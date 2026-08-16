@@ -1,7 +1,3 @@
-// export function main() {
-//   console.log(Bun.argv);
-// }
-
 import { Effect, Schema } from "effect";
 import { parseArgs } from "util";
 import { HexColor, Mode, omarchyColorsFromMaterialSeed } from "./colors";
