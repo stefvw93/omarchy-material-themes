@@ -5,10 +5,23 @@ directories:
 files:
   - "!**/.vscode/*"
   - "!src/*"
+  - "!build/*"
   - "!electron.vite.config.{js,ts,mjs,cjs}"
   - "!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}"
   - "!{.env,.env.*,.npmrc,pnpm-lock.yaml}"
   - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
+  - "!**/*.{map,md,markdown,ts,tsx,flow}"
+  - "!**/{test,tests,__tests__,spec,example,examples,docs,doc,.github,.idea}/**"
+  - "!**/{LICENSE,LICENSE.*,AUTHORS,CONTRIBUTORS,.eslintrc*,.editorconfig,.travis.yml}"
+asar: true
+compression: maximum
+removePackageScripts: true
+removePackageKeywords: true
+# Ship only English. Every extra locale costs ~200 KB in the framework bundle;
+# the full set is ~48 MB.
+electronLanguages:
+  - en-US
+afterPack: build/afterPack.cjs
 asarUnpack:
   - resources/**
 win:
@@ -19,6 +32,10 @@ nsis:
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 mac:
+  # dmg only. Adding `zip` here doubles dist output and is only needed if you
+  # wire up Squirrel.Mac auto-updates (see KEEP_AUTOUPDATER in build/afterPack.cjs).
+  target:
+    - dmg
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
@@ -29,10 +46,11 @@ mac:
 dmg:
   artifactName: ${name}-${version}.${ext}
 linux:
+  # AppImage only. `snap` bundles a runtime and roughly doubles output; `deb`
+  # ships a second uncompressed copy of the same tree.
   target:
     - AppImage
-    - snap
-    - deb
+  executableName: frontend
   maintainer: electronjs.org
   category: Utility
 appImage:
