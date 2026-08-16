@@ -13,6 +13,9 @@
     "dev": "vp run website#dev",
     "prepare": "vp config"
   },
+  "dependencies": {
+    "@effect/vitest": "^4.0.0-beta.107"
+  },
   "devDependencies": {
     "vite": "catalog:",
     "vite-plus": "catalog:"

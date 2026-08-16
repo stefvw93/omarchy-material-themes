@@ -1,8 +1,6 @@
 import {
   argbFromHex,
-  themeFromSourceColor,
   hexFromArgb,
-  SchemeTonalSpot,
   Hct,
   MaterialDynamicColors,
   DynamicScheme,
@@ -15,6 +13,7 @@ export function main() {
     variant: 0,
     contrastLevel: 0,
   });
+
   const colors = new MaterialDynamicColors();
   const surfaceContainerLowest = hexFromArgb(colors.surfaceContainerLowest().getArgb(scheme));
   const surfaceContainer = hexFromArgb(colors.surfaceContainer().getArgb(scheme));
