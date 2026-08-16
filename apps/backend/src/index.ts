@@ -6,7 +6,7 @@ const main = Effect.gen(function* () {
   yield* Effect.void;
 
   const { values } = parseArgs({
-    args: Bun.argv,
+    args: process.argv,
     options: {
       accent: {
         type: "string",

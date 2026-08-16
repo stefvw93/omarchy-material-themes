@@ -2,42 +2,24 @@
   "name": "omarchy-material-themes",
   "version": "0.0.0",
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "apps/*",
-    "tools/*"
-  ],
   "type": "module",
   "scripts": {
     "ready": "vp check && vp run -r test && vp run -r build",
-    "dev": "vp run website#dev",
     "prepare": "vp config"
   },
-  "dependencies": {
-    "@effect/vitest": "^4.0.0-beta.107"
-  },
   "devDependencies": {
-    "@types/bun": "^1.3.14",
+    "@types/node": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
   },
-  "overrides": {
-    "vite": "catalog:"
-  },
   "devEngines": {
     "packageManager": {
-      "name": "bun",
-      "version": "1.3.14",
+      "name": "pnpm",
+      "version": "11.22.0",
       "onFail": "download"
     }
   },
   "engines": {
-    "node": ">=22.18.0"
-  },
-  "catalog": {
-    "effect": "^4.0.0-beta.107",
-    "typescript": "^7.0.2",
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8",
-    "vite-plus": "0.2.8"
+    "node": ">=24.19.0"
   }
 }
