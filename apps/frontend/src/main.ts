@@ -4,7 +4,7 @@ import viteLogo from "./assets/vite.svg";
 import heroImg from "./assets/hero.png";
 import { setupCounter } from "./counter.ts";
 import { Effect, FileSystem } from "effect";
-import { TauriFileSystem } from "effect-platform-tauri";
+import { TauriFileSystem, TauriPaths } from "effect-platform-tauri";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 <section id="center">
@@ -64,9 +64,16 @@ setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
 void Effect.runPromise(
   Effect.gen(function* () {
     const fs = yield* FileSystem.FileSystem;
-    yield* Effect.log("hello!", { fs });
+    const paths = yield* TauriPaths.Paths;
+    const entries = yield* fs.readDirectory(yield* paths.Home, { recursive: true });
+    yield* Effect.log({ entries });
   }).pipe(
-    // The store needs a concrete FileSystem; wire in the Node implementation.
     Effect.provide(TauriFileSystem.layer),
+    Effect.provide(TauriPaths.layer),
+    Effect.catch((error) => {
+      // oxlint-disable-next-line typescript/no-base-to-string typescript/restrict-template-expressions
+      console.log(`recovered from cause: "${error.cause ?? ""}"`, { error });
+      return Effect.succeed("recovered");
+    }),
   ),
 );

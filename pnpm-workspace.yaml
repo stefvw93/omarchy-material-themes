@@ -6,7 +6,10 @@ packages:
 catalogMode: prefer
 
 catalog:
+  "@effect/platform": ^0.97.1
+  "@effect/platform-node": ^0.108.1
   "@effect/vitest": "^4.0.0-beta.107"
+  "@tauri-apps/api": ^2.11.1
   "@tauri-apps/cli": ^2.11.4
   "@tauri-apps/plugin-fs": ^2.5.1
   "@types/node": ^24.13.3
@@ -23,6 +26,7 @@ peerDependencyRules:
   allowedVersions:
     vite: "*"
 allowBuilds:
+  "@parcel/watcher": set this to true or false
   electron: true
   electron-winstaller: true
   esbuild: true

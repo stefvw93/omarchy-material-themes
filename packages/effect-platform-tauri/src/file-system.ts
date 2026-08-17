@@ -1,8 +1,39 @@
-// import * as FS from "@tauri-apps/plugin-fs";
+import { readDir } from "@tauri-apps/plugin-fs";
 import { Effect, FileSystem, Layer, PlatformError, Stream } from "effect";
+import { errorTagOfCause } from "./utils";
 
-const notImplementedError = PlatformError.systemError({ _tag: "Unknown", module: "", method: "" });
+const notImplementedError = PlatformError.systemError({
+  _tag: "Unknown",
+  module: "@effect-platform-tauri/FileSystem",
+  method: "<not implemented>",
+});
 const notImplemented = () => Effect.fail(notImplementedError);
+
+const readDirectory: FileSystem.FileSystem["readDirectory"] = (path, options) => {
+  if (options?.recursive) {
+    return Effect.fail(
+      PlatformError.systemError({
+        _tag: "Unknown",
+        module: "@effect-platform-tauri/FileSystem",
+        method: "readDirectory",
+        pathOrDescriptor: path,
+        cause: "`recursive` is not implemented",
+      }),
+    );
+  }
+
+  return Effect.tryPromise({
+    try: () => readDir(path),
+    catch: (cause) =>
+      PlatformError.systemError({
+        _tag: errorTagOfCause(cause),
+        module: "@effect-platform-tauri/FileSystem",
+        method: "readDirectory",
+        pathOrDescriptor: path,
+        cause,
+      }),
+  }).pipe(Effect.map((entries) => entries.map((e) => e.name)));
+};
 
 const makeFileSystem = FileSystem.make({
   access: notImplemented,
@@ -18,7 +49,7 @@ const makeFileSystem = FileSystem.make({
   makeTempFile: notImplemented,
   makeTempFileScoped: notImplemented,
   open: notImplemented,
-  readDirectory: notImplemented,
+  readDirectory,
   readFile: notImplemented,
   readLink: notImplemented,
   realPath: notImplemented,
