@@ -1,5 +1,5 @@
 {
-  "name": "effect-platform-tauri",
+  "name": "react-argon",
   "version": "0.0.0",
   "description": "A starter for creating a TypeScript package.",
   "homepage": "https://github.com/author/library#readme",
@@ -35,18 +35,17 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "@tauri-apps/plugin-fs": "catalog:",
-    "effect": "catalog:"
+    "effect": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@tauri-apps/api": "catalog:",
     "@types/node": "^26.1.1",
-    "bumpp": "^11.1.0",
-    "typescript": "^7.0.2",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "tstyche": "catalog:",
+    "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
-  },
-  "inlinedDependencies": {
-    "@tauri-apps/api": "2.11.1"
   }
 }
