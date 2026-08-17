@@ -1,11 +1,11 @@
 import { describe, it, assert, expect } from "@effect/vitest";
-import { omarchyColorsFromMaterialSeed } from "./colors.ts";
+import { omarchyColorsFromScheme } from "./_colors.ts";
 import { Effect, Exit, Option, Schema } from "effect";
 
 describe("generate omarchy colors from seed", () => {
   it.effect("fails when seed is invalid", () =>
     Effect.gen(function* () {
-      const exit = yield* Effect.exit(omarchyColorsFromMaterialSeed("#ggg", "dark"));
+      const exit = yield* Effect.exit(omarchyColorsFromScheme("#ggg", "dark"));
       const cause = Exit.findErrorOption(exit);
       assert.isTrue(Option.isSome(cause) && cause.value instanceof Schema.SchemaError);
     }),
@@ -13,7 +13,7 @@ describe("generate omarchy colors from seed", () => {
 
   it.effect("contains expected keys", () =>
     Effect.gen(function* () {
-      const { colors } = yield* omarchyColorsFromMaterialSeed("#00ff00", "light");
+      const { colors } = yield* omarchyColorsFromScheme("#00ff00", "light");
 
       // probe
       expect(colors.mode).toBe("light");

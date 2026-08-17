@@ -123,7 +123,7 @@ export const htcFromHex = (hex: typeof HexColor.Type) =>
     return Hct.fromInt(argb);
   });
 
-export const omarchyColorsFromMaterialSeed = (seed: HexColor, mode: Mode) =>
+export const omarchyColorsFromScheme = (seed: HexColor, mode: Mode) =>
   Effect.gen(function* () {
     yield* Effect.log(`omarchyColorsFromMaterialSeed: seed=${seed}, mode=${mode}`);
 
@@ -178,3 +178,5 @@ export const omarchyColorsFromMaterialSeed = (seed: HexColor, mode: Mode) =>
 
     return { scheme, colors };
   });
+
+// themeFromImage(image)
