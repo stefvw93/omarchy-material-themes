@@ -3,6 +3,8 @@ import typescriptLogo from "./assets/typescript.svg";
 import viteLogo from "./assets/vite.svg";
 import heroImg from "./assets/hero.png";
 import { setupCounter } from "./counter.ts";
+import { Effect, FileSystem } from "effect";
+import { TauriFileSystem } from "effect-platform-tauri";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 <section id="center">
@@ -58,3 +60,13 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 `;
 
 setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
+
+void Effect.runPromise(
+  Effect.gen(function* () {
+    const fs = yield* FileSystem.FileSystem;
+    yield* Effect.log("hello!", { fs });
+  }).pipe(
+    // The store needs a concrete FileSystem; wire in the Node implementation.
+    Effect.provide(TauriFileSystem.layer),
+  ),
+);

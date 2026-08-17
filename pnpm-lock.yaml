@@ -249,6 +249,12 @@ importers:
       '@tauri-apps/plugin-fs':
         specifier: 'catalog:'
         version: 2.5.1
+      effect:
+        specifier: 'catalog:'
+        version: 4.0.0-rc.109
+      effect-platform-tauri:
+        specifier: workspace:*
+        version: link:../../packages/effect-platform-tauri
     devDependencies:
       '@tauri-apps/cli':
         specifier: 'catalog:'
@@ -267,6 +273,13 @@ importers:
         version: 0.2.9(@types/node@24.13.3)(@voidzero-dev/vite-plus-core@0.2.9(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(typescript@7.0.2)(yaml@2.9.0))(esbuild@0.28.2)(jiti@2.7.0)(typescript@7.0.2)(yaml@2.9.0)
 
   packages/effect-platform-tauri:
+    dependencies:
+      '@tauri-apps/plugin-fs':
+        specifier: 'catalog:'
+        version: 2.5.1
+      effect:
+        specifier: 'catalog:'
+        version: 4.0.0-rc.109
     devDependencies:
       '@types/node':
         specifier: ^26.1.1
