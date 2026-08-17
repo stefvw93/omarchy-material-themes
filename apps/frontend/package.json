@@ -1,43 +1,21 @@
 {
   "name": "frontend",
-  "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
-  "homepage": "https://electron-vite.org",
-  "author": "example.com",
-  "main": "./out/main/index.js",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "start": "electron-vite preview",
-    "dev": "electron-vite dev",
-    "build": "electron-vite build",
-    "postinstall": "electron-builder install-app-deps",
-    "build:unpack": "npm run build && electron-builder --dir",
-    "build:win": "npm run build && electron-builder --win",
-    "build:mac": "electron-vite build && electron-builder --mac",
-    "build:linux": "electron-vite build && electron-builder --linux"
+    "dev": "vp dev",
+    "build": "tsc && vp build",
+    "preview": "vp preview"
   },
   "dependencies": {
-    "@electron-toolkit/preload": "^3.0.2",
-    "@electron-toolkit/utils": "^4.0.0"
+    "@tauri-apps/plugin-fs": "catalog:"
   },
   "devDependencies": {
-    "@electron-toolkit/tsconfig": "^2.0.0",
-    "@types/node": "catalog:",
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.5",
-    "electron": "^42.9.1",
-    "electron-builder": "^26.0.12",
-    "electron-vite": "^5.0.0",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
+    "@tauri-apps/cli": "catalog:",
+    "services": "workspace:*",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "electron",
-      "esbuild"
-    ]
   }
 }

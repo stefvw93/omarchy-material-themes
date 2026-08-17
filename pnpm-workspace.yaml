@@ -7,6 +7,8 @@ catalogMode: prefer
 
 catalog:
   "@effect/vitest": "^4.0.0-beta.107"
+  "@tauri-apps/cli": ^2.11.4
+  "@tauri-apps/plugin-fs": ^2.5.1
   "@types/node": ^24.13.3
   effect: "^4.0.0-beta.107"
   electron-vite: ^5.0.0
