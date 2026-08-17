@@ -19,6 +19,7 @@
     "effect": "catalog:",
     "effect-platform-tauri": "workspace:*",
     "react": "catalog:",
+    "react-argon": "workspace:*",
     "react-dom": "catalog:",
     "shadcn": "catalog:",
     "tailwind-merge": "catalog:",
