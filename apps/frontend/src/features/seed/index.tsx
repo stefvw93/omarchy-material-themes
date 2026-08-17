@@ -5,7 +5,7 @@ import { component } from "../shared";
 import { ColorPicker, ColorPickerHex, ColorPickerInput } from "@/components/ui/color-picker";
 import { HexColor } from "../material/_colors";
 import { Input } from "@/components/ui/input";
-import { WallhavenService } from "../wallhaven/service";
+import { WallhavenSearchPayload, WallhavenService } from "../wallhaven/service";
 
 const Props = Schema.Struct({
   children: Schema.optionalKey(Children),
@@ -13,15 +13,23 @@ const Props = Schema.Struct({
 
 const State = Schema.Struct({
   colorValue: Schema.String,
+  isSearchPending: Schema.Boolean,
+  searchResults: Schema.optionalKey(WallhavenSearchPayload),
 });
 
-const InputColor = Action("InputColor", {
-  hex: HexColor,
-});
-
+const InputColor = Action("InputColor", { hex: HexColor });
 const ClickedSearch = Action("ClickedSearch", {});
+const SearchPending = Action("SearchPending", {});
+const SearchFulfilled = Action("SearchFulfilled", { data: WallhavenSearchPayload });
+const SearchRejected = Action("SearchRejected", {});
 
-const SeedAction = Action.of([InputColor, ClickedSearch]);
+const SeedAction = Action.of([
+  InputColor,
+  ClickedSearch,
+  SearchPending,
+  SearchFulfilled,
+  SearchRejected,
+]);
 
 const SeedFactory = define({
   props: Props,
@@ -29,19 +37,38 @@ const SeedFactory = define({
   action: SeedAction,
 });
 
-const initialState = SeedFactory.initialState(() => ({ colorValue: "#000000" }));
+const initialState = SeedFactory.initialState(() => ({
+  colorValue: "#000000",
+  isSearchPending: false,
+}));
 
 const reducer = SeedFactory.reducer({
   InputColor: (action, { state }) => ({ ...state, colorValue: action.hex }),
+
+  SearchPending: (_action, { state }) => ({ ...state, isSearchPending: true }),
+
+  SearchFulfilled: (action, { state }) => ({
+    ...state,
+    isSearchPending: false,
+    searchResults: action.data,
+  }),
+
+  SearchRejected: (_action, { state }) => ({ ...state, isSearchPending: false }),
+
   ClickedSearch: (_action, { state }) => {
     return [
       { ...state },
-      Command.effect((_dispatch) =>
-        Effect.gen(function* () {
-          const wallhaven = yield* WallhavenService;
-          const result = yield* wallhaven.search({});
-          console.log({ result });
-        }).pipe(Effect.catch(() => Effect.void)),
+      Command.batch(
+        Command.effect((dispatch) => dispatch(SearchPending.make({}))),
+        Command.restart(
+          "search",
+          Command.effect((dispatch) =>
+            Effect.gen(function* () {
+              const wallhaven = yield* WallhavenService;
+              yield* dispatch(SearchFulfilled.make({ data: yield* wallhaven.search({}) }));
+            }).pipe(Effect.catch(() => dispatch(SearchRejected.make({})))),
+          ),
+        ),
       ),
     ];
   },
@@ -68,7 +95,9 @@ const render = SeedFactory.render(({ state, dispatch }) => (
     </div>
 
     <div className="col-span-9">
-      <Button onClick={() => dispatch(ClickedSearch.make({}))}>Search</Button>
+      <Button disabled={state.isSearchPending} onClick={() => dispatch(ClickedSearch.make({}))}>
+        {state.isSearchPending ? "Searching..." : "Search"}
+      </Button>
     </div>
   </div>
 ));

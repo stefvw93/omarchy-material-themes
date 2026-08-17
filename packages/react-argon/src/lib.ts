@@ -159,7 +159,7 @@ export interface Vocabularies extends MessageConstructor<"internal"> {
   ) => Vocabulary<Members, ChannelOf<Members>>;
 }
 
-const messages = <Ch extends Channel>(ch: Ch) =>
+export const messages = <Ch extends Channel>(ch: Ch) =>
   function message(tag: string, fields: Schema.Struct.Fields) {
     return Object.assign(Schema.TaggedStruct(tag, fields), { [channel]: ch });
   };
