@@ -3,17 +3,15 @@ import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstab
 import { TauriHttpClient } from "effect-platform-tauri";
 import { HexColor } from "../material/_colors";
 
-export const WallhavenCategory = Schema.Union([
-  Schema.Literal("general"),
-  Schema.Literal("anime"),
-  Schema.Literal("people"),
-]);
+/** Order is significant: it defines the bit position in the `categories` param. */
+export const WALLHAVEN_CATEGORIES = ["general", "anime", "people"] as const;
+export const WALLHAVEN_CATEGORY = Schema.Literals(WALLHAVEN_CATEGORIES);
+export type WALLHAVEN_CATEGORY = typeof WALLHAVEN_CATEGORY.Type;
 
-export const WallhavenPurity = Schema.Union([
-  Schema.Literal("sfw"),
-  Schema.Literal("sketchy"),
-  Schema.Literal("nsfw"),
-]);
+/** Order is significant: it defines the bit position in the `purity` param. */
+export const WALLHAVEN_PURITIES = ["sfw", "sketchy", "nsfw"] as const;
+export const WALLHAVEN_PURITY = Schema.Literals(WALLHAVEN_PURITIES);
+export type WALLHAVEN_PURITY = typeof WALLHAVEN_PURITY.Type;
 
 export const WallhavenItem = Schema.Struct({
   id: Schema.String,
@@ -22,8 +20,8 @@ export const WallhavenItem = Schema.Struct({
   views: Schema.Number,
   favorites: Schema.Number,
   source: Schema.String,
-  purity: WallhavenPurity,
-  category: WallhavenCategory,
+  purity: WALLHAVEN_PURITY,
+  category: WALLHAVEN_CATEGORY,
   dimension_x: Schema.Number,
   dimension_y: Schema.Number,
   resolution: Schema.String,
@@ -129,10 +127,26 @@ const CommaSeparated = <S extends Schema.Codec<any, string>>(item: S) =>
     ),
   );
 
+/**
+ * `"101"` (Encoded) <-> `["general", "people"]` (Type).
+ * One digit per option, in the order given: `1` = on, `0` = off.
+ * Unknown/short strings decode to whatever bits are present.
+ */
+const BitFlags = <const L extends ReadonlyArray<string>>(options: L) =>
+  Schema.String.pipe(
+    Schema.decodeTo(
+      Schema.Array(Schema.Literals(options)),
+      SchemaTransformation.transform<ReadonlyArray<L[number]>, string>({
+        decode: (str) => options.filter((_, i) => str[i] === "1"),
+        encode: (flags) => options.map((o) => (flags.includes(o) ? "1" : "0")).join(""),
+      }),
+    ),
+  );
+
 export const WallhavenSearchParams = Schema.Struct({
   q: Schema.optional(Schema.String),
-  categories: Schema.optional(Schema.String),
-  purity: Schema.optional(Schema.String),
+  categories: Schema.optional(BitFlags(WALLHAVEN_CATEGORIES)),
+  purity: Schema.optional(BitFlags(WALLHAVEN_PURITIES)),
   sorting: Schema.optional(WallhavenSearchSorting),
   order: Schema.optional(WallhavenSearchOrder),
   topRange: Schema.optional(WallhavenSearchTopRange),
@@ -169,6 +183,11 @@ export class WallhavenService extends Context.Service<
             HttpClientRequest.prependUrl("https://wallhaven.cc/api/v1"),
             HttpClientRequest.acceptJson,
           ),
+        ),
+        HttpClient.tapRequest((r) =>
+          Effect.gen(function* () {
+            yield* Effect.log(r);
+          }),
         ),
         // Turn non-2xx responses into a typed failure.
         HttpClient.filterStatusOk,

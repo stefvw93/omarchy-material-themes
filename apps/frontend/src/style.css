@@ -128,4 +128,10 @@
     font-size: 2ch;
     @apply font-mono;
   }
+
+  html,
+  body,
+  #app {
+    height: 100%;
+  }
 }

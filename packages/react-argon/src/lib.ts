@@ -777,7 +777,7 @@ const internals: unique symbol = Symbol("@tea/internals");
 export interface BlueprintInternals<Props, State, Action, H extends AnyHooks> {
   readonly initialState: (props: Props) => State;
   readonly render: Render<Props, State, Action, H>;
-  readonly useHooks: HookSpec<Props, State, H> | undefined;
+  readonly useUnsafeHooks: HookSpec<Props, State, H> | undefined;
   readonly props: AnyPropsSchema;
   readonly outputTags: ReadonlyArray<string>;
 
@@ -883,7 +883,7 @@ export interface Definition<
  *       state: State,
  *       action: Action.of([…]),
  *       output: Action.of([OrderPlaced]),
- *       useHooks: …,
+ *       useUnsafeHooks: …,
  *     })
  *
  *     export const cart = Cart.create({ initialState, reducer, render })
@@ -900,7 +900,7 @@ export const define: <
   readonly action: A;
   readonly output?: O & Disjoint<A, O> & NoPropCollision<PropsSchema, O>;
 
-  readonly useHooks?: HookSpec<PropsOf<PropsSchema>, StateOf<StateSchema>, H>;
+  readonly useUnsafeHooks?: HookSpec<PropsOf<PropsSchema>, StateOf<StateSchema>, H>;
 }) => Definition<PropsOf<PropsSchema>, StateOf<StateSchema>, A, O, H> = (spec) => {
   // Opaque declarations (`Children`) are redacted only in `PropsChanged`
   // events; state reaches devtools transitions verbatim. Refusing them here
@@ -951,7 +951,7 @@ export const define: <
         [internals]: {
           initialState: parts.initialState,
           render: parts.render,
-          useHooks: spec.useHooks,
+          useUnsafeHooks: spec.useUnsafeHooks,
           props: spec.props,
           outputTags,
           opaqueProps: opaqueProps(spec.props),
@@ -1598,9 +1598,9 @@ export const createRuntime: <RootR, RootE>(
     blueprint: Blueprint<any, any, any, any, any, any>,
     componentOptions: { readonly layer?: Layer.Layer<any, any, any>; readonly name?: string } = {},
   ): FC<any> => {
-    const { render, useHooks, props: propsSchema, outputTags } = blueprint[internals];
+    const { render, useUnsafeHooks, props: propsSchema, outputTags } = blueprint[internals];
     const name = componentOptions.name ?? "TeaFeature";
-    const useFeatureHooks: HookSpec<any, any, AnyHooks> = useHooks ?? (() => noHooks);
+    const useFeatureHooks: HookSpec<any, any, AnyHooks> = useUnsafeHooks ?? (() => noHooks);
     const outputPropNames = new Set(outputTags.map((tag) => `on${tag}`));
 
     const equivalence = {

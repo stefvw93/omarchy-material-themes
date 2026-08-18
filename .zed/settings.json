@@ -6,6 +6,7 @@
           "run": "onType",
           "fixKind": "safe_fix",
           "typeAware": true,
+          "typeCheck": true,
           "unusedDisableDirectives": "deny"
         }
       }

@@ -389,7 +389,7 @@ function` and no implementation, deliberately: they are illustrations of the
 
 ## Known limitations
 
-- **`useHooks` sees the pre-`sync` state.** `component` calls the hook spec
+- **`useUnsafeHooks` sees the pre-`sync` state.** `component` calls the hook spec
   with the committed state read _before_ `store.sync` folds
   `PropsChanged`/`HookChanged`, and a sync-driven fold suppresses notification
   (the change paints on the same render), so a hook value derived from state
