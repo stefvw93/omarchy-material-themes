@@ -19,7 +19,7 @@ export const WALLHAVEN_CATEGORY = Schema.Literals(WALLHAVEN_CATEGORIES);
 export type WALLHAVEN_CATEGORY = typeof WALLHAVEN_CATEGORY.Type;
 
 /** Order is significant: it defines the bit position in the `purity` param. */
-export const WALLHAVEN_PURITIES = ["sfw", "sketchy"] as const;
+export const WALLHAVEN_PURITIES = ["sfw", "sketchy", "nsfw"] as const;
 export const WALLHAVEN_PURITY = Schema.Literals(WALLHAVEN_PURITIES);
 export type WALLHAVEN_PURITY = typeof WALLHAVEN_PURITY.Type;
 
@@ -195,6 +195,7 @@ export class WallhavenService extends Context.Service<
           ),
         ),
         HttpClient.tapRequest((req) => Effect.log(req.toJSON())),
+        HttpClient.tap(Effect.log),
         HttpClient.tap((res) =>
           Effect.flatMap(res.json, (body) => Effect.log({ status: res.status, body })),
         ),

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Effect, Match, Schema } from "effect";
-import { Action, Async, Children, define, Next } from "react-argon";
+import { Effect, Schema } from "effect";
+import { Action, Async, Children, define } from "react-argon";
 import { component } from "../shared";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,7 +27,9 @@ const CATEGORIES: { value: WALLHAVEN_CATEGORY; label: string }[] = WALLHAVEN_CAT
   (value) => ({ value, label: value }),
 );
 
-const PURITY: { value: WALLHAVEN_PURITY; label: string }[] = WALLHAVEN_PURITIES.map((value) => ({
+const PURITY: { value: WALLHAVEN_PURITY; label: string }[] = WALLHAVEN_PURITIES.filter(
+  (p) => p !== "nsfw",
+).map((value) => ({
   value,
   label: value,
 }));
@@ -42,14 +44,19 @@ const Props = Schema.Struct({
   children: Schema.optionalKey(Children),
 });
 
-const wallhavenSearch = Async("search", {
+const wallhavenSearch = Async("WallhavenSearch", {
   success: WallhavenSearchPayload,
   onError: Async.message,
+  run: (params: typeof WallhavenSearchParams.Type) =>
+    Effect.flatMap(WallhavenService, (wallhaven) => wallhaven.search(params)),
 });
 
-const loadPexelsCurated = Async("pexels", {
+const pexelsCurated = Async("PexelsCurated", {
   success: Schema.Array(PexelsPhoto),
   onError: Async.message,
+  // Takes nothing, so the input is `void` — which is what lets `start(state)`
+  // be called with the state alone.
+  run: (_: void) => Effect.flatMap(PexelsService, (pexels) => pexels.curated),
 });
 
 const State = Schema.Struct({
@@ -58,18 +65,20 @@ const State = Schema.Struct({
     searchParams: WallhavenSearchParams,
   }),
   ...wallhavenSearch.field,
-  ...loadPexelsCurated.field,
+  ...pexelsCurated.field,
 });
 
 const ClickedSearch = Action("ClickedSearch", {});
+const ClickedWallhavenPaginator = Action("ClickedWallhavenPaginator", { page: Schema.Number });
 const InputTypeChanged = Action("InputTypeChanged", { inputType: InputType });
 const SearchParamsChanged = Action("SearchParamsChanged", { searchParams: WallhavenSearchParams });
 const SeedAction = Action.of([
   ClickedSearch,
+  ClickedWallhavenPaginator,
   InputTypeChanged,
   SearchParamsChanged,
   ...wallhavenSearch.actions,
-  ...loadPexelsCurated.actions,
+  ...pexelsCurated.actions,
 ]);
 
 const SeedFactory = define({
@@ -82,50 +91,43 @@ const initialState = SeedFactory.initialState(() => ({
   inputType: "file" as const,
   wallhaven: {
     searchParams: {
+      page: 1,
       categories: ["general"],
       purity: ["sfw"],
       sorting: "toplist",
+      topRange: "1y",
+      atleast: "2560x1440",
     },
   },
-  search: wallhavenSearch.idle,
-  pexels: loadPexelsCurated.idle,
+  ...wallhavenSearch.initial,
+  ...pexelsCurated.initial,
 }));
 
 const reducer = SeedFactory.reducer({
   InputTypeChanged: (action, { state }) => {
-    if (action.inputType === "file") {
-      return { ...state, inputType: action.inputType };
-    }
+    // `start` writes `Pending` into whatever state it is handed, so the tab
+    // change and the work it triggers are one return — nothing to unwrap.
+    const next = { ...state, inputType: action.inputType };
 
-    if (action.inputType === "pexels") {
-      const operation = loadPexelsCurated.start(
-        state,
-        Effect.flatMap(PexelsService, (pexels) => pexels.curated),
-      );
+    if (action.inputType === "pexels") return pexelsCurated.start(next);
+    if (action.inputType === "wallhaven")
+      return wallhavenSearch.start(next, state.wallhaven.searchParams);
 
-      const command = Next.command(operation)!;
-      const nextState = Next.state(operation);
-      const next = { ...state, ...nextState, inputType: action.inputType };
+    return next;
+  },
 
-      return [next, command];
-    }
-
-    if (action.inputType === "wallhaven") {
-      const operation = wallhavenSearch.start(
-        state,
-        Effect.flatMap(WallhavenService, (wallhaven) =>
-          wallhaven.search(state.wallhaven.searchParams),
-        ),
-      );
-
-      const command = Next.command(operation)!;
-      const nextState = Next.state(operation);
-      const next = { ...state, ...nextState, inputType: action.inputType };
-
-      return [next, command];
-    }
-
-    return state;
+  ClickedWallhavenPaginator: (action, { state }) => {
+    const next = {
+      ...state,
+      wallhaven: {
+        ...state.wallhaven,
+        searchParams: {
+          ...state.wallhaven.searchParams,
+          page: action.page || state.wallhaven.searchParams.page || 1,
+        },
+      },
+    };
+    return wallhavenSearch.start(next, next.wallhaven.searchParams);
   },
 
   SearchParamsChanged: (action, { state }) => ({
@@ -133,23 +135,10 @@ const reducer = SeedFactory.reducer({
     wallhaven: { ...state.wallhaven, searchParams: action.searchParams },
   }),
 
-  ClickedSearch: (_action, { state }) => {
-    const operation = wallhavenSearch.start(
-      state,
-      Effect.flatMap(WallhavenService, (wallhaven) =>
-        wallhaven.search(state.wallhaven.searchParams),
-      ),
-    );
-
-    const command = Next.command(operation);
-    const nextState = Next.state(operation);
-    const next = { ...state, ...nextState };
-
-    return command ? [next, command] : state;
-  },
+  ClickedSearch: (_action, { state }) => wallhavenSearch.start(state, state.wallhaven.searchParams),
 
   ...wallhavenSearch.handlers,
-  ...loadPexelsCurated.handlers,
+  ...pexelsCurated.handlers,
 });
 
 const render = SeedFactory.render(({ state, dispatch }) => {
@@ -163,43 +152,13 @@ const render = SeedFactory.render(({ state, dispatch }) => {
         >
           <TabsList>
             <TabsTrigger value="file">File</TabsTrigger>
-            <TabsTrigger value="pexels">Pexels</TabsTrigger>
             <TabsTrigger value="wallhaven">Wallhaven</TabsTrigger>
+            <TabsTrigger value="pexels">Pexels</TabsTrigger>
           </TabsList>
 
           <TabsContent value="file" className="flex flex-col gap-4">
             Add a file.
             <Input type="file" accept="image/*" />
-          </TabsContent>
-
-          <TabsContent value="pexels" className="flex flex-col flex-1 min-h-0 gap-4">
-            <div className="flex flex-col flex-1 min-h-0">
-              {Match.type<typeof state.pexels>().pipe(
-                Match.tag("Idle", () => <></>),
-                Match.tag("Pending", () => "Loading..."),
-                Match.tag("Rejected", (result) => `Error: ${result.error}`),
-                Match.tag("Resolved", (result) => (
-                  <div className="flex flex-col flex-1 min-h-0 gap-4 @container">
-                    <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 overflow-auto gap-4">
-                      {result.value.map((item) => (
-                        // `thumbs.large` maxes out around 432x243, so keep cells
-                        // small enough that they are not upscaled on HiDPI.
-                        <button key={item.id} type="button" className="aspect-video relative">
-                          <img
-                            src={item.src.medium.toString()}
-                            loading="lazy"
-                            decoding="async"
-                            className="size-full absolute object-cover"
-                          />
-                        </button>
-                      ))}
-                    </div>
-                    <p>{`${result.value.length} total`}</p>
-                  </div>
-                )),
-                Match.exhaustive,
-              )(state.pexels)}
-            </div>
           </TabsContent>
 
           <TabsContent value="wallhaven" className="flex flex-col flex-1 min-h-0 gap-4">
@@ -263,22 +222,22 @@ const render = SeedFactory.render(({ state, dispatch }) => {
               </Select>
 
               <Button
-                disabled={state.search._tag === "Pending"}
+                disabled={Async.isPending(state.wallhavenSearch)}
                 onClick={() => dispatch(ClickedSearch.make({}))}
               >
-                {state.search._tag === "Pending" ? "Searching..." : "Search"}
+                {Async.isPending(state.wallhavenSearch) ? "Searching..." : "Search"}
               </Button>
             </div>
 
             <div className="flex flex-col flex-1 min-h-0">
-              {Match.type<typeof state.search>().pipe(
-                Match.tag("Idle", () => <></>),
-                Match.tag("Pending", () => "Searching..."),
-                Match.tag("Rejected", (result) => `Error: ${result.error}`),
-                Match.tag("Resolved", (result) => (
+              {wallhavenSearch.match(state, {
+                Idle: () => <></>,
+                Pending: () => "Searching...",
+                Rejected: (rejected) => `Error: ${rejected.error}`,
+                Resolved: (resolved) => (
                   <div className="flex flex-col flex-1 min-h-0 gap-4 @container">
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 overflow-auto gap-4">
-                      {result.value.data.map((item) => (
+                      {resolved.value.data.map((item) => (
                         // `thumbs.large` maxes out around 432x243, so keep cells
                         // small enough that they are not upscaled on HiDPI.
                         <button key={item.id} type="button" className="aspect-video relative">
@@ -286,16 +245,72 @@ const render = SeedFactory.render(({ state, dispatch }) => {
                             src={item.thumbs.large.toString()}
                             loading="lazy"
                             decoding="async"
+                            className="size-full absolute object-cover inset-0"
+                          />
+                        </button>
+                      ))}
+
+                      <div className="col-span-full flex items-center justify-center gap-2">
+                        <Button
+                          onClick={() =>
+                            dispatch(
+                              ClickedWallhavenPaginator.make({
+                                page: Math.max(1, (state.wallhaven.searchParams.page || 1) - 1),
+                              }),
+                            )
+                          }
+                        >
+                          prev
+                        </Button>
+                        <span>
+                          {`page ${resolved.value.meta.current_page} of ${Math.ceil(resolved.value.meta.total / resolved.value.meta.per_page)}`}
+                        </span>
+                        <Button
+                          onClick={() =>
+                            dispatch(
+                              ClickedWallhavenPaginator.make({
+                                page: (state.wallhaven.searchParams.page || 1) + 1,
+                              }),
+                            )
+                          }
+                        >
+                          next
+                        </Button>
+                      </div>
+                    </div>
+                    <p>{`${resolved.value.data.length} of ${resolved.value.meta.total}`}</p>
+                  </div>
+                ),
+              })}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="pexels" className="flex flex-col flex-1 min-h-0 gap-4">
+            <div className="flex flex-col flex-1 min-h-0">
+              {pexelsCurated.match(state, {
+                Idle: () => <></>,
+                Pending: () => "Loading...",
+                Rejected: (rejected) => `Error: ${rejected.error}`,
+                Resolved: (resolved) => (
+                  <div className="flex flex-col flex-1 min-h-0 gap-4 @container">
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 overflow-auto gap-4">
+                      {resolved.value.map((item) => (
+                        // `thumbs.large` maxes out around 432x243, so keep cells
+                        // small enough that they are not upscaled on HiDPI.
+                        <button key={item.id} type="button" className="aspect-video relative">
+                          <img
+                            src={item.src.medium.toString()}
+                            loading="lazy"
+                            decoding="async"
                             className="size-full absolute object-cover"
                           />
                         </button>
                       ))}
                     </div>
-                    <p>{`${result.value.data.length} of ${result.value.meta.total}`}</p>
+                    <p>{`${resolved.value.length} total`}</p>
                   </div>
-                )),
-                Match.exhaustive,
-              )(state.search)}
+                ),
+              })}
             </div>
           </TabsContent>
         </Tabs>
