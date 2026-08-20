@@ -1,4 +1,14 @@
-import { Context, Effect, flow, Layer, Schedule, Schema, SchemaTransformation } from "effect";
+import {
+  Cache,
+  Context,
+  Duration,
+  Effect,
+  flow,
+  Layer,
+  Schedule,
+  Schema,
+  SchemaTransformation,
+} from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http";
 import { TauriHttpClient } from "effect-platform-tauri";
 import { HexColor } from "../material/_colors";
@@ -9,7 +19,7 @@ export const WALLHAVEN_CATEGORY = Schema.Literals(WALLHAVEN_CATEGORIES);
 export type WALLHAVEN_CATEGORY = typeof WALLHAVEN_CATEGORY.Type;
 
 /** Order is significant: it defines the bit position in the `purity` param. */
-export const WALLHAVEN_PURITIES = ["sfw", "sketchy", "nsfw"] as const;
+export const WALLHAVEN_PURITIES = ["sfw", "sketchy"] as const;
 export const WALLHAVEN_PURITY = Schema.Literals(WALLHAVEN_PURITIES);
 export type WALLHAVEN_PURITY = typeof WALLHAVEN_PURITY.Type;
 
@@ -184,10 +194,9 @@ export class WallhavenService extends Context.Service<
             HttpClientRequest.acceptJson,
           ),
         ),
-        HttpClient.tapRequest((r) =>
-          Effect.gen(function* () {
-            yield* Effect.log(r);
-          }),
+        HttpClient.tapRequest((req) => Effect.log(req.toJSON())),
+        HttpClient.tap((res) =>
+          Effect.flatMap(res.json, (body) => Effect.log({ status: res.status, body })),
         ),
         // Turn non-2xx responses into a typed failure.
         HttpClient.filterStatusOk,
@@ -209,7 +218,15 @@ export class WallhavenService extends Context.Service<
         );
       });
 
-      return WallhavenService.of({ search });
+      const searchCache = yield* Cache.make({
+        capacity: Number.POSITIVE_INFINITY,
+        timeToLive: Duration.minutes(5),
+        lookup: search,
+      });
+
+      return WallhavenService.of({
+        search: (params: WallhavenSearchParams) => Cache.get(searchCache, params),
+      });
     }),
   ).pipe(Layer.provide(TauriHttpClient.TauriHttpClientLayer));
 }

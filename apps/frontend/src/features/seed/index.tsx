@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PexelsPhoto, PexelsService } from "../pexels/service";
 
 const CATEGORIES: { value: WALLHAVEN_CATEGORY; label: string }[] = WALLHAVEN_CATEGORIES.map(
   (value) => ({ value, label: value }),
@@ -31,21 +32,33 @@ const PURITY: { value: WALLHAVEN_PURITY; label: string }[] = WALLHAVEN_PURITIES.
   label: value,
 }));
 
-const InputType = Schema.Union([Schema.Literal("file"), Schema.Literal("wallhaven")]);
+const InputType = Schema.Union([
+  Schema.Literal("file"),
+  Schema.Literal("wallhaven"),
+  Schema.Literal("pexels"),
+]);
 
 const Props = Schema.Struct({
   children: Schema.optionalKey(Children),
 });
 
-const search = Async("search", {
+const wallhavenSearch = Async("search", {
   success: WallhavenSearchPayload,
+  onError: Async.message,
+});
+
+const loadPexelsCurated = Async("pexels", {
+  success: Schema.Array(PexelsPhoto),
   onError: Async.message,
 });
 
 const State = Schema.Struct({
   inputType: InputType,
-  searchParams: WallhavenSearchParams,
-  ...search.field,
+  wallhaven: Schema.Struct({
+    searchParams: WallhavenSearchParams,
+  }),
+  ...wallhavenSearch.field,
+  ...loadPexelsCurated.field,
 });
 
 const ClickedSearch = Action("ClickedSearch", {});
@@ -55,7 +68,8 @@ const SeedAction = Action.of([
   ClickedSearch,
   InputTypeChanged,
   SearchParamsChanged,
-  ...search.actions,
+  ...wallhavenSearch.actions,
+  ...loadPexelsCurated.actions,
 ]);
 
 const SeedFactory = define({
@@ -66,12 +80,15 @@ const SeedFactory = define({
 
 const initialState = SeedFactory.initialState(() => ({
   inputType: "file" as const,
-  searchParams: {
-    categories: ["general"],
-    purity: ["sfw"],
-    sorting: "toplist",
+  wallhaven: {
+    searchParams: {
+      categories: ["general"],
+      purity: ["sfw"],
+      sorting: "toplist",
+    },
   },
-  search: search.idle,
+  search: wallhavenSearch.idle,
+  pexels: loadPexelsCurated.idle,
 }));
 
 const reducer = SeedFactory.reducer({
@@ -80,27 +97,59 @@ const reducer = SeedFactory.reducer({
       return { ...state, inputType: action.inputType };
     }
 
-    const operation = search.start(
-      state,
-      Effect.flatMap(WallhavenService, (wallhaven) => wallhaven.search(state.searchParams)),
-    );
+    if (action.inputType === "pexels") {
+      const operation = loadPexelsCurated.start(
+        state,
+        Effect.flatMap(PexelsService, (pexels) => pexels.curated),
+      );
 
-    const command = Next.command(operation)!;
-    const nextState = Next.state(operation);
-    const next = { ...state, ...nextState, inputType: action.inputType };
+      const command = Next.command(operation)!;
+      const nextState = Next.state(operation);
+      const next = { ...state, ...nextState, inputType: action.inputType };
 
-    return [next, command];
+      return [next, command];
+    }
+
+    if (action.inputType === "wallhaven") {
+      const operation = wallhavenSearch.start(
+        state,
+        Effect.flatMap(WallhavenService, (wallhaven) =>
+          wallhaven.search(state.wallhaven.searchParams),
+        ),
+      );
+
+      const command = Next.command(operation)!;
+      const nextState = Next.state(operation);
+      const next = { ...state, ...nextState, inputType: action.inputType };
+
+      return [next, command];
+    }
+
+    return state;
   },
 
-  SearchParamsChanged: (action, { state }) => ({ ...state, searchParams: action.searchParams }),
+  SearchParamsChanged: (action, { state }) => ({
+    ...state,
+    wallhaven: { ...state.wallhaven, searchParams: action.searchParams },
+  }),
 
-  ClickedSearch: (_action, { state }) =>
-    search.start(
+  ClickedSearch: (_action, { state }) => {
+    const operation = wallhavenSearch.start(
       state,
-      Effect.flatMap(WallhavenService, (wallhaven) => wallhaven.search(state.searchParams)),
-    ),
+      Effect.flatMap(WallhavenService, (wallhaven) =>
+        wallhaven.search(state.wallhaven.searchParams),
+      ),
+    );
 
-  ...search.handlers,
+    const command = Next.command(operation);
+    const nextState = Next.state(operation);
+    const next = { ...state, ...nextState };
+
+    return command ? [next, command] : state;
+  },
+
+  ...wallhavenSearch.handlers,
+  ...loadPexelsCurated.handlers,
 });
 
 const render = SeedFactory.render(({ state, dispatch }) => {
@@ -114,6 +163,7 @@ const render = SeedFactory.render(({ state, dispatch }) => {
         >
           <TabsList>
             <TabsTrigger value="file">File</TabsTrigger>
+            <TabsTrigger value="pexels">Pexels</TabsTrigger>
             <TabsTrigger value="wallhaven">Wallhaven</TabsTrigger>
           </TabsList>
 
@@ -122,15 +172,48 @@ const render = SeedFactory.render(({ state, dispatch }) => {
             <Input type="file" accept="image/*" />
           </TabsContent>
 
+          <TabsContent value="pexels" className="flex flex-col flex-1 min-h-0 gap-4">
+            <div className="flex flex-col flex-1 min-h-0">
+              {Match.type<typeof state.pexels>().pipe(
+                Match.tag("Idle", () => <></>),
+                Match.tag("Pending", () => "Loading..."),
+                Match.tag("Rejected", (result) => `Error: ${result.error}`),
+                Match.tag("Resolved", (result) => (
+                  <div className="flex flex-col flex-1 min-h-0 gap-4 @container">
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 overflow-auto gap-4">
+                      {result.value.map((item) => (
+                        // `thumbs.large` maxes out around 432x243, so keep cells
+                        // small enough that they are not upscaled on HiDPI.
+                        <button key={item.id} type="button" className="aspect-video relative">
+                          <img
+                            src={item.src.medium.toString()}
+                            loading="lazy"
+                            decoding="async"
+                            className="size-full absolute object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                    <p>{`${result.value.length} total`}</p>
+                  </div>
+                )),
+                Match.exhaustive,
+              )(state.pexels)}
+            </div>
+          </TabsContent>
+
           <TabsContent value="wallhaven" className="flex flex-col flex-1 min-h-0 gap-4">
             <div className="flex gap-2">
               <Select
                 items={CATEGORIES}
-                value={[...(state.searchParams.categories ?? ["general"])]}
+                value={[...(state.wallhaven.searchParams.categories ?? ["general"])]}
                 onValueChange={(values) =>
                   dispatch(
                     SearchParamsChanged.make({
-                      searchParams: { ...state.searchParams, categories: values },
+                      searchParams: {
+                        ...state.wallhaven.searchParams,
+                        categories: values,
+                      },
                     }),
                   )
                 }
@@ -150,7 +233,21 @@ const render = SeedFactory.render(({ state, dispatch }) => {
                 </SelectContent>
               </Select>
 
-              <Select items={PURITY} value={[...(state.searchParams.purity ?? ["sfw"])]} multiple>
+              <Select
+                items={PURITY}
+                value={[...(state.wallhaven.searchParams.purity ?? ["sfw"])]}
+                onValueChange={(values) =>
+                  dispatch(
+                    SearchParamsChanged.make({
+                      searchParams: {
+                        ...state.wallhaven.searchParams,
+                        purity: values,
+                      },
+                    }),
+                  )
+                }
+                multiple
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="purity" />
                 </SelectTrigger>
@@ -179,18 +276,22 @@ const render = SeedFactory.render(({ state, dispatch }) => {
                 Match.tag("Pending", () => "Searching..."),
                 Match.tag("Rejected", (result) => `Error: ${result.error}`),
                 Match.tag("Resolved", (result) => (
-                  <div className="flex flex-col flex-1 min-h-0 gap-4">
-                    <div className="grid grid-cols-3 flex-1 min-h-0 overflow-auto gap-4">
+                  <div className="flex flex-col flex-1 min-h-0 gap-4 @container">
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 overflow-auto gap-4">
                       {result.value.data.map((item) => (
-                        <div key={item.id} className="aspect-4/3 relative">
+                        // `thumbs.large` maxes out around 432x243, so keep cells
+                        // small enough that they are not upscaled on HiDPI.
+                        <button key={item.id} type="button" className="aspect-video relative">
                           <img
                             src={item.thumbs.large.toString()}
+                            loading="lazy"
+                            decoding="async"
                             className="size-full absolute object-cover"
                           />
-                        </div>
+                        </button>
                       ))}
                     </div>
-                    <p>{`Ok: ${result.value.data.length} of ${result.value.meta.total}`}</p>
+                    <p>{`${result.value.data.length} of ${result.value.meta.total}`}</p>
                   </div>
                 )),
                 Match.exhaustive,

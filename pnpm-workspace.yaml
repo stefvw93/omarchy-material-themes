@@ -24,6 +24,7 @@ catalog:
   clsx: ^2.1.1
   effect: rc
   electron-vite: ^5.0.0
+  pexels: ^1.4.0
   react: ^19.2.8
   react-colorful: ^5.8.0
   react-dom: ^19.2.8

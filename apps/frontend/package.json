@@ -7,7 +7,8 @@
     "dev": "vp dev",
     "build": "tsc && vp build",
     "preview": "vp preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "pexels": "node --env-file=.env pexels.ts"
   },
   "dependencies": {
     "@base-ui/react": "catalog:",
@@ -35,6 +36,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "pexels": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
