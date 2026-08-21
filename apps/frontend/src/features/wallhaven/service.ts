@@ -10,7 +10,6 @@ import {
   SchemaTransformation,
 } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http";
-import { TauriHttpClient } from "effect-platform-tauri";
 import { HexColor } from "../material/_colors";
 
 /** Order is significant: it defines the bit position in the `categories` param. */
@@ -47,6 +46,7 @@ export const WallhavenItem = Schema.Struct({
     small: Schema.URLFromString,
   }),
 });
+export type WallhavenItem = typeof WallhavenItem.Type;
 
 export const WallhavenPayloadMeta = Schema.Struct({
   current_page: Schema.Number,
@@ -229,7 +229,7 @@ export class WallhavenService extends Context.Service<
         search: (params: WallhavenSearchParams) => Cache.get(searchCache, params),
       });
     }),
-  ).pipe(Layer.provide(TauriHttpClient.TauriHttpClientLayer));
+  );
 }
 
 export class WallhavenServiceError extends Schema.TaggedError<WallhavenServiceError>()(

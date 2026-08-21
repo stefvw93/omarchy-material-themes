@@ -37,7 +37,11 @@
     "fs:allow-appdata-meta-recursive",
     {
       "identifier": "http:default",
-      "allow": [{ "url": "https://wallhaven.cc/*" }]
+      "allow": [
+        { "url": "https://wallhaven.cc/*" },
+        { "url": "https://*.wallhaven.cc/*" },
+        { "url": "https://images.pexels.com/*" }
+      ]
     }
   ]
 }

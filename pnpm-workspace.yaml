@@ -2,8 +2,12 @@ packages:
   - apps/*
   - packages/*
   - tools/*
-
-catalogMode: prefer
+allowBuilds:
+  "@parcel/watcher": set this to true or false
+  electron: true
+  electron-winstaller: true
+  esbuild: true
+  msgpackr-extract: true
 
 catalog:
   "@base-ui/react": ^1.7.0
@@ -22,11 +26,13 @@ catalog:
   "@vitejs/plugin-react": ^6.0.5
   class-variance-authority: ^0.7.1
   clsx: ^2.1.1
+  date-fns: ^4.4.0
   effect: rc
   electron-vite: ^5.0.0
   pexels: ^1.4.0
   react: ^19.2.8
   react-colorful: ^5.8.0
+  react-day-picker: ^10.0.1
   react-dom: ^19.2.8
   shadcn: ^4.18.0
   tailwind-merge: ^3.6.0
@@ -36,6 +42,11 @@ catalog:
   typescript: ^7.0.2
   vite: npm:@voidzero-dev/vite-plus-core@0.2.9
   vite-plus: 0.2.9
+
+catalogMode: prefer
+minimumReleaseAgeExclude:
+  - "@effect/vitest@4.0.0-rc.110"
+  - effect@4.0.0-rc.110
 overrides:
   vite: "catalog:"
 peerDependencyRules:
@@ -43,12 +54,3 @@ peerDependencyRules:
     - vite
   allowedVersions:
     vite: "*"
-allowBuilds:
-  "@parcel/watcher": set this to true or false
-  electron: true
-  electron-winstaller: true
-  esbuild: true
-  msgpackr-extract: true
-minimumReleaseAgeExclude:
-  - "@effect/vitest@4.0.0-rc.110"
-  - effect@4.0.0-rc.110
