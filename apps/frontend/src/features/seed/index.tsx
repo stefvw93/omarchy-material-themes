@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PexelsPhoto, PexelsService } from "../pexels/service";
+import { useMemo } from "react";
 
 const CATEGORIES: { value: WALLHAVEN_CATEGORY; label: string }[] = WALLHAVEN_CATEGORIES.map(
   (value) => ({ value, label: value }),
@@ -54,8 +55,6 @@ const wallhavenSearch = Async("WallhavenSearch", {
 const pexelsCurated = Async("PexelsCurated", {
   success: Schema.Array(PexelsPhoto),
   onError: Async.message,
-  // Takes nothing, so the input is `void` — which is what lets `start(state)`
-  // be called with the state alone.
   run: (_: void) => Effect.flatMap(PexelsService, (pexels) => pexels.curated),
 });
 
@@ -85,6 +84,13 @@ const SeedFactory = define({
   props: Props,
   state: State,
   action: SeedAction,
+  useUnsafeHooks() {
+    const canvas = useMemo(() => {
+      const el = document.createElement("canvas");
+      return el;
+    }, []);
+    return { canvas };
+  },
 });
 
 const initialState = SeedFactory.initialState(() => ({
@@ -141,7 +147,8 @@ const reducer = SeedFactory.reducer({
   ...pexelsCurated.handlers,
 });
 
-const render = SeedFactory.render(({ state, dispatch }) => {
+const render = SeedFactory.render(({ state, dispatch, hooks }) => {
+  console.log({ hooks });
   return (
     <div className="grid grid-cols-12 flex-1 min-h-0 gap-4 p-4">
       <div className="col-span-6 flex flex-col flex-1 min-h-0 gap-4">
@@ -278,7 +285,6 @@ const render = SeedFactory.render(({ state, dispatch }) => {
                         </Button>
                       </div>
                     </div>
-                    <p>{`${resolved.value.data.length} of ${resolved.value.meta.total}`}</p>
                   </div>
                 ),
               })}
