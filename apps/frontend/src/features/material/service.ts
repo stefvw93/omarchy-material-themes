@@ -9,12 +9,14 @@ import {
 } from "@material/material-color-utilities";
 import { Context, Effect, flow, Layer, pipe, Schema } from "effect";
 import { HttpClient } from "effect/unstable/http";
-import { decodeHexColor, MATERIAL_REFERENCE_COLORS_2014_ARGB, type OmarchyColors } from "./_colors";
+import { HexColor, MATERIAL_REFERENCE_COLORS_2014_ARGB, type OmarchyColors } from "./_colors";
 
 export interface MaterialServiceImpl {
   quantizeSource: (url: URL) => Effect.Effect<number, MaterialServiceError>;
   createScheme: (sourceArgb: number) => Effect.Effect<DynamicScheme>;
-  schemeToOmarchyColors: (scheme: DynamicScheme) => Effect.Effect<OmarchyColors>;
+  schemeToOmarchyColors: (
+    scheme: DynamicScheme,
+  ) => Effect.Effect<OmarchyColors, Schema.SchemaError>;
 }
 
 export class MaterialService extends Context.Service<MaterialService, MaterialServiceImpl>()(
@@ -25,15 +27,9 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
   static readonly layer = Layer.effect(
     this,
     Effect.gen(function* () {
-      // Take the base HttpClient and apply middleware that should run on every
-      // request this service makes.
       const client = (yield* HttpClient.HttpClient).pipe(
         HttpClient.tapRequest((req) => Effect.log(req.toJSON())),
         HttpClient.tap(Effect.log),
-        HttpClient.tap((res) =>
-          Effect.flatMap(res.json, (body) => Effect.log({ status: res.status, body })),
-        ),
-        // Turn non-2xx responses into a typed failure.
         HttpClient.filterStatusOk,
       );
 
@@ -68,7 +64,7 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
           const imageData = ctx.getImageData(0, 0, compressedWidth, compressedHeight);
           const sourceArgb = sourceColorFromImageBytes(imageData.data);
           return { objectUrl, sourceArgb, canvas, image };
-        });
+        }).pipe(Effect.tapError(Effect.logError));
 
       const quantizeSource: MaterialServiceImpl["quantizeSource"] = flow(
         Effect.fn("MaterialService.quantizeSource")(function* (url: URL) {
@@ -88,6 +84,7 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
           return sourceArgb;
         }),
         Effect.scoped,
+        Effect.tapError(Effect.logError),
         Effect.catch((error) => new MaterialServiceError({ cause: error })),
       );
 
@@ -106,57 +103,58 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
 
       const schemeToOmarchyColors: MaterialServiceImpl["schemeToOmarchyColors"] = flow(
         Effect.fn("MaterialService.schemeToOmarchyColors")((scheme: DynamicScheme) =>
-          Effect.sync(() => {
-            const hexFromArgb = (argb: number) =>
-              pipe(unsafeHexFromArgb(argb), (hex) => decodeHexColor(hex));
+          Effect.gen(function* () {
+            const decodeHexColor = Schema.decodeEffect(HexColor);
+            const hexFromArgb = (argb: number) => pipe(unsafeHexFromArgb(argb), decodeHexColor);
 
             const harmonize = (argb: number) =>
               pipe(
                 argb,
                 (argb) => Blend.harmonize(argb, scheme.sourceColorArgb),
                 hexFromArgb,
-                decodeHexColor,
+                Effect.flatMap(decodeHexColor),
               );
 
             const colors: OmarchyColors = {
               mode: scheme.isDark ? "dark" : "light",
 
-              accent: hexFromArgb(scheme.primary),
-              selection: hexFromArgb(scheme.primaryContainer),
-              muted: hexFromArgb(scheme.onSurfaceVariant),
+              accent: yield* hexFromArgb(scheme.primary),
+              selection: yield* hexFromArgb(scheme.primaryContainer),
+              muted: yield* hexFromArgb(scheme.onSurfaceVariant),
 
-              background: hexFromArgb(scheme.surface),
-              dark_background: hexFromArgb(scheme.surfaceContainerLow),
-              darker_background: hexFromArgb(scheme.surfaceContainerLowest),
-              lighter_background: hexFromArgb(scheme.surfaceBright),
+              background: yield* hexFromArgb(scheme.surface),
+              dark_background: yield* hexFromArgb(scheme.surfaceContainerLow),
+              darker_background: yield* hexFromArgb(scheme.surfaceContainerLowest),
+              lighter_background: yield* hexFromArgb(scheme.surfaceBright),
 
-              foreground: hexFromArgb(scheme.onSurface),
-              dark_foreground: hexFromArgb(Contrast.darkerUnsafe(scheme.onSurface, 1)),
-              light_foreground: hexFromArgb(Contrast.lighterUnsafe(scheme.onSurface, 1)),
-              bright_foreground: hexFromArgb(Contrast.lighterUnsafe(scheme.onSurface, 1.4)),
+              foreground: yield* hexFromArgb(scheme.onSurface),
+              dark_foreground: yield* hexFromArgb(Contrast.darkerUnsafe(scheme.onSurface, 1)),
+              light_foreground: yield* hexFromArgb(Contrast.lighterUnsafe(scheme.onSurface, 1)),
+              bright_foreground: yield* hexFromArgb(Contrast.lighterUnsafe(scheme.onSurface, 1.4)),
 
-              red: hexFromArgb(scheme.error),
-              // red: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.red),
-              yellow: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.yellow),
-              green: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.green),
-              cyan: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.cyan),
-              blue: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.blue),
-              magenta: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.magenta),
+              red: yield* hexFromArgb(scheme.error),
+              // red: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.red),
+              yellow: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.yellow),
+              green: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.green),
+              cyan: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.cyan),
+              blue: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.blue),
+              magenta: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.magenta),
 
-              bright_red: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_red),
-              bright_yellow: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_yellow),
-              bright_green: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_green),
-              bright_cyan: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_cyan),
-              bright_blue: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_blue),
-              bright_magenta: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_magenta),
+              bright_red: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_red),
+              bright_yellow: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_yellow),
+              bright_green: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_green),
+              bright_cyan: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_cyan),
+              bright_blue: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_blue),
+              bright_magenta: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.bright_magenta),
 
-              orange: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.orange),
-              brown: harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.brown),
+              orange: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.orange),
+              brown: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.brown),
             };
 
             return colors;
           }),
         ),
+        Effect.tapError(Effect.logError),
       );
 
       return {
