@@ -21,10 +21,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PexelsPhoto, PexelsService } from "../pexels/service";
+import { PexelsPhoto, PexelsService } from "@/features/pexels/service";
 import { ImageGrid } from "./components/image-grid";
-import { OmarchyColors } from "../material/_colors";
-import { MaterialService } from "../material/service";
+import { OmarchyColors } from "@/features/material/colors";
+import { MaterialService } from "@/features/material/service";
 
 const CATEGORIES: { value: WALLHAVEN_CATEGORY; label: string }[] = WALLHAVEN_CATEGORIES.map(
   (value) => ({ value, label: value }),
@@ -37,10 +37,23 @@ const PURITY: { value: WALLHAVEN_PURITY; label: string }[] = WALLHAVEN_PURITIES.
   label: value,
 }));
 
-const InputType = Schema.Union([
+const CONSTRUCTORS = Object.keys(MaterialService.schemeContstructors).map((key) => ({
+  value: key,
+  label: key,
+}));
+
+const InputKind = Schema.Union([
   Schema.Literal("file"),
   Schema.Literal("wallhaven"),
   Schema.Literal("pexels"),
+]);
+
+const SchemeKind = Schema.Union([
+  Schema.Literal("expressive"),
+  Schema.Literal("fidelity"),
+  Schema.Literal("neutral"),
+  Schema.Literal("vibrant"),
+  Schema.Literal("rainbow"),
 ]);
 
 const Props = Schema.Struct({
@@ -61,12 +74,13 @@ const pexelsCurated = Async("PexelsCurated", {
 });
 
 const State = Schema.Struct({
-  inputType: InputType,
+  inputType: InputKind,
   wallhaven: Schema.Struct({
     searchParams: WallhavenSearchParams,
   }),
   selectedImageUrl: Schema.UndefinedOr(Schema.URLFromString).pipe(Schema.optional),
   omarchyColors: Schema.UndefinedOr(OmarchyColors).pipe(Schema.optional),
+  schemeKind: SchemeKind,
   ...wallhavenSearch.field,
   ...pexelsCurated.field,
 });
@@ -74,16 +88,19 @@ const State = Schema.Struct({
 const ClickedSearch = Action("ClickedSearch", {});
 const ClickedWallhavenPaginator = Action("ClickedWallhavenPaginator", { page: Schema.Number });
 const ClickedImageThumb = Action("ClickedImageThumb", { url: Schema.URLFromString });
-const InputTypeChanged = Action("InputTypeChanged", { inputType: InputType });
-const SearchParamsChanged = Action("SearchParamsChanged", { searchParams: WallhavenSearchParams });
+const SetInputKind = Action("SetInputKind", { inputType: InputKind });
+const SetSearchParams = Action("SetSearchParams", { searchParams: WallhavenSearchParams });
 const SetOmarchyColors = Action("SetOmarchyColors", { colors: OmarchyColors });
+const SetSchemeKind = Action("SetSchemeKind", { schemeKind: SchemeKind });
+
 const SeedAction = Action.of([
   ClickedSearch,
   ClickedWallhavenPaginator,
   ClickedImageThumb,
-  InputTypeChanged,
-  SearchParamsChanged,
+  SetInputKind,
+  SetSearchParams,
   SetOmarchyColors,
+  SetSchemeKind,
   ...wallhavenSearch.actions,
   ...pexelsCurated.actions,
 ]);
@@ -106,12 +123,22 @@ const initialState = SeedFactory.initialState(() => ({
       atleast: "2560x1440",
     },
   },
+  schemeKind: "neutral",
   ...wallhavenSearch.initial,
   ...pexelsCurated.initial,
 }));
 
+const createOmarchyColors = (url: URL, state: typeof State.Type) =>
+  Effect.gen(function* () {
+    const material = yield* MaterialService;
+    const quantized = yield* material.quantizeSource(url);
+    const scheme = yield* material.createScheme(state.schemeKind, quantized);
+    const colors = yield* material.schemeToOmarchyColors(scheme);
+    return colors;
+  });
+
 const reducer = SeedFactory.reducer({
-  InputTypeChanged: (action, { state }) => {
+  SetInputKind: (action, { state }) => {
     // `start` writes `Pending` into whatever state it is handed, so the tab
     // change and the work it triggers are one return — nothing to unwrap.
     const next = { ...state, inputType: action.inputType };
@@ -141,15 +168,31 @@ const reducer = SeedFactory.reducer({
     { ...state, selectedImageUrl: action.url, omarchyColors: undefined },
     Command.effect((dispatch) =>
       Effect.gen(function* () {
-        const material = yield* MaterialService;
-        const quantized = yield* material.quantizeSource(action.url);
-        const scheme = yield* material.createScheme(quantized);
-        const colors = yield* material.schemeToOmarchyColors(scheme);
-        yield* dispatch(SetOmarchyColors.make({ colors }));
+        yield* dispatch(
+          SetOmarchyColors.make({ colors: yield* createOmarchyColors(action.url, state) }),
+        );
       }).pipe(
         Effect.catch((err) => {
           console.error(err.cause);
-          console.error(`Woopsie`);
+          return Effect.void;
+        }),
+      ),
+    ),
+  ],
+
+  SetSchemeKind: (action, { state }) => [
+    { ...state, schemeKind: action.schemeKind },
+    Command.effect((dispatch) =>
+      Effect.gen(function* () {
+        if (!state.selectedImageUrl) return;
+        yield* dispatch(
+          SetOmarchyColors.make({
+            colors: yield* createOmarchyColors(state.selectedImageUrl, state),
+          }),
+        );
+      }).pipe(
+        Effect.catch((err) => {
+          console.error(err.cause);
           return Effect.void;
         }),
       ),
@@ -158,7 +201,7 @@ const reducer = SeedFactory.reducer({
 
   SetOmarchyColors: (action, { state }) => ({ ...state, omarchyColors: action.colors }),
 
-  SearchParamsChanged: (action, { state }) => ({
+  SetSearchParams: (action, { state }) => ({
     ...state,
     wallhaven: { ...state.wallhaven, searchParams: action.searchParams },
   }),
@@ -169,14 +212,13 @@ const reducer = SeedFactory.reducer({
   ...pexelsCurated.handlers,
 });
 
-const render = SeedFactory.render(({ state, dispatch, hooks }) => {
-  console.log({ hooks });
+const render = SeedFactory.render(({ state, dispatch }) => {
   return (
     <div className="grid grid-cols-12 flex-1 min-h-0 gap-4 p-4">
       <div className="col-span-6 flex flex-col flex-1 min-h-0 gap-4">
         <Tabs
           value={state.inputType}
-          onValueChange={(value) => dispatch(InputTypeChanged.make({ inputType: value }))}
+          onValueChange={(value) => dispatch(SetInputKind.make({ inputType: value }))}
           className="flex-1 min-h-0"
         >
           <TabsList>
@@ -197,7 +239,7 @@ const render = SeedFactory.render(({ state, dispatch, hooks }) => {
                 value={[...(state.wallhaven.searchParams.categories ?? ["general"])]}
                 onValueChange={(values) =>
                   dispatch(
-                    SearchParamsChanged.make({
+                    SetSearchParams.make({
                       searchParams: {
                         ...state.wallhaven.searchParams,
                         categories: values,
@@ -226,7 +268,7 @@ const render = SeedFactory.render(({ state, dispatch, hooks }) => {
                 value={[...(state.wallhaven.searchParams.purity ?? ["sfw"])]}
                 onValueChange={(values) =>
                   dispatch(
-                    SearchParamsChanged.make({
+                    SetSearchParams.make({
                       searchParams: {
                         ...state.wallhaven.searchParams,
                         purity: values,
@@ -346,7 +388,28 @@ const render = SeedFactory.render(({ state, dispatch, hooks }) => {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-1">
+            <Select
+              items={CONSTRUCTORS}
+              value={state.schemeKind}
+              onValueChange={(value) =>
+                dispatch(SetSchemeKind.make({ schemeKind: value ?? "neutral" }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="scheme" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {CONSTRUCTORS.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            <div className="grid grid-cols-6 gap-1">
               {state.omarchyColors &&
                 Object.entries(state.omarchyColors).map(([unsafeKey, value], index) => {
                   const key = unsafeKey as keyof typeof state.omarchyColors;
@@ -357,16 +420,23 @@ const render = SeedFactory.render(({ state, dispatch, hooks }) => {
                     key === "selection" ||
                     key === "muted" ||
                     key === "foreground" ||
-                    index >= 12
+                    key === "dark_foreground" ||
+                    key === "light_foreground" ||
+                    key === "bright_foreground" ||
+                    (index >= 10 && index <= 12)
                   ) {
-                    textColor = state.omarchyColors!.dark_foreground;
+                    textColor = state.omarchyColors!.background;
                   } else {
                     textColor = state.omarchyColors!.foreground;
                   }
 
                   return key === "mode" ? null : (
-                    <div key={key} style={{ backgroundColor: value }} className="aspect-square p-1">
-                      <span className="text-xs" style={{ color: textColor }}>
+                    <div
+                      key={key}
+                      style={{ backgroundColor: value }}
+                      className="aspect-square py-1 px-0.5 leading-0"
+                    >
+                      <span className="text-[.5rem]" style={{ color: textColor }}>
                         {key}
                       </span>
                     </div>

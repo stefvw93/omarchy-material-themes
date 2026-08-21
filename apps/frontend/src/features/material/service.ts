@@ -3,17 +3,26 @@ import {
   Contrast,
   DynamicScheme,
   Hct,
+  SchemeExpressive,
   SchemeFidelity,
+  SchemeNeutral,
+  SchemeVibrant,
+  SchemeRainbow,
   sourceColorFromImageBytes,
   hexFromArgb as unsafeHexFromArgb,
 } from "@material/material-color-utilities";
 import { Context, Effect, flow, Layer, pipe, Schema } from "effect";
 import { HttpClient } from "effect/unstable/http";
-import { HexColor, MATERIAL_REFERENCE_COLORS_2014_ARGB, type OmarchyColors } from "./_colors";
+import { HexColor, MATERIAL_REFERENCE_COLORS_2014_ARGB, type OmarchyColors } from "./colors";
 
 export interface MaterialServiceImpl {
   quantizeSource: (url: URL) => Effect.Effect<number, MaterialServiceError>;
-  createScheme: (sourceArgb: number) => Effect.Effect<DynamicScheme>;
+  createScheme: (
+    kind: keyof typeof MaterialService.schemeContstructors,
+    sourceArgb: number,
+    isDark?: boolean,
+    contrastLevel?: number,
+  ) => Effect.Effect<DynamicScheme>;
   schemeToOmarchyColors: (
     scheme: DynamicScheme,
   ) => Effect.Effect<OmarchyColors, Schema.SchemaError>;
@@ -22,7 +31,15 @@ export interface MaterialServiceImpl {
 export class MaterialService extends Context.Service<MaterialService, MaterialServiceImpl>()(
   "features/material/MaterialService",
 ) {
-  static readonly quantizeMaxSize = 256;
+  static readonly schemeContstructors = {
+    expressive: SchemeExpressive,
+    fidelity: SchemeFidelity,
+    neutral: SchemeNeutral,
+    vibrant: SchemeVibrant,
+    rainbow: SchemeRainbow,
+  } as const;
+
+  static readonly quantizeMaxSize = 128;
 
   static readonly layer = Layer.effect(
     this,
@@ -89,15 +106,21 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
       );
 
       const createScheme: MaterialServiceImpl["createScheme"] = flow(
-        Effect.fn("MaterialService.createScheme")((sourceArgb: number) =>
-          Effect.sync(() => {
-            const sourceHct = Hct.fromInt(sourceArgb);
-            return new SchemeFidelity(
-              sourceHct,
-              true, // isDark
-              0, // contrastLevel: -1 to 1, 0 = default
-            );
-          }),
+        Effect.fn("MaterialService.createScheme")(
+          (
+            kind: keyof typeof MaterialService.schemeContstructors,
+            sourceArgb: number,
+            isDark = false,
+            contrastLevel = 0,
+          ) =>
+            Effect.sync(() => {
+              const sourceHct = Hct.fromInt(sourceArgb);
+              return new MaterialService.schemeContstructors[kind](
+                sourceHct,
+                isDark,
+                contrastLevel,
+              );
+            }),
         ),
       );
 
@@ -128,9 +151,30 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
               lighter_background: yield* hexFromArgb(scheme.surfaceBright),
 
               foreground: yield* hexFromArgb(scheme.onSurface),
-              dark_foreground: yield* hexFromArgb(Contrast.darkerUnsafe(scheme.onSurface, 1)),
-              light_foreground: yield* hexFromArgb(Contrast.lighterUnsafe(scheme.onSurface, 1)),
-              bright_foreground: yield* hexFromArgb(Contrast.lighterUnsafe(scheme.onSurface, 1.4)),
+              dark_foreground: yield* hexFromArgb(
+                (() => {
+                  const hct = Hct.fromInt(scheme.onSurface);
+                  const tone = Contrast.darkerUnsafe(hct.tone, 2);
+                  hct.tone = tone;
+                  return hct.toInt();
+                })(),
+              ),
+              light_foreground: yield* hexFromArgb(
+                (() => {
+                  const hct = Hct.fromInt(scheme.onSurface);
+                  const tone = Contrast.lighterUnsafe(hct.tone, 2);
+                  hct.tone = tone;
+                  return hct.toInt();
+                })(),
+              ),
+              bright_foreground: yield* hexFromArgb(
+                (() => {
+                  const hct = Hct.fromInt(scheme.onSurface);
+                  const tone = Contrast.lighterUnsafe(hct.tone, 3);
+                  hct.tone = tone;
+                  return hct.toInt();
+                })(),
+              ),
 
               red: yield* hexFromArgb(scheme.error),
               // red: yield* harmonize(MATERIAL_REFERENCE_COLORS_2014_ARGB.red),

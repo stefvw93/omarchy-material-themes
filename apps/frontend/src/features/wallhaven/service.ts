@@ -10,7 +10,7 @@ import {
   SchemaTransformation,
 } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http";
-import { HexColor } from "../material/_colors";
+import { HexColor } from "@/features/material/colors";
 
 /** Order is significant: it defines the bit position in the `categories` param. */
 export const WALLHAVEN_CATEGORIES = ["general", "anime", "people"] as const;
