@@ -298,7 +298,7 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
 
                 return Effect.sync(cleanup);
               }).pipe(
-                Effect.andThen(Schema.decodeUnknownEffect(MaterialWorkerMessageData)),
+                Effect.flatMap(Schema.decodeUnknownEffect(MaterialWorkerMessageData)),
                 Effect.flatMap(
                   Match.type<typeof MaterialWorkerMessageData.Type>().pipe(
                     Match.tag("CreateOmarchyColors", ({ id: _id, ...colors }) =>

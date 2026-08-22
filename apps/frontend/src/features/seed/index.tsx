@@ -25,6 +25,7 @@ import { PexelsPhoto, PexelsService } from "@/features/pexels/service";
 import { ImageGrid } from "./components/image-grid";
 import { OmarchyColors, SchemeKind } from "@/features/material/colors";
 import { MaterialService } from "@/features/material/service";
+import { ColorsGrid } from "./components/colors-grid";
 
 const CATEGORIES: { value: WALLHAVEN_CATEGORY; label: string }[] = WALLHAVEN_CATEGORIES.map(
   (value) => ({ value, label: value }),
@@ -405,38 +406,7 @@ const render = SeedFactory.render(({ state, dispatch }) => {
             </Select>
 
             <div className="grid grid-cols-6 gap-1">
-              {state.omarchyColors &&
-                Object.entries(state.omarchyColors).map(([unsafeKey, value], index) => {
-                  const key = unsafeKey as keyof typeof state.omarchyColors;
-                  let textColor: string;
-
-                  if (
-                    key === "accent" ||
-                    key === "selection" ||
-                    key === "muted" ||
-                    key === "foreground" ||
-                    key === "dark_foreground" ||
-                    key === "light_foreground" ||
-                    key === "bright_foreground" ||
-                    (index >= 10 && index <= 12)
-                  ) {
-                    textColor = state.omarchyColors!.background;
-                  } else {
-                    textColor = state.omarchyColors!.foreground;
-                  }
-
-                  return key === "mode" ? null : (
-                    <div
-                      key={key}
-                      style={{ backgroundColor: value }}
-                      className="aspect-square py-1 px-0.5 leading-0"
-                    >
-                      <span className="text-[.5rem]" style={{ color: textColor }}>
-                        {key}
-                      </span>
-                    </div>
-                  );
-                })}
+              <ColorsGrid omarchyColors={state.omarchyColors} />
             </div>
           </>
         )}
