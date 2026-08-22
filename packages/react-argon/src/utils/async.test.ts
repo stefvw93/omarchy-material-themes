@@ -7,24 +7,40 @@ class Api extends Context.Service<Api, { readonly load: Effect.Effect<string, Er
 
 const Props = Schema.Struct({ children: Schema.optionalKey(Children) });
 const Clicked = Action("Clicked", {});
+const Cancelled = Action("Cancelled", {});
 const load = Effect.flatMap(Api, (api) => api.load);
 const layerOf = (value: Effect.Effect<string, Error>) => Layer.succeed(Api)({ load: value });
 
 // --- folded -----------------------------------------------------------------
 
-const folded = (mode?: "first" | "every") => {
-  const search = Async("Search", { success: Schema.String, onError: Async.message, mode });
-  const State = Schema.Struct({ colorValue: Schema.String, ...search.field });
-  const Vocab = Action.of([Clicked, ...search.actions]);
+/**
+ * The shape the library now asks for: a slice under a name the feature chose, a
+ * `Pending` write on the fold that issues the command, and two handlers that say
+ * where the result lands. Take-first is a guard in the handler, not a mode.
+ */
+const folded = (options?: { readonly mode?: "every"; readonly takeFirst?: boolean }) => {
+  const search = Async("Search", {
+    success: Schema.String,
+    onError: Async.message,
+    mode: options?.mode,
+  });
+
+  const State = Schema.Struct({ colorValue: Schema.String, search: Async.slice(Schema.String) });
+  const Vocab = Action.of([Clicked, Cancelled, ...search.actions]);
   const F = define({ props: Props, state: State, action: Vocab });
 
   return {
     search,
     blueprint: F.create({
-      initialState: F.initialState(() => ({ colorValue: "#000", ...search.initial })),
+      initialState: F.initialState(() => ({ colorValue: "#000", search: Async.idle })),
       reducer: F.reducer({
-        Clicked: (_a, { state }) => search.start(state, load),
-        ...search.handlers,
+        Clicked: (_a, { state }) =>
+          options?.takeFirst && Async.isPending(state.search)
+            ? state
+            : [{ ...state, search: Async.pending }, search.run(load)],
+        Cancelled: (_a, { state }) => [{ ...state, search: Async.idle }, search.cancel],
+        SearchResolved: (a, { state }) => ({ ...state, search: Async.resolved(a.value) }),
+        SearchRejected: (a, { state }) => ({ ...state, search: Async.rejected(a.error) }),
       }),
       render: F.render(() => null),
     }),
@@ -34,31 +50,31 @@ const folded = (mode?: "first" | "every") => {
 const run = (
   blueprint: { run: (...args: any[]) => Effect.Effect<any> },
   value: Effect.Effect<string, Error>,
-  clicks = 1,
+  actions: ReadonlyArray<{ readonly _tag: string }> = [Clicked.make({})],
 ) =>
   Effect.runPromise(
-    blueprint.run(
-      Array.from({ length: clicks }, () => Clicked.make({})),
-      {
-        props: {},
-        hooks: {},
-        layer: layerOf(value),
-      },
-    ),
+    blueprint.run(actions, {
+      props: {},
+      hooks: {},
+      layer: layerOf(value),
+    }),
   );
 
+const clicks = (n: number) => Array.from({ length: n }, () => Clicked.make({}));
+
 describe("Async", () => {
-  it("derives the field from the name, lower-cased", () => {
+  it("declares the two tags from the name, and nothing state-shaped", () => {
     const search = Async("WallhavenSearch", { success: Schema.String, onError: Async.message });
-    expect(Object.keys(search.field)).toEqual(["wallhavenSearch"]);
-    expect(Object.keys(search.initial)).toEqual(["wallhavenSearch"]);
+
     expect(search.actions.map((a) => (a.make as any)({ value: "x", error: "x" })._tag)).toEqual([
       "WallhavenSearchResolved",
       "WallhavenSearchRejected",
     ]);
+
+    expect(Object.keys(search).sort()).toEqual(["actions", "cancel", "run"]);
   });
 
-  it("resolves into the slice", async () => {
+  it("resolves into whatever slice the handler writes", async () => {
     const out = await run(folded().blueprint, Effect.succeed("ok"));
     expect(out.state.search).toEqual({ _tag: "Resolved", value: "ok" });
     expect(out.emitted.map((a: { _tag: string }) => a._tag)).toEqual(["SearchResolved"]);
@@ -75,90 +91,68 @@ describe("Async", () => {
   });
 
   it("writes Pending synchronously, on the fold that issued the command", () => {
-    const { blueprint, search } = folded();
-    const next = blueprint.reduce(Clicked.make({}), {
-      state: { colorValue: "#000", search: search.idle },
+    const next = folded().blueprint.reduce(Clicked.make({}), {
+      state: { colorValue: "#000", search: Async.idle },
       props: {},
       hooks: {},
     });
     expect((next as readonly [any, any])[0].search).toEqual({ _tag: "Pending" });
   });
 
-  it("take-latest: a second start interrupts the first, and the interrupt is not a rejection", async () => {
-    const out = await run(folded().blueprint, Effect.as(Effect.sleep(50), "second"), 2);
+  it("take-latest: a second run interrupts the first, and the interrupt is not a rejection", async () => {
+    const out = await run(folded().blueprint, Effect.as(Effect.sleep(50), "second"), clicks(2));
     expect(out.emitted.map((a: { _tag: string }) => a._tag)).toEqual(["SearchResolved"]);
     expect(out.state.search).toEqual({ _tag: "Resolved", value: "second" });
   });
 
-  it("take-first: a second start while Pending is dropped", async () => {
-    const out = await run(folded("first").blueprint, Effect.as(Effect.sleep(50), "first"), 2);
-    expect(out.emitted).toHaveLength(1);
-  });
-
-  it("every: both starts run to completion", async () => {
-    const out = await run(folded("every").blueprint, Effect.as(Effect.sleep(50), "both"), 2);
+  it("every: both runs go to completion", async () => {
+    const out = await run(
+      folded({ mode: "every" }).blueprint,
+      Effect.as(Effect.sleep(50), "both"),
+      clicks(2),
+    );
     expect(out.emitted).toHaveLength(2);
   });
 
-  it("reset returns to Idle from any case", () => {
-    const { search } = folded();
-    const [state] = search.reset({
-      colorValue: "#000",
-      search: { _tag: "Resolved", value: "x" },
-    }) as readonly [any, any];
-    expect(state.search).toEqual({ _tag: "Idle" });
-  });
-
-  it("cancel clears a Pending, and leaves anything else by reference", () => {
-    const { search } = folded();
-
-    const pending = { colorValue: "#000", search: { _tag: "Pending" } } as const;
-    const [cleared, command] = search.cancel(pending) as readonly [any, any];
-    expect(cleared.search).toEqual({ _tag: "Idle" });
-    expect(command._tag).toBe("Cancel");
-    expect(command.target).toBe("Async/Search");
-
-    // Nothing to clear: same object, so the fold reports "did not move" — but
-    // the interrupt still goes out, because `every` can have work in flight.
-    const resolved = { colorValue: "#000", search: { _tag: "Resolved", value: "x" } } as const;
-    const [same, still] = search.cancel(resolved) as readonly [any, any];
-    expect(same).toBe(resolved);
-    expect(still._tag).toBe("Cancel");
-
-    expect(search.cancel.silent._tag).toBe("Cancel");
-  });
-
-  it("cancel actually interrupts the work it started", async () => {
-    const search = Async("Search", { success: Schema.String, onError: Async.message });
-    const Cancelled = Action("Cancelled", {});
-    const State = Schema.Struct({ ...search.field });
-    const Vocab = Action.of([Clicked, Cancelled, ...search.actions]);
-    const F = define({ props: Props, state: State, action: Vocab });
-
-    const blueprint = F.create({
-      initialState: F.initialState(() => ({ ...search.initial })),
-      reducer: F.reducer({
-        Clicked: (_a, { state }) => search.start(state, load),
-        Cancelled: (_a, { state }) => search.cancel(state),
-        ...search.handlers,
-      }),
-      render: F.render(() => null),
-    });
-
-    const out = await Effect.runPromise(
-      blueprint.run([Clicked.make({}), Cancelled.make({})], {
-        props: {},
-        hooks: {},
-        layer: layerOf(Effect.as(Effect.sleep(50), "never seen")),
-      }),
+  it("take-first is an `isPending` guard in the handler, and it drops the second run", async () => {
+    const out = await run(
+      folded({ takeFirst: true }).blueprint,
+      Effect.as(Effect.sleep(50), "first"),
+      clicks(2),
     );
+    expect(out.emitted).toHaveLength(1);
+  });
+
+  it("cancel interrupts the work, and the handler clears the slice", async () => {
+    const out = await run(folded().blueprint, Effect.as(Effect.sleep(50), "never seen"), [
+      Clicked.make({}),
+      Cancelled.make({}),
+    ]);
 
     expect(out.emitted).toHaveLength(0);
     expect(out.state.search).toEqual({ _tag: "Idle" });
   });
 
-  it("match covers the four cases, each handed its whole member", () => {
+  it("cancel is a bare command, booked under the operation's own group", () => {
     const { search } = folded();
+    expect(search.cancel._tag).toBe("Cancel");
+    expect((search.cancel as unknown as { readonly target: string }).target).toBe("Async/Search");
+  });
+
+  it("constructs the four cases", () => {
+    expect(Async.idle).toEqual({ _tag: "Idle" });
+    expect(Async.pending).toEqual({ _tag: "Pending" });
+    expect(Async.resolved("v")).toEqual({ _tag: "Resolved", value: "v" });
+    expect(Async.rejected("e")).toEqual({ _tag: "Rejected", error: "e" });
+  });
+
+  it("slice carries the four cases, with Schema.String as the default failure", () => {
+    const slice = Async.slice(Schema.String);
+    expect(Object.keys(slice.cases).sort()).toEqual(["Idle", "Pending", "Rejected", "Resolved"]);
+    expect(slice.cases.Rejected.make({ error: "e" })).toEqual({ _tag: "Rejected", error: "e" });
+  });
+
+  it("match covers the four cases, each handed its whole member", () => {
     const arms: AsyncCases<string, string, string> = {
       Idle: () => "idle",
       Pending: () => "pending",
@@ -180,7 +174,6 @@ describe("Async", () => {
       "rejected:e",
     ]);
 
-    expect(search.match({ colorValue: "#000", search: { _tag: "Pending" } }, arms)).toBe("pending");
     expect(Async.isPending({ _tag: "Pending" })).toBe(true);
     expect(Async.isPending({ _tag: "Idle" })).toBe(false);
   });
@@ -195,15 +188,16 @@ describe("Async with `run`", () => {
     run: (query: string) => Effect.map(load, (value) => `${value}:${query}`),
   });
 
-  const State = Schema.Struct({ ...search.field });
+  const State = Schema.Struct({ search: Async.slice(Schema.String) });
   const Vocab = Action.of([Clicked, ...search.actions]);
   const F = define({ props: Props, state: State, action: Vocab });
 
   const blueprint = F.create({
-    initialState: F.initialState(() => ({ ...search.initial })),
+    initialState: F.initialState(() => ({ search: Async.idle })),
     reducer: F.reducer({
-      Clicked: (_a, { state }) => search.start(state, "query"),
-      ...search.handlers,
+      Clicked: (_a, { state }) => [{ ...state, search: Async.pending }, search.run("query")],
+      SearchResolved: (a, { state }) => ({ ...state, search: Async.resolved(a.value) }),
+      SearchRejected: (a, { state }) => ({ ...state, search: Async.rejected(a.error) }),
     }),
     render: F.render(() => null),
   });
@@ -225,7 +219,7 @@ describe("Async.output", () => {
 
   const blueprint = F.create({
     initialState: F.initialState(() => ({ colorValue: "#000" })),
-    reducer: F.reducer({ Clicked: (_a, { state }) => [state, search.start(load)] }),
+    reducer: F.reducer({ Clicked: (_a, { state }) => [state, search.run(load)] }),
     render: F.render(() => null),
   });
 

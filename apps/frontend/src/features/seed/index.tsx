@@ -26,6 +26,7 @@ import { ImageGrid } from "./components/image-grid";
 import { OmarchyColors, SchemeKind } from "@/features/material/colors";
 import { MaterialService } from "@/features/material/service";
 import { ColorsGrid } from "./components/colors-grid";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CATEGORIES: { value: WALLHAVEN_CATEGORY; label: string }[] = WALLHAVEN_CATEGORIES.map(
   (value) => ({ value, label: value }),
@@ -74,9 +75,10 @@ const State = Schema.Struct({
   selectedImageUrl: Schema.UndefinedOr(Schema.URLFromString).pipe(Schema.optional),
   omarchyColors: Schema.UndefinedOr(OmarchyColors).pipe(Schema.optional),
   schemeKind: SchemeKind,
-  ...wallhavenSearch.field,
-  ...pexelsCurated.field,
+  search: Async.slice(WallhavenSearchPayload),
+  curated: Async.slice(Schema.Array(PexelsPhoto)),
 });
+type State = typeof State.Type;
 
 const ClickedSearch = Action("ClickedSearch", {});
 const ClickedWallhavenPaginator = Action("ClickedWallhavenPaginator", { page: Schema.Number });
@@ -117,8 +119,8 @@ const initialState = SeedFactory.initialState(() => ({
     },
   },
   schemeKind: "neutral",
-  ...wallhavenSearch.initial,
-  ...pexelsCurated.initial,
+  search: Async.idle,
+  curated: Async.idle,
 }));
 
 const createOmarchyColors = (url: URL, state: typeof State.Type) =>
@@ -135,29 +137,34 @@ const createOmarchyColors = (url: URL, state: typeof State.Type) =>
 
 const reducer = SeedFactory.reducer({
   SetInputKind: (action, { state }) => {
-    // `start` writes `Pending` into whatever state it is handed, so the tab
-    // change and the work it triggers are one return — nothing to unwrap.
     const next = { ...state, inputType: action.inputType };
 
-    if (action.inputType === "pexels") return pexelsCurated.start(next);
+    if (action.inputType === "pexels")
+      return [{ ...next, curated: Async.pending }, pexelsCurated.run()];
+
     if (action.inputType === "wallhaven")
-      return wallhavenSearch.start(next, state.wallhaven.searchParams);
+      return [
+        { ...next, search: Async.pending },
+        wallhavenSearch.run(state.wallhaven.searchParams),
+      ];
 
     return next;
   },
 
   ClickedWallhavenPaginator: (action, { state }) => {
-    const next = {
-      ...state,
-      wallhaven: {
-        ...state.wallhaven,
-        searchParams: {
-          ...state.wallhaven.searchParams,
-          page: action.page || state.wallhaven.searchParams.page || 1,
-        },
-      },
+    const searchParams = {
+      ...state.wallhaven.searchParams,
+      page: action.page || state.wallhaven.searchParams.page || 1,
     };
-    return wallhavenSearch.start(next, next.wallhaven.searchParams);
+
+    return [
+      {
+        ...state,
+        wallhaven: { ...state.wallhaven, searchParams },
+        search: Async.pending,
+      },
+      wallhavenSearch.run(searchParams),
+    ];
   },
 
   ClickedImageThumb: (action, { state }) => [
@@ -177,7 +184,7 @@ const reducer = SeedFactory.reducer({
   ],
 
   SetSchemeKind: (action, { state }) => [
-    { ...state, schemeKind: action.schemeKind },
+    { ...state, omarchyColors: undefined, schemeKind: action.schemeKind },
     Command.effect((dispatch) =>
       Effect.gen(function* () {
         if (!state.selectedImageUrl) return;
@@ -202,10 +209,28 @@ const reducer = SeedFactory.reducer({
     wallhaven: { ...state.wallhaven, searchParams: action.searchParams },
   }),
 
-  ClickedSearch: (_action, { state }) => wallhavenSearch.start(state, state.wallhaven.searchParams),
+  ClickedSearch: (_action, { state }) => [
+    { ...state, search: Async.pending },
+    wallhavenSearch.run(state.wallhaven.searchParams),
+  ],
 
-  ...wallhavenSearch.handlers,
-  ...pexelsCurated.handlers,
+  WallhavenSearchResolved: (action, { state }) => ({
+    ...state,
+    search: Async.resolved(action.value),
+  }),
+  WallhavenSearchRejected: (action, { state }) => ({
+    ...state,
+    search: Async.rejected(action.error),
+  }),
+
+  PexelsCuratedResolved: (action, { state }) => ({
+    ...state,
+    curated: Async.resolved(action.value),
+  }),
+  PexelsCuratedRejected: (action, { state }) => ({
+    ...state,
+    curated: Async.rejected(action.error),
+  }),
 });
 
 const render = SeedFactory.render(({ state, dispatch }) => {
@@ -289,15 +314,15 @@ const render = SeedFactory.render(({ state, dispatch }) => {
               </Select>
 
               <Button
-                disabled={Async.isPending(state.wallhavenSearch)}
+                disabled={Async.isPending(state.search)}
                 onClick={() => dispatch(ClickedSearch.make({}))}
               >
-                {Async.isPending(state.wallhavenSearch) ? "Searching..." : "Search"}
+                {Async.isPending(state.search) ? "Searching..." : "Search"}
               </Button>
             </div>
 
             <div className="flex flex-col flex-1 min-h-0">
-              {wallhavenSearch.match(state, {
+              {Async.match(state.search, {
                 Idle: () => <></>,
                 Pending: () => "Searching...",
                 Rejected: (rejected) => `Error: ${rejected.error}`,
@@ -345,7 +370,7 @@ const render = SeedFactory.render(({ state, dispatch }) => {
 
           <TabsContent value="pexels" className="flex flex-col flex-1 min-h-0 gap-4">
             <div className="flex flex-col flex-1 min-h-0">
-              {pexelsCurated.match(state, {
+              {Async.match(state.curated, {
                 Idle: () => <></>,
                 Pending: () => "Loading...",
                 Rejected: (rejected) => `Error: ${rejected.error}`,
@@ -375,41 +400,42 @@ const render = SeedFactory.render(({ state, dispatch }) => {
       </div>
 
       <div className="col-span-6 flex flex-col gap-4" id="output">
-        {state.selectedImageUrl && (
-          <>
-            <div className="relative w-full aspect-video">
-              <img
-                src={state.selectedImageUrl.toString()}
-                className="size-full absolute object-cover"
-              />
-            </div>
-
-            <Select
-              items={CONSTRUCTORS}
-              value={state.schemeKind}
-              onValueChange={(value) =>
-                dispatch(SetSchemeKind.make({ schemeKind: value ?? "neutral" }))
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="scheme" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {CONSTRUCTORS.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-
-            <div className="grid grid-cols-6 gap-1">
-              <ColorsGrid omarchyColors={state.omarchyColors} />
-            </div>
-          </>
+        {state.selectedImageUrl ? (
+          <div className="relative w-full aspect-video">
+            <img
+              key={state.selectedImageUrl.toString()}
+              src={state.selectedImageUrl.toString()}
+              className="size-full absolute object-cover"
+            />
+          </div>
+        ) : (
+          <Skeleton className="aspect-video" />
         )}
+
+        <Select
+          items={CONSTRUCTORS}
+          value={state.schemeKind}
+          onValueChange={(value) =>
+            dispatch(SetSchemeKind.make({ schemeKind: value ?? "neutral" }))
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="scheme" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {CONSTRUCTORS.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
+        <div className="grid grid-cols-6 gap-1">
+          <ColorsGrid omarchyColors={state.omarchyColors} />
+        </div>
       </div>
     </div>
   );

@@ -66,12 +66,7 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
     this,
     Effect.gen(function* () {
       const worker: Option.Option<Worker> = !("DedicatedWorkerGlobalScope" in globalThis)
-        ? (() => {
-            console.log("create worker...");
-            return Option.some(
-              new Worker(new URL("./worker.ts", import.meta.url), { type: "module" }),
-            );
-          })()
+        ? Option.some(new Worker(new URL("./worker.ts", import.meta.url), { type: "module" }))
         : Option.none();
 
       if (Option.isSome(worker)) {
@@ -117,11 +112,6 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
         Effect.catch((error) => new MaterialServiceError({ cause: error })),
       );
 
-      /**
-       * `createImageBitmap` + `OffscreenCanvas` instead of `<img>` + `<canvas>`: both exist in
-       * a worker, so the decode stays off the main thread along with the quantizer, and there
-       * is no load-event race to lose.
-       */
       const quantizeSource: MaterialServiceImpl["quantizeSource"] = flow(
         Effect.fn("MaterialService.quantizeSource")((imageBytes: Uint8Array) =>
           Effect.tryPromise(async () => {
