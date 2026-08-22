@@ -27,6 +27,13 @@ import { OmarchyColors, SchemeKind } from "@/features/material/colors";
 import { MaterialService } from "@/features/material/service";
 import { ColorsGrid } from "./components/colors-grid";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const CATEGORIES: { value: WALLHAVEN_CATEGORY; label: string }[] = WALLHAVEN_CATEGORIES.map(
   (value) => ({ value, label: value }),
@@ -324,44 +331,59 @@ const render = SeedFactory.render(({ state, dispatch }) => {
             <div className="flex flex-col flex-1 min-h-0">
               {Async.match(state.search, {
                 Idle: () => <></>,
-                Pending: () => "Searching...",
+                Pending: () => (
+                  <div className="flex flex-col flex-1 min-h-0 gap-2">
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 gap-2 pr-px">
+                      {Array.from({ length: 24 }, (_, index) => (
+                        <Skeleton key={index} className="aspect-video" />
+                      ))}
+                    </div>
+                  </div>
+                ),
                 Rejected: (rejected) => `Error: ${rejected.error}`,
                 Resolved: (resolved) => (
-                  <div className="flex flex-col flex-1 min-h-0 gap-4 @container">
+                  <div className="flex flex-col flex-1 min-h-0 gap-2">
                     <ImageGrid
                       onItemClick={(item) => {
                         dispatch(ClickedImageThumb.make({ url: item.path }));
                       }}
                       items={resolved.value.data}
-                    >
-                      <div className="col-span-full flex items-center justify-center gap-2">
-                        <Button
-                          onClick={() =>
-                            dispatch(
-                              ClickedWallhavenPaginator.make({
-                                page: Math.max(1, (state.wallhaven.searchParams.page || 1) - 1),
-                              }),
-                            )
-                          }
-                        >
-                          prev
-                        </Button>
-                        <span>
-                          {`page ${resolved.value.meta.current_page} of ${Math.ceil(resolved.value.meta.total / resolved.value.meta.per_page)}`}
-                        </span>
-                        <Button
-                          onClick={() =>
-                            dispatch(
-                              ClickedWallhavenPaginator.make({
-                                page: (state.wallhaven.searchParams.page || 1) + 1,
-                              }),
-                            )
-                          }
-                        >
-                          next
-                        </Button>
-                      </div>
-                    </ImageGrid>
+                    />
+                    <Pagination className="col-span-full">
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            type="button"
+                            onClick={() =>
+                              dispatch(
+                                ClickedWallhavenPaginator.make({
+                                  page: Math.max(1, (state.wallhaven.searchParams.page || 1) - 1),
+                                }),
+                              )
+                            }
+                          />
+                        </PaginationItem>
+
+                        <PaginationItem>
+                          <span className="px-1">
+                            {`${resolved.value.meta.current_page} of ${Math.ceil(resolved.value.meta.total / resolved.value.meta.per_page)}`}
+                          </span>
+                        </PaginationItem>
+
+                        <PaginationItem>
+                          <PaginationNext
+                            type="button"
+                            onClick={() =>
+                              dispatch(
+                                ClickedWallhavenPaginator.make({
+                                  page: (state.wallhaven.searchParams.page || 1) + 1,
+                                }),
+                              )
+                            }
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
                   </div>
                 ),
               })}

@@ -11,7 +11,7 @@ export const ImageGrid: FC<
 > = (props) => {
   return (
     <ScrollArea className="min-h-0">
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 gap-4 pr-px">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 gap-2 pr-px">
         {props.items.map((item) => (
           // `thumbs.large` maxes out around 432x243, so keep cells
           // small enough that they are not upscaled on HiDPI.
