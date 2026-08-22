@@ -433,9 +433,7 @@ const render = SeedFactory.render(({ state, dispatch }) => {
           </SelectContent>
         </Select>
 
-        <div className="grid grid-cols-6 gap-1">
-          <ColorsGrid omarchyColors={state.omarchyColors} />
-        </div>
+        <ColorsGrid omarchyColors={state.omarchyColors} />
       </div>
     </div>
   );
