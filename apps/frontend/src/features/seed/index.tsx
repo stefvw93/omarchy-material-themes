@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select";
 import { PexelsPhoto, PexelsService } from "@/features/pexels/service";
 import { ImageGrid } from "./components/image-grid";
-import { OmarchyColors } from "@/features/material/colors";
+import { OmarchyColors, SchemeKind } from "@/features/material/colors";
 import { MaterialService } from "@/features/material/service";
 
 const CATEGORIES: { value: WALLHAVEN_CATEGORY; label: string }[] = WALLHAVEN_CATEGORIES.map(
@@ -46,14 +46,6 @@ const InputKind = Schema.Union([
   Schema.Literal("file"),
   Schema.Literal("wallhaven"),
   Schema.Literal("pexels"),
-]);
-
-const SchemeKind = Schema.Union([
-  Schema.Literal("expressive"),
-  Schema.Literal("fidelity"),
-  Schema.Literal("neutral"),
-  Schema.Literal("vibrant"),
-  Schema.Literal("rainbow"),
 ]);
 
 const Props = Schema.Struct({
@@ -131,9 +123,12 @@ const initialState = SeedFactory.initialState(() => ({
 const createOmarchyColors = (url: URL, state: typeof State.Type) =>
   Effect.gen(function* () {
     const material = yield* MaterialService;
-    const { sourceArgb, hues } = yield* material.quantizeSource(url);
-    const scheme = yield* material.createScheme(state.schemeKind, sourceArgb);
-    const colors = yield* material.schemeToOmarchyColors(scheme, hues);
+
+    const colors = yield* material.createOmarchyColorsFromImage(url, {
+      schemeKind: state.schemeKind,
+      isDark: true,
+    });
+
     return colors;
   });
 

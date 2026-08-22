@@ -13,10 +13,11 @@ import {
   sourceColorFromImageBytes,
   hexFromArgb as unsafeHexFromArgb,
 } from "@material/material-color-utilities";
-import { Context, Effect, flow, Layer, pipe, Schema } from "effect";
+import { Context, Effect, flow, Layer, Match, Option, pipe, Schema } from "effect";
 import { HttpClient } from "effect/unstable/http";
 import { buildAnsiColors } from "./ansi";
-import { HexColor, type OmarchyColors } from "./colors";
+import { HexColor, OmarchyColors, SchemeKind } from "./colors";
+import { MaterialWorkerEventData, MaterialWorkerMessageData } from "./protocol";
 
 /** The seed image reduced to what scheme building needs: one source colour, and the hues actually in it. */
 export interface QuantizedSeed {
@@ -25,7 +26,13 @@ export interface QuantizedSeed {
 }
 
 export interface MaterialServiceImpl {
-  quantizeSource: (url: URL) => Effect.Effect<QuantizedSeed, MaterialServiceError>;
+  /**
+   * Fetch the raw (still-encoded) image file. Main thread only: Tauri's IPC lives on
+   * `window.__TAURI_INTERNALS__`, which a worker cannot reach.
+   */
+  fetchImageBytes: (url: URL) => Effect.Effect<Uint8Array, MaterialServiceError>;
+  /** Decode, downscale and quantize the image file. Worker-safe: no DOM, no IPC. */
+  quantizeSource: (imageBytes: Uint8Array) => Effect.Effect<QuantizedSeed, MaterialServiceError>;
   createScheme: (
     kind: keyof typeof MaterialService.schemeContstructors,
     sourceArgb: number,
@@ -36,6 +43,10 @@ export interface MaterialServiceImpl {
     scheme: DynamicScheme,
     imageHues: readonly number[],
   ) => Effect.Effect<OmarchyColors, Schema.SchemaError>;
+  createOmarchyColorsFromImage: (
+    url: URL,
+    options: { schemeKind: typeof SchemeKind.Type; isDark?: boolean },
+  ) => Effect.Effect<OmarchyColors, Schema.SchemaError | MaterialServiceError>;
 }
 
 export class MaterialService extends Context.Service<MaterialService, MaterialServiceImpl>()(
@@ -54,6 +65,19 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
   static readonly layer = Layer.effect(
     this,
     Effect.gen(function* () {
+      const worker: Option.Option<Worker> = !("DedicatedWorkerGlobalScope" in globalThis)
+        ? (() => {
+            console.log("create worker...");
+            return Option.some(
+              new Worker(new URL("./worker.ts", import.meta.url), { type: "module" }),
+            );
+          })()
+        : Option.none();
+
+      if (Option.isSome(worker)) {
+        yield* Effect.addFinalizer(() => Effect.sync(() => worker.value.terminate()));
+      }
+
       const client = (yield* HttpClient.HttpClient).pipe(
         HttpClient.tapRequest((req) => Effect.log(req.toJSON())),
         HttpClient.tap(Effect.log),
@@ -65,8 +89,7 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
        * whole wallpaper to a single colour, which is what made every generated terminal
        * palette look alike — this keeps the rest of the distribution around.
        */
-      const imageHues = (imageData: ImageData) => {
-        const bytes = imageData.data;
+      const imageHues = (bytes: Uint8ClampedArray) => {
         const pixels: number[] = [];
 
         for (let i = 0; i < bytes.length; i += 4) {
@@ -82,64 +105,64 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
         return ranked.map((argb) => Hct.fromInt(argb).hue);
       };
 
-      const quantizeImage = (objectUrl: string) =>
-        Effect.gen(function* () {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
+      const fetchImageBytes: MaterialServiceImpl["fetchImageBytes"] = flow(
+        Effect.fn("MaterialService.fetchImageBytes")(function* (url: URL) {
+          const data = yield* client
+            .get(url.toString())
+            .pipe(Effect.flatMap((res) => res.arrayBuffer));
 
-          if (!ctx) throw new Error("Failed to get canvas context");
-
-          const image = yield* Effect.tryPromise(
-            () =>
-              new Promise<HTMLImageElement>((resolve, reject) => {
-                const image = new Image();
-                image.src = objectUrl;
-                image.onload = () => resolve(image);
-                image.onerror = () => reject(new Error("Failed to load image"));
-              }),
-          );
-
-          const aspectRatio = image.width / image.height;
-          const width = Math.min(MaterialService.quantizeMaxSize, image.width);
-          const height = Math.min(MaterialService.quantizeMaxSize / aspectRatio, image.height);
-
-          // The canvas defaults to 300x150, so tall images would otherwise read back
-          // rows that were never drawn to.
-          canvas.width = Math.max(1, Math.ceil(width));
-          canvas.height = Math.max(1, Math.ceil(height));
-
-          ctx.drawImage(image, 0, 0, width, height);
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-          return {
-            sourceArgb: sourceColorFromImageBytes(imageData.data),
-            hues: imageHues(imageData),
-          } satisfies QuantizedSeed;
-        }).pipe(Effect.tapError(Effect.logError));
-
-      const quantizeSource: MaterialServiceImpl["quantizeSource"] = flow(
-        Effect.fn("MaterialService.quantizeSource")(function* (url: URL) {
-          const blob = yield* client.get(url.toString()).pipe(
-            Effect.flatMap((res) => res.arrayBuffer),
-            Effect.map((data) => new Blob([data])),
-          );
-
-          const objectUrl = URL.createObjectURL(blob);
-
-          yield* Effect.addFinalizer(() => Effect.succeed(URL.revokeObjectURL(objectUrl)));
-
-          return yield* quantizeImage(objectUrl);
+          return new Uint8Array(data);
         }),
-        Effect.scoped,
         Effect.tapError(Effect.logError),
         Effect.catch((error) => new MaterialServiceError({ cause: error })),
       );
+
+      /**
+       * `createImageBitmap` + `OffscreenCanvas` instead of `<img>` + `<canvas>`: both exist in
+       * a worker, so the decode stays off the main thread along with the quantizer, and there
+       * is no load-event race to lose.
+       */
+      const quantizeSource: MaterialServiceImpl["quantizeSource"] = flow(
+        Effect.fn("MaterialService.quantizeSource")((imageBytes: Uint8Array) =>
+          Effect.tryPromise(async () => {
+            const bitmap = await createImageBitmap(new Blob([imageBytes as BlobPart]));
+            const aspectRatio = bitmap.width / bitmap.height;
+
+            const width = Math.max(
+              1,
+              Math.ceil(Math.min(MaterialService.quantizeMaxSize, bitmap.width)),
+            );
+            const height = Math.max(
+              1,
+              Math.ceil(Math.min(MaterialService.quantizeMaxSize / aspectRatio, bitmap.height)),
+            );
+
+            const canvas = new OffscreenCanvas(width, height);
+            const ctx = canvas.getContext("2d");
+
+            if (!ctx) throw new Error("Failed to get canvas context");
+
+            ctx.drawImage(bitmap, 0, 0, width, height);
+            bitmap.close();
+
+            const { data } = ctx.getImageData(0, 0, width, height);
+
+            return {
+              sourceArgb: sourceColorFromImageBytes(data),
+              hues: imageHues(data),
+            } satisfies QuantizedSeed;
+          }),
+        ),
+        Effect.tapError(Effect.logError),
+        Effect.catch((error) => new MaterialServiceError({ cause: error })),
+      );
+
       const createScheme: MaterialServiceImpl["createScheme"] = flow(
         Effect.fn("MaterialService.createScheme")(
           (
             kind: keyof typeof MaterialService.schemeContstructors,
             sourceArgb: number,
-            isDark = true,
+            isDark = false,
             contrastLevel = 0,
           ) =>
             Effect.sync(() => {
@@ -224,10 +247,83 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
         Effect.tapError(Effect.logError),
       );
 
+      const createOmarchyColorsFromImage: MaterialServiceImpl["createOmarchyColorsFromImage"] =
+        flow(
+          Effect.fn("MaterialService.createOmarchyColorsFromImage")((url, options) =>
+            Effect.gen(function* () {
+              if (Option.isNone(worker)) {
+                return yield* new MaterialServiceError({ cause: "worker is not available" });
+              }
+
+              const activeWorker = worker.value;
+
+              // Fetched here, not in the worker: Tauri's IPC is only reachable from the window.
+              const imageBytes = yield* fetchImageBytes(url);
+
+              const id = crypto.randomUUID();
+
+              const message = yield* Schema.encodeEffect(MaterialWorkerEventData)({
+                _tag: "CreateOmarchyColors",
+                id,
+                imageBytes,
+                options,
+              });
+
+              const result = yield* Effect.callback<unknown, MaterialServiceError>((resume) => {
+                const cleanup = () => {
+                  activeWorker.removeEventListener("message", messageHandler);
+                  activeWorker.removeEventListener("error", errorHandler);
+                };
+
+                const messageHandler = (event: MessageEvent) => {
+                  // Every in-flight call listens on the same worker, so ignore other replies.
+                  if ((event.data as { id?: unknown } | null)?.id !== id) return;
+
+                  cleanup();
+                  resume(Effect.succeed(event.data));
+                };
+
+                const errorHandler = (event: ErrorEvent) => {
+                  cleanup();
+                  resume(
+                    Effect.fail(
+                      new MaterialServiceError({ cause: event.message ?? "unknown error" }),
+                    ),
+                  );
+                };
+
+                activeWorker.addEventListener("message", messageHandler);
+                activeWorker.addEventListener("error", errorHandler);
+                activeWorker.postMessage(message, [message.imageBytes.buffer]);
+
+                return Effect.sync(cleanup);
+              }).pipe(
+                Effect.andThen(Schema.decodeUnknownEffect(MaterialWorkerMessageData)),
+                Effect.flatMap(
+                  Match.type<typeof MaterialWorkerMessageData.Type>().pipe(
+                    Match.tag("CreateOmarchyColors", ({ id: _id, ...colors }) =>
+                      Effect.succeed(colors),
+                    ),
+                    Match.tag("Failure", ({ message }) =>
+                      Effect.fail(new MaterialServiceError({ cause: message })),
+                    ),
+                    Match.exhaustive,
+                  ),
+                ),
+              );
+
+              return result;
+            }),
+          ),
+          Effect.tapError(Effect.logError),
+        );
+
       return {
+        fetchImageBytes,
         quantizeSource,
         createScheme,
         schemeToOmarchyColors,
+        createOmarchyColorsFromImage,
       };
     }),
   );

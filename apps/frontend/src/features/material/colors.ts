@@ -14,6 +14,14 @@ export type HexColor = typeof HexColor.Type;
 export const Mode = Schema.Union([Schema.Literal("dark"), Schema.Literal("light")]);
 export type Mode = typeof Mode.Type;
 
+export const SchemeKind = Schema.Union([
+  Schema.Literal("expressive"),
+  Schema.Literal("fidelity"),
+  Schema.Literal("neutral"),
+  Schema.Literal("vibrant"),
+  Schema.Literal("rainbow"),
+]);
+
 /**
  * Based on existing theme colors.toml: https://github.com/basecamp/omarchy/blob/quattro/themes/matte-black/colors.toml
  */
