@@ -131,9 +131,9 @@ const initialState = SeedFactory.initialState(() => ({
 const createOmarchyColors = (url: URL, state: typeof State.Type) =>
   Effect.gen(function* () {
     const material = yield* MaterialService;
-    const quantized = yield* material.quantizeSource(url);
-    const scheme = yield* material.createScheme(state.schemeKind, quantized);
-    const colors = yield* material.schemeToOmarchyColors(scheme);
+    const { sourceArgb, hues } = yield* material.quantizeSource(url);
+    const scheme = yield* material.createScheme(state.schemeKind, sourceArgb);
+    const colors = yield* material.schemeToOmarchyColors(scheme, hues);
     return colors;
   });
 
