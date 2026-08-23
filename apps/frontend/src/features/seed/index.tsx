@@ -132,13 +132,23 @@ const createOmarchyColors = (url: URL, state: typeof State.Type) =>
   });
 
 const reducer = SeedFactory.reducer({
-  Mounted: (_, { state }) => [state, wallhavenSearch.run(state.wallhavenSearchParams)],
+  Mounted: (_, { state }) => {
+    if (state.inputType === "wallhaven") {
+      return [state, wallhavenSearch.run(state.wallhavenSearchParams)];
+    }
+
+    return state;
+  },
 
   SetInputKind: (payload, { state }) => {
     const next = { ...state, inputType: payload.inputType };
 
     if (payload.inputType === "pexels") {
       return [{ ...next, curated: Async.pending }, pexelsCurated.run()];
+    }
+
+    if (payload.inputType === "wallhaven") {
+      return [{ ...next, search: Async.pending }, wallhavenSearch.run(state.wallhavenSearchParams)];
     }
 
     return next;
@@ -228,8 +238,8 @@ const reducer = SeedFactory.reducer({
 
 const render = SeedFactory.render(({ state, dispatch }) => {
   return (
-    <div className="grid grid-cols-12 flex-1 min-h-0 gap-4 p-4">
-      <div className="col-span-6 flex flex-col flex-1 min-h-0 gap-4">
+    <div className="grid grid-cols-12 flex-1 min-h-0 gap-2 p-2">
+      <div className="col-span-6 flex flex-col flex-1 min-h-0 gap-2">
         <Tabs
           value={state.inputType}
           onValueChange={(value) => dispatch(SetInputKind.make({ inputType: value }))}
@@ -241,12 +251,12 @@ const render = SeedFactory.render(({ state, dispatch }) => {
             <TabsTrigger value="pexels">Pexels</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="file" className="flex flex-col gap-4">
+          <TabsContent value="file" className="flex flex-col gap-2">
             Add a file.
             <Input type="file" accept="image/*" />
           </TabsContent>
 
-          <TabsContent value="wallhaven" className="flex flex-col flex-1 min-h-0 gap-4">
+          <TabsContent value="wallhaven" className="flex flex-col flex-1 min-h-0 gap-2">
             <WallhavenInputs
               value={state.wallhavenSearchParams}
               loading={Async.isPending(state.search)}
@@ -316,15 +326,15 @@ const render = SeedFactory.render(({ state, dispatch }) => {
             </div>
           </TabsContent>
 
-          <TabsContent value="pexels" className="flex flex-col flex-1 min-h-0 gap-4">
+          <TabsContent value="pexels" className="flex flex-col flex-1 min-h-0 gap-2">
             <div className="flex flex-col flex-1 min-h-0">
               {Async.match(state.curated, {
                 Idle: () => <></>,
                 Pending: () => "Loading...",
                 Rejected: (rejected) => `Error: ${rejected.error}`,
                 Resolved: (resolved) => (
-                  <div className="flex flex-col flex-1 min-h-0 gap-4 @container">
-                    <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 overflow-auto gap-4">
+                  <div className="flex flex-col flex-1 min-h-0 gap-2 @container">
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 overflow-auto gap-2">
                       {resolved.value.map((item) => (
                         // `thumbs.large` maxes out around 432x243, so keep cells
                         // small enough that they are not upscaled on HiDPI.
@@ -347,7 +357,7 @@ const render = SeedFactory.render(({ state, dispatch }) => {
         </Tabs>
       </div>
 
-      <div className="col-span-6 flex flex-col gap-4" id="output">
+      <div className="col-span-6 flex flex-col gap-2" id="output">
         {state.selectedImageUrl ? (
           <div className="relative w-full aspect-video">
             <img
