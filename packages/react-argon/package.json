@@ -43,6 +43,8 @@
     "@types/node": "^26.1.1",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
+    "playwright": "catalog:",
     "tstyche": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

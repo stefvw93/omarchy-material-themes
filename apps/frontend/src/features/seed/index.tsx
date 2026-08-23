@@ -1,13 +1,8 @@
-import { Button } from "@/components/ui/button";
 import { Effect, Schema } from "effect";
 import { Action, Async, Children, Command, define } from "react-argon";
 import { component } from "../shared";
 import { Input } from "@/components/ui/input";
 import {
-  WALLHAVEN_CATEGORIES,
-  WALLHAVEN_CATEGORY,
-  WALLHAVEN_PURITIES,
-  WALLHAVEN_PURITY,
   WallhavenSearchParams,
   WallhavenSearchPayload,
   WallhavenService,
@@ -34,17 +29,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-
-const CATEGORIES: { value: WALLHAVEN_CATEGORY; label: string }[] = WALLHAVEN_CATEGORIES.map(
-  (value) => ({ value, label: value }),
-);
-
-const PURITY: { value: WALLHAVEN_PURITY; label: string }[] = WALLHAVEN_PURITIES.filter(
-  (p) => p !== "nsfw",
-).map((value) => ({
-  value,
-  label: value,
-}));
+import { WallhavenInputs } from "./components/wallhaven-inputs";
 
 const CONSTRUCTORS = Object.keys(MaterialService.schemeContstructors).map((key) => ({
   value: key,
@@ -76,36 +61,42 @@ const pexelsCurated = Async("PexelsCurated", {
 
 const State = Schema.Struct({
   inputType: InputKind,
-  wallhaven: Schema.Struct({
-    searchParams: WallhavenSearchParams,
-  }),
   selectedImageUrl: Schema.UndefinedOr(Schema.URLFromString).pipe(Schema.optional),
   omarchyColors: Schema.UndefinedOr(OmarchyColors).pipe(Schema.optional),
   schemeKind: SchemeKind,
+  wallhavenSearchParams: WallhavenSearchParams,
   search: Async.slice(WallhavenSearchPayload),
   curated: Async.slice(Schema.Array(PexelsPhoto)),
 });
 type State = typeof State.Type;
 
-const ClickedSearch = Action("ClickedSearch", {});
+//
+// Actions
+//
+
+const SearchWallhaven = Action("SearchWallhaven", WallhavenSearchParams.fields);
 const ClickedWallhavenPaginator = Action("ClickedWallhavenPaginator", { page: Schema.Number });
 const ClickedImageThumb = Action("ClickedImageThumb", { url: Schema.URLFromString });
 const SetInputKind = Action("SetInputKind", { inputType: InputKind });
-const SetSearchParams = Action("SetSearchParams", { searchParams: WallhavenSearchParams });
 const SetOmarchyColors = Action("SetOmarchyColors", { colors: OmarchyColors });
 const SetSchemeKind = Action("SetSchemeKind", { schemeKind: SchemeKind });
+const SetWallhavenSearchParams = Action("SetWallhavenSearchParams", WallhavenSearchParams.fields);
 
 const SeedAction = Action.of([
-  ClickedSearch,
+  SearchWallhaven,
   ClickedWallhavenPaginator,
   ClickedImageThumb,
   SetInputKind,
-  SetSearchParams,
   SetOmarchyColors,
   SetSchemeKind,
+  SetWallhavenSearchParams,
   ...wallhavenSearch.actions,
   ...pexelsCurated.actions,
 ]);
+
+//
+// Definitions
+//
 
 const SeedFactory = define({
   props: Props,
@@ -115,17 +106,15 @@ const SeedFactory = define({
 
 const initialState = SeedFactory.initialState(() => ({
   inputType: "file" as const,
-  wallhaven: {
-    searchParams: {
-      page: 1,
-      categories: ["general"],
-      purity: ["sfw"],
-      sorting: "toplist",
-      topRange: "1y",
-      atleast: "2560x1440",
-    },
-  },
   schemeKind: "neutral",
+  wallhavenSearchParams: {
+    page: 1,
+    categories: ["general"],
+    purity: ["sfw"],
+    sorting: "toplist",
+    topRange: "1y",
+    atleast: "2560x1440",
+  },
   search: Async.idle,
   curated: Async.idle,
 }));
@@ -143,43 +132,40 @@ const createOmarchyColors = (url: URL, state: typeof State.Type) =>
   });
 
 const reducer = SeedFactory.reducer({
-  SetInputKind: (action, { state }) => {
-    const next = { ...state, inputType: action.inputType };
+  Mounted: (_, { state }) => [state, wallhavenSearch.run(state.wallhavenSearchParams)],
 
-    if (action.inputType === "pexels")
+  SetInputKind: (payload, { state }) => {
+    const next = { ...state, inputType: payload.inputType };
+
+    if (payload.inputType === "pexels") {
       return [{ ...next, curated: Async.pending }, pexelsCurated.run()];
-
-    if (action.inputType === "wallhaven")
-      return [
-        { ...next, search: Async.pending },
-        wallhavenSearch.run(state.wallhaven.searchParams),
-      ];
+    }
 
     return next;
   },
 
-  ClickedWallhavenPaginator: (action, { state }) => {
+  ClickedWallhavenPaginator: (payload, { state }) => {
     const searchParams = {
-      ...state.wallhaven.searchParams,
-      page: action.page || state.wallhaven.searchParams.page || 1,
+      ...state.wallhavenSearchParams,
+      page: payload.page || state.wallhavenSearchParams.page || 1,
     };
 
     return [
       {
         ...state,
-        wallhaven: { ...state.wallhaven, searchParams },
+        wallhavenSearchParams: searchParams,
         search: Async.pending,
       },
       wallhavenSearch.run(searchParams),
     ];
   },
 
-  ClickedImageThumb: (action, { state }) => [
-    { ...state, selectedImageUrl: action.url, omarchyColors: undefined },
+  ClickedImageThumb: (payload, { state }) => [
+    { ...state, selectedImageUrl: payload.url, omarchyColors: undefined },
     Command.effect((dispatch) =>
       Effect.gen(function* () {
         yield* dispatch(
-          SetOmarchyColors.make({ colors: yield* createOmarchyColors(action.url, state) }),
+          SetOmarchyColors.make({ colors: yield* createOmarchyColors(payload.url, state) }),
         );
       }).pipe(
         Effect.catch((err) => {
@@ -190,8 +176,8 @@ const reducer = SeedFactory.reducer({
     ),
   ],
 
-  SetSchemeKind: (action, { state }) => [
-    { ...state, omarchyColors: undefined, schemeKind: action.schemeKind },
+  SetSchemeKind: (payload, { state }) => [
+    { ...state, omarchyColors: undefined, schemeKind: payload.schemeKind },
     Command.effect((dispatch) =>
       Effect.gen(function* () {
         if (!state.selectedImageUrl) return;
@@ -209,34 +195,34 @@ const reducer = SeedFactory.reducer({
     ),
   ],
 
-  SetOmarchyColors: (action, { state }) => ({ ...state, omarchyColors: action.colors }),
+  SetOmarchyColors: (payload, { state }) => ({ ...state, omarchyColors: payload.colors }),
 
-  SetSearchParams: (action, { state }) => ({
+  SetWallhavenSearchParams: (wallhavenSearchParams, { state }) => ({
     ...state,
-    wallhaven: { ...state.wallhaven, searchParams: action.searchParams },
+    wallhavenSearchParams,
   }),
 
-  ClickedSearch: (_action, { state }) => [
+  SearchWallhaven: (payload, { state }) => [
     { ...state, search: Async.pending },
-    wallhavenSearch.run(state.wallhaven.searchParams),
+    wallhavenSearch.run(payload),
   ],
 
-  WallhavenSearchResolved: (action, { state }) => ({
+  WallhavenSearchResolved: (payload, { state }) => ({
     ...state,
-    search: Async.resolved(action.value),
+    search: Async.resolved(payload.value),
   }),
-  WallhavenSearchRejected: (action, { state }) => ({
+  WallhavenSearchRejected: (payload, { state }) => ({
     ...state,
-    search: Async.rejected(action.error),
+    search: Async.rejected(payload.error),
   }),
 
-  PexelsCuratedResolved: (action, { state }) => ({
+  PexelsCuratedResolved: (payload, { state }) => ({
     ...state,
-    curated: Async.resolved(action.value),
+    curated: Async.resolved(payload.value),
   }),
-  PexelsCuratedRejected: (action, { state }) => ({
+  PexelsCuratedRejected: (payload, { state }) => ({
     ...state,
-    curated: Async.rejected(action.error),
+    curated: Async.rejected(payload.error),
   }),
 });
 
@@ -261,72 +247,12 @@ const render = SeedFactory.render(({ state, dispatch }) => {
           </TabsContent>
 
           <TabsContent value="wallhaven" className="flex flex-col flex-1 min-h-0 gap-4">
-            <div className="flex gap-2">
-              <Select
-                items={CATEGORIES}
-                value={[...(state.wallhaven.searchParams.categories ?? ["general"])]}
-                onValueChange={(values) =>
-                  dispatch(
-                    SetSearchParams.make({
-                      searchParams: {
-                        ...state.wallhaven.searchParams,
-                        categories: values,
-                      },
-                    }),
-                  )
-                }
-                multiple
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {CATEGORIES.map((item) => (
-                      <SelectItem key={item.value} value={item.value}>
-                        {item.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-
-              <Select
-                items={PURITY}
-                value={[...(state.wallhaven.searchParams.purity ?? ["sfw"])]}
-                onValueChange={(values) =>
-                  dispatch(
-                    SetSearchParams.make({
-                      searchParams: {
-                        ...state.wallhaven.searchParams,
-                        purity: values,
-                      },
-                    }),
-                  )
-                }
-                multiple
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="purity" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {PURITY.map((item) => (
-                      <SelectItem key={item.value} value={item.value}>
-                        {item.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-
-              <Button
-                disabled={Async.isPending(state.search)}
-                onClick={() => dispatch(ClickedSearch.make({}))}
-              >
-                {Async.isPending(state.search) ? "Searching..." : "Search"}
-              </Button>
-            </div>
+            <WallhavenInputs
+              value={state.wallhavenSearchParams}
+              loading={Async.isPending(state.search)}
+              onChange={(params) => dispatch(SetWallhavenSearchParams.make(params))}
+              onSubmit={(params) => dispatch(SearchWallhaven.make(params))}
+            />
 
             <div className="flex flex-col flex-1 min-h-0">
               {Async.match(state.search, {
@@ -357,7 +283,7 @@ const render = SeedFactory.render(({ state, dispatch }) => {
                             onClick={() =>
                               dispatch(
                                 ClickedWallhavenPaginator.make({
-                                  page: Math.max(1, (state.wallhaven.searchParams.page || 1) - 1),
+                                  page: Math.max(1, (state.wallhavenSearchParams.page || 1) - 1),
                                 }),
                               )
                             }
@@ -376,7 +302,7 @@ const render = SeedFactory.render(({ state, dispatch }) => {
                             onClick={() =>
                               dispatch(
                                 ClickedWallhavenPaginator.make({
-                                  page: (state.wallhaven.searchParams.page || 1) + 1,
+                                  page: (state.wallhavenSearchParams.page || 1) + 1,
                                 }),
                               )
                             }
@@ -461,8 +387,13 @@ const render = SeedFactory.render(({ state, dispatch }) => {
   );
 });
 
-const seed = SeedFactory.create({ initialState, reducer, render });
-
-const Seed = component(seed, { name: "Seed" });
-
-export { Seed };
+export const Seed = component(
+  SeedFactory.create({
+    initialState,
+    reducer,
+    render,
+  }),
+  {
+    name: "Seed",
+  },
+);

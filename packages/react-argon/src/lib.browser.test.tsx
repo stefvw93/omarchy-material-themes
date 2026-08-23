@@ -308,6 +308,108 @@ test("an excess prop is rejected, which no spread would catch at compile time", 
   expect(String(errors[0])).toMatch(/rogue|excess|unexpected/i);
 });
 
+// ---------------------------------------------------------------------------
+// Transforming props schemas: validated on the `Type` side, never decoded.
+// ---------------------------------------------------------------------------
+
+const codedBlueprint = () =>
+  define({
+    props: Schema.Struct({ page: Schema.NumberFromString }),
+    state: Schema.Struct({ seen: Schema.Number }),
+    action: Action.of([Action("Noop", {})]),
+  }).create({
+    initialState: (props) => ({ seen: props.page }),
+    reducer: {
+      Noop: (_action, { state }) => state,
+      PropsChanged: (_action, { state: _state, props }) => ({ seen: props.page }),
+    },
+    render: ({ state }) => <span data-testid="page">{state.seen}</span>,
+  });
+
+test("a codec prop flows through as its decoded `Type`", async () => {
+  // `NumberFromString` is a wire codec; the parent passes the decoded number
+  // and everything downstream — validation, equivalence, `PropsChanged` —
+  // sees exactly that value.
+  const CodedView = component(codedBlueprint(), { name: "Coded" });
+
+  const Parent = () => {
+    const [page, setPage] = useState(1);
+    return (
+      <div>
+        <button data-testid="next" onClick={() => setPage(2)}>
+          next
+        </button>
+        <CodedView page={page} />
+      </div>
+    );
+  };
+
+  await mount(<Parent />);
+  await vi.waitFor(() => expect(text("page")).toBe("1"));
+
+  await click("next");
+  expect(text("page")).toBe("2");
+});
+
+test("the wire shape of a codec prop is a malformed prop, not an input to decode", async () => {
+  const CodedView = component(codedBlueprint(), { name: "Coded" });
+
+  const errors: Array<unknown> = [];
+  const onError = (error: unknown) => void errors.push(error);
+  const previous = window.onerror;
+  window.onerror = (_message, _source, _lineno, _colno, error) => {
+    onError(error);
+    return true;
+  };
+
+  try {
+    await mount(
+      <ErrorBoundary onError={onError}>
+        {/* The wire string, the way an unparsed query param would arrive. */}
+        <CodedView {...({ page: "3" } as unknown as React.ComponentProps<typeof CodedView>)} />
+      </ErrorBoundary>,
+    );
+    await vi.waitFor(() => expect(errors.length).toBeGreaterThan(0));
+  } finally {
+    window.onerror = previous;
+  }
+
+  expect(String(errors[0])).toMatch(/page/);
+});
+
+test("an output dispatched straight from render leaves through its prop", async () => {
+  // `dispatch` carries the outbound vocabulary: the store routes by tag, so a
+  // passthrough view needs no mirror action — the output crosses into the
+  // parent's `on<Tag>` prop without a reducer handler in between.
+  const Sent = Action.output("Sent", { q: Schema.String });
+
+  const echo = define({
+    props: Schema.Struct({}),
+    state: Schema.Struct({}),
+    action: Action.of([]),
+    output: Action.of([Sent]),
+  }).create({
+    initialState: () => ({}),
+    reducer: {},
+    render: ({ dispatch }) => (
+      <button data-testid="send" onClick={() => dispatch(Sent.make({ q: "hi" }))}>
+        send
+      </button>
+    ),
+  });
+
+  const EchoView = component(echo, { name: "Echo" });
+
+  const got: Array<unknown> = [];
+  await mount(<EchoView onSent={(payload: { q: string }) => void got.push(payload)} />);
+  await vi.waitFor(() => expect(container?.querySelector('[data-testid="send"]')).not.toBeNull());
+
+  await click("send");
+
+  // `_tag` stripped, the prop's name already carries it.
+  await vi.waitFor(() => expect(got).toEqual([{ q: "hi" }]));
+});
+
 test("an output with no matching prop throws rather than vanishing", async () => {
   // `OutputProps` makes every `on<Tag>` required, so reaching this means the
   // typed surface was bypassed — the same precedent as a missing reducer

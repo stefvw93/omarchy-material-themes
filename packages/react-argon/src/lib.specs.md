@@ -21,7 +21,9 @@ implementations of grouping and cancellation would have to agree forever.
 
 ## `children`, as an opaque prop
 
-Props are schema values: validated, never decoded, `Encoded` equal to `Type`.
+Props are schema values: validated, never decoded — `define` strips any
+encoding a field declares with `Schema.toType`, so a transforming schema is
+accepted and its decoded `Type` is what the parent passes.
 A React node is none of those things — it does not encode, it is a fresh object
 on every parent render, and printing one into a devtools event dumps an element
 tree. So `children` is _declared_ rather than described:
@@ -217,6 +219,7 @@ landed with every box checked again.
 - [x] Seeded actions are processed but are not recorded in `emitted`.
 - [x] Actions a command emits feed back into the reducer loop; `emitted` collects them.
 - [x] `outputs` collects messages whose tag is a declared output; an output never re-enters the reducer.
+- [x] A handler receives the action's **payload** — `_tag` stripped on the same terms as an output crossing into its `on<Tag>` prop: the handler key already named the tag, so what the handler holds cannot smuggle a tag into state or a command's payload. Lifecycle handlers receive theirs on the same rule.
 - [x] `Command.cancel(name)` interrupts the group booked under `name`; an unkeyed command's group is its issuing action's tag.
 - [x] `Command.batch` members run in order, sharing the issuing action's context.
 - [x] Services a command requests (`R`) are satisfied from `options.layer`.
@@ -235,7 +238,7 @@ landed with every box checked again.
 - [x] `Children` carries a constantly-`true` equivalence, so a new node alone never raises `PropsChanged` and never re-runs the reducer. The corollary — a reducer's `snapshot.props.children` may be stale — is accepted, and `render` is unaffected.
 - [x] The props carrying the `"@tea/opaque"` annotation are collected off the props schema at `create`, whether the key is declared directly, through `Schema.optionalKey`, or through `Schema.optional` (a union). A feature declaring none collects `[]`.
 - [x] `PropsChanged`'s reported `previous` has each opaque prop replaced by its placeholder (`"<children>"`), which is what keeps every devtools event JSON round-trippable. The reducer's snapshot keeps the real node; a feature with no opaque props reports the action unchanged.
-- [x] `dispatch` accepts only declared actions and is reference-stable for the life of the mount.
+- [x] `dispatch` accepts declared actions **and declared outputs** — the store routes every dispatched message by tag, so an output dispatched from the view leaves through its `on<Tag>` prop without touching the reducer — and is reference-stable for the life of the mount. An undeclared tag stays a compile error.
 - [x] Lifecycle order: `Mounted` once per mount, then `PropsChanged`/`HookChanged` as ambient inputs change, then `Unmounted` at teardown. _With one uncovered window: a props change landing between the first render and the mount effect buffers its command ahead of `Mounted`'s. See open work #5._
 - [x] `PropsChanged`/`HookChanged` are detected **by value** — props via `Schema.toEquivalence`, hooks via `Equivalence.Record(Equivalence.strictEqual())`.
 - [x] `store.sync` folds during render, so a props-driven change paints on the render that carried the props. Moving the fold into an effect is **deferred** — see Deferred decisions.
@@ -247,8 +250,9 @@ landed with every box checked again.
 
 ### Type-level (TSTyche)
 
-- [x] `Disjoint`, `NoTransform`, `NoPropCollision`, `Exhaustive`/`Excess`, `ServiceOf`/`ServicesOf` reject what they document and accept what they document.
-- [x] `NoTransform` accepts a props schema declaring `children: Children` — `Schema.declare` is an identity codec — and the field surfaces to `initialState`, the reducer and `render` as `ReactNode`, optional under `Schema.optionalKey` and as the given function type under `Children.as<T>()`.
+- [x] `Disjoint`, `NoPropCollision`, `Exhaustive`/`Excess`, `ServiceOf`/`ServicesOf` reject what they document and accept what they document.
+- [x] A transforming props schema is accepted: `define` normalizes it to its `Type` side with `Schema.toType`, so a codec field surfaces to `initialState`, the reducer and `render` as its decoded `Type`, the parent passes decoded values, and the wire shape is rejected by `validateProps` rather than decoded.
+- [x] A props schema declaring `children: Children` surfaces the field to `initialState`, the reducer and `render` as `ReactNode`, optional under `Schema.optionalKey` and as the given function type under `Children.as<T>()`.
 - [x] `Command<Narrow>` stays assignable to `Command<Wide>` under the callback leaf, and `Command.none: Command<never>` stays the bottom. `Dispatcher<A>` is contravariant in `A` and sits in a parameter position — contravariant again — so the two compose to covariant. **The existing covariance test passes unchanged.**
 - [x] `Command.effect` carries `R` out of the effect it is handed. `A` has no inference site of its own, so it defaults to `never`: a command that emits nothing is `Command<never, R>` and fits every slot. Passing a bare `Effect` — the pre-redesign shape — no longer compiles, and neither does an effect with an open error channel.
 - [x] Inside a handler, `dispatch` is typed by the feature's own vocabulary: `A` arrives from the contextual type of the handler's return. An undeclared tag and a declared tag with the wrong payload are both compile errors.
@@ -533,8 +537,13 @@ already own-keys checked. The channel brand keeps its declaration-time jobs
 (`ChannelOf`, `SameChannel`, `Disjoint`, `OutputProps`); it stops being checked
 at the command call site, where it never affected routing anyway.
 
-**Deferred** to keep the leaf pass to one blast radius. It touches every example's
-props and the brand's call-site role; the leaf change does not.
+**Partially executed.** `dispatch` now carries `Emit<A, O>` everywhere — the
+command dispatcher always did, and `render`'s dispatch is widened to match, so
+a passthrough view announces without a mirror action. A purely type-level
+change: the store routed by tag all along. `Command.output` **stays**, as
+sugar over `Command.effect((dispatch) => dispatch(message.make(payload)))`;
+removing it and the brand's call-site check remains deferred — it still
+touches every example.
 
 ### `store.sync` folding during render
 

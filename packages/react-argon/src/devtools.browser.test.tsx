@@ -137,14 +137,21 @@ test("a real click reports the transition and the command it issued", async () =
   expect(bumped!.previous).toEqual({ count: 1 });
   expect(bumped!.next).toEqual({ count: 2 });
 
+  // Two commands cross the log: `Bumped`'s keyed effect, and then the
+  // `Command.output` that `Landed` — dispatched by that effect — issues in
+  // turn. Every command a fold produces is reported, `Command.output` being
+  // an effect like any other.
   const commands = tagged("Command");
-  expect(commands).toHaveLength(1);
+  expect(commands).toHaveLength(2);
   expect(commands[0]!.dropped).toBe(false);
+  expect(commands[0]!.group).toBe("Bumped");
   expect(commands[0]!.command).toEqual({
     _tag: "Keyed",
     key: "bump",
     command: { _tag: "Effect" },
   });
+  expect(commands[1]!.group).toBe("Landed");
+  expect(commands[1]!.command).toEqual({ _tag: "Effect" });
 });
 
 test("an output crossing into a real `on<Tag>` prop is reported before the prop is called", async () => {

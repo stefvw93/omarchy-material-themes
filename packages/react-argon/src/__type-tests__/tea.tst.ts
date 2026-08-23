@@ -15,7 +15,6 @@ import {
   type MemberOf,
   type Message,
   type NoPropCollision,
-  type NoTransform,
   type OutputProps,
   type ServicesOf,
   type TagsOf,
@@ -224,29 +223,30 @@ test("`NoPropCollision` rejects a declared prop colliding with a derived `on<Tag
 });
 
 // ---------------------------------------------------------------------------
-// NoTransform
+// Transforming props schemas
 // ---------------------------------------------------------------------------
 
-test("`NoTransform` rejects a props schema whose `Encoded` differs from its `Type`", () => {
+test("a transforming props schema is accepted, and props surface as its `Type`", () => {
   const PlainProps = Schema.Struct({ id: Schema.String });
   const TransformingProps = Schema.Struct({ id: Schema.NumberFromString });
-
-  expect<NoTransform<typeof PlainProps>>().type.toBe<unknown>();
-  expect<NoTransform<typeof TransformingProps>>().type.toBe<never>();
 
   const state = Schema.Struct({});
   const Actions = Action.of([Action("Bar", {})]);
 
   expect(define).type.toBeCallableWith({ props: PlainProps, state, action: Actions });
-  expect(define).type.not.toBeCallableWith({ props: TransformingProps, state, action: Actions });
+  expect(define).type.toBeCallableWith({ props: TransformingProps, state, action: Actions });
 
-  // The intersection has to keep bare `PropsSchema` as the inference site. If
-  // `NoTransform<PropsSchema>` stood alone as the parameter type there would
-  // be nothing to infer from, `PropsSchema` would fall back to its constraint,
-  // and props would degrade to a record of `unknown` downstream — taking the
-  // guard with it, since `NoTransform<Struct<Struct.Fields>>` is `unknown` and
-  // accepts the very schema it exists to reject. Both assertions above survive
-  // that; this one does not.
+  // Props are validated, never decoded: `define` normalizes the schema to its
+  // `Type` side, so a codec field surfaces downstream as the decoded shape —
+  // the parent passes `number`, never the wire string.
+  const Transformed = define({ props: TransformingProps, state, action: Actions });
+
+  expect<Parameters<Parameters<typeof Transformed.initialState>[0]>[0]>().type.toBe<{
+    readonly id: number;
+  }>();
+
+  // `PropsSchema` stays the inference site: were it to fall back to its
+  // constraint, props would degrade to a record of `unknown` downstream.
   const Defined = define({ props: PlainProps, state, action: Actions });
 
   expect<Parameters<Parameters<typeof Defined.initialState>[0]>[0]>().type.toBe<{
@@ -258,14 +258,9 @@ test("`NoTransform` rejects a props schema whose `Encoded` differs from its `Typ
 // Children
 // ---------------------------------------------------------------------------
 
-test("`Children` is a props field `NoTransform` accepts, and it surfaces as `ReactNode`", () => {
+test("`Children` is a props field that surfaces as `ReactNode`", () => {
   const ChildrenProps = Schema.Struct({ children: Children });
   const OptionalChildrenProps = Schema.Struct({ children: Schema.optionalKey(Children) });
-
-  // `Schema.declare` is an identity codec, so the guard that rejects a
-  // transforming props schema has nothing to object to here.
-  expect<NoTransform<typeof ChildrenProps>>().type.toBe<unknown>();
-  expect<NoTransform<typeof OptionalChildrenProps>>().type.toBe<unknown>();
 
   const state = Schema.Struct({});
   const Actions = Action.of([Action("Bar", {})]);
@@ -291,8 +286,6 @@ test("`Children` is a props field `NoTransform` accepts, and it surfaces as `Rea
   // as the function the parent passed.
   type Row = { readonly id: string };
   const RenderProp = Schema.Struct({ children: Children.as<(row: Row) => ReactNode>() });
-
-  expect<NoTransform<typeof RenderProp>>().type.toBe<unknown>();
 
   const RenderPropDefined = define({ props: RenderProp, state, action: Actions });
 
@@ -543,6 +536,53 @@ test("the leaf's `dispatch` is typed by the feature it is written in", () => {
       dispatch({ _tag: "Pong", at: 1 }),
     ),
   ).type.toBe<Command<{ readonly _tag: "Pong"; readonly at: number }, never>>();
+});
+
+test("`render`'s dispatch carries the outbound vocabulary too", () => {
+  // Written as direct calls, same reasoning as above: the contextual type is
+  // the thing under test. A dispatched output is routed by tag at the store,
+  // so the view can announce without a mirror action in between.
+  const Sent = Action.output("Sent", { at: Schema.Number });
+  const Defined = define({
+    props: Schema.Struct({}),
+    state: Schema.Struct({}),
+    action: Action.of([Action("Ping", {})]),
+    output: Action.of([Sent]),
+  });
+
+  Defined.create({
+    initialState: () => ({}),
+    reducer: { Ping: (_action, snapshot) => snapshot.state },
+    render: ({ dispatch }) => {
+      dispatch({ _tag: "Ping" });
+      dispatch({ _tag: "Sent", at: 1 });
+      // @ts-expect-error is not assignable to type '"Ping" | "Sent"'
+      dispatch({ _tag: "Nope" });
+      // @ts-expect-error is not assignable to parameter of type
+      dispatch({ _tag: "Sent" });
+      return null;
+    },
+  });
+});
+
+test("a reducer handler receives the payload — `_tag` stripped by the runtime", () => {
+  // The handler key already names the tag, so the parameter is the remainder:
+  // plain data, storable in state or forwardable into a command whole.
+  const Defined = define({
+    props: Schema.Struct({ id: Schema.String }),
+    state: Schema.Struct({ count: Schema.Number }),
+    action: Action.of([Action("Set", { count: Schema.Number })]),
+  });
+
+  const reducer = Defined.reducer({
+    Set: (payload, snapshot) => ({ ...snapshot.state, ...payload }),
+    PropsChanged: (_payload, snapshot) => snapshot.state,
+  });
+
+  expect<Parameters<typeof reducer.Set>[0]>().type.toBe<{ readonly count: number }>();
+  expect<Parameters<NonNullable<typeof reducer.PropsChanged>>[0]>().type.toBe<{
+    readonly previous: { readonly id: string };
+  }>();
 });
 
 test("`Dispatcher` is contravariant in `A`, which is what makes `Command` covariant", () => {

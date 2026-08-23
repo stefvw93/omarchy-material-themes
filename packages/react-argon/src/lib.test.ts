@@ -17,6 +17,7 @@ import {
   Option,
   Ref,
   Schema,
+  SchemaIssue,
   SchemaParser,
   Stream,
 } from "effect";
@@ -449,6 +450,35 @@ describe("Blueprint.run", () => {
 
     expect(state).toEqual({ count: 2 });
     expect(emitted).toEqual([{ _tag: "Bump" }]);
+  });
+
+  it("hands a handler the payload alone — `_tag` stripped, like the `on<Tag>` prop", async () => {
+    const received: Array<unknown> = [];
+    const Set = Action("Set", { count: Schema.Number });
+    const feature = define({
+      props: RunProps,
+      state: RunState,
+      action: Action.of([Set]),
+    }).create({
+      initialState: () => ({ count: 0 }),
+      reducer: {
+        // Storing the payload whole is correct by construction — there is no
+        // tag left to smuggle into state.
+        Set: (payload, { state }) => {
+          received.push(payload);
+          return { ...state, ...payload };
+        },
+      },
+      render: () => null,
+    });
+
+    const { state } = await Effect.runPromise(
+      feature.run([{ _tag: "Set", count: 3 }], { props: {}, hooks: {}, layer: Layer.empty }),
+    );
+
+    // `toEqual` is exact about keys: a surviving `_tag` would fail both.
+    expect(received).toEqual([{ count: 3 }]);
+    expect(state).toEqual({ count: 3 });
   });
 
   it("emissions re-enter the loop transitively, not only once", async () => {
@@ -1388,20 +1418,40 @@ describe("validateProps (via `component`'s check)", () => {
   });
 
   it("reports every problem at once rather than one per debugging round", () => {
+    // The parser's own throw says only "Schema validation failed"; the
+    // binding formats the issue in `cause` into the message, the same way
+    // `component`'s check does.
     const validate = SchemaParser.decodeUnknownSync(Props, {
       onExcessProperty: "error",
       errors: "all",
     });
+    const format = SchemaIssue.makeFormatterDefault();
 
     let message = "";
     try {
       validate({ id: 1, count: "no" });
     } catch (error) {
-      message = String(error);
+      message = SchemaIssue.isIssue((error as Error).cause)
+        ? format((error as Error).cause as SchemaIssue.Issue)
+        : String(error);
     }
 
     expect(message).toContain("id");
     expect(message).toContain("count");
+  });
+
+  it("validates a transforming schema on its `Type` side, never decoding", () => {
+    // What `define` builds the validator from: the props schema stripped to
+    // its `Type` side with `Schema.toType`. The decoded shape passes; the
+    // wire shape is a malformed prop, not an input to decode.
+    const Props = Schema.Struct({ page: Schema.NumberFromString });
+    const validate = SchemaParser.decodeUnknownSync(Schema.toType(Props), {
+      onExcessProperty: "error",
+      errors: "all",
+    });
+
+    expect(() => validate({ page: 3 })).not.toThrow();
+    expect(() => validate({ page: "3" })).toThrow();
   });
 });
 
@@ -3562,6 +3612,31 @@ describe("createFeatureStore — devtools", () => {
     expect(order).toEqual(["event", "handler"]);
   });
 
+  it("routes a dispatched output straight out, without touching the reducer", async () => {
+    // One routing rule for both entry points: `store.dispatch` folds through
+    // the same tag check a command's emission does, so an output dispatched
+    // from the view leaves through `emit` — no reducer handler consulted, no
+    // transition recorded.
+    const { store, recorder, emitted } = setup({
+      reducer: {
+        Bump: (_a: unknown, s: any) => s.state,
+        Land: (_a: unknown, s: any) => s.state,
+      },
+      outputs: true,
+    });
+
+    store.start();
+    recorder.clear();
+    store.dispatch({ _tag: "Placed", at: 7 } as never);
+    await settle();
+
+    expect(emitted).toEqual([{ _tag: "Placed", at: 7 }]);
+    const outputs = only(recorder, "Output");
+    expect(outputs).toHaveLength(1);
+    expect(outputs[0]!.cause).toEqual({ _tag: "Dispatch" });
+    expect(only(recorder, "Transition")).toHaveLength(0);
+  });
+
   it("emits exactly one `Defect` for a dying command, then the `Error` transition", async () => {
     // The double-emission guard. `onExit` routes through `raiseDefect`, which
     // is the single emission site; adding one to `onExit` as well would double
@@ -3903,10 +3978,10 @@ describe("createFeatureStore — devtools", () => {
   });
 
   it("keeps `PropsChanged`'s previous props, which are a schema value", async () => {
-    // The other side of the same decision. Props are a schema struct and
-    // `NoTransform` guarantees `Encoded` equals `Type`, so `previous` encodes
-    // and is worth keeping — trimming both would have thrown away the useful
-    // one to fix the unusable one.
+    // The other side of the same decision. Props are a schema struct held on
+    // its `Type` side — `define` strips any encoding with `Schema.toType` —
+    // so `previous` is a plain schema value and worth keeping; trimming both
+    // would have thrown away the useful one to fix the unusable one.
     const { store, recorder } = setup({
       reducer: {
         Bump: (_a: unknown, s: any) => s.state,
@@ -4105,10 +4180,20 @@ describe("Children", () => {
     // `Missing key`. That is the intended reading: a feature that cannot render
     // without children declares `children: Children` and gets a compile error
     // at the call site; one that can wraps it in `optionalKey`.
-    const required = SchemaParser.decodeUnknownSync(Schema.Struct({ children: Children }), {
+    const decode = SchemaParser.decodeUnknownSync(Schema.Struct({ children: Children }), {
       onExcessProperty: "error",
       errors: "all",
     });
+    const format = SchemaIssue.makeFormatterDefault();
+    const required = (input: unknown) => {
+      try {
+        decode(input);
+      } catch (error) {
+        throw SchemaIssue.isIssue((error as Error).cause)
+          ? new TypeError(format((error as Error).cause as SchemaIssue.Issue))
+          : error;
+      }
+    };
 
     expect(() => required({ children: node() })).not.toThrow();
     expect(() => required({ children: undefined })).not.toThrow();

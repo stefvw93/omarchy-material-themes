@@ -25,6 +25,7 @@ import {
   Pipeable,
   Queue,
   Schema,
+  SchemaIssue,
   SchemaParser,
 } from "effect";
 import {
@@ -205,17 +206,6 @@ export type AnyPropsSchema = Schema.Struct<Schema.Struct.Fields>;
 export type PropsOf<P extends AnyPropsSchema> = P["Type"];
 
 /**
- * Props are **validated, never decoded**: `Encoded` must equal `Type`, so
- * `props.x` is always exactly what the parent passed. A transforming props
- * schema is a compile error.
- */
-export type NoTransform<P extends AnyPropsSchema> = [P["Encoded"]] extends [P["Type"]]
-  ? [P["Type"]] extends [P["Encoded"]]
-    ? unknown
-    : never
-  : never;
-
-/**
  * Marks a prop the devtools must not print. The annotation's value is the
  * placeholder printed in its stead.
  */
@@ -262,6 +252,9 @@ export const Children: Schema.declare<ReactNode> & {
  * `optionalKey(UndefinedOr(x))` — off a union's members. `Schema.optionalKey`
  * needs no unwrapping: it marks the key, leaving the declaration's AST intact.
  */
+/** Renders a schema issue with every problem and its path, for props defects. */
+const formatIssue = SchemaIssue.makeFormatterDefault();
+
 const opaqueProps = (schema: AnyPropsSchema): ReadonlyArray<readonly [string, unknown]> => {
   const found: Array<readonly [string, unknown]> = [];
 
@@ -697,7 +690,7 @@ export type LifecycleAction<Props, H extends AnyHooks> =
  * `LifecycleAction`, so there is one place a lifecycle action is described.
  */
 type LifecycleHandler<Tag extends LifecycleTag, Props, State, Action, H extends AnyHooks, R> = (
-  action: Extract<LifecycleAction<Props, H>, { readonly _tag: Tag }>,
+  payload: Simplify<Omit<Extract<LifecycleAction<Props, H>, { readonly _tag: Tag }>, "_tag">>,
   snapshot: Snapshot<Props, State, H>,
 ) => Next<State, Action, R>;
 
@@ -757,6 +750,12 @@ export type Exhaustive<U, State> = {
  * Exhaustive over the declared actions; lifecycle handlers stay optional; output
  * tags are absent from the key set, so writing a handler for one is a compile
  * error.
+ *
+ * A handler receives the action's **payload** — `_tag` stripped, on the same
+ * terms as an output crossing into its `on<Tag>` prop: the handler's own key
+ * already did the discrimination, so the tag is spent routing information.
+ * What remains is plain data, safe to store in state or forward into a
+ * command whole.
  */
 export type Reducer<
   Props,
@@ -767,7 +766,7 @@ export type Reducer<
   R = never,
 > = {
   readonly [K in keyof A["cases"]]: (
-    action: A["cases"][K]["Type"],
+    payload: Simplify<Omit<A["cases"][K]["Type"], "_tag">>,
     snapshot: Snapshot<Props, State, H>,
   ) => Next<State, Emit<A, O>, R>;
 } & LifecycleHandlers<Props, State, Emit<A, O>, H, R>;
@@ -778,7 +777,15 @@ export interface BlueprintInternals<Props, State, Action, H extends AnyHooks> {
   readonly initialState: (props: Props) => State;
   readonly render: Render<Props, State, Action, H>;
   readonly useUnsafeHooks: HookSpec<Props, State, H> | undefined;
-  readonly props: AnyPropsSchema;
+
+  /**
+   * The props schema on its `Type` side alone. Props are **validated, never
+   * decoded**: `define` strips any encoding a field declares with
+   * `Schema.toType`, so `props.x` is always exactly what the parent passed —
+   * a transforming field never re-decodes on a parent render, and the parent
+   * is never asked for the wire shape.
+   */
+  readonly props: Schema.toType<AnyPropsSchema>;
   readonly outputTags: ReadonlyArray<string>;
 
   /**
@@ -806,7 +813,7 @@ export interface Blueprint<
   out R = never,
 > {
   /** @internal Not part of the surface — see `BlueprintInternals`. */
-  readonly [internals]: BlueprintInternals<Props, State, Action, H>;
+  readonly [internals]: BlueprintInternals<Props, State, Action | Output, H>;
 
   /**
    * The reducer as one pure function,
@@ -860,14 +867,20 @@ export interface Definition<
     reducer: U & Exhaustive<U, State>,
   ) => U;
 
+  /**
+   * `render`'s dispatch carries the outbound vocabulary too: the store routes
+   * every dispatched message by tag, so an output dispatched from the view
+   * leaves through its `on<Tag>` prop without touching the reducer. Declare a
+   * mirror action instead when the feature's own state must witness what left.
+   */
   readonly render: (
-    render: Render<Props, State, MemberOf<A>, H>,
-  ) => Render<Props, State, MemberOf<A>, H>;
+    render: Render<Props, State, Emit<A, O>, H>,
+  ) => Render<Props, State, Emit<A, O>, H>;
 
   readonly create: <U extends Reducer<Props, State, A, O, H, any>>(parts: {
     readonly initialState: (props: Props) => State;
     readonly reducer: U & Exhaustive<U, State>;
-    readonly render: Render<Props, State, MemberOf<A>, H>;
+    readonly render: Render<Props, State, Emit<A, O>, H>;
   }) => Blueprint<Props, State, MemberOf<A>, MemberOf<O>, H, ServicesOf<U>>;
 }
 
@@ -895,7 +908,7 @@ export const define: <
   O extends AnyVocabulary<"outbound"> = NoOutputs,
   H extends AnyHooks = {},
 >(spec: {
-  readonly props: PropsSchema & NoTransform<PropsSchema>;
+  readonly props: PropsSchema;
   readonly state: StateSchema;
   readonly action: A;
   readonly output?: O & Disjoint<A, O> & NoPropCollision<PropsSchema, O>;
@@ -938,7 +951,12 @@ export const define: <
       ): Next<any, any, any> => {
         const handler = handlerFor(parts.reducer, action._tag);
         if (handler) {
-          const next = handler(action as never, snapshot);
+          // The handler key already did the discrimination, so the tag is
+          // spent — stripped on the same terms as `emit` strips it for the
+          // `on<Tag>` prop. What the handler holds cannot smuggle a tag into
+          // state or a command's payload.
+          const { _tag, ...payload } = action;
+          const next = handler(payload as never, snapshot);
           if (action._tag !== "Unmounted") return next;
           const command = Next.command(next);
           return command === undefined ? snapshot.state : [snapshot.state, command];
@@ -952,7 +970,7 @@ export const define: <
           initialState: parts.initialState,
           render: parts.render,
           useUnsafeHooks: spec.useUnsafeHooks,
-          props: spec.props,
+          props: Schema.toType(spec.props as AnyPropsSchema),
           outputTags,
           opaqueProps: opaqueProps(spec.props),
           handles: (tag) => handlerFor(parts.reducer, tag) !== undefined,
@@ -1608,10 +1626,26 @@ export const createRuntime: <RootR, RootE>(
       hooks: hooksEquivalence,
     };
 
-    const validateProps = SchemaParser.decodeUnknownSync(
-      propsSchema as AnyPropsSchema & { readonly DecodingServices: never },
-      { onExcessProperty: "error", errors: "all" },
-    );
+    const decodeProps = SchemaParser.decodeUnknownSync(propsSchema, {
+      onExcessProperty: "error",
+      errors: "all",
+    });
+
+    // The parser's own throw says only "Schema validation failed", with the
+    // issue in `cause` — useless at an error boundary. Every problem, with its
+    // path, belongs in the message.
+    const validateProps = (input: unknown): void => {
+      try {
+        decodeProps(input);
+      } catch (error) {
+        if (error instanceof Error && SchemaIssue.isIssue(error.cause)) {
+          throw new TypeError(`Invalid props for <${name}>:\n${formatIssue(error.cause)}`, {
+            cause: error.cause,
+          });
+        }
+        throw error;
+      }
+    };
 
     const Feature: FC<Record<string, unknown>> = (incoming) => {
       const rootRuntime = useContext(context);
@@ -1621,7 +1655,7 @@ export const createRuntime: <RootR, RootE>(
         [incoming],
       );
 
-      useMemo(() => void validateProps(props), [props]);
+      useMemo(() => validateProps(props), [props]);
 
       // Latest-ref, assigned in a layout effect: commit and layout effects run
       // in one synchronous task, so no command fiber's microtask can emit
