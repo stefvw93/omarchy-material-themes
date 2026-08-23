@@ -45,7 +45,7 @@ export interface MaterialServiceImpl {
   ) => Effect.Effect<OmarchyColors, Schema.SchemaError>;
   createOmarchyColorsFromImage: (
     url: URL,
-    options: { schemeKind: typeof SchemeKind.Type; isDark?: boolean },
+    options: { schemeKind: typeof SchemeKind.Type; isDark?: boolean; contrastLevel?: number },
   ) => Effect.Effect<OmarchyColors, Schema.SchemaError | MaterialServiceError>;
 }
 
@@ -183,8 +183,8 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
                 muted: yield* hexFromArgb(scheme.onSurfaceVariant),
 
                 background: yield* hexFromArgb(scheme.surface),
-                dark_background: yield* hexFromArgb(scheme.surfaceContainerLow),
-                darker_background: yield* hexFromArgb(scheme.surfaceContainerLowest),
+                dark_background: yield* hexFromArgb(scheme.surfaceContainer),
+                darker_background: yield* hexFromArgb(scheme.surfaceDim),
                 lighter_background: yield* hexFromArgb(scheme.surfaceBright),
 
                 foreground: yield* hexFromArgb(scheme.onSurface),

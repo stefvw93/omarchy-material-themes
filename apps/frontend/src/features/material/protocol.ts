@@ -1,5 +1,5 @@
 import { Schema } from "effect";
-import { OmarchyColors, SchemeKind } from "./colors";
+import { ContrastLevel, OmarchyColors, SchemeKind } from "./colors";
 
 export const MaterialWorkerEventData = Schema.TaggedUnion({
   CreateOmarchyColors: {
@@ -8,6 +8,7 @@ export const MaterialWorkerEventData = Schema.TaggedUnion({
     options: Schema.Struct({
       schemeKind: SchemeKind,
       isDark: Schema.optional(Schema.Boolean),
+      contrastLevel: Schema.optional(ContrastLevel),
     }),
   },
 });

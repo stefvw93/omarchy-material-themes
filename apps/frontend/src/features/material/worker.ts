@@ -59,12 +59,17 @@ if (
 
 const createOmarchyColors = (
   imageBytes: Uint8Array,
-  options: { schemeKind: typeof SchemeKind.Type; isDark?: boolean },
+  options: { schemeKind: typeof SchemeKind.Type; isDark?: boolean; contrastLevel?: number },
 ) =>
   Effect.gen(function* () {
     const material = yield* MaterialService;
     const { sourceArgb, hues } = yield* material.quantizeSource(imageBytes);
-    const scheme = yield* material.createScheme(options.schemeKind, sourceArgb, options.isDark);
+    const scheme = yield* material.createScheme(
+      options.schemeKind,
+      sourceArgb,
+      options.isDark,
+      options.contrastLevel,
+    );
     const colors = yield* material.schemeToOmarchyColors(scheme, hues);
     return colors;
   });

@@ -56,6 +56,26 @@ const buildSlice = (success: Schema.Top, failure: Schema.Top = Schema.String) =>
 const idle: { readonly _tag: "Idle" } = Object.freeze({ _tag: "Idle" as const });
 const pendingValue: { readonly _tag: "Pending" } = Object.freeze({ _tag: "Pending" as const });
 
+/**
+ * The fields of a state that hold an `AsyncValue` — the only ones `Async.start`
+ * will write `Pending` into.
+ *
+ * `AsyncValue<any, any>` rather than `AsyncValue<unknown, unknown>`: a slice of
+ * `Resolved { value: Photo[] }` is not assignable to one of `value: unknown`
+ * under the readonly property, and `any` is the escape that keeps every slice
+ * matching regardless of what it carries. `-?` strips optionality, so a slice
+ * declared `Schema.optional` is still addressable.
+ */
+type AsyncKeys<State> = {
+  [Key in keyof State]-?: State[Key] extends AsyncValue<any, any> ? Key : never;
+}[keyof State];
+
+const start = <State, Key extends AsyncKeys<State>, Action, R>(
+  state: State,
+  key: Key,
+  command: Command<Action, R>,
+): readonly [State, Command<Action, R>] => [{ ...state, [key]: pendingValue }, command];
+
 const resolved = <Success>(
   value: Success,
 ): { readonly _tag: "Resolved"; readonly value: Success } => ({ _tag: "Resolved", value });
@@ -343,6 +363,29 @@ export interface AsyncConstructors extends AsyncConstructor<"internal"> {
   /** Written on the fold that issues the command, not dispatched a tick later. */
   readonly pending: { readonly _tag: "Pending" };
 
+  /**
+   * `Pending` and the command, as the one return the handler owes:
+   *
+   *     ClickedSearch: (_action, { state }) =>
+   *       Async.start(state, "search", wallhavenSearch.run(state.searchParams))
+   *
+   * The same two lines the long form writes, in an order that cannot come apart
+   * — `run` without a slice write is the failure this exists to make
+   * unspellable, and it is silent when it happens: the work runs, the result
+   * lands, and the interval in between renders as whatever the slice held
+   * before. `Idle` renders nothing, so the loading state simply never appears.
+   *
+   * `key` is constrained to the state's own async slices, so a typo or a
+   * renamed field is a compile error rather than a slice that stays `Idle`.
+   * Reach for the tuple directly when the fold writes something other than
+   * `Pending` — a take-first guard, or a slice cleared rather than started.
+   */
+  readonly start: <State, Key extends AsyncKeys<State>, Action, R>(
+    state: State,
+    key: Key,
+    command: Command<Action, R>,
+  ) => readonly [State, Command<Action, R>];
+
   /** For the `Resolved` handler: `{ ...state, search: Async.resolved(action.value) }`. */
   readonly resolved: <Success>(value: Success) => {
     readonly _tag: "Resolved";
@@ -490,6 +533,7 @@ export const Async: AsyncConstructors = Object.assign(make("internal"), {
   slice: buildSlice,
   idle,
   pending: pendingValue,
+  start,
   resolved,
   rejected,
   message,

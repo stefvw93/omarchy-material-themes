@@ -14,6 +14,9 @@ export type HexColor = typeof HexColor.Type;
 export const Mode = Schema.Union([Schema.Literal("dark"), Schema.Literal("light")]);
 export type Mode = typeof Mode.Type;
 
+export const ContrastLevel = Schema.Number.check(Schema.isBetween({ minimum: -1, maximum: 1 }));
+export type ContrastLevel = typeof ContrastLevel.Type;
+
 export const SchemeKind = Schema.Union([
   Schema.Literal("expressive"),
   Schema.Literal("fidelity"),

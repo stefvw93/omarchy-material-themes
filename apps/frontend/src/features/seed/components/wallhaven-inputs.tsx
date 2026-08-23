@@ -82,7 +82,6 @@ const initialState = WallhavenInputsFactory.initialState(() => ({}));
 const reducer = WallhavenInputsFactory.reducer({});
 
 const render = WallhavenInputsFactory.render(({ props, dispatch }) => {
-  console.log({ props });
   return (
     <div className="flex gap-2">
       <Select

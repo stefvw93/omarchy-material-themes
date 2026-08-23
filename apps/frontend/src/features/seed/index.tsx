@@ -1,5 +1,5 @@
 import { Effect, Schema } from "effect";
-import { Action, Async, Children, Command, define } from "react-argon";
+import { Action, Async, Children, define } from "react-argon";
 import { component } from "../shared";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { PexelsPhoto, PexelsService } from "@/features/pexels/service";
 import { ImageGrid } from "./components/image-grid";
-import { OmarchyColors, SchemeKind } from "@/features/material/colors";
+import { ContrastLevel, Mode, OmarchyColors, SchemeKind } from "@/features/material/colors";
 import { MaterialService } from "@/features/material/service";
 import { ColorsGrid } from "./components/colors-grid";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,6 +30,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { WallhavenInputs } from "./components/wallhaven-inputs";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 
 const CONSTRUCTORS = Object.keys(MaterialService.schemeContstructors).map((key) => ({
   value: key,
@@ -46,27 +48,50 @@ const Props = Schema.Struct({
   children: Schema.optionalKey(Children),
 });
 
-const wallhavenSearch = Async("WallhavenSearch", {
+const WallhavenSearch = Async("WallhavenSearch", {
   success: WallhavenSearchPayload,
   onError: Async.message,
   run: (params: typeof WallhavenSearchParams.Type) =>
     Effect.flatMap(WallhavenService, (wallhaven) => wallhaven.search(params)),
 });
 
-const pexelsCurated = Async("PexelsCurated", {
+const PexelsCurated = Async("PexelsCurated", {
   success: Schema.Array(PexelsPhoto),
   onError: Async.message,
   run: (_: void) => Effect.flatMap(PexelsService, (pexels) => pexels.curated),
 });
 
+const CreateOmarchyColors = Async("CreateOmarchyColors", {
+  success: OmarchyColors,
+  onError: Async.message,
+  run: (state: State) =>
+    Effect.gen(function* () {
+      if (!state.selectedImageUrl) {
+        return yield* Effect.fail(new Error("No image selected"));
+      }
+
+      const material = yield* MaterialService;
+
+      const colors = yield* material.createOmarchyColorsFromImage(state.selectedImageUrl, {
+        schemeKind: state.schemeKind,
+        isDark: state.mode === "dark",
+        contrastLevel: state.contrastLevel,
+      });
+
+      return colors;
+    }),
+});
+
 const State = Schema.Struct({
   inputType: InputKind,
   selectedImageUrl: Schema.UndefinedOr(Schema.URLFromString).pipe(Schema.optional),
-  omarchyColors: Schema.UndefinedOr(OmarchyColors).pipe(Schema.optional),
   schemeKind: SchemeKind,
   wallhavenSearchParams: WallhavenSearchParams,
+  mode: Mode,
+  contrastLevel: ContrastLevel,
   search: Async.slice(WallhavenSearchPayload),
   curated: Async.slice(Schema.Array(PexelsPhoto)),
+  omarchyColors: Async.slice(OmarchyColors),
 });
 type State = typeof State.Type;
 
@@ -74,24 +99,29 @@ type State = typeof State.Type;
 // Actions
 //
 
-const SearchWallhaven = Action("SearchWallhaven", WallhavenSearchParams.fields);
-const ClickedWallhavenPaginator = Action("ClickedWallhavenPaginator", { page: Schema.Number });
 const ClickedImageThumb = Action("ClickedImageThumb", { url: Schema.URLFromString });
+const ClickedWallhavenPaginator = Action("ClickedWallhavenPaginator", { page: Schema.Number });
+const CommitContrastLevel = Action("CommitContrastLevel", { contrastLevel: ContrastLevel });
+const SearchWallhaven = Action("SearchWallhaven", WallhavenSearchParams.fields);
+const SetContrastLevel = Action("SetContrastLevel", { contrastLevel: ContrastLevel });
 const SetInputKind = Action("SetInputKind", { inputType: InputKind });
-const SetOmarchyColors = Action("SetOmarchyColors", { colors: OmarchyColors });
+const SetMode = Action("SetMode", { mode: Mode });
 const SetSchemeKind = Action("SetSchemeKind", { schemeKind: SchemeKind });
 const SetWallhavenSearchParams = Action("SetWallhavenSearchParams", WallhavenSearchParams.fields);
 
 const SeedAction = Action.of([
-  SearchWallhaven,
-  ClickedWallhavenPaginator,
+  ...PexelsCurated.actions,
+  ...WallhavenSearch.actions,
+  ...CreateOmarchyColors.actions,
+  CommitContrastLevel,
   ClickedImageThumb,
+  ClickedWallhavenPaginator,
+  SearchWallhaven,
+  SetContrastLevel,
   SetInputKind,
-  SetOmarchyColors,
+  SetMode,
   SetSchemeKind,
   SetWallhavenSearchParams,
-  ...wallhavenSearch.actions,
-  ...pexelsCurated.actions,
 ]);
 
 //
@@ -107,6 +137,8 @@ const SeedFactory = define({
 const initialState = SeedFactory.initialState(() => ({
   inputType: "file" as const,
   schemeKind: "neutral",
+  mode: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+  contrastLevel: 0,
   wallhavenSearchParams: {
     page: 1,
     categories: ["general"],
@@ -117,41 +149,42 @@ const initialState = SeedFactory.initialState(() => ({
   },
   search: Async.idle,
   curated: Async.idle,
+  omarchyColors: Async.idle,
 }));
-
-const createOmarchyColors = (url: URL, state: typeof State.Type) =>
-  Effect.gen(function* () {
-    const material = yield* MaterialService;
-
-    const colors = yield* material.createOmarchyColorsFromImage(url, {
-      schemeKind: state.schemeKind,
-      isDark: true,
-    });
-
-    return colors;
-  });
 
 const reducer = SeedFactory.reducer({
   Mounted: (_, { state }) => {
     if (state.inputType === "wallhaven") {
-      return [state, wallhavenSearch.run(state.wallhavenSearchParams)];
+      return Async.start(state, "search", WallhavenSearch.run(state.wallhavenSearchParams));
     }
 
     return state;
+  },
+
+  SetContrastLevel: (payload, { state }) => ({ ...state, ...payload }),
+
+  CommitContrastLevel: (payload, { state }) => {
+    const nextState = { ...state, ...payload };
+    return Async.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
   },
 
   SetInputKind: (payload, { state }) => {
     const next = { ...state, inputType: payload.inputType };
 
     if (payload.inputType === "pexels") {
-      return [{ ...next, curated: Async.pending }, pexelsCurated.run()];
+      return Async.start(next, "curated", PexelsCurated.run());
     }
 
     if (payload.inputType === "wallhaven") {
-      return [{ ...next, search: Async.pending }, wallhavenSearch.run(state.wallhavenSearchParams)];
+      return Async.start(next, "search", WallhavenSearch.run(state.wallhavenSearchParams));
     }
 
     return next;
+  },
+
+  SetMode: (payload, { state }) => {
+    const nextState = { ...state, mode: payload.mode };
+    return Async.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
   },
 
   ClickedWallhavenPaginator: (payload, { state }) => {
@@ -160,62 +193,30 @@ const reducer = SeedFactory.reducer({
       page: payload.page || state.wallhavenSearchParams.page || 1,
     };
 
-    return [
-      {
-        ...state,
-        wallhavenSearchParams: searchParams,
-        search: Async.pending,
-      },
-      wallhavenSearch.run(searchParams),
-    ];
+    return Async.start(
+      { ...state, wallhavenSearchParams: searchParams },
+      "search",
+      WallhavenSearch.run(searchParams),
+    );
   },
 
-  ClickedImageThumb: (payload, { state }) => [
-    { ...state, selectedImageUrl: payload.url, omarchyColors: undefined },
-    Command.effect((dispatch) =>
-      Effect.gen(function* () {
-        yield* dispatch(
-          SetOmarchyColors.make({ colors: yield* createOmarchyColors(payload.url, state) }),
-        );
-      }).pipe(
-        Effect.catch((err) => {
-          console.error(err.cause);
-          return Effect.void;
-        }),
-      ),
-    ),
-  ],
+  ClickedImageThumb: (payload, { state }) => {
+    const nextState = { ...state, selectedImageUrl: payload.url };
+    return Async.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
+  },
 
-  SetSchemeKind: (payload, { state }) => [
-    { ...state, omarchyColors: undefined, schemeKind: payload.schemeKind },
-    Command.effect((dispatch) =>
-      Effect.gen(function* () {
-        if (!state.selectedImageUrl) return;
-        yield* dispatch(
-          SetOmarchyColors.make({
-            colors: yield* createOmarchyColors(state.selectedImageUrl, state),
-          }),
-        );
-      }).pipe(
-        Effect.catch((err) => {
-          console.error(err.cause);
-          return Effect.void;
-        }),
-      ),
-    ),
-  ],
-
-  SetOmarchyColors: (payload, { state }) => ({ ...state, omarchyColors: payload.colors }),
+  SetSchemeKind: (payload, { state }) => {
+    const nextState = { ...state, schemeKind: payload.schemeKind };
+    return Async.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
+  },
 
   SetWallhavenSearchParams: (wallhavenSearchParams, { state }) => ({
     ...state,
     wallhavenSearchParams,
   }),
 
-  SearchWallhaven: (payload, { state }) => [
-    { ...state, search: Async.pending },
-    wallhavenSearch.run(payload),
-  ],
+  SearchWallhaven: (payload, { state }) =>
+    Async.start(state, "search", WallhavenSearch.run(payload)),
 
   WallhavenSearchResolved: (payload, { state }) => ({
     ...state,
@@ -233,6 +234,15 @@ const reducer = SeedFactory.reducer({
   PexelsCuratedRejected: (payload, { state }) => ({
     ...state,
     curated: Async.rejected(payload.error),
+  }),
+
+  CreateOmarchyColorsRejected: (payload, { state }) => ({
+    ...state,
+    omarchyColors: Async.rejected(payload.error),
+  }),
+  CreateOmarchyColorsResolved: (payload, { state }) => ({
+    ...state,
+    omarchyColors: Async.resolved(payload.value),
   }),
 });
 
@@ -370,28 +380,78 @@ const render = SeedFactory.render(({ state, dispatch }) => {
           <Skeleton className="aspect-video" />
         )}
 
-        <Select
-          items={CONSTRUCTORS}
-          value={state.schemeKind}
-          onValueChange={(value) =>
-            dispatch(SetSchemeKind.make({ schemeKind: value ?? "neutral" }))
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="scheme" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {CONSTRUCTORS.map((item) => (
-                <SelectItem key={item.value} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        {state.selectedImageUrl ? (
+          <div className="flex gap-2">
+            <Select
+              items={CONSTRUCTORS}
+              value={state.schemeKind}
+              onValueChange={(value) =>
+                dispatch(SetSchemeKind.make({ schemeKind: value ?? "neutral" }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="scheme" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {CONSTRUCTORS.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
 
-        <ColorsGrid omarchyColors={state.omarchyColors} />
+            <Select
+              items={[
+                { value: "light", label: "light" },
+                { value: "dark", label: "dark" },
+              ]}
+              value={state.mode}
+              onValueChange={(value) => dispatch(SetMode.make({ mode: value ?? state.mode }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="mode" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="light">light</SelectItem>
+                  <SelectItem value="dark">dark</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            <div className="flex items-center flex-1 gap-2 pl-1">
+              <Label>contrast</Label>
+              <Slider
+                min={-1}
+                max={1}
+                step={0.1}
+                value={state.contrastLevel}
+                onValueCommitted={(value) =>
+                  dispatch(CommitContrastLevel.make({ contrastLevel: value as number }))
+                }
+                onValueChange={(value) =>
+                  dispatch(SetContrastLevel.make({ contrastLevel: value as number }))
+                }
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="flex gap-2 h-8" aria-hidden>
+            <Skeleton className="flex-1" />
+            <Skeleton className="flex-1" />
+            <Skeleton className="flex-4" />
+          </div>
+        )}
+
+        {Async.match(state.omarchyColors, {
+          Idle: () => null,
+          Pending: () => <ColorsGrid />,
+          Rejected: (rejected) => `Error: ${rejected.error}`,
+          Resolved: (resolved) => <ColorsGrid omarchyColors={resolved.value} />,
+        })}
       </div>
     </div>
   );

@@ -40,62 +40,57 @@ export const ColorsGrid: FC<{ readonly omarchyColors?: OmarchyColors }> = ({ oma
   }, [omarchyColors]);
 
   return (
-    <div className="flex flex-col gap-1">
-      <div>
-        <Tile
-          label="accent"
-          color={omarchyColors?.accent}
-          textColor={accentForeground}
-          className="aspect-12/1"
-        />
-      </div>
+    <div className="grid grid-cols-12 gap-1">
+      <Tile label="accent" color={omarchyColors?.accent} textColor={accentForeground} />
 
-      <div className="grid grid-cols-4 gap-1">
-        {BACKGROUND_COLOR_KEYS.map((key) => (
-          <Tile
-            key={key}
-            label={key}
-            color={omarchyColors?.[key]}
-            textColor={omarchyColors?.foreground}
-            className="aspect-4/1"
-          />
-        ))}
-      </div>
+      <div className="flex flex-col gap-1 col-span-11">
+        <div className="grid grid-cols-4 gap-1">
+          {BACKGROUND_COLOR_KEYS.map((key) => (
+            <Tile
+              key={key}
+              label={key}
+              color={omarchyColors?.[key]}
+              textColor={omarchyColors?.foreground}
+              className="aspect-4/1"
+            />
+          ))}
+        </div>
 
-      <div className="grid grid-cols-4 gap-1">
-        {FOREGROUND_COLOR_KEYS.map((key) => (
-          <Tile
-            key={key}
-            label={key}
-            color={omarchyColors?.[key]}
-            textColor={omarchyColors?.background}
-            className="aspect-4/1"
-          />
-        ))}
-      </div>
+        <div className="grid grid-cols-4 gap-1">
+          {FOREGROUND_COLOR_KEYS.map((key) => (
+            <Tile
+              key={key}
+              label={key}
+              color={omarchyColors?.[key]}
+              textColor={omarchyColors?.background}
+              className="aspect-4/1"
+            />
+          ))}
+        </div>
 
-      <div className="grid grid-cols-7 gap-1">
-        {BASE_COLOR_KEYS.map((key) => (
-          <Tile
-            key={key}
-            label={key}
-            color={omarchyColors?.[key]}
-            textColor={omarchyColors?.darker_background}
-            className="aspect-2/1"
-          />
-        ))}
-      </div>
+        <div className="grid grid-cols-7 gap-1">
+          {BASE_COLOR_KEYS.map((key) => (
+            <Tile
+              key={key}
+              label={key}
+              color={omarchyColors?.[key]}
+              textColor={omarchyColors?.darker_background}
+              className="aspect-2/1"
+            />
+          ))}
+        </div>
 
-      <div className="grid grid-cols-7 gap-1">
-        {BASE_COLOR_BRIGHT_KEYS.map((key) => (
-          <Tile
-            key={key}
-            label={key}
-            color={omarchyColors?.[key]}
-            textColor={omarchyColors?.darker_background}
-            className="aspect-2/1"
-          />
-        ))}
+        <div className="grid grid-cols-7 gap-1">
+          {BASE_COLOR_BRIGHT_KEYS.map((key) => (
+            <Tile
+              key={key}
+              label={key}
+              color={omarchyColors?.[key]}
+              textColor={omarchyColors?.darker_background}
+              className="aspect-2/1"
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
