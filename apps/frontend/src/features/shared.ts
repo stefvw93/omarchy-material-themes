@@ -7,10 +7,10 @@ import { MaterialService } from "./material/service";
 import { OmarchyTheme } from "./omarchy-theme";
 
 export const MainLayer = Layer.mergeAll(
-  import.meta.env.DEV ? Layer.mergeAll(consoleDevtoolsLayer(), OmarchyTheme.dev) : Layer.empty,
   WallhavenService.layer,
   PexelsService.layer,
   MaterialService.layer,
+  import.meta.env.DEV ? Layer.mergeAll(consoleDevtoolsLayer(), OmarchyTheme.dev) : Layer.empty,
 ).pipe(
   Layer.provide(TauriHttpClient.layer),
   Layer.provide(TauriFileSystem.layer),

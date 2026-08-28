@@ -1,13 +1,30 @@
-import { Context, Effect, FileSystem, Layer, PlatformError, Schema } from "effect";
+import { Context, Effect, FileSystem, Layer, Schema } from "effect";
 import { homeDir, join } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api/core";
 import type { OmarchyColors } from "../material/colors";
+import { HttpClient } from "effect/unstable/http";
 
 export interface OmarchyThemeImpl {
-  writeColors: (colors: OmarchyColors) => Effect.Effect<void, PlatformError.PlatformError, never>;
-  // writeBackgroundImage: (url: URL) => Effect.Effect<void, PlatformError.PlatformError, never>;
+  writeColors: (colors: OmarchyColors) => Effect.Effect<void, OmarchyThemeError, never>;
+  writeBackgroundImage: (url: URL) => Effect.Effect<void, OmarchyThemeError, never>;
   setTheme: (name: string) => Effect.Effect<void, OmarchyThemeError, never>;
 }
+
+const imageContentTypeToExtension: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+  "image/avif": "avif",
+  "image/bmp": "bmp",
+  "image/svg+xml": "svg",
+  "image/tiff": "tiff",
+};
+
+const imageExtensionFromContentType = (contentType: string | undefined): string => {
+  const mimeType = contentType?.split(";")[0]?.trim().toLowerCase();
+  return (mimeType && imageContentTypeToExtension[mimeType]) ?? "jpg";
+};
 
 export class OmarchyTheme extends Context.Service<OmarchyTheme, OmarchyThemeImpl>()(
   "frontend/features/omarchy-theme/OmarchyTheme",
@@ -16,12 +33,21 @@ export class OmarchyTheme extends Context.Service<OmarchyTheme, OmarchyThemeImpl
     this,
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
+
+      const client = (yield* HttpClient.HttpClient).pipe(
+        HttpClient.tapRequest((req) => Effect.log(req.toJSON())),
+        HttpClient.tap(Effect.log),
+        HttpClient.filterStatusOk,
+      );
+
       const home = yield* Effect.promise(homeDir);
       const devThemePath = yield* Effect.promise(() =>
         join(home, ".config/omarchy/themes/omaterial-dev"),
       );
+      const backgroundImagesPath = yield* Effect.promise(() => join(devThemePath, "backgrounds"));
 
       yield* fs.makeDirectory(devThemePath, { recursive: true });
+      yield* fs.makeDirectory(backgroundImagesPath, { recursive: true });
 
       const writeColors: OmarchyThemeImpl["writeColors"] = (colors) =>
         Effect.gen(function* () {
@@ -35,7 +61,22 @@ ${Object.entries(colors)
   .join("\n")}
 `;
           yield* fs.writeFileString(colorsTomlPath, contents);
-        });
+        }).pipe(Effect.catch((e) => Effect.fail(new OmarchyThemeError({ cause: e }))));
+
+      const writeBackgroundImage: OmarchyThemeImpl["writeBackgroundImage"] = (url) =>
+        Effect.gen(function* () {
+          const res = yield* client.get(url.toString());
+          const data = yield* res.arrayBuffer;
+
+          const extension = imageExtensionFromContentType(res.headers["content-type"]);
+
+          const imageBytes = new Uint8Array(data);
+          const imagePath = yield* Effect.promise(() =>
+            join(devThemePath, `backgrounds/background.${extension}`),
+          );
+
+          yield* fs.writeFile(imagePath, imageBytes);
+        }).pipe(Effect.catch((e) => Effect.fail(new OmarchyThemeError({ cause: e }))));
 
       const setTheme: OmarchyThemeImpl["setTheme"] = (name) =>
         Effect.tryPromise({
@@ -43,7 +84,7 @@ ${Object.entries(colors)
           catch: (cause) => new OmarchyThemeError({ cause }),
         });
 
-      return { writeColors, setTheme };
+      return { writeColors, writeBackgroundImage, setTheme };
     }),
   );
 }

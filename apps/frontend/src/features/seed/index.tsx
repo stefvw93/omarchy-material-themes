@@ -90,8 +90,11 @@ const ApplyOmarchyColors = Async("ApplyOmarchyColors", {
   run: (state: State) =>
     Effect.gen(function* () {
       if (state.omarchyColors._tag !== "Resolved") return;
+      if (!state.selectedImageUrl) return;
+
       const omarchyTheme = yield* OmarchyTheme;
       yield* omarchyTheme.writeColors(state.omarchyColors.value);
+      yield* omarchyTheme.writeBackgroundImage(state.selectedImageUrl);
       yield* omarchyTheme.setTheme("omaterial-dev");
     }),
 });
