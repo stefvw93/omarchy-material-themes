@@ -32,6 +32,8 @@ import {
 import { WallhavenInputs } from "./components/wallhaven-inputs";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { OmarchyTheme } from "../omarchy-theme";
+import { Button } from "@/components/ui/button";
 
 const CONSTRUCTORS = Object.keys(MaterialService.schemeContstructors).map((key) => ({
   value: key,
@@ -82,6 +84,18 @@ const CreateOmarchyColors = Async("CreateOmarchyColors", {
     }),
 });
 
+const ApplyOmarchyColors = Async("ApplyOmarchyColors", {
+  success: Schema.Void,
+  onError: Async.message,
+  run: (state: State) =>
+    Effect.gen(function* () {
+      if (state.omarchyColors._tag !== "Resolved") return;
+      const omarchyTheme = yield* OmarchyTheme;
+      yield* omarchyTheme.writeColors(state.omarchyColors.value);
+      yield* omarchyTheme.setTheme("omaterial-dev");
+    }),
+});
+
 const State = Schema.Struct({
   inputType: InputKind,
   selectedImageUrl: Schema.UndefinedOr(Schema.URLFromString).pipe(Schema.optional),
@@ -92,6 +106,7 @@ const State = Schema.Struct({
   search: Async.slice(WallhavenSearchPayload),
   curated: Async.slice(Schema.Array(PexelsPhoto)),
   omarchyColors: Async.slice(OmarchyColors),
+  omarchyTheme: Async.slice(Schema.Void),
 });
 type State = typeof State.Type;
 
@@ -108,11 +123,14 @@ const SetInputKind = Action("SetInputKind", { inputType: InputKind });
 const SetMode = Action("SetMode", { mode: Mode });
 const SetSchemeKind = Action("SetSchemeKind", { schemeKind: SchemeKind });
 const SetWallhavenSearchParams = Action("SetWallhavenSearchParams", WallhavenSearchParams.fields);
+const ApplyColors = Action("ApplyColors", {});
 
 const SeedAction = Action.of([
   ...PexelsCurated.actions,
   ...WallhavenSearch.actions,
   ...CreateOmarchyColors.actions,
+  ...ApplyOmarchyColors.actions,
+  ApplyColors,
   CommitContrastLevel,
   ClickedImageThumb,
   ClickedWallhavenPaginator,
@@ -150,6 +168,7 @@ const initialState = SeedFactory.initialState(() => ({
   search: Async.idle,
   curated: Async.idle,
   omarchyColors: Async.idle,
+  omarchyTheme: Async.idle,
 }));
 
 const reducer = SeedFactory.reducer({
@@ -215,6 +234,8 @@ const reducer = SeedFactory.reducer({
     wallhavenSearchParams,
   }),
 
+  ApplyColors: (_, { state }) => Async.start(state, "omarchyTheme", ApplyOmarchyColors.run(state)),
+
   SearchWallhaven: (payload, { state }) =>
     Async.start(state, "search", WallhavenSearch.run(payload)),
 
@@ -243,6 +264,15 @@ const reducer = SeedFactory.reducer({
   CreateOmarchyColorsResolved: (payload, { state }) => ({
     ...state,
     omarchyColors: Async.resolved(payload.value),
+  }),
+
+  ApplyOmarchyColorsRejected: (payload, { state }) => ({
+    ...state,
+    omarchyTheme: Async.rejected(payload.error),
+  }),
+  ApplyOmarchyColorsResolved: (payload, { state }) => ({
+    ...state,
+    omarchyTheme: Async.resolved(payload.value),
   }),
 });
 
@@ -452,6 +482,8 @@ const render = SeedFactory.render(({ state, dispatch }) => {
           Rejected: (rejected) => `Error: ${rejected.error}`,
           Resolved: (resolved) => <ColorsGrid omarchyColors={resolved.value} />,
         })}
+
+        <Button onClick={() => dispatch(ApplyColors.make({}))}>Apply</Button>
       </div>
     </div>
   );

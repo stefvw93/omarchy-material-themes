@@ -11,8 +11,8 @@ if (
   console.log("[worker] live");
 
   onmessage = async (event) => {
-    const MainLayer = await import("../shared").then((m) => m.MainLayer);
-    const workerRuntimeMain = ManagedRuntime.make(MainLayer);
+    const MaterialWorkerLayer = await import("../shared").then((m) => m.MaterialWorkerLayer);
+    const workerRuntimeMain = ManagedRuntime.make(MaterialWorkerLayer);
 
     // Read before decoding: a malformed request still needs a reply the caller can match.
     const requestId = (event.data as { id?: unknown } | null)?.id;

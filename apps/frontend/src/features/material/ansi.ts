@@ -47,8 +47,21 @@ export const MIN_SEPARATION = 22;
 /** Chroma below which slots stop being tellable apart, regardless of what the seed had. */
 const SOURCE_CHROMA_FLOOR = 26;
 
-/** How much more luminous a `bright_` slot is than its base. */
-const BRIGHT_STEP = 12;
+/**
+ * How much more luminous a `bright_` slot is than its base. Kept small on purpose:
+ * sRGB's max achievable chroma falls off sharply as tone climbs for red/orange/blue/
+ * magenta (e.g. red's gamut ceiling roughly halves from tone 72 to tone 84), so a big
+ * step reads as pale rather than vivid. A small step keeps bright tones near the base's
+ * chroma headroom; `bright()` below then maxes out that headroom instead of scaling it.
+ */
+const BRIGHT_STEP = 4;
+
+/**
+ * Deliberately past what any hue/tone can display, so `Hct.from` always clips it down
+ * to the true sRGB gamut boundary — the most saturated colour displayable at that tone.
+ * This is what makes `bright_` read as fierce rather than merely lighter.
+ */
+const BRIGHT_CHROMA_CEILING = 150;
 
 export interface AnsiPolicy {
   /** Maximum degrees a slot may leave its anchor, before the semantic lock scales it down. */
@@ -229,7 +242,7 @@ export function buildAnsiColors(scheme: DynamicScheme, imageHues: readonly numbe
     Hct.from(hue, targetChroma, tone).toInt();
 
   const base = (slot: AnsiSlot) => toArgb(hues[slot], chroma, baseTone);
-  const bright = (slot: AnsiSlot) => toArgb(hues[slot], chroma * 1.2, brightTone);
+  const bright = (slot: AnsiSlot) => toArgb(hues[slot], BRIGHT_CHROMA_CEILING, brightTone);
 
   return {
     red: base("red"),

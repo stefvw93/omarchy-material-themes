@@ -1,4 +1,4 @@
-import { readDir } from "@tauri-apps/plugin-fs";
+import * as TauriFS from "@tauri-apps/plugin-fs";
 import { Effect, FileSystem, Layer, PlatformError, Stream } from "effect";
 import { errorTagOfCause } from "./utils";
 
@@ -23,7 +23,7 @@ const readDirectory: FileSystem.FileSystem["readDirectory"] = (path, options) =>
   }
 
   return Effect.tryPromise({
-    try: () => readDir(path),
+    try: () => TauriFS.readDir(path),
     catch: (cause) =>
       PlatformError.systemError({
         _tag: errorTagOfCause(cause),
@@ -35,7 +35,35 @@ const readDirectory: FileSystem.FileSystem["readDirectory"] = (path, options) =>
   }).pipe(Effect.map((entries) => entries.map((e) => e.name)));
 };
 
-const makeFileSystem = FileSystem.make({
+const makeDirectory: FileSystem.FileSystem["makeDirectory"] = (path, options) => {
+  return Effect.tryPromise({
+    try: () => TauriFS.mkdir(path, options),
+    catch: (cause) =>
+      PlatformError.systemError({
+        _tag: errorTagOfCause(cause),
+        module: "@effect-platform-tauri/FileSystem",
+        method: "makeDirectory",
+        pathOrDescriptor: path,
+        cause,
+      }),
+  });
+};
+
+const writeFile: FileSystem.FileSystem["writeFile"] = (path, content, options) => {
+  return Effect.tryPromise({
+    try: () => TauriFS.writeFile(path, content, options),
+    catch: (cause) =>
+      PlatformError.systemError({
+        _tag: errorTagOfCause(cause),
+        module: "@effect-platform-tauri/FileSystem",
+        method: "writeFile",
+        pathOrDescriptor: path,
+        cause,
+      }),
+  });
+};
+
+const tauriFS = FileSystem.make({
   access: notImplemented,
   chmod: notImplemented,
   chown: notImplemented,
@@ -43,7 +71,7 @@ const makeFileSystem = FileSystem.make({
   copyFile: notImplemented,
   glob: notImplemented,
   link: notImplemented,
-  makeDirectory: notImplemented,
+  makeDirectory,
   makeTempDirectory: notImplemented,
   makeTempDirectoryScoped: notImplemented,
   makeTempFile: notImplemented,
@@ -62,7 +90,7 @@ const makeFileSystem = FileSystem.make({
   watch(_path, _options) {
     return Stream.fail(notImplementedError);
   },
-  writeFile: notImplemented,
+  writeFile,
 });
 
 /**
@@ -70,5 +98,5 @@ const makeFileSystem = FileSystem.make({
  * file operations, directory operations, links, metadata, and file watching.
  */
 export const layer: Layer.Layer<FileSystem.FileSystem> = Layer.effect(FileSystem.FileSystem)(
-  Effect.succeed(makeFileSystem),
+  Effect.succeed(tauriFS),
 );
