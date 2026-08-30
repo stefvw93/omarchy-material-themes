@@ -1,4 +1,4 @@
-import { Async } from "react-argon";
+import { Task } from "react-argon";
 import {
   ApplyColors,
   CommitContrastLevel,
@@ -111,7 +111,7 @@ export const OutputPanel = () => {
         </div>
       )}
 
-      {Async.match(state.omarchyColors, {
+      {Task.match(state.omarchyColors, {
         Idle: () => null,
         Pending: () => <ColorsGrid />,
         Rejected: (rejected) => `Error: ${rejected.error}`,

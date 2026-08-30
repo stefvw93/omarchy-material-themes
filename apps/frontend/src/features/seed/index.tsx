@@ -1,5 +1,5 @@
 import { Effect, Schema } from "effect";
-import { Action, Async, Children, define } from "react-argon";
+import { Action, Task, Children, define } from "react-argon";
 import { component } from "../shared";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,22 +27,22 @@ const Props = Schema.Struct({
   children: Schema.optionalKey(Children),
 });
 
-const WallhavenSearch = Async("WallhavenSearch", {
+const WallhavenSearch = Task("WallhavenSearch", {
   success: WallhavenSearchPayload,
-  onError: Async.message,
+  onError: Task.message,
   run: (params: typeof WallhavenSearchParams.Type) =>
     Effect.flatMap(WallhavenService, (wallhaven) => wallhaven.search(params)),
 });
 
-const PexelsCurated = Async("PexelsCurated", {
+const PexelsCurated = Task("PexelsCurated", {
   success: Schema.Array(PexelsPhoto),
-  onError: Async.message,
+  onError: Task.message,
   run: (_: void) => Effect.flatMap(PexelsService, (pexels) => pexels.curated),
 });
 
-const CreateOmarchyColors = Async("CreateOmarchyColors", {
+const CreateOmarchyColors = Task("CreateOmarchyColors", {
   success: OmarchyColors,
-  onError: Async.message,
+  onError: Task.message,
   run: (state: State) =>
     Effect.gen(function* () {
       if (!state.selectedImageUrl) {
@@ -61,9 +61,9 @@ const CreateOmarchyColors = Async("CreateOmarchyColors", {
     }),
 });
 
-const ApplyOmarchyColors = Async("ApplyOmarchyColors", {
+const ApplyOmarchyColors = Task("ApplyOmarchyColors", {
   success: Schema.Void,
-  onError: Async.message,
+  onError: Task.message,
   run: (state: State) =>
     Effect.gen(function* () {
       if (state.omarchyColors._tag !== "Resolved") return;
@@ -83,10 +83,10 @@ const State = Schema.Struct({
   wallhavenSearchParams: WallhavenSearchParams,
   mode: Mode,
   contrastLevel: ContrastLevel,
-  search: Async.slice(WallhavenSearchPayload),
-  curated: Async.slice(Schema.Array(PexelsPhoto)),
-  omarchyColors: Async.slice(OmarchyColors),
-  omarchyTheme: Async.slice(Schema.Void),
+  search: Task.slice(WallhavenSearchPayload),
+  curated: Task.slice(Schema.Array(PexelsPhoto)),
+  omarchyColors: Task.slice(OmarchyColors),
+  omarchyTheme: Task.slice(Schema.Void),
 });
 type State = typeof State.Type;
 
@@ -147,16 +147,16 @@ const initialState = SeedDefinition.initialState(() => ({
     topRange: "1y",
     atleast: "2560x1440",
   },
-  search: Async.idle,
-  curated: Async.idle,
-  omarchyColors: Async.idle,
-  omarchyTheme: Async.idle,
+  search: Task.idle,
+  curated: Task.idle,
+  omarchyColors: Task.idle,
+  omarchyTheme: Task.idle,
 }));
 
 const reducer = SeedDefinition.reducer({
   Mounted: (_, { state }) => {
     if (state.inputType === "wallhaven") {
-      return Async.start(state, "search", WallhavenSearch.run(state.wallhavenSearchParams));
+      return Task.start(state, "search", WallhavenSearch.run(state.wallhavenSearchParams));
     }
 
     return state;
@@ -166,18 +166,18 @@ const reducer = SeedDefinition.reducer({
 
   CommitContrastLevel: (payload, { state }) => {
     const nextState = { ...state, ...payload };
-    return Async.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
+    return Task.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
   },
 
   SetInputKind: (payload, { state }) => {
     const next = { ...state, inputType: payload.inputType };
 
     if (payload.inputType === "pexels") {
-      return Async.start(next, "curated", PexelsCurated.run());
+      return Task.start(next, "curated", PexelsCurated.run());
     }
 
     if (payload.inputType === "wallhaven") {
-      return Async.start(next, "search", WallhavenSearch.run(state.wallhavenSearchParams));
+      return Task.start(next, "search", WallhavenSearch.run(state.wallhavenSearchParams));
     }
 
     return next;
@@ -185,7 +185,7 @@ const reducer = SeedDefinition.reducer({
 
   SetMode: (payload, { state }) => {
     const nextState = { ...state, mode: payload.mode };
-    return Async.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
+    return Task.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
   },
 
   ClickedWallhavenPaginator: (payload, { state }) => {
@@ -194,7 +194,7 @@ const reducer = SeedDefinition.reducer({
       page: payload.page || state.wallhavenSearchParams.page || 1,
     };
 
-    return Async.start(
+    return Task.start(
       { ...state, wallhavenSearchParams: searchParams },
       "search",
       WallhavenSearch.run(searchParams),
@@ -203,12 +203,12 @@ const reducer = SeedDefinition.reducer({
 
   ClickedImageThumb: (payload, { state }) => {
     const nextState = { ...state, selectedImageUrl: payload.url };
-    return Async.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
+    return Task.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
   },
 
   SetSchemeKind: (payload, { state }) => {
     const nextState = { ...state, schemeKind: payload.schemeKind };
-    return Async.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
+    return Task.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
   },
 
   SetWallhavenSearchParams: (wallhavenSearchParams, { state }) => ({
@@ -216,45 +216,45 @@ const reducer = SeedDefinition.reducer({
     wallhavenSearchParams,
   }),
 
-  ApplyColors: (_, { state }) => Async.start(state, "omarchyTheme", ApplyOmarchyColors.run(state)),
+  ApplyColors: (_, { state }) => Task.start(state, "omarchyTheme", ApplyOmarchyColors.run(state)),
 
   SearchWallhaven: (payload, { state }) =>
-    Async.start(state, "search", WallhavenSearch.run(payload)),
+    Task.start(state, "search", WallhavenSearch.run(payload)),
 
   WallhavenSearchResolved: (payload, { state }) => ({
     ...state,
-    search: Async.resolved(payload.value),
+    search: Task.resolved(payload.value),
   }),
   WallhavenSearchRejected: (payload, { state }) => ({
     ...state,
-    search: Async.rejected(payload.error),
+    search: Task.rejected(payload.error),
   }),
 
   PexelsCuratedResolved: (payload, { state }) => ({
     ...state,
-    curated: Async.resolved(payload.value),
+    curated: Task.resolved(payload.value),
   }),
   PexelsCuratedRejected: (payload, { state }) => ({
     ...state,
-    curated: Async.rejected(payload.error),
+    curated: Task.rejected(payload.error),
   }),
 
   CreateOmarchyColorsRejected: (payload, { state }) => ({
     ...state,
-    omarchyColors: Async.rejected(payload.error),
+    omarchyColors: Task.rejected(payload.error),
   }),
   CreateOmarchyColorsResolved: (payload, { state }) => ({
     ...state,
-    omarchyColors: Async.resolved(payload.value),
+    omarchyColors: Task.resolved(payload.value),
   }),
 
   ApplyOmarchyColorsRejected: (payload, { state }) => ({
     ...state,
-    omarchyTheme: Async.rejected(payload.error),
+    omarchyTheme: Task.rejected(payload.error),
   }),
   ApplyOmarchyColorsResolved: (payload, { state }) => ({
     ...state,
-    omarchyTheme: Async.resolved(payload.value),
+    omarchyTheme: Task.resolved(payload.value),
   }),
 });
 
@@ -280,7 +280,7 @@ const render = SeedDefinition.render(({ state, dispatch }) => (
         <TabsContent value="wallhaven" className="flex flex-col flex-1 min-h-0 gap-2">
           <WallhavenInputs
             value={state.wallhavenSearchParams}
-            loading={Async.isPending(state.search)}
+            loading={Task.isPending(state.search)}
             onChange={(params) => dispatch(SetWallhavenSearchParams.make(params))}
             onSubmit={(params) => dispatch(SearchWallhaven.make(params))}
           />

@@ -1,6 +1,6 @@
 import { Context, Effect, Schema } from "effect";
 import { expect, test } from "tstyche";
-import { Async } from "../utils/async";
+import { Task } from "../utils/task";
 import type { Command, ServicesOf } from "../lib";
 
 class Api extends Context.Service<Api, { readonly load: Effect.Effect<string> }>()("Api") {}
@@ -14,7 +14,7 @@ type SearchAction =
 // ---------------------------------------------------------------------------
 
 test("an operation owns the work and nothing state-shaped", () => {
-  const search = Async("Search", { success: Schema.String, onError: Async.message });
+  const search = Task("Search", { success: Schema.String, onError: Task.message });
 
   expect(search).type.not.toHaveProperty("field");
   expect(search).type.not.toHaveProperty("initial");
@@ -28,16 +28,16 @@ test("an operation owns the work and nothing state-shaped", () => {
 
 test("a lower-case name is rejected, the way an action tag is", () => {
   // The name is the tag prefix, so it has to be capitalised.
-  expect(Async).type.not.toBeCallableWith("search", {
+  expect(Task).type.not.toBeCallableWith("search", {
     success: Schema.String,
-    onError: Async.message,
+    onError: Task.message,
   });
 });
 
 test("take-first is not a mode — it is a guard the handler writes", () => {
-  expect(Async).type.not.toBeCallableWith("Search", {
+  expect(Task).type.not.toBeCallableWith("Search", {
     success: Schema.String,
-    onError: Async.message,
+    onError: Task.message,
     mode: "first",
   });
 });
@@ -47,9 +47,9 @@ test("take-first is not a mode — it is a guard the handler writes", () => {
 // ---------------------------------------------------------------------------
 
 test("declaring `run` makes the operation's `run` take its input, and only its input", () => {
-  const search = Async("Search", {
+  const search = Task("Search", {
     success: Schema.String,
-    onError: Async.message,
+    onError: Task.message,
     run: (query: string) =>
       Effect.map(
         Effect.flatMap(Api, (api) => api.load),
@@ -64,13 +64,13 @@ test("declaring `run` makes the operation's `run` take its input, and only its i
 });
 
 test("without `run`, it takes the effect and carries its services to `ServicesOf`", () => {
-  const search = Async("Search", { success: Schema.String, onError: Async.message });
-  const state = { search: Async.idle };
+  const search = Task("Search", { success: Schema.String, onError: Task.message });
+  const state = { search: Task.idle };
 
   const reducer = {
     Clicked: (_action: { readonly _tag: "Clicked" }, snapshot: { readonly state: typeof state }) =>
       [
-        { ...snapshot.state, search: Async.pending },
+        { ...snapshot.state, search: Task.pending },
         search.run(Effect.flatMap(Api, (api) => api.load)),
       ] as const,
   };
@@ -86,7 +86,7 @@ test("without `run`, it takes the effect and carries its services to `ServicesOf
 // ---------------------------------------------------------------------------
 
 test("the constructors are assignable to the slice they fill", () => {
-  const State = Schema.Struct({ search: Async.slice(Schema.String) });
+  const State = Schema.Struct({ search: Task.slice(Schema.String) });
   type State = typeof State.Type;
 
   expect<State["search"]>().type.toBe<
@@ -96,19 +96,19 @@ test("the constructors are assignable to the slice they fill", () => {
     | { readonly _tag: "Rejected"; readonly error: string }
   >();
 
-  expect(Async.idle).type.toBeAssignableTo<State["search"]>();
-  expect(Async.pending).type.toBeAssignableTo<State["search"]>();
-  expect(Async.resolved("v")).type.toBeAssignableTo<State["search"]>();
-  expect(Async.rejected("e")).type.toBeAssignableTo<State["search"]>();
+  expect(Task.idle).type.toBeAssignableTo<State["search"]>();
+  expect(Task.pending).type.toBeAssignableTo<State["search"]>();
+  expect(Task.resolved("v")).type.toBeAssignableTo<State["search"]>();
+  expect(Task.rejected("e")).type.toBeAssignableTo<State["search"]>();
 
   // The success type is not erased: a number does not fill a string slice.
-  expect(Async.resolved(1)).type.not.toBeAssignableTo<State["search"]>();
+  expect(Task.resolved(1)).type.not.toBeAssignableTo<State["search"]>();
 });
 
 test("an explicit failure schema types both `onError` and the slice", () => {
   const Failure = Schema.Struct({ status: Schema.Number });
 
-  const search = Async("Search", {
+  const search = Task("Search", {
     success: Schema.String,
     failure: Failure,
     onError: (): { readonly status: number } => ({ status: 500 }),
@@ -116,7 +116,7 @@ test("an explicit failure schema types both `onError` and the slice", () => {
 
   expect(search.run).type.toBeCallableWith(Effect.succeed("ok"));
 
-  const State = Schema.Struct({ search: Async.slice(Schema.String, Failure) });
+  const State = Schema.Struct({ search: Task.slice(Schema.String, Failure) });
   expect<(typeof State.Type)["search"]>().type.toBe<
     | { readonly _tag: "Idle" }
     | { readonly _tag: "Pending" }
@@ -130,11 +130,11 @@ test("an explicit failure schema types both `onError` and the slice", () => {
 // ---------------------------------------------------------------------------
 
 test("`match` is total — a missing arm does not compile", () => {
-  const State = Schema.Struct({ search: Async.slice(Schema.String) });
-  const state: typeof State.Type = { search: Async.idle };
+  const State = Schema.Struct({ search: Task.slice(Schema.String) });
+  const state: typeof State.Type = { search: Task.idle };
 
   expect(
-    Async.match(state.search, {
+    Task.match(state.search, {
       Idle: () => 0,
       Pending: () => 1,
       Resolved: (resolved) => resolved.value.length,
@@ -142,7 +142,7 @@ test("`match` is total — a missing arm does not compile", () => {
     }),
   ).type.toBe<number>();
 
-  expect(Async.match).type.not.toBeCallableWith(state.search, {
+  expect(Task.match).type.not.toBeCallableWith(state.search, {
     Idle: () => 0,
     Pending: () => 1,
     Resolved: (resolved: { readonly value: string }) => resolved.value.length,
@@ -154,7 +154,7 @@ test("`match` is total — a missing arm does not compile", () => {
 // ---------------------------------------------------------------------------
 
 test("an announced operation is the same shape — only the channel differs", () => {
-  const search = Async.output("Search", { success: Schema.String, onError: Async.message });
+  const search = Task.output("Search", { success: Schema.String, onError: Task.message });
 
   expect(search.run(Effect.succeed("ok"))).type.toBe<Command<SearchAction, never>>();
   expect(search.cancel).type.toBe<Command<SearchAction, never>>();

@@ -1,4 +1,4 @@
-import { Async } from "react-argon";
+import { Task } from "react-argon";
 import { ClickedImageThumb, ClickedWallhavenPaginator, Seed } from "@/features/seed";
 import type { WallhavenSearchPayload } from "@/features/wallhaven/service";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,7 +17,7 @@ export const WallhavenResults = () => {
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
-      {Async.match(state.search, {
+      {Task.match(state.search, {
         Idle: () => <></>,
         Pending: () => (
           <div className="flex flex-col flex-1 min-h-0 gap-2">

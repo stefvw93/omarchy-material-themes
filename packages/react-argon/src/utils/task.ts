@@ -17,9 +17,9 @@ import { Action, Command, type Message } from "../lib";
  *
  * Nothing in this layer knows an operation exists. The type, its constructors
  * and its match are usable against a slice you wrote by hand, filled from work
- * that never went through `Async` at all.
+ * that never went through `Task` at all.
  */
-export type AsyncValue<Success, Failure> =
+export type TaskValue<Success, Failure> =
   | { readonly _tag: "Idle" }
   | { readonly _tag: "Pending" }
   | { readonly _tag: "Resolved"; readonly value: Success }
@@ -35,10 +35,7 @@ export type AsyncValue<Success, Failure> =
  * will not reduce until `F` is concrete. `TaggedUnion`'s constraint is the bare
  * `Constraint`, so it survives the generic position.
  */
-export type AsyncSlice<
-  Success extends Schema.Top,
-  Failure extends Schema.Top,
-> = Schema.TaggedUnion<{
+export type TaskSlice<Success extends Schema.Top, Failure extends Schema.Top> = Schema.TaggedUnion<{
   readonly Idle: Schema.TaggedStruct<"Idle", {}>;
   readonly Pending: Schema.TaggedStruct<"Pending", {}>;
   readonly Resolved: Schema.TaggedStruct<"Resolved", { readonly value: Success }>;
@@ -57,20 +54,20 @@ const idle: { readonly _tag: "Idle" } = Object.freeze({ _tag: "Idle" as const })
 const pendingValue: { readonly _tag: "Pending" } = Object.freeze({ _tag: "Pending" as const });
 
 /**
- * The fields of a state that hold an `AsyncValue` — the only ones `Async.start`
+ * The fields of a state that hold an `TaskValue` — the only ones `Task.start`
  * will write `Pending` into.
  *
- * `AsyncValue<any, any>` rather than `AsyncValue<unknown, unknown>`: a slice of
+ * `TaskValue<any, any>` rather than `TaskValue<unknown, unknown>`: a slice of
  * `Resolved { value: Photo[] }` is not assignable to one of `value: unknown`
  * under the readonly property, and `any` is the escape that keeps every slice
  * matching regardless of what it carries. `-?` strips optionality, so a slice
  * declared `Schema.optional` is still addressable.
  */
-type AsyncKeys<State> = {
-  [Key in keyof State]-?: State[Key] extends AsyncValue<any, any> ? Key : never;
+type TaskKeys<State> = {
+  [Key in keyof State]-?: State[Key] extends TaskValue<any, any> ? Key : never;
 }[keyof State];
 
-const start = <State, Key extends AsyncKeys<State>, Action, R>(
+const start = <State, Key extends TaskKeys<State>, Action, R>(
   state: State,
   key: Key,
   command: Command<Action, R>,
@@ -96,7 +93,7 @@ const rejected = <Failure>(
  * Total, with no `orElse`: the point of four cases is that a render forgetting
  * one is a compile error, not a blank screen.
  */
-export type AsyncCases<Success, Failure, Out> = {
+export type TaskCases<Success, Failure, Out> = {
   readonly Idle: (value: { readonly _tag: "Idle" }) => Out;
   readonly Pending: (value: { readonly _tag: "Pending" }) => Out;
   readonly Resolved: (value: { readonly _tag: "Resolved"; readonly value: Success }) => Out;
@@ -111,17 +108,17 @@ export type AsyncCases<Success, Failure, Out> = {
  * a string and whose `Resolved` arm is an element would not compile. Reading
  * the result off the arms instead leaves each one to say what it returns.
  */
-export type AsyncMatched<Cases> = {
+export type TaskMatched<Cases> = {
   [K in keyof Cases]: Cases[K] extends (...args: never) => infer Out ? Out : never;
 }[keyof Cases];
 
-const matchValue = <Success, Failure, Cases extends AsyncCases<Success, Failure, unknown>>(
-  value: AsyncValue<Success, Failure>,
+const matchValue = <Success, Failure, Cases extends TaskCases<Success, Failure, unknown>>(
+  value: TaskValue<Success, Failure>,
   cases: Cases,
-): AsyncMatched<Cases> =>
-  (cases as Record<string, (value: unknown) => AsyncMatched<Cases>>)[value._tag]!(value);
+): TaskMatched<Cases> =>
+  (cases as Record<string, (value: unknown) => TaskMatched<Cases>>)[value._tag]!(value);
 
-const isPending = (value: AsyncValue<unknown, unknown>): boolean => value._tag === "Pending";
+const isPending = (value: TaskValue<unknown, unknown>): boolean => value._tag === "Pending";
 
 // ---------------------------------------------------------------------------
 // Layer 2 — the operation's vocabulary
@@ -136,7 +133,7 @@ const isPending = (value: AsyncValue<unknown, unknown>): boolean => value._tag =
  * proof it cannot compute, so a generated action spreads into `Action.of([...])`
  * alongside hand-written ones.
  */
-type AsyncMessage<
+type TaskMessage<
   Tag extends Capitalize<string>,
   Fields extends Schema.Struct.Fields,
   Ch extends "internal" | "outbound",
@@ -160,7 +157,7 @@ export type RejectedTag<Name extends string> = Capitalize<`${Name}Rejected`>;
  * when the click handler returns; a dispatched `Pending` would paint a microtask
  * later, which is exactly long enough to double-submit.
  */
-export type AsyncAction<Name extends string, Success, Failure> =
+export type TaskAction<Name extends string, Success, Failure> =
   | { readonly _tag: ResolvedTag<Name>; readonly value: Success }
   | { readonly _tag: RejectedTag<Name>; readonly error: Failure };
 
@@ -180,11 +177,11 @@ export type AsyncAction<Name extends string, Success, Failure> =
  * has the state in hand:
  *
  *     ClickedSubmit: (_action, { state }) =>
- *       Async.isPending(state.submit)
+ *       Task.isPending(state.submit)
  *         ? state
- *         : [{ ...state, submit: Async.pending }, submit.run(state.form)],
+ *         : [{ ...state, submit: Task.pending }, submit.run(state.form)],
  */
-export type AsyncMode =
+export type TaskMode =
   /** Interrupt the running fiber, run the new one. The default, and what search wants. */
   | "latest"
   /** Run both. Last to settle wins, which is usually a bug — declare it deliberately. */
@@ -207,10 +204,10 @@ export type AsyncMode =
  * One cause it never sees: interruption. Take-latest and `cancel` end work on
  * purpose, and "you cancelled it" is not an error the UI has to render.
  */
-export type AsyncOnError<Failure> = (cause: Cause.Cause<unknown>) => Failure;
+export type TaskOnError<Failure> = (cause: Cause.Cause<unknown>) => Failure;
 
 /** The default pairing for a `Schema.String` failure: the message, nothing else. */
-const message: AsyncOnError<string> = (cause) => {
+const message: TaskOnError<string> = (cause) => {
   const error: unknown = Cause.squash(cause);
   return error instanceof Error ? error.message : String(error);
 };
@@ -229,8 +226,8 @@ const message: AsyncOnError<string> = (cause) => {
  * and the feature's reducer is already total over the action union, so writing
  * those two entries by hand costs two lines and cannot be forgotten:
  *
- *     SearchResolved: (action, { state }) => ({ ...state, search: Async.resolved(action.value) }),
- *     SearchRejected: (action, { state }) => ({ ...state, search: Async.rejected(action.error) }),
+ *     SearchResolved: (action, { state }) => ({ ...state, search: Task.resolved(action.value) }),
+ *     SearchRejected: (action, { state }) => ({ ...state, search: Task.rejected(action.error) }),
  *
  * That is also the extension point the injected version did not have: a handler
  * that wants to derive something else from the result — select the first item,
@@ -238,10 +235,10 @@ const message: AsyncOnError<string> = (cause) => {
  * spread-in handler for the same tag.
  *
  * Internal and announced operations are the same shape. The only difference is
- * the channel the two actions are declared on, which is what `Async.output`
+ * the channel the two actions are declared on, which is what `Task.output`
  * changes — an announced operation was never anything but these three members.
  */
-export interface AsyncOperation<
+export interface TaskOperation<
   Name extends string,
   Success extends Schema.Top,
   Failure extends Schema.Top,
@@ -251,11 +248,11 @@ export interface AsyncOperation<
 > {
   /**
    * Spread into `Action.of([...])` alongside the feature's own actions — or,
-   * for `Async.output`, into the vocabulary passed as `output`.
+   * for `Task.output`, into the vocabulary passed as `output`.
    */
   readonly actions: readonly [
-    AsyncMessage<ResolvedTag<Name>, { readonly value: Success }, Ch>,
-    AsyncMessage<RejectedTag<Name>, { readonly error: Failure }, Ch>,
+    TaskMessage<ResolvedTag<Name>, { readonly value: Success }, Ch>,
+    TaskMessage<RejectedTag<Name>, { readonly error: Failure }, Ch>,
   ];
 
   /**
@@ -263,7 +260,7 @@ export interface AsyncOperation<
    * wants — which is where the `Pending` write goes:
    *
    *     ClickedSearch: (_action, { state }) =>
-   *       [{ ...state, search: Async.pending }, search.run(state.searchParams)]
+   *       [{ ...state, search: Task.pending }, search.run(state.searchParams)]
    *
    * Returned from the *triggering* action's handler, which is what keeps the
    * effect's `R` visible to `ServicesOf` — the services a command needs are
@@ -276,17 +273,17 @@ export interface AsyncOperation<
   readonly run: [Input] extends [never]
     ? <A extends Success["Type"], E, R2>(
         effect: Effect.Effect<A, E, R2>,
-      ) => Command<AsyncAction<Name, Success["Type"], Failure["Type"]>, R2>
-    : (input: Input) => Command<AsyncAction<Name, Success["Type"], Failure["Type"]>, R>;
+      ) => Command<TaskAction<Name, Success["Type"], Failure["Type"]>, R2>
+    : (input: Input) => Command<TaskAction<Name, Success["Type"], Failure["Type"]>, R>;
 
   /**
    * Interrupt whatever this operation has in flight. Nothing is written — a
    * cancelled operation left `Pending` is a permanently disabled button, so
    * clear the slice in the same return:
    *
-   *     ClickedCancel: (_action, { state }) => [{ ...state, search: Async.idle }, search.cancel]
+   *     ClickedCancel: (_action, { state }) => [{ ...state, search: Task.idle }, search.cancel]
    */
-  readonly cancel: Command<AsyncAction<Name, Success["Type"], Failure["Type"]>>;
+  readonly cancel: Command<TaskAction<Name, Success["Type"], Failure["Type"]>>;
 }
 
 // ---------------------------------------------------------------------------
@@ -295,7 +292,7 @@ export interface AsyncOperation<
 
 /**
  * `onError` is mandatory in both forms. The `Schema.String` default exists to
- * spare you a schema, not to spare you the decision — `Async.message` is the
+ * spare you a schema, not to spare you the decision — `Task.message` is the
  * mapping that pairs with it, spelled out at the call site so a defect quietly
  * becoming `"[object Object]"` is something you chose.
  *
@@ -305,16 +302,16 @@ export interface AsyncOperation<
  * the operation's `run` takes the effect, for work that genuinely differs per
  * call site.
  */
-export interface AsyncConstructor<Ch extends "internal" | "outbound"> {
+export interface TaskConstructor<Ch extends "internal" | "outbound"> {
   <const Name extends Capitalize<string>, Success extends Schema.Top, Input = never, R = never>(
     name: Name,
     schemas: {
       readonly success: Success;
-      readonly onError: AsyncOnError<string>;
-      readonly mode?: AsyncMode;
+      readonly onError: TaskOnError<string>;
+      readonly mode?: TaskMode;
       readonly run?: (input: Input) => Effect.Effect<Success["Type"], unknown, R>;
     },
-  ): AsyncOperation<Name, Success, Schema.String, Input, R, Ch>;
+  ): TaskOperation<Name, Success, Schema.String, Input, R, Ch>;
 
   <
     const Name extends Capitalize<string>,
@@ -327,22 +324,22 @@ export interface AsyncConstructor<Ch extends "internal" | "outbound"> {
     schemas: {
       readonly success: Success;
       readonly failure: Failure;
-      readonly onError: AsyncOnError<Failure["Type"]>;
-      readonly mode?: AsyncMode;
+      readonly onError: TaskOnError<Failure["Type"]>;
+      readonly mode?: TaskMode;
       readonly run?: (input: Input) => Effect.Effect<Success["Type"], unknown, R>;
     },
-  ): AsyncOperation<Name, Success, Failure, Input, R, Ch>;
+  ): TaskOperation<Name, Success, Failure, Input, R, Ch>;
 }
 
-export interface AsyncConstructors extends AsyncConstructor<"internal"> {
+export interface TaskConstructors extends TaskConstructor<"internal"> {
   /** Announced, never folded. The `Action` / `Action.output` split, for async work. */
-  readonly output: AsyncConstructor<"outbound">;
+  readonly output: TaskConstructor<"outbound">;
 
   /**
    * The state field, for the feature's `State` — under whatever name the
    * feature wants to read it back by:
    *
-   *     const State = Schema.Struct({ search: Async.slice(WallhavenSearchPayload) })
+   *     const State = Schema.Struct({ search: Task.slice(WallhavenSearchPayload) })
    *
    * The failure defaults to `Schema.String`, to pair with the default `onError`.
    * Nothing connects this to an operation but the handlers you write, which is
@@ -350,11 +347,11 @@ export interface AsyncConstructors extends AsyncConstructor<"internal"> {
    * operation is declarable for a feature that stores nothing.
    */
   readonly slice: {
-    <Success extends Schema.Top>(success: Success): AsyncSlice<Success, Schema.String>;
+    <Success extends Schema.Top>(success: Success): TaskSlice<Success, Schema.String>;
     <Success extends Schema.Top, Failure extends Schema.Top>(
       success: Success,
       failure: Failure,
-    ): AsyncSlice<Success, Failure>;
+    ): TaskSlice<Success, Failure>;
   };
 
   /** The initial value for a slice, for `FeatureDefinition.initialState`. */
@@ -367,7 +364,7 @@ export interface AsyncConstructors extends AsyncConstructor<"internal"> {
    * `Pending` and the command, as the one return the handler owes:
    *
    *     ClickedSearch: (_action, { state }) =>
-   *       Async.start(state, "search", wallhavenSearch.run(state.searchParams))
+   *       Task.start(state, "search", wallhavenSearch.run(state.searchParams))
    *
    * The same two lines the long form writes, in an order that cannot come apart
    * — `run` without a slice write is the failure this exists to make
@@ -380,35 +377,35 @@ export interface AsyncConstructors extends AsyncConstructor<"internal"> {
    * Reach for the tuple directly when the fold writes something other than
    * `Pending` — a take-first guard, or a slice cleared rather than started.
    */
-  readonly start: <State, Key extends AsyncKeys<State>, Action, R>(
+  readonly start: <State, Key extends TaskKeys<State>, Action, R>(
     state: State,
     key: Key,
     command: Command<Action, R>,
   ) => readonly [State, Command<Action, R>];
 
-  /** For the `Resolved` handler: `{ ...state, search: Async.resolved(action.value) }`. */
+  /** For the `Resolved` handler: `{ ...state, search: Task.resolved(action.value) }`. */
   readonly resolved: <Success>(value: Success) => {
     readonly _tag: "Resolved";
     readonly value: Success;
   };
 
-  /** For the `Rejected` handler: `{ ...state, search: Async.rejected(action.error) }`. */
+  /** For the `Rejected` handler: `{ ...state, search: Task.rejected(action.error) }`. */
   readonly rejected: <Failure>(error: Failure) => {
     readonly _tag: "Rejected";
     readonly error: Failure;
   };
 
   /** `Cause` → its message. The mapping that pairs with the default `Schema.String` failure. */
-  readonly message: AsyncOnError<string>;
+  readonly message: TaskOnError<string>;
 
   /** The four arms, over a slice you hold. Total: a missing arm does not compile. */
-  readonly match: <Success, Failure, Cases extends AsyncCases<Success, Failure, unknown>>(
-    value: AsyncValue<Success, Failure>,
+  readonly match: <Success, Failure, Cases extends TaskCases<Success, Failure, unknown>>(
+    value: TaskValue<Success, Failure>,
     cases: Cases,
-  ) => AsyncMatched<Cases>;
+  ) => TaskMatched<Cases>;
 
   /** For the `disabled={…}` case, and for a take-first guard, which do not want four arms. */
-  readonly isPending: (value: AsyncValue<unknown, unknown>) => boolean;
+  readonly isPending: (value: TaskValue<unknown, unknown>) => boolean;
 }
 
 const make = (ch: "internal" | "outbound") =>
@@ -417,8 +414,8 @@ const make = (ch: "internal" | "outbound") =>
     schemas: {
       readonly success: Schema.Top;
       readonly failure?: Schema.Top;
-      readonly onError: AsyncOnError<unknown>;
-      readonly mode?: AsyncMode;
+      readonly onError: TaskOnError<unknown>;
+      readonly mode?: TaskMode;
       readonly run?: (input: unknown) => Effect.Effect<unknown, unknown, unknown>;
     },
   ) {
@@ -431,7 +428,7 @@ const make = (ch: "internal" | "outbound") =>
     // its issuing action's tag in the same flat namespace, and a feature with
     // an action tagged `WallhavenSearch` must not have its work interrupted by
     // this operation's `cancel` — nor the reverse.
-    const group = `Async/${name}`;
+    const group = `Task/${name}`;
 
     const message_ = ch === "internal" ? Action : Action.output;
     const Resolved = message_(resolvedTag, { value: schemas.success });
@@ -481,33 +478,33 @@ const make = (ch: "internal" | "outbound") =>
  *
  * Declares two actions and the command that produces them, from a name and the
  * schemas of what the work yields. The name prefixes the action tags and names
- * the fiber group `cancel` addresses. The state half is `Async.slice` plus four
+ * the fiber group `cancel` addresses. The state half is `Task.slice` plus four
  * lines of your own reducer, which is where it stays: this layer never writes
  * into your state, so where a result lands is visible in the file that owns it.
  *
- *     const wallhavenSearch = Async("WallhavenSearch", {
+ *     const wallhavenSearch = Task("WallhavenSearch", {
  *       success: WallhavenSearchPayload,
- *       onError: Async.message,
+ *       onError: Task.message,
  *       run: (params: typeof WallhavenSearchParams.Type) =>
  *         Effect.flatMap(WallhavenService, (service) => service.search(params)),
  *     })
  *
- *     const State = Schema.Struct({ search: Async.slice(WallhavenSearchPayload) })
+ *     const State = Schema.Struct({ search: Task.slice(WallhavenSearchPayload) })
  *     const SeedAction = Action.of([ClickedSearch, ...wallhavenSearch.actions])
  *
- *     const initialState = FeatureDefinition.initialState(() => ({ search: Async.idle }))
+ *     const initialState = FeatureDefinition.initialState(() => ({ search: Task.idle }))
  *
  *     const reducer = FeatureDefinition.reducer({
  *       ClickedSearch: (_action, { state }) =>
- *         [{ ...state, search: Async.pending }, wallhavenSearch.run(state.searchParams)],
+ *         [{ ...state, search: Task.pending }, wallhavenSearch.run(state.searchParams)],
  *       WallhavenSearchResolved: (action, { state }) =>
- *         ({ ...state, search: Async.resolved(action.value) }),
+ *         ({ ...state, search: Task.resolved(action.value) }),
  *       WallhavenSearchRejected: (action, { state }) =>
- *         ({ ...state, search: Async.rejected(action.error) }),
+ *         ({ ...state, search: Task.rejected(action.error) }),
  *     })
  *
  *     // render
- *     Async.match(state.search, {
+ *     Task.match(state.search, {
  *       Idle: () => null,
  *       Pending: () => "Searching…",
  *       Rejected: (rejected) => `Error: ${rejected.error}`,
@@ -525,10 +522,10 @@ const make = (ch: "internal" | "outbound") =>
  * and a typed failure told apart, `onError` receives the whole `Cause` and
  * `Cause.hasDies` is the question to ask.
  *
- * `Async.output` is the same operation announced rather than folded, in the
+ * `Task.output` is the same operation announced rather than folded, in the
  * shape `Action` / `Action.output` already establishes.
  */
-export const Async: AsyncConstructors = Object.assign(make("internal"), {
+export const Task: TaskConstructors = Object.assign(make("internal"), {
   output: make("outbound"),
   slice: buildSlice,
   idle,

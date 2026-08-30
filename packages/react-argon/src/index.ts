@@ -1,3 +1,3 @@
 export * from "./devtools";
 export * from "./lib";
-export * from "./utils/async";
+export * from "./utils/task";

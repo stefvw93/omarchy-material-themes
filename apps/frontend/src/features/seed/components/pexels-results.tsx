@@ -1,4 +1,4 @@
-import { Async } from "react-argon";
+import { Task } from "react-argon";
 import { Seed } from "@/features/seed";
 
 /** The pexels tab's body. Reads the feature; dispatches nothing yet. */
@@ -7,7 +7,7 @@ export const PexelsResults = () => {
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
-      {Async.match(state.curated, {
+      {Task.match(state.curated, {
         Idle: () => <></>,
         Pending: () => "Loading...",
         Rejected: (rejected) => `Error: ${rejected.error}`,
