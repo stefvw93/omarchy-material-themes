@@ -1,4 +1,4 @@
-import { Context, Effect, Schema } from "effect";
+import { Context, Effect, Option, Schema } from "effect";
 import { expect, test } from "tstyche";
 import { Task, type TaskValue } from "../utils/task";
 import { Next, type Command, type ServicesOf } from "../lib";
@@ -82,11 +82,11 @@ test("without `run`, it takes the effect and carries its services to `ServicesOf
 });
 
 // ---------------------------------------------------------------------------
-// Constructors and the slice
+// Constructors and the schema
 // ---------------------------------------------------------------------------
 
-test("the constructors are assignable to the slice they fill", () => {
-  const State = Schema.Struct({ search: Task.slice(Schema.String) });
+test("the constructors are assignable to the field they fill", () => {
+  const State = Schema.Struct({ search: Task.schema(Schema.String) });
   type State = typeof State.Type;
 
   expect<State["search"]>().type.toBe<
@@ -101,11 +101,11 @@ test("the constructors are assignable to the slice they fill", () => {
   expect(Task.resolved("v")).type.toBeAssignableTo<State["search"]>();
   expect(Task.rejected("e")).type.toBeAssignableTo<State["search"]>();
 
-  // The success type is not erased: a number does not fill a string slice.
+  // The success type is not erased: a number does not fill a string field.
   expect(Task.resolved(1)).type.not.toBeAssignableTo<State["search"]>();
 });
 
-test("an explicit failure schema types both `onError` and the slice", () => {
+test("an explicit failure schema types both `onError` and the field", () => {
   const Failure = Schema.Struct({ status: Schema.Number });
 
   const search = Task("Search", {
@@ -116,7 +116,7 @@ test("an explicit failure schema types both `onError` and the slice", () => {
 
   expect(search.run).type.toBeCallableWith(Effect.succeed("ok"));
 
-  const State = Schema.Struct({ search: Task.slice(Schema.String, Failure) });
+  const State = Schema.Struct({ search: Task.schema(Schema.String, Failure) });
   expect<(typeof State.Type)["search"]>().type.toBe<
     | { readonly _tag: "Idle" }
     | { readonly _tag: "Pending" }
@@ -130,7 +130,7 @@ test("an explicit failure schema types both `onError` and the slice", () => {
 // ---------------------------------------------------------------------------
 
 test("`match` is total — a missing arm does not compile", () => {
-  const State = Schema.Struct({ search: Task.slice(Schema.String) });
+  const State = Schema.Struct({ search: Task.schema(Schema.String) });
   const state: typeof State.Type = { search: Task.idle };
 
   expect(
@@ -147,6 +147,25 @@ test("`match` is total — a missing arm does not compile", () => {
     Pending: () => 1,
     Resolved: (resolved: { readonly value: string }) => resolved.value.length,
   });
+});
+
+test("the partial reads are typed by the field, and the guards narrow it", () => {
+  const State = Schema.Struct({ search: Task.schema(Schema.String, Schema.Number) });
+  const state: typeof State.Type = { search: Task.idle };
+
+  expect(Task.value(state.search)).type.toBe<Option.Option<string>>();
+  expect(Task.error(state.search)).type.toBe<Option.Option<number>>();
+  expect(Task.getOrElse(state.search, () => null)).type.toBe<string | null>();
+
+  if (Task.isResolved(state.search)) {
+    expect(state.search.value).type.toBe<string>();
+  }
+  if (Task.isRejected(state.search)) {
+    expect(state.search.error).type.toBe<number>();
+  }
+  if (Task.isPending(state.search)) {
+    expect(state.search).type.toBe<{ readonly _tag: "Pending" }>();
+  }
 });
 
 // ---------------------------------------------------------------------------

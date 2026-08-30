@@ -83,10 +83,10 @@ const State = Schema.Struct({
   wallhavenSearchParams: WallhavenSearchParams,
   mode: Mode,
   contrastLevel: ContrastLevel,
-  search: Task.slice(WallhavenSearchPayload),
-  curated: Task.slice(Schema.Array(PexelsPhoto)),
-  omarchyColors: Task.slice(OmarchyColors),
-  omarchyTheme: Task.slice(Schema.Void),
+  search: Task.schema(WallhavenSearchPayload),
+  curated: Task.schema(Schema.Array(PexelsPhoto)),
+  omarchyColors: Task.schema(OmarchyColors),
+  omarchyTheme: Task.schema(Schema.Void),
 });
 type State = typeof State.Type;
 

@@ -1,4 +1,4 @@
-import { Context, Effect, Layer, Schema } from "effect";
+import { Context, Effect, Layer, Option, Schema } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import { Action, Children, define } from "../lib";
 import { Task, type TaskCases, type TaskValue } from "./task";
@@ -14,7 +14,7 @@ const layerOf = (value: Effect.Effect<string, Error>) => Layer.succeed(Api)({ lo
 // --- folded -----------------------------------------------------------------
 
 /**
- * The shape the library now asks for: a slice under a name the feature chose, a
+ * The shape the library now asks for: a field under a name the feature chose, a
  * `Pending` write on the fold that issues the command, and two handlers that say
  * where the result lands. Take-first is a guard in the handler, not a mode.
  */
@@ -25,7 +25,7 @@ const folded = (options?: { readonly mode?: "every"; readonly takeFirst?: boolea
     mode: options?.mode,
   });
 
-  const State = Schema.Struct({ colorValue: Schema.String, search: Task.slice(Schema.String) });
+  const State = Schema.Struct({ colorValue: Schema.String, search: Task.schema(Schema.String) });
   const Vocab = Action.of([Clicked, Cancelled, ...search.actions]);
   const F = define({ props: Props, state: State, action: Vocab });
 
@@ -74,7 +74,7 @@ describe("Task", () => {
     expect(Object.keys(search).sort()).toEqual(["actions", "cancel", "run"]);
   });
 
-  it("resolves into whatever slice the handler writes", async () => {
+  it("resolves into whatever field the handler writes", async () => {
     const out = await run(folded().feature, Effect.succeed("ok"));
     expect(out.state.search).toEqual({ _tag: "Resolved", value: "ok" });
     expect(out.emitted.map((a: { _tag: string }) => a._tag)).toEqual(["SearchResolved"]);
@@ -123,7 +123,7 @@ describe("Task", () => {
     expect(out.emitted).toHaveLength(1);
   });
 
-  it("cancel interrupts the work, and the handler clears the slice", async () => {
+  it("cancel interrupts the work, and the handler clears the field", async () => {
     const out = await run(folded().feature, Effect.as(Effect.sleep(50), "never seen"), [
       Clicked.make({}),
       Cancelled.make({}),
@@ -146,10 +146,37 @@ describe("Task", () => {
     expect(Task.rejected("e")).toEqual({ _tag: "Rejected", error: "e" });
   });
 
-  it("slice carries the four cases, with Schema.String as the default failure", () => {
-    const slice = Task.slice(Schema.String);
-    expect(Object.keys(slice.cases).sort()).toEqual(["Idle", "Pending", "Rejected", "Resolved"]);
-    expect(slice.cases.Rejected.make({ error: "e" })).toEqual({ _tag: "Rejected", error: "e" });
+  it("schema carries the four cases, with Schema.String as the default failure", () => {
+    const schema = Task.schema(Schema.String);
+    expect(Object.keys(schema.cases).sort()).toEqual(["Idle", "Pending", "Rejected", "Resolved"]);
+    expect(schema.cases.Rejected.make({ error: "e" })).toEqual({ _tag: "Rejected", error: "e" });
+  });
+
+  it("the partial reads see one case each, and the guards narrow", () => {
+    const resolved: TaskValue<string, string> = { _tag: "Resolved", value: "v" };
+    const rejected: TaskValue<string, string> = { _tag: "Rejected", error: "e" };
+    const pending: TaskValue<string, string> = { _tag: "Pending" };
+
+    expect(Task.value(resolved)).toEqual(Option.some("v"));
+    expect(Task.value(rejected)).toEqual(Option.none());
+    expect(Task.value(pending)).toEqual(Option.none());
+
+    expect(Task.error(rejected)).toEqual(Option.some("e"));
+    expect(Task.error(resolved)).toEqual(Option.none());
+
+    expect(Task.getOrElse(resolved, () => "fallback")).toBe("v");
+    expect(Task.getOrElse(rejected, () => "fallback")).toBe("fallback");
+    expect(Task.getOrElse(pending, () => "fallback")).toBe("fallback");
+
+    expect([resolved, rejected, pending, Task.idle].map(Task.isIdle)).toEqual([
+      false,
+      false,
+      false,
+      true,
+    ]);
+    expect([resolved, rejected, pending].map(Task.isPending)).toEqual([false, false, true]);
+    expect([resolved, rejected, pending].map(Task.isResolved)).toEqual([true, false, false]);
+    expect([resolved, rejected, pending].map(Task.isRejected)).toEqual([false, true, false]);
   });
 
   it("match covers the four cases, each handed its whole member", () => {
@@ -188,7 +215,7 @@ describe("Task with `run`", () => {
     run: (query: string) => Effect.map(load, (value) => `${value}:${query}`),
   });
 
-  const State = Schema.Struct({ search: Task.slice(Schema.String) });
+  const State = Schema.Struct({ search: Task.schema(Schema.String) });
   const Vocab = Action.of([Clicked, ...search.actions]);
   const F = define({ props: Props, state: State, action: Vocab });
 

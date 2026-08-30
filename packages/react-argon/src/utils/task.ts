@@ -1,4 +1,4 @@
-import { Cause, Effect, Schema } from "effect";
+import { Cause, Effect, Option, Schema } from "effect";
 import { Action, Command, type LazyCommand, type Message } from "../lib";
 
 // ---------------------------------------------------------------------------
@@ -16,7 +16,7 @@ import { Action, Command, type LazyCommand, type Message } from "../lib";
  * silently ships; an empty flash is the one you notice.
  *
  * Nothing in this layer knows an operation exists. The type, its constructors
- * and its match are usable against a slice you wrote by hand, filled from work
+ * and its match are usable against a field you wrote by hand, filled from work
  * that never went through `Task` at all.
  */
 export type TaskValue<Success, Failure> =
@@ -35,14 +35,17 @@ export type TaskValue<Success, Failure> =
  * will not reduce until `F` is concrete. `TaggedUnion`'s constraint is the bare
  * `Constraint`, so it survives the generic position.
  */
-export type TaskSlice<Success extends Schema.Top, Failure extends Schema.Top> = Schema.TaggedUnion<{
+export type TaskSchema<
+  Success extends Schema.Top,
+  Failure extends Schema.Top,
+> = Schema.TaggedUnion<{
   readonly Idle: Schema.TaggedStruct<"Idle", {}>;
   readonly Pending: Schema.TaggedStruct<"Pending", {}>;
   readonly Resolved: Schema.TaggedStruct<"Resolved", { readonly value: Success }>;
   readonly Rejected: Schema.TaggedStruct<"Rejected", { readonly error: Failure }>;
 }>;
 
-const buildSlice = (success: Schema.Top, failure: Schema.Top = Schema.String) =>
+const buildSchema = (success: Schema.Top, failure: Schema.Top = Schema.String) =>
   Schema.TaggedUnion({
     Idle: {},
     Pending: {},
@@ -57,10 +60,10 @@ const pendingValue: { readonly _tag: "Pending" } = Object.freeze({ _tag: "Pendin
  * The fields of a state that hold an `TaskValue` — the only ones `Task.start`
  * will write `Pending` into.
  *
- * `TaskValue<any, any>` rather than `TaskValue<unknown, unknown>`: a slice of
+ * `TaskValue<any, any>` rather than `TaskValue<unknown, unknown>`: a field of
  * `Resolved { value: Photo[] }` is not assignable to one of `value: unknown`
- * under the readonly property, and `any` is the escape that keeps every slice
- * matching regardless of what it carries. `-?` strips optionality, so a slice
+ * under the readonly property, and `any` is the escape that keeps every field
+ * matching regardless of what it carries. `-?` strips optionality, so a field
  * declared `Schema.optional` is still addressable.
  */
 type TaskKeys<State> = {
@@ -121,7 +124,33 @@ const matchValue = <Success, Failure, Cases extends TaskCases<Success, Failure, 
 ): TaskMatched<Cases> =>
   (cases as Record<string, (value: unknown) => TaskMatched<Cases>>)[value._tag]!(value);
 
-const isPending = (value: TaskValue<unknown, unknown>): boolean => value._tag === "Pending";
+type Idle = { readonly _tag: "Idle" };
+type Pending = { readonly _tag: "Pending" };
+type Resolved<Success> = { readonly _tag: "Resolved"; readonly value: Success };
+type Rejected<Failure> = { readonly _tag: "Rejected"; readonly error: Failure };
+
+const isIdle = (task: TaskValue<unknown, unknown>): task is Idle => task._tag === "Idle";
+const isPending = (task: TaskValue<unknown, unknown>): task is Pending => task._tag === "Pending";
+const isResolved = <Success>(task: TaskValue<Success, unknown>): task is Resolved<Success> =>
+  task._tag === "Resolved";
+const isRejected = <Failure>(task: TaskValue<unknown, Failure>): task is Rejected<Failure> =>
+  task._tag === "Rejected";
+
+/**
+ * The partial reads, for everywhere that is not a render: a reducer deriving
+ * from the last result, a guard, a default. `match` is total by design and
+ * four arms are noise when three of them say "nothing".
+ */
+const value = <Success>(task: TaskValue<Success, unknown>): Option.Option<Success> =>
+  task._tag === "Resolved" ? Option.some(task.value) : Option.none();
+
+const error = <Failure>(task: TaskValue<unknown, Failure>): Option.Option<Failure> =>
+  task._tag === "Rejected" ? Option.some(task.error) : Option.none();
+
+const getOrElse = <Success, Fallback>(
+  task: TaskValue<Success, unknown>,
+  orElse: () => Fallback,
+): Success | Fallback => (task._tag === "Resolved" ? task.value : orElse());
 
 // ---------------------------------------------------------------------------
 // Layer 2 — the operation's vocabulary
@@ -155,7 +184,7 @@ export type RejectedTag<Name extends string> = Capitalize<`${Name}Rejected`>;
  * the feature's fold.
  *
  * There is no `Pending` member, and there is no handler for these two either —
- * the reducer writes the slice itself. `Pending` belongs on the same fold that
+ * the reducer writes the field itself. `Pending` belongs on the same fold that
  * issued the command, so the button that triggered the work is already disabled
  * when the click handler returns; a dispatched `Pending` would paint a microtask
  * later, which is exactly long enough to double-submit.
@@ -282,7 +311,7 @@ export interface TaskOperation<
   /**
    * Interrupt whatever this operation has in flight. Nothing is written — a
    * cancelled operation left `Pending` is a permanently disabled button, so
-   * clear the slice in the same return:
+   * clear the field in the same return:
    *
    *     ClickedCancel: (_action, { state }) => [{ ...state, search: Task.idle }, search.cancel]
    */
@@ -339,25 +368,25 @@ export interface TaskConstructors extends TaskConstructor<"internal"> {
   readonly output: TaskConstructor<"outbound">;
 
   /**
-   * The state field, for the feature's `State` — under whatever name the
+   * The schema of a state field holding a `TaskValue`, under whatever name the
    * feature wants to read it back by:
    *
-   *     const State = Schema.Struct({ search: Task.slice(WallhavenSearchPayload) })
+   *     const State = Schema.Struct({ search: Task.schema(WallhavenSearchPayload) })
    *
    * The failure defaults to `Schema.String`, to pair with the default `onError`.
    * Nothing connects this to an operation but the handlers you write, which is
-   * the point: the slice is declarable before the operation exists, and an
+   * the point: the field is declarable before the operation exists, and an
    * operation is declarable for a feature that stores nothing.
    */
-  readonly slice: {
-    <Success extends Schema.Top>(success: Success): TaskSlice<Success, Schema.String>;
+  readonly schema: {
+    <Success extends Schema.Top>(success: Success): TaskSchema<Success, Schema.String>;
     <Success extends Schema.Top, Failure extends Schema.Top>(
       success: Success,
       failure: Failure,
-    ): TaskSlice<Success, Failure>;
+    ): TaskSchema<Success, Failure>;
   };
 
-  /** The initial value for a slice, for `FeatureDefinition.initialState`. */
+  /** The initial value for a field, for `FeatureDefinition.initialState`. */
   readonly idle: { readonly _tag: "Idle" };
 
   /** Written on the fold that issues the command, not dispatched a tick later. */
@@ -370,9 +399,9 @@ export interface TaskConstructors extends TaskConstructor<"internal"> {
    *       Task.start(state, "search", wallhavenSearch.run(state.searchParams))
    *
    * The same two lines the long form writes, in an order that cannot come apart
-   * — `run` without a slice write is the failure this exists to make
+   * — `run` without a field write is the failure this exists to make
    * unspellable, and it is silent when it happens: the work runs, the result
-   * lands, and the interval in between renders as whatever the slice held
+   * lands, and the interval in between renders as whatever the field held
    * before. `Idle` renders nothing, so the loading state simply never appears.
    *
    * The command may be lazy — `(next) => op.run(next)`, or point-free
@@ -380,10 +409,10 @@ export interface TaskConstructors extends TaskConstructor<"internal"> {
    * with `Pending` already written, so an operation that reads the state it
    * was started from sees the one the fold returned.
    *
-   * `key` is constrained to the state's own async slices, so a typo or a
-   * renamed field is a compile error rather than a slice that stays `Idle`.
+   * `key` is constrained to the state's own async task fields, so a typo or a
+   * renamed field is a compile error rather than a field that stays `Idle`.
    * Reach for the tuple directly when the fold writes something other than
-   * `Pending` — a take-first guard, or a slice cleared rather than started.
+   * `Pending` — a take-first guard, or a field cleared rather than started.
    */
   readonly start: <State, Key extends TaskKeys<State>, Action, R>(
     state: State,
@@ -406,14 +435,29 @@ export interface TaskConstructors extends TaskConstructor<"internal"> {
   /** `Cause` → its message. The mapping that pairs with the default `Schema.String` failure. */
   readonly message: TaskOnError<string>;
 
-  /** The four arms, over a slice you hold. Total: a missing arm does not compile. */
+  /** The four arms, over a field you hold. Total: a missing arm does not compile. */
   readonly match: <Success, Failure, Cases extends TaskCases<Success, Failure, unknown>>(
     value: TaskValue<Success, Failure>,
     cases: Cases,
   ) => TaskMatched<Cases>;
 
-  /** For the `disabled={…}` case, and for a take-first guard, which do not want four arms. */
-  readonly isPending: (value: TaskValue<unknown, unknown>) => boolean;
+  /**
+   * The partial reads, for everywhere that is not a render — a reducer
+   * deriving from the last result, a `disabled={…}`, a take-first guard —
+   * where four arms are noise. Data-first, like `Option`'s own.
+   */
+  readonly value: <Success>(task: TaskValue<Success, unknown>) => Option.Option<Success>;
+  readonly error: <Failure>(task: TaskValue<unknown, Failure>) => Option.Option<Failure>;
+  readonly getOrElse: <Success, Fallback>(
+    task: TaskValue<Success, unknown>,
+    orElse: () => Fallback,
+  ) => Success | Fallback;
+
+  /** Guards, narrowing to the one case. */
+  readonly isIdle: (task: TaskValue<unknown, unknown>) => task is Idle;
+  readonly isPending: (task: TaskValue<unknown, unknown>) => task is Pending;
+  readonly isResolved: <Success>(task: TaskValue<Success, unknown>) => task is Resolved<Success>;
+  readonly isRejected: <Failure>(task: TaskValue<unknown, Failure>) => task is Rejected<Failure>;
 }
 
 const make = (ch: "internal" | "outbound") =>
@@ -486,7 +530,7 @@ const make = (ch: "internal" | "outbound") =>
  *
  * Declares two actions and the command that produces them, from a name and the
  * schemas of what the work yields. The name prefixes the action tags and names
- * the fiber group `cancel` addresses. The state half is `Task.slice` plus four
+ * the fiber group `cancel` addresses. The state half is `Task.field` plus four
  * lines of your own reducer, which is where it stays: this layer never writes
  * into your state, so where a result lands is visible in the file that owns it.
  *
@@ -497,7 +541,7 @@ const make = (ch: "internal" | "outbound") =>
  *         Effect.flatMap(WallhavenService, (service) => service.search(params)),
  *     })
  *
- *     const State = Schema.Struct({ search: Task.slice(WallhavenSearchPayload) })
+ *     const State = Schema.Struct({ search: Task.schema(WallhavenSearchPayload) })
  *     const SeedAction = Action.of([ClickedSearch, ...wallhavenSearch.actions])
  *
  *     const initialState = FeatureDefinition.initialState(() => ({ search: Task.idle }))
@@ -524,7 +568,7 @@ const make = (ch: "internal" | "outbound") =>
  * site.
  *
  * Every way the work can end badly is mapped to `Failure` by `onError`, defects
- * included — so a genuine bug inside the effect lands in the slice as a
+ * included — so a genuine bug inside the effect lands in the field as a
  * rejection rather than reaching the `Error` lifecycle handler. Interruption is
  * the exception: cancelled work dispatches nothing at all. If you want a defect
  * and a typed failure told apart, `onError` receives the whole `Cause` and
@@ -535,7 +579,7 @@ const make = (ch: "internal" | "outbound") =>
  */
 export const Task: TaskConstructors = Object.assign(make("internal"), {
   output: make("outbound"),
-  slice: buildSlice,
+  schema: buildSchema,
   idle,
   pending: pendingValue,
   start,
@@ -543,5 +587,11 @@ export const Task: TaskConstructors = Object.assign(make("internal"), {
   rejected,
   message,
   match: matchValue,
+  value,
+  error,
+  getOrElse,
+  isIdle,
   isPending,
+  isResolved,
+  isRejected,
 }) as never;
