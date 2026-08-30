@@ -188,6 +188,36 @@ command))` — the 80% pattern written as one word, without the ordering mistake
 hand-writing the pair invites. No new ADT variant, no interpreter branch, no
 new `CommandSummary` member: devtools show the desugared batch honestly.
 
+**A command may be lazy.** `[state, (next) => command]` hands the command the
+state it sits beside — the _next_ state — so a handler that writes state inline
+and needs that same state in the command keeps its implicit return:
+
+```ts
+// before: name it, then use it twice
+SetMode: (payload, { state }) => {
+  const next = { ...state, mode: payload.mode };
+  return Task.start(next, "colors", createColors.run(next));
+},
+// after: the thunk is handed what `Task.start` returned beside it
+SetMode: (payload, { state }) =>
+  Task.start({ ...state, mode: payload.mode }, "colors", createColors.run),
+```
+
+Resolved once, by `Next.command` — the accessor every consumer already reads
+through (`reduce`'s `Unmounted` branch, `run`, the store's fold, teardown) — so
+there is no second interpretation site to keep in step. It is not a `Command`
+variant: the interpreter and devtools only ever see the command it returned.
+`Task.start` accepts the thunk on the same terms and hands it the state with
+`Pending` already written.
+
+`LazyCommand`'s parameter is **bivariant** (a method type, the React event
+handler trick). A handler's tuple state is routinely narrower than `State` —
+spreading a value into an optional field makes it required — and under
+`strictFunctionTypes` `(next: Narrow) => …` would not fit `Next<State>`; the
+first frontend handler converted failed exactly so. The thunk only ever
+receives the tuple's own state, which is that narrow value, so the loosening
+is sound by construction.
+
 `Batch` sequences commands. After the leaf change its one irreplaceable job is
 putting a `Cancel` before the command that replaces it — the cancel has to run
 before the new fiber is registered, and nothing inside that fiber can do it.
@@ -261,6 +291,8 @@ landed with every box checked again.
 
 - [x] `Next.state(next)` returns the state whether `next` is a bare state or a `[state, command]` tuple.
 - [x] `Next.command(next)` returns the command for a tuple, `undefined` for a bare state.
+- [x] `Next.command(next)` resolves a lazy command by calling it **once** with the tuple's own state, by identity, and returns what it returned. Every consumer — `reduce`'s `Unmounted` branch, `run`, the store's fold and teardown — reads through it, so a lazy command reaches the interpreter already resolved.
+- [x] `Task.start(state, key, thunk)` accepts a lazy command and hands it the state with `Pending` written.
 
 ### `Feature.reduce`
 
@@ -330,6 +362,9 @@ landed with every box checked again.
 - [x] `Command.cancel` is `Command<never>` and takes exactly one string. An object target — `{ tag }` or `{ tag, key }` — is a compile error, as are a number and a zero-argument call.
 - [x] `ignore`/`queue`/`stream` are absent from the constructor set, and the `Stream` and `Guarded` variants are absent from the ADT.
 - [x] `restart` is a constructor-set member, not an ADT variant, and preserves `A` and `R` in both forms. The two-argument form keeps contextual `A` (the same rule as `keyed`); the `.pipe` form severs it, pinned with `@ts-expect-error` on identical terms.
+- [x] A lazy command's parameter is typed as the feature's `State`, and its `dispatch` keeps the contextual `A`: an undeclared tag is a compile error one function deeper, on the same terms as the leaf.
+- [x] `ServicesOf` reads `R` through a lazy command, so a service the thunk's command needs is still a compile error at `component`.
+- [x] A lazy command whose tuple state is narrower than `State` (an optional field written as required) still satisfies the handler's return type. In a raw tuple its parameter is contextually typed as `State`; through `Task.start`, which infers from its first argument, it is the narrower state actually written.
 - [x] `Seed.useFeature()` is typed `RenderSnapshot<Props, State, Action | Output, H>`: `state` is the state schema's `Type`, `props` the props schema's `Type` side (decoded, `children` as declared), `hooks` is `H`, and `dispatch` accepts every declared action and output and rejects an undeclared tag and a declared tag with the wrong payload.
 - [x] `useFeature` is present on **both** `component` overloads — with and without `layer` — and on a feature with no outputs (`Output` = `never`) `dispatch` accepts the actions alone.
 - [x] `Seed` remains assignable to `FC<…>` where an `FC` is expected: the added member does not change what JSX accepts.

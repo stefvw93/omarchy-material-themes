@@ -1,5 +1,5 @@
 import { Cause, Effect, Schema } from "effect";
-import { Action, Command, type Message } from "../lib";
+import { Action, Command, type LazyCommand, type Message } from "../lib";
 
 // ---------------------------------------------------------------------------
 // Layer 1 — the vocabulary
@@ -70,8 +70,11 @@ type TaskKeys<State> = {
 const start = <State, Key extends TaskKeys<State>, Action, R>(
   state: State,
   key: Key,
-  command: Command<Action, R>,
-): readonly [State, Command<Action, R>] => [{ ...state, [key]: pendingValue }, command];
+  command: Command<Action, R> | LazyCommand<State, Action, R>,
+): readonly [State, Command<Action, R> | LazyCommand<State, Action, R>] => [
+  { ...state, [key]: pendingValue },
+  command,
+];
 
 const resolved = <Success>(
   value: Success,
@@ -372,6 +375,11 @@ export interface TaskConstructors extends TaskConstructor<"internal"> {
    * lands, and the interval in between renders as whatever the slice held
    * before. `Idle` renders nothing, so the loading state simply never appears.
    *
+   * The command may be lazy — `(next) => op.run(next)`, or point-free
+   * `op.run` when the operation takes the state — and is handed the state
+   * with `Pending` already written, so an operation that reads the state it
+   * was started from sees the one the fold returned.
+   *
    * `key` is constrained to the state's own async slices, so a typo or a
    * renamed field is a compile error rather than a slice that stays `Idle`.
    * Reach for the tuple directly when the fold writes something other than
@@ -380,8 +388,8 @@ export interface TaskConstructors extends TaskConstructor<"internal"> {
   readonly start: <State, Key extends TaskKeys<State>, Action, R>(
     state: State,
     key: Key,
-    command: Command<Action, R>,
-  ) => readonly [State, Command<Action, R>];
+    command: Command<Action, R> | LazyCommand<State, Action, R>,
+  ) => readonly [State, Command<Action, R> | LazyCommand<State, Action, R>];
 
   /** For the `Resolved` handler: `{ ...state, search: Task.resolved(action.value) }`. */
   readonly resolved: <Success>(value: Success) => {

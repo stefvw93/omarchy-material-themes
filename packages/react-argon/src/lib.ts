@@ -302,7 +302,16 @@ export type NoPropCollision<
 // Services
 // ---------------------------------------------------------------------------
 
-type ServiceOf<T> = T extends readonly [any, Command<any, infer R>] ? R : never;
+/**
+ * Two tuple patterns rather than `infer C` then `C extends …`: a naked `C`
+ * would distribute over `Command`'s own union, and the `None` member — which
+ * mentions no `R` — infers `unknown` and swallows the rest.
+ */
+type ServiceOf<T> = T extends readonly [any, Command<any, infer R>]
+  ? R
+  : T extends readonly [any, LazyCommand<any, any, infer R>]
+    ? R
+    : never;
 
 export type ServicesOf<U> = {
   [K in keyof U]: ServiceOf<ReturnType<Extract<U[K], (...args: any) => any>>>;
@@ -603,13 +612,45 @@ const commandInterpreter = (deps: {
 };
 
 /**
- * What a reducer returns: the next state, optionally with a command.
+ * A command that wants the state it is returned beside. Handed the tuple's
+ * own state — the *next* state — once, by `Next.command`, so a handler can
+ * write the next state inline and still give it to the command without
+ * naming it first:
+ *
+ *     Added: ({ item }, { state }) => [
+ *       { ...state, items: [...state.items, item] },
+ *       (next) => persist(next),
+ *     ]
+ *
+ * Not a `Command` variant: by the time the interpreter or devtools see it, it
+ * is the command it returned.
+ *
+ * Written as a method type, so the parameter is checked **bivariantly**. A
+ * handler's tuple state is routinely narrower than `State` — spreading a
+ * value into an optional field makes it required — and under
+ * `strictFunctionTypes` a `(next: Narrow) => …` would not fit
+ * `Next<State>`'s slot. The thunk only ever receives the tuple's own state,
+ * which is that narrow value, so the loosening costs nothing.
  */
-export type Next<State, Action, R = never> = State | readonly [State, Command<Action, R>];
+export type LazyCommand<State, Action, R = never> = {
+  bivariant(state: State): Command<Action, R>;
+}["bivariant"];
+
+/**
+ * What a reducer returns: the next state, optionally with a command — given
+ * outright, or as a {@link LazyCommand} of that state.
+ */
+export type Next<State, Action, R = never> =
+  | State
+  | readonly [State, Command<Action, R> | LazyCommand<State, Action, R>];
 
 /**
  * Accessors, so a test can fold a sequence of actions without pattern matching
  * on the tuple at every step.
+ *
+ * `command` is the one place a lazy command is resolved: `reduce`'s
+ * `Unmounted` branch, `run`, the store's fold and its teardown all read
+ * through it, so there is no second site to keep in step.
  */
 export const Next: {
   readonly state: <State>(next: Next<State, any, any>) => State;
@@ -618,7 +659,11 @@ export const Next: {
   ) => Command<Action, R> | undefined;
 } = {
   state: (next) => (Array.isArray(next) ? next[0] : next),
-  command: (next) => (Array.isArray(next) ? next[1] : undefined),
+  command: (next) => {
+    if (!Array.isArray(next)) return undefined;
+    const command = next[1];
+    return typeof command === "function" ? command(next[0]) : command;
+  },
 };
 
 // ---------------------------------------------------------------------------

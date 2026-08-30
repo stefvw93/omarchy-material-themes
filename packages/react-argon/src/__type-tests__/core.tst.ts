@@ -15,6 +15,7 @@ import {
   type FeatureComponent,
   type MemberOf,
   type Message,
+  Next,
   type NoPropCollision,
   type OutputProps,
   type RenderSnapshot,
@@ -1031,4 +1032,96 @@ test("`FeatureComponent` is still an `FC`, so JSX and `FC`-typed slots accept it
     onOrderPlaced: (payload: { readonly orderId: string }) => void payload.orderId,
   });
   expect(CartView).type.not.toBeCallableWith({ customerId: "c1" });
+});
+
+// ---------------------------------------------------------------------------
+// Lazy commands — `[state, (next) => command]`
+// ---------------------------------------------------------------------------
+
+test("a lazy command is handed the tuple's state and keeps the contextual `A`", () => {
+  // Same rule as the leaf: `A` arrives from the handler's return type, one
+  // function deeper. Direct calls, not `toBeCallableWith`, for the reason
+  // given at the leaf's own test.
+  Contextual.create({
+    initialState: () => ({ count: 0 }),
+    reducer: {
+      Ping: (_action, { state }) => [
+        { count: state.count + 1 },
+        (next) => {
+          expect(next).type.toBe<{ readonly count: number }>();
+          return Command.effect((dispatch) => dispatch({ _tag: "Pong", at: next.count }));
+        },
+      ],
+      Pong: (_action, snapshot) => snapshot.state,
+    },
+    render: () => null,
+  });
+
+  Contextual.create({
+    initialState: () => ({ count: 0 }),
+    reducer: {
+      Ping: (_action, { state }) => [
+        { count: state.count + 1 },
+        // @ts-expect-error is not assignable to type '"Ping" | "Pong"'
+        (next) => Command.effect((dispatch) => dispatch({ _tag: "Nope", at: next.count })),
+      ],
+      Pong: (_action, snapshot) => snapshot.state,
+    },
+    render: () => null,
+  });
+});
+
+test("a lazy command over a narrower tuple state still fits `Next<State>`", () => {
+  // The common shape in practice: spreading into an optional field makes the
+  // tuple's state narrower than `State`. The whole tuple still satisfies the
+  // handler's return type — which is the bivariance `LazyCommand` is declared
+  // with. The thunk's parameter is contextually typed as `State`, not the
+  // narrower literal: the contextual type is the handler's return, which
+  // knows nothing of this tuple. (`Task.start` infers from its first argument
+  // and does narrow — see the task type tests.)
+  const Optional = define({
+    props: Schema.Struct({}),
+    state: Schema.Struct({ picked: Schema.optional(Schema.String) }),
+    action: Action.of([Action("Pick", { id: Schema.String }), Action("Seen", {})]),
+  });
+
+  Optional.create({
+    initialState: () => ({}),
+    reducer: {
+      Pick: (action, { state }) => [
+        { ...state, picked: action.id },
+        (next) => {
+          expect(next.picked).type.toBe<string | undefined>();
+          return Command.effect((dispatch) => dispatch({ _tag: "Seen" }));
+        },
+      ],
+      Seen: (_action, { state }) => state,
+    },
+    render: () => null,
+  });
+});
+
+test("`ServicesOf` reads `R` through a lazy command", () => {
+  const lazyFoo = Contextual.create({
+    initialState: () => ({ count: 0 }),
+    reducer: {
+      Ping: (_action, { state }) => [state, () => Command.effect(() => fooEffect)],
+      Pong: (_action, snapshot) => snapshot.state,
+    },
+    render: () => null,
+  });
+
+  // The DI guarantee holds one function deeper: the service the thunk's
+  // command needs is still a compile error at `component`.
+  expect(createRuntime(Layer.empty).component).type.not.toBeCallableWith(lazyFoo);
+  expect(createRuntime(fooLayer).component).type.toBeCallableWith(lazyFoo);
+});
+
+test("`Next.command` resolves a lazy command to the command type", () => {
+  const state: { readonly count: number } = { count: 1 };
+  const lazy = [state, (_next: { readonly count: number }) => named] as const;
+
+  expect(Next.command(lazy)).type.toBe<
+    Command<{ readonly _tag: "X" }, PipeableFooService> | undefined
+  >();
 });

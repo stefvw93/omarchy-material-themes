@@ -1,7 +1,7 @@
 import { Context, Effect, Schema } from "effect";
 import { expect, test } from "tstyche";
-import { Task } from "../utils/task";
-import type { Command, ServicesOf } from "../lib";
+import { Task, type TaskValue } from "../utils/task";
+import { Next, type Command, type ServicesOf } from "../lib";
 
 class Api extends Context.Service<Api, { readonly load: Effect.Effect<string> }>()("Api") {}
 
@@ -158,4 +158,18 @@ test("an announced operation is the same shape — only the channel differs", ()
 
   expect(search.run(Effect.succeed("ok"))).type.toBe<Command<SearchAction, never>>();
   expect(search.cancel).type.toBe<Command<SearchAction, never>>();
+});
+
+test("`Task.start` takes a lazy command, handed the state with `Pending` written", () => {
+  const search = Task("Search", { success: Schema.String, onError: Task.message });
+  type State = { readonly q: string; readonly search: TaskValue<string, string> };
+  const state = { q: "x", search: Task.idle } as State;
+
+  const next = Task.start(state, "search", (written) => {
+    expect(written).type.toBe<State>();
+    return search.run(Effect.succeed(written.q));
+  });
+
+  expect(next[0]).type.toBe<State>();
+  expect(Next.command(next)).type.toBeAssignableTo<Command<SearchAction> | undefined>();
 });

@@ -202,6 +202,55 @@ describe("Next", () => {
     expect(Next.command([{ count: 1 }, command])).toBe(command);
     expect(Next.command([{ count: 1 }, command])).not.toBe(Command.none);
   });
+
+  it("command() resolves a lazy command with the tuple's own state", () => {
+    // The thunk is handed the state it sits beside — the *next* state, by
+    // identity — so a handler can write it inline and still give it to the
+    // command without a `const` first.
+    const seen: Array<unknown> = [];
+    const command = Command.effect(() => Effect.void);
+    const next = { count: 2 };
+
+    const resolved = Next.command([
+      next,
+      (state) => {
+        seen.push(state);
+        return command;
+      },
+    ]);
+
+    expect(resolved).toBe(command);
+    expect(seen).toHaveLength(1);
+    expect(seen[0]).toBe(next);
+  });
+
+  it("a lazy command reaches `run` resolved, seeing the post-fold state", async () => {
+    // One resolution site, `Next.command`, so `run` needs nothing of its own —
+    // and the emission proves the thunk saw the state the handler returned,
+    // not the one it was handed.
+    const lazy = define({
+      props: Schema.Struct({}),
+      state: Schema.Struct({ count: Schema.Number }),
+      action: Action.of([Action("Bump", {}), Action("Seen", { count: Schema.Number })]),
+    }).create({
+      initialState: () => ({ count: 0 }),
+      reducer: {
+        Bump: (_action, { state }) => [
+          { count: state.count + 1 },
+          (next) => Command.effect((dispatch) => dispatch({ _tag: "Seen", count: next.count })),
+        ],
+        Seen: (_action, { state }) => state,
+      },
+      render: () => null,
+    });
+
+    const result = await Effect.runPromise(
+      lazy.run([{ _tag: "Bump" }], { props: {}, hooks: {}, layer: Layer.empty }),
+    );
+
+    expect(result.state).toEqual({ count: 1 });
+    expect(result.emitted).toEqual([{ _tag: "Seen", count: 1 }]);
+  });
 });
 
 // ---------------------------------------------------------------------------

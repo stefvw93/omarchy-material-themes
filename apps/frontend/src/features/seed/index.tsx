@@ -164,10 +164,8 @@ const reducer = SeedDefinition.reducer({
 
   SetContrastLevel: (payload, { state }) => ({ ...state, ...payload }),
 
-  CommitContrastLevel: (payload, { state }) => {
-    const nextState = { ...state, ...payload };
-    return Task.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
-  },
+  CommitContrastLevel: (payload, { state }) =>
+    Task.start({ ...state, ...payload }, "omarchyColors", CreateOmarchyColors.run),
 
   SetInputKind: (payload, { state }) => {
     const next = { ...state, inputType: payload.inputType };
@@ -183,10 +181,8 @@ const reducer = SeedDefinition.reducer({
     return next;
   },
 
-  SetMode: (payload, { state }) => {
-    const nextState = { ...state, mode: payload.mode };
-    return Task.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
-  },
+  SetMode: (payload, { state }) =>
+    Task.start({ ...state, mode: payload.mode }, "omarchyColors", CreateOmarchyColors.run),
 
   ClickedWallhavenPaginator: (payload, { state }) => {
     const searchParams = {
@@ -201,22 +197,26 @@ const reducer = SeedDefinition.reducer({
     );
   },
 
-  ClickedImageThumb: (payload, { state }) => {
-    const nextState = { ...state, selectedImageUrl: payload.url };
-    return Task.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
-  },
+  ClickedImageThumb: (payload, { state }) =>
+    Task.start(
+      { ...state, selectedImageUrl: payload.url },
+      "omarchyColors",
+      CreateOmarchyColors.run,
+    ),
 
-  SetSchemeKind: (payload, { state }) => {
-    const nextState = { ...state, schemeKind: payload.schemeKind };
-    return Task.start(nextState, "omarchyColors", CreateOmarchyColors.run(nextState));
-  },
+  SetSchemeKind: (payload, { state }) =>
+    Task.start(
+      { ...state, schemeKind: payload.schemeKind },
+      "omarchyColors",
+      CreateOmarchyColors.run,
+    ),
 
   SetWallhavenSearchParams: (wallhavenSearchParams, { state }) => ({
     ...state,
     wallhavenSearchParams,
   }),
 
-  ApplyColors: (_, { state }) => Task.start(state, "omarchyTheme", ApplyOmarchyColors.run(state)),
+  ApplyColors: (_, { state }) => Task.start(state, "omarchyTheme", ApplyOmarchyColors.run),
 
   SearchWallhaven: (payload, { state }) =>
     Task.start(state, "search", WallhavenSearch.run(payload)),
