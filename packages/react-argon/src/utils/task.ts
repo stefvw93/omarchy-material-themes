@@ -530,7 +530,7 @@ const make = (ch: "internal" | "outbound") =>
  *
  * Declares two actions and the command that produces them, from a name and the
  * schemas of what the work yields. The name prefixes the action tags and names
- * the fiber group `cancel` addresses. The state half is `Task.field` plus four
+ * the fiber group `cancel` addresses. The state half is `Task.schema` plus four
  * lines of your own reducer, which is where it stays: this layer never writes
  * into your state, so where a result lands is visible in the file that owns it.
  *
