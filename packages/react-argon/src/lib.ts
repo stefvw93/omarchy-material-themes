@@ -490,7 +490,7 @@ const allFibers = (book: FiberBook): Array<Fiber.Fiber<void>> =>
   [...book.groups.values()].flatMap((set) => [...set]);
 
 /**
- * The command interpreter, shared by `Blueprint.run` and `createFeatureStore`.
+ * The command interpreter, shared by `Feature.run` and `createFeatureStore`.
  *
  * `interpret` walks a command, forking its leaves: `None` returns, `Effect`
  * forks the leaf with a `dispatch` bound to `deps.emit`, `Keyed` sets the key
@@ -668,7 +668,7 @@ export type HookChanged<H extends AnyHooks> = {
 };
 
 /**
- * The lifecycle actions as values, `Unmounted` among them — so `blueprint.reduce`
+ * The lifecycle actions as values, `Unmounted` among them — so `feature.reduce`
  * can be handed one and teardown is testable without mounting anything.
  */
 export type LifecycleAction<Props, H extends AnyHooks> =
@@ -724,14 +724,14 @@ export interface LifecycleHandlers<Props, State, Action, H extends AnyHooks, R =
   /**
    * The component is gone, so the runtime reads `Next.command(…)` and
    * discards the rest — return `snapshot.state` and put the work in the
-   * command. `blueprint.reduce` discards identically, so a teardown test
+   * command. `feature.reduce` discards identically, so a teardown test
    * folded through `reduce` cannot disagree with the runtime.
    */
   readonly Unmounted?: LifecycleHandler<"Unmounted", Props, State, Action, H, R>;
 }
 
 // ---------------------------------------------------------------------------
-// Blueprints
+// Features
 // ---------------------------------------------------------------------------
 
 export type StatePart<N> = N extends readonly [infer S, unknown] ? S : N;
@@ -773,7 +773,7 @@ export type Reducer<
 
 const internals: unique symbol = Symbol("@tea/internals");
 
-export interface BlueprintInternals<Props, State, Action, H extends AnyHooks> {
+export interface FeatureInternals<Props, State, Action, H extends AnyHooks> {
   readonly initialState: (props: Props) => State;
   readonly render: Render<Props, State, Action, H>;
   readonly useUnsafeHooks: HookSpec<Props, State, H> | undefined;
@@ -804,16 +804,9 @@ export interface BlueprintInternals<Props, State, Action, H extends AnyHooks> {
  * A feature's behaviour, before it is wired to a runtime. `component` turns one
  * into an `FC<Props>`; until then it is an inert value you can unit-test.
  */
-export interface Blueprint<
-  in Props,
-  State,
-  Action,
-  Output,
-  H extends AnyHooks = {},
-  out R = never,
-> {
-  /** @internal Not part of the surface — see `BlueprintInternals`. */
-  readonly [internals]: BlueprintInternals<Props, State, Action | Output, H>;
+export interface Feature<in Props, State, Action, Output, H extends AnyHooks = {}, out R = never> {
+  /** @internal Not part of the surface — see `FeatureInternals`. */
+  readonly [internals]: FeatureInternals<Props, State, Action | Output, H>;
 
   /**
    * The reducer as one pure function,
@@ -847,14 +840,14 @@ export interface Blueprint<
 // ---------------------------------------------------------------------------
 
 /**
- * What `define` hands back: the four pieces of a blueprint, each already bound
+ * What `define` hands back: the four pieces of a feature, each already bound
  * to this feature's `Props`, `State`, vocabularies and hooks.
  *
  * `initialState`, `reducer` and `render` are identity functions at runtime.
  * They exist only to *supply* those types, which is what makes a piece
  * writable on its own.
  */
-export interface Definition<
+export interface FeatureDefinition<
   Props,
   State,
   A extends AnyVocabulary<"internal">,
@@ -881,7 +874,7 @@ export interface Definition<
     readonly initialState: (props: Props) => State;
     readonly reducer: U & Exhaustive<U, State>;
     readonly render: Render<Props, State, Emit<A, O>, H>;
-  }) => Blueprint<Props, State, MemberOf<A>, MemberOf<O>, H, ServicesOf<U>>;
+  }) => Feature<Props, State, MemberOf<A>, MemberOf<O>, H, ServicesOf<U>>;
 }
 
 /**
@@ -914,7 +907,7 @@ export const define: <
   readonly output?: O & Disjoint<A, O> & NoPropCollision<PropsSchema, O>;
 
   readonly useUnsafeHooks?: HookSpec<PropsOf<PropsSchema>, StateOf<StateSchema>, H>;
-}) => Definition<PropsOf<PropsSchema>, StateOf<StateSchema>, A, O, H> = (spec) => {
+}) => FeatureDefinition<PropsOf<PropsSchema>, StateOf<StateSchema>, A, O, H> = (spec) => {
   // Opaque declarations (`Children`) are redacted only in `PropsChanged`
   // events; state reaches devtools transitions verbatim. Refusing them here
   // keeps the "every event is encodable" contract honest.
@@ -1039,7 +1032,7 @@ export const define: <
 };
 
 // ---------------------------------------------------------------------------
-// Mounting a blueprint
+// Mounting a feature
 // ---------------------------------------------------------------------------
 
 /**
@@ -1122,7 +1115,7 @@ const commandCause = (ctx: CommandContext): DevtoolsCause =>
     : { _tag: "Command", action: ctx.tag, key: ctx.key };
 
 export const createFeatureStore = <Props, State, Action, H extends AnyHooks>(args: {
-  readonly blueprint: Blueprint<Props, State, Action, any, H, any>;
+  readonly feature: Feature<Props, State, Action, any, H, any>;
   readonly props: Props;
   readonly equivalence: {
     readonly props: Equivalence.Equivalence<Props>;
@@ -1135,8 +1128,8 @@ export const createFeatureStore = <Props, State, Action, H extends AnyHooks>(arg
   readonly name?: string;
   readonly instance?: string;
 }): FeatureStore<Props, State, Action, H> => {
-  const { blueprint, equivalence, runtime, layer, emit, defect } = args;
-  const { initialState, outputTags, opaqueProps: opaqueFields, handles } = blueprint[internals];
+  const { feature, equivalence, runtime, layer, emit, defect } = args;
+  const { initialState, outputTags, opaqueProps: opaqueFields, handles } = feature[internals];
 
   const name = args.name ?? "TeaFeature";
   const instance = args.instance ?? String(++instanceCount);
@@ -1268,7 +1261,7 @@ export const createFeatureStore = <Props, State, Action, H extends AnyHooks>(arg
     }
 
     const previous = state;
-    const next = blueprint.reduce(action as never, snapshot());
+    const next = feature.reduce(action as never, snapshot());
     const command = Next.command(next);
     const nextState = Next.state(next);
     const moved = nextState !== state;
@@ -1509,7 +1502,7 @@ export const createFeatureStore = <Props, State, Action, H extends AnyHooks>(arg
       let thrown: { readonly error: unknown } | undefined;
 
       try {
-        teardown = Next.command(blueprint.reduce({ _tag: "Unmounted" } as never, snapshot()));
+        teardown = Next.command(feature.reduce({ _tag: "Unmounted" } as never, snapshot()));
       } catch (error) {
         thrown = { error };
       }
@@ -1583,8 +1576,8 @@ const noHooks: AnyHooks = Object.freeze({});
  *       …
  *     };
  *
- * A fragment is part of its feature's view; a child *feature* is a blueprint
- * and talks through props and `on<Tag>`. A blueprint reaching into an
+ * A fragment is part of its feature's view; a child *feature* is a `Feature`
+ * of its own and talks through props and `on<Tag>`. A child feature reaching into an
  * ancestor's `useFeature` compiles, and hides that input from its own props
  * schema — documented as a smell, not prevented.
  */
@@ -1615,7 +1608,7 @@ export const createRuntime: <RootR, RootE>(
       H extends AnyHooks,
       R extends RootR,
     >(
-      blueprint: Blueprint<Props, State, Action, Output, H, R>,
+      feature: Feature<Props, State, Action, Output, H, R>,
       options?: { readonly name?: string },
     ): FeatureComponent<Props, State, Action, Output, H>;
 
@@ -1628,7 +1621,7 @@ export const createRuntime: <RootR, RootE>(
       R,
       LayerError,
     >(
-      blueprint: Blueprint<Props, State, Action, Output, H, R>,
+      feature: Feature<Props, State, Action, Output, H, R>,
       options: {
         readonly layer: Layer.Layer<Exclude<R, RootR>, LayerError, RootR>;
         readonly name?: string;
@@ -1637,7 +1630,7 @@ export const createRuntime: <RootR, RootE>(
   };
 
   /**
-   * Escape hatch for ordinary React components that are not blueprints.
+   * Escape hatch for ordinary React components that are not features.
    */
   readonly useRuntime: () => ManagedRuntime.ManagedRuntime<RootR, RootE>;
 } = (layer) => {
@@ -1645,14 +1638,14 @@ export const createRuntime: <RootR, RootE>(
   const context = createContext(runtime);
 
   const component = (
-    blueprint: Blueprint<any, any, any, any, any, any>,
+    feature: Feature<any, any, any, any, any, any>,
     componentOptions: { readonly layer?: Layer.Layer<any, any, any>; readonly name?: string } = {},
   ): FeatureComponent<any, any, any, any, any> => {
-    const { render, useUnsafeHooks, props: propsSchema, outputTags } = blueprint[internals];
+    const { render, useUnsafeHooks, props: propsSchema, outputTags } = feature[internals];
     const name = componentOptions.name ?? "TeaFeature";
 
     // One context per `component()` call, so two components over one
-    // blueprint cannot see each other's mounts. `undefined` is the no-mount
+    // feature cannot see each other's mounts. `undefined` is the no-mount
     // signal `useFeature` turns into a named throw.
     const Snapshot = createContext<RenderSnapshot<any, any, any, any> | undefined>(undefined);
 
@@ -1692,7 +1685,7 @@ export const createRuntime: <RootR, RootE>(
       }
     };
 
-    const Feature: FC<Record<string, unknown>> = (incoming) => {
+    const Mount: FC<Record<string, unknown>> = (incoming) => {
       const rootRuntime = useContext(context);
 
       const { props, handlers } = useMemo(
@@ -1718,7 +1711,7 @@ export const createRuntime: <RootR, RootE>(
 
       const [store] = useState(() =>
         createFeatureStore({
-          blueprint,
+          feature,
           props,
           equivalence,
           runtime: rootRuntime,
@@ -1775,8 +1768,8 @@ export const createRuntime: <RootR, RootE>(
       return createElement(Snapshot.Provider, { value: snapshot }, render(snapshot));
     };
 
-    Feature.displayName = name;
-    return Object.assign(Feature, { useFeature });
+    Mount.displayName = name;
+    return Object.assign(Mount, { useFeature });
   };
 
   return {

@@ -31,7 +31,7 @@ const folded = (options?: { readonly mode?: "every"; readonly takeFirst?: boolea
 
   return {
     search,
-    blueprint: F.create({
+    feature: F.create({
       initialState: F.initialState(() => ({ colorValue: "#000", search: Async.idle })),
       reducer: F.reducer({
         Clicked: (_a, { state }) =>
@@ -48,12 +48,12 @@ const folded = (options?: { readonly mode?: "every"; readonly takeFirst?: boolea
 };
 
 const run = (
-  blueprint: { run: (...args: any[]) => Effect.Effect<any> },
+  feature: { run: (...args: any[]) => Effect.Effect<any> },
   value: Effect.Effect<string, Error>,
   actions: ReadonlyArray<{ readonly _tag: string }> = [Clicked.make({})],
 ) =>
   Effect.runPromise(
-    blueprint.run(actions, {
+    feature.run(actions, {
       props: {},
       hooks: {},
       layer: layerOf(value),
@@ -75,23 +75,23 @@ describe("Async", () => {
   });
 
   it("resolves into whatever slice the handler writes", async () => {
-    const out = await run(folded().blueprint, Effect.succeed("ok"));
+    const out = await run(folded().feature, Effect.succeed("ok"));
     expect(out.state.search).toEqual({ _tag: "Resolved", value: "ok" });
     expect(out.emitted.map((a: { _tag: string }) => a._tag)).toEqual(["SearchResolved"]);
   });
 
   it("maps a typed failure through onError", async () => {
-    const out = await run(folded().blueprint, Effect.fail(new Error("boom")));
+    const out = await run(folded().feature, Effect.fail(new Error("boom")));
     expect(out.state.search).toEqual({ _tag: "Rejected", error: "boom" });
   });
 
   it("maps a defect through onError too — nothing reaches the Error lifecycle", async () => {
-    const out = await run(folded().blueprint, Effect.die(new Error("bug")));
+    const out = await run(folded().feature, Effect.die(new Error("bug")));
     expect(out.state.search).toEqual({ _tag: "Rejected", error: "bug" });
   });
 
   it("writes Pending synchronously, on the fold that issued the command", () => {
-    const next = folded().blueprint.reduce(Clicked.make({}), {
+    const next = folded().feature.reduce(Clicked.make({}), {
       state: { colorValue: "#000", search: Async.idle },
       props: {},
       hooks: {},
@@ -100,14 +100,14 @@ describe("Async", () => {
   });
 
   it("take-latest: a second run interrupts the first, and the interrupt is not a rejection", async () => {
-    const out = await run(folded().blueprint, Effect.as(Effect.sleep(50), "second"), clicks(2));
+    const out = await run(folded().feature, Effect.as(Effect.sleep(50), "second"), clicks(2));
     expect(out.emitted.map((a: { _tag: string }) => a._tag)).toEqual(["SearchResolved"]);
     expect(out.state.search).toEqual({ _tag: "Resolved", value: "second" });
   });
 
   it("every: both runs go to completion", async () => {
     const out = await run(
-      folded({ mode: "every" }).blueprint,
+      folded({ mode: "every" }).feature,
       Effect.as(Effect.sleep(50), "both"),
       clicks(2),
     );
@@ -116,7 +116,7 @@ describe("Async", () => {
 
   it("take-first is an `isPending` guard in the handler, and it drops the second run", async () => {
     const out = await run(
-      folded({ takeFirst: true }).blueprint,
+      folded({ takeFirst: true }).feature,
       Effect.as(Effect.sleep(50), "first"),
       clicks(2),
     );
@@ -124,7 +124,7 @@ describe("Async", () => {
   });
 
   it("cancel interrupts the work, and the handler clears the slice", async () => {
-    const out = await run(folded().blueprint, Effect.as(Effect.sleep(50), "never seen"), [
+    const out = await run(folded().feature, Effect.as(Effect.sleep(50), "never seen"), [
       Clicked.make({}),
       Cancelled.make({}),
     ]);
@@ -192,7 +192,7 @@ describe("Async with `run`", () => {
   const Vocab = Action.of([Clicked, ...search.actions]);
   const F = define({ props: Props, state: State, action: Vocab });
 
-  const blueprint = F.create({
+  const feature = F.create({
     initialState: F.initialState(() => ({ search: Async.idle })),
     reducer: F.reducer({
       Clicked: (_a, { state }) => [{ ...state, search: Async.pending }, search.run("query")],
@@ -203,7 +203,7 @@ describe("Async with `run`", () => {
   });
 
   it("passes the input to the declared effect", async () => {
-    const out = await run(blueprint, Effect.succeed("ok"));
+    const out = await run(feature, Effect.succeed("ok"));
     expect(out.state.search).toEqual({ _tag: "Resolved", value: "ok:query" });
   });
 });
@@ -217,20 +217,20 @@ describe("Async.output", () => {
   const Outputs = Action.of([...search.actions]);
   const F = define({ props: Props, state: State, action: Vocab, output: Outputs });
 
-  const blueprint = F.create({
+  const feature = F.create({
     initialState: F.initialState(() => ({ colorValue: "#000" })),
     reducer: F.reducer({ Clicked: (_a, { state }) => [state, search.run(load)] }),
     render: F.render(() => null),
   });
 
   it("announces the result instead of folding it", async () => {
-    const out = await run(blueprint, Effect.succeed("ok"));
+    const out = await run(feature, Effect.succeed("ok"));
     expect(out.outputs).toEqual([{ _tag: "SearchResolved", value: "ok" }]);
     expect(out.state).toEqual({ colorValue: "#000" });
   });
 
   it("announces a rejection", async () => {
-    const out = await run(blueprint, Effect.fail(new Error("nope")));
+    const out = await run(feature, Effect.fail(new Error("nope")));
     expect(out.outputs).toEqual([{ _tag: "SearchRejected", error: "nope" }]);
   });
 });

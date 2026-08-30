@@ -3,7 +3,7 @@
  *
  * The node suite drives `createFeatureStore` directly and covers the fold,
  * routing, lifecycle ordering and store lifetime — none of which needs a DOM.
- * What is left, and what only a browser can answer, is whether a blueprint
+ * What is left, and what only a browser can answer, is whether a feature
  * actually paints: that `render` reaches the document, that a dispatch from a
  * real click repaints, that an output crosses the boundary into a parent's
  * `on<Tag>` prop, and that a props change costs one render rather than two.
@@ -117,7 +117,7 @@ const click = async (testId: string) => {
 
 // ---------------------------------------------------------------------------
 
-test("a mounted blueprint paints its initial state", async () => {
+test("a mounted feature paints its initial state", async () => {
   await mount(<CounterView step={2} label="hello" onReached={() => {}} />);
 
   // The tree lands a tick after mount resolves, so this waits rather than
@@ -312,7 +312,7 @@ test("an excess prop is rejected, which no spread would catch at compile time", 
 // Transforming props schemas: validated on the `Type` side, never decoded.
 // ---------------------------------------------------------------------------
 
-const codedBlueprint = () =>
+const codedFeature = () =>
   define({
     props: Schema.Struct({ page: Schema.NumberFromString }),
     state: Schema.Struct({ seen: Schema.Number }),
@@ -330,7 +330,7 @@ test("a codec prop flows through as its decoded `Type`", async () => {
   // `NumberFromString` is a wire codec; the parent passes the decoded number
   // and everything downstream — validation, equivalence, `PropsChanged` —
   // sees exactly that value.
-  const CodedView = component(codedBlueprint(), { name: "Coded" });
+  const CodedView = component(codedFeature(), { name: "Coded" });
 
   const Parent = () => {
     const [page, setPage] = useState(1);
@@ -352,7 +352,7 @@ test("a codec prop flows through as its decoded `Type`", async () => {
 });
 
 test("the wire shape of a codec prop is a malformed prop, not an input to decode", async () => {
-  const CodedView = component(codedBlueprint(), { name: "Coded" });
+  const CodedView = component(codedFeature(), { name: "Coded" });
 
   const errors: Array<unknown> = [];
   const onError = (error: unknown) => void errors.push(error);
@@ -576,7 +576,7 @@ test("`children` can be a render prop, called with the feature's own state", asy
 // A feature whose view is split into fragments two levels deep. `Inner` reads
 // the snapshot through the hook, never through props — that is the whole
 // point, and the reason the fragments are plain components rather than
-// blueprints of their own.
+// features of their own.
 
 const Tally = define({
   props: Schema.Struct({ step: Schema.Number }),

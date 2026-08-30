@@ -39,7 +39,7 @@ export type DevtoolsCause =
 /**
  * What every event carries, whatever its `_tag`.
  *
- * `name` is a *blueprint* name, so without `instance` two `<Presence roomId="…">`
+ * `name` is a *feature* name, so without `instance` two `<Presence roomId="…">`
  * are indistinguishable in the stream. `instance` is unique per mount and per
  * page, not gapless: StrictMode double-invokes the `useState` initialiser and
  * burns an id, and the counter is module-global rather than per runtime.
@@ -434,7 +434,7 @@ export const createConsoleDevtools = (options: ConsoleDevtoolsOptions = {}): Dev
   /**
    * Last print time per mount, for the elapsed figure.
    *
-   * Keyed by `name#instance` and not by `name`: two mounts of one blueprint
+   * Keyed by `name#instance` and not by `name`: two mounts of one feature
    * each have their own clock, and sharing one would report the gap between
    * two unrelated features as if it were a reducer's duration.
    */

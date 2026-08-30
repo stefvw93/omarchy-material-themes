@@ -128,13 +128,13 @@ const SeedAction = Action.of([
 // Definitions
 //
 
-const SeedFactory = define({
+const SeedDefinition = define({
   props: Props,
   state: State,
   action: SeedAction,
 });
 
-const initialState = SeedFactory.initialState(() => ({
+const initialState = SeedDefinition.initialState(() => ({
   inputType: "file" as const,
   schemeKind: "neutral",
   mode: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
@@ -153,7 +153,7 @@ const initialState = SeedFactory.initialState(() => ({
   omarchyTheme: Async.idle,
 }));
 
-const reducer = SeedFactory.reducer({
+const reducer = SeedDefinition.reducer({
   Mounted: (_, { state }) => {
     if (state.inputType === "wallhaven") {
       return Async.start(state, "search", WallhavenSearch.run(state.wallhavenSearchParams));
@@ -258,7 +258,7 @@ const reducer = SeedFactory.reducer({
   }),
 });
 
-const render = SeedFactory.render(({ state, dispatch }) => (
+const render = SeedDefinition.render(({ state, dispatch }) => (
   <div className="grid grid-cols-12 flex-1 min-h-0 gap-2 p-2">
     <div className="col-span-6 flex flex-col flex-1 min-h-0 gap-2">
       <Tabs
@@ -298,7 +298,7 @@ const render = SeedFactory.render(({ state, dispatch }) => (
 ));
 
 export const Seed = component(
-  SeedFactory.create({
+  SeedDefinition.create({
     initialState,
     reducer,
     render,

@@ -357,7 +357,7 @@ export interface AsyncConstructors extends AsyncConstructor<"internal"> {
     ): AsyncSlice<Success, Failure>;
   };
 
-  /** The initial value for a slice, for `Factory.initialState`. */
+  /** The initial value for a slice, for `FeatureDefinition.initialState`. */
   readonly idle: { readonly _tag: "Idle" };
 
   /** Written on the fold that issues the command, not dispatched a tick later. */
@@ -495,9 +495,9 @@ const make = (ch: "internal" | "outbound") =>
  *     const State = Schema.Struct({ search: Async.slice(WallhavenSearchPayload) })
  *     const SeedAction = Action.of([ClickedSearch, ...wallhavenSearch.actions])
  *
- *     const initialState = Factory.initialState(() => ({ search: Async.idle }))
+ *     const initialState = FeatureDefinition.initialState(() => ({ search: Async.idle }))
  *
- *     const reducer = Factory.reducer({
+ *     const reducer = FeatureDefinition.reducer({
  *       ClickedSearch: (_action, { state }) =>
  *         [{ ...state, search: Async.pending }, wallhavenSearch.run(state.searchParams)],
  *       WallhavenSearchResolved: (action, { state }) =>

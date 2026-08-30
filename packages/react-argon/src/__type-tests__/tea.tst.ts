@@ -339,7 +339,7 @@ test("`Exhaustive` catches a reducer handler returning an unknown state key", ()
     render: () => null,
   });
 
-  // `Definition.reducer` carries the same guard, for reducers written in their
+  // `FeatureDefinition.reducer` carries the same guard, for reducers written in their
   // own file rather than inline.
   expect(Defined.reducer).type.not.toBeCallableWith({ Inc: () => ({ count: 1, lmao: 5 }) });
 });
@@ -387,7 +387,7 @@ test("`ServicesOf` unions services across handlers instead of collapsing to `nev
     action: Action.of([Action("A", {}), Action("B", {}), Action("C", {})]),
   });
 
-  const blueprint = Defined.create({
+  const feature = Defined.create({
     initialState: () => ({ count: 0 }),
     reducer: {
       A: () => [{ count: 1 }, Command.effect(() => fooEffect)] as const,
@@ -399,7 +399,7 @@ test("`ServicesOf` unions services across handlers instead of collapsing to `nev
   });
 
   // `run` is where `R` becomes observable: it demands a layer providing it.
-  expect<Parameters<typeof blueprint.run>[1]["layer"]>().type.toBe<
+  expect<Parameters<typeof feature.run>[1]["layer"]>().type.toBe<
     Layer.Layer<FooService | BarService>
   >();
 });
@@ -881,9 +881,9 @@ const cart = Cart.create({
 });
 
 test("`component` merges declared props with one required `on<Tag>` prop per output", () => {
-  const Feature = createRuntime(Layer.empty).component(cart);
+  const CartView = createRuntime(Layer.empty).component(cart);
 
-  expect(Feature).type.toBeCallableWith({
+  expect(CartView).type.toBeCallableWith({
     customerId: "c1",
     onOrderPlaced: (payload: { readonly orderId: string }) => void payload.orderId,
   });
@@ -891,13 +891,13 @@ test("`component` merges declared props with one required `on<Tag>` prop per out
   // Required, not optional. This is the whole argument for per-output props
   // over a single `onOutput`: the exhaustiveness check lands at the JSX call
   // site, in every parent, whether or not anyone wrote an exhaustive switch.
-  expect(Feature).type.not.toBeCallableWith({ customerId: "c1" });
+  expect(CartView).type.not.toBeCallableWith({ customerId: "c1" });
 
   // Declared props are still checked, and still required.
-  expect(Feature).type.not.toBeCallableWith({ onOrderPlaced: () => {} });
+  expect(CartView).type.not.toBeCallableWith({ onOrderPlaced: () => {} });
 
   // `_tag` is stripped from the payload — the prop name already carries it.
-  expect<Parameters<Parameters<typeof Feature>[0]["onOrderPlaced"]>[0]>().type.toBe<{
+  expect<Parameters<Parameters<typeof CartView>[0]["onOrderPlaced"]>[0]>().type.toBe<{
     readonly orderId: string;
   }>();
 });
@@ -919,7 +919,7 @@ test("`component` is closed over the root's `R`", () => {
   expect(createRuntime(Layer.empty).component).type.not.toBeCallableWith(needsFoo);
 
   // Positive control, so the rejection above is attributable to `R` rather
-  // than to some unrelated mismatch in the blueprint's shape.
+  // than to some unrelated mismatch in the feature's shape.
   expect(createRuntime(fooLayer).component).type.toBeCallableWith(needsFoo);
 
   // A feature may bring its own layer; the root must cover the residue. `Bar`
@@ -948,7 +948,7 @@ test("`component` is closed over the root's `R`", () => {
   });
 });
 
-test("a blueprint's string-keyed surface stays exactly `reduce` and `run`", () => {
+test("a feature's string-keyed surface stays exactly `reduce` and `run`", () => {
   // The internals slot `component` reads is symbol-keyed, so it cannot be
   // reached by name from userland and cannot collide with a future method.
   // Asserted on the string keys specifically: a slot added as a plain property
@@ -961,8 +961,8 @@ test("a blueprint's string-keyed surface stays exactly `reduce` and `run`", () =
 // ---------------------------------------------------------------------------
 
 test("`useFeature` returns the `RenderSnapshot` typed to the feature", () => {
-  const Feature = createRuntime(Layer.empty).component(cart);
-  const snapshot = Feature.useFeature();
+  const CartView = createRuntime(Layer.empty).component(cart);
+  const snapshot = CartView.useFeature();
 
   expect(snapshot.state).type.toBe<{ readonly count: number }>();
   expect(snapshot.props).type.toBe<{ readonly customerId: string }>();
@@ -976,7 +976,7 @@ test("`useFeature` returns the `RenderSnapshot` typed to the feature", () => {
   expect(snapshot.dispatch).type.not.toBeCallableWith({ _tag: "OrderPlaced" });
 
   // The whole snapshot is nameable without reconstructing the generics.
-  expect<ReturnType<typeof Feature.useFeature>>().type.toBe<
+  expect<ReturnType<typeof CartView.useFeature>>().type.toBe<
     RenderSnapshot<
       { readonly customerId: string },
       { readonly count: number },
@@ -1012,10 +1012,10 @@ test("`useFeature` is on both `component` overloads, and on a feature with no ou
 });
 
 test("`FeatureComponent` is still an `FC`, so JSX and `FC`-typed slots accept it", () => {
-  const Feature = createRuntime(Layer.empty).component(cart);
+  const CartView = createRuntime(Layer.empty).component(cart);
 
-  expect(Feature).type.toBeAssignableTo<FC<ComponentProps<typeof Feature>>>();
-  expect(Feature).type.toBeAssignableTo<
+  expect(CartView).type.toBeAssignableTo<FC<ComponentProps<typeof CartView>>>();
+  expect(CartView).type.toBeAssignableTo<
     FeatureComponent<
       { readonly customerId: string },
       { readonly count: number },
@@ -1026,9 +1026,9 @@ test("`FeatureComponent` is still an `FC`, so JSX and `FC`-typed slots accept it
   >();
 
   // The added member changes nothing about what JSX accepts.
-  expect(Feature).type.toBeCallableWith({
+  expect(CartView).type.toBeCallableWith({
     customerId: "c1",
     onOrderPlaced: (payload: { readonly orderId: string }) => void payload.orderId,
   });
-  expect(Feature).type.not.toBeCallableWith({ customerId: "c1" });
+  expect(CartView).type.not.toBeCallableWith({ customerId: "c1" });
 });

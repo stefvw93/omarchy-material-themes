@@ -250,8 +250,8 @@ test("unmounting reports `Unmounted` and stops reporting", async () => {
   expect(unmounted[0]!.cause).toEqual({ _tag: "Lifecycle" });
 });
 
-test("two mounts of one blueprint are distinguishable in the stream", async () => {
-  // The reason `instance` exists: `name` is a *blueprint* name, so without it
+test("two mounts of one feature are distinguishable in the stream", async () => {
+  // The reason `instance` exists: `name` is a *feature* name, so without it
   // two of the same feature are one indistinguishable interleaved log.
   await mount(
     <div>

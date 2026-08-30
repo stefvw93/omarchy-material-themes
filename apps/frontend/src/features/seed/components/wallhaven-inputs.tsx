@@ -63,10 +63,10 @@ const Submit = Action.output("Submit", WallhavenSearchParams.fields);
 const WallhavenInputsOutputs = Action.of([Change, Submit]);
 
 //
-// Factory
+// Definition
 //
 
-const WallhavenInputsFactory = define({
+const WallhavenInputsDefinition = define({
   props: WallhavenInputsProps,
   state: WallhavenInputsState,
   action: WallhavenInputsActions,
@@ -77,11 +77,11 @@ const WallhavenInputsFactory = define({
 // Implementations
 //
 
-const initialState = WallhavenInputsFactory.initialState(() => ({}));
+const initialState = WallhavenInputsDefinition.initialState(() => ({}));
 
-const reducer = WallhavenInputsFactory.reducer({});
+const reducer = WallhavenInputsDefinition.reducer({});
 
-const render = WallhavenInputsFactory.render(({ props, dispatch }) => {
+const render = WallhavenInputsDefinition.render(({ props, dispatch }) => {
   return (
     <div className="flex gap-2">
       <Select
@@ -140,7 +140,7 @@ const render = WallhavenInputsFactory.render(({ props, dispatch }) => {
 //
 
 export const WallhavenInputs = component(
-  WallhavenInputsFactory.create({
+  WallhavenInputsDefinition.create({
     initialState,
     reducer,
     render,

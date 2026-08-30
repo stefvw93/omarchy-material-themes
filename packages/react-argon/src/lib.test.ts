@@ -205,7 +205,7 @@ describe("Next", () => {
 });
 
 // ---------------------------------------------------------------------------
-// define(...).create(...) -> Blueprint.reduce
+// define(...).create(...) -> Feature.reduce
 // ---------------------------------------------------------------------------
 
 const CounterState = Schema.Struct({ count: Schema.Number });
@@ -235,7 +235,7 @@ const at = (count: number) => ({
   hooks: {},
 });
 
-describe("Blueprint.reduce", () => {
+describe("Feature.reduce", () => {
   it("dispatches a declared action to its handler", () => {
     const next = counter.reduce({ _tag: "Incremented" }, at(10));
     expect(Next.state(next)).toEqual({ count: 15 });
@@ -366,7 +366,7 @@ describe("Blueprint.reduce", () => {
 });
 
 // ---------------------------------------------------------------------------
-// define(...).create(...) -> Blueprint.run
+// define(...).create(...) -> Feature.run
 // ---------------------------------------------------------------------------
 
 class TestLog extends Context.Service<TestLog, { readonly ref: Ref.Ref<ReadonlyArray<string>> }>()(
@@ -390,7 +390,7 @@ const Go = Action("Go", { ms: Schema.Number, id: Schema.String });
 const Bump = Action("Bump", {});
 const Announced = Action.output("Announced", { id: Schema.String });
 
-describe("Blueprint.run", () => {
+describe("Feature.run", () => {
   it("seeded actions are processed but not recorded in `emitted`", async () => {
     const Echo = Action("Echo", {});
     const Feature = define({ props: RunProps, state: RunState, action: Action.of([Bump, Echo]) });
@@ -671,7 +671,7 @@ describe("Blueprint.run", () => {
     expect(await Effect.runPromise(Ref.get(ref))).toEqual(["late"]);
   });
 
-  it("Blueprint.run discards Unmounted's returned state (matches reduce)", async () => {
+  it("Feature.run discards Unmounted's returned state (matches reduce)", async () => {
     const Feature = define({ props: RunProps, state: RunState, action: Action.of([Bump]) });
     const feature = Feature.create({
       initialState: () => ({ count: 0 }),
@@ -785,7 +785,7 @@ describe("Blueprint.run", () => {
 // render counts, error boundaries and paint belong to the browser suite.
 // ---------------------------------------------------------------------------
 
-describe("Blueprint internals slot", () => {
+describe("Feature internals slot", () => {
   const feature = define({
     props: Schema.Struct({ id: Schema.String }),
     state: Schema.Struct({ count: Schema.Number }),
@@ -873,7 +873,7 @@ describe("createFeatureStore", () => {
     const emitted: Array<{ readonly _tag: string }> = [];
     const defects: Array<unknown> = [];
 
-    const blueprint = define({
+    const feature = define({
       props: Props,
       state: State,
       action: Action.of([Action("Bump", {}), Action("Echo", {})]),
@@ -891,7 +891,7 @@ describe("createFeatureStore", () => {
     } as any);
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: overrides.props ?? { id: "a" },
       equivalence: equivalence as any,
       runtime: makeRuntime(),
@@ -958,7 +958,7 @@ describe("createFeatureStore — sync", () => {
   const setup = () => {
     const seen: Array<string> = [];
 
-    const blueprint = define({
+    const feature = define({
       props: Props,
       state: Schema.Struct({ propsChanged: Schema.Number, hookChanged: Schema.Number }),
       action: Action.of([Action("Bump", {})]),
@@ -979,7 +979,7 @@ describe("createFeatureStore — sync", () => {
     });
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: { id: "a" },
       equivalence,
       runtime: testRuntime(),
@@ -1057,7 +1057,7 @@ describe("createFeatureStore — lifecycle", () => {
 
   const setup = (reducer: Record<string, any>) => {
     const log: Array<string> = [];
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Bump", {})]),
@@ -1068,7 +1068,7 @@ describe("createFeatureStore — lifecycle", () => {
     });
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1157,7 +1157,7 @@ describe("createFeatureStore — outputs", () => {
     const folded: Array<string> = [];
     const emitted: Array<{ readonly _tag: string }> = [];
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Bump", {})]),
@@ -1174,7 +1174,7 @@ describe("createFeatureStore — outputs", () => {
     });
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1205,7 +1205,7 @@ describe("createFeatureStore — defects", () => {
 
   const setup = (reducer: Record<string, any>) => {
     const defects: Array<unknown> = [];
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ handled: Schema.Number }),
       action: Action.of([Action("Boom", {})]),
@@ -1216,7 +1216,7 @@ describe("createFeatureStore — defects", () => {
     });
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1315,7 +1315,7 @@ describe("createFeatureStore — feature layers", () => {
       ),
     );
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Use", {})]),
@@ -1331,7 +1331,7 @@ describe("createFeatureStore — feature layers", () => {
     });
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1359,7 +1359,7 @@ describe("createFeatureStore — feature layers", () => {
     // `Effect.addFinalizer` lands on the mount scope and runs when the mount
     // closes — including with no feature layer at all.
     const log: Array<string> = [];
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Open", {})]),
@@ -1381,7 +1381,7 @@ describe("createFeatureStore — feature layers", () => {
 
     const defects: Array<unknown> = [];
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1467,7 +1467,7 @@ describe("createFeatureStore — defects from commands (review regression)", () 
 
   const setup = (reducer: Record<string, any>, layer?: Layer.Layer<any, any, any>) => {
     const defects: Array<unknown> = [];
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ handled: Schema.Number }),
       action: Action.of([Action("Boom", {})]),
@@ -1478,7 +1478,7 @@ describe("createFeatureStore — defects from commands (review regression)", () 
     });
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1584,7 +1584,7 @@ describe("createFeatureStore — remount races (review regression)", () => {
     // still in flight — so a feature that loads on mount never loaded in dev.
     const ran: Array<string> = [];
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Loaded", {})]),
@@ -1605,7 +1605,7 @@ describe("createFeatureStore — remount races (review regression)", () => {
     });
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1644,7 +1644,7 @@ describe("createFeatureStore — remount races (review regression)", () => {
       ),
     );
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Noop", {})]),
@@ -1663,7 +1663,7 @@ describe("createFeatureStore — remount races (review regression)", () => {
     });
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1695,7 +1695,7 @@ describe("createFeatureStore — output handler throw (review regression)", () =
     const defects: Array<unknown> = [];
     let handledHere = 0;
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Announce", {})]),
@@ -1716,7 +1716,7 @@ describe("createFeatureStore — output handler throw (review regression)", () =
     });
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1746,7 +1746,7 @@ describe("createFeatureStore — review iteration 2 regressions", () => {
 
   const make = (reducer: Record<string, any>, layer?: Layer.Layer<any, any, any>) => {
     const defects: Array<unknown> = [];
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Boom", {}), Action("Step", {})]),
@@ -1756,7 +1756,7 @@ describe("createFeatureStore — review iteration 2 regressions", () => {
       render: () => null,
     });
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1852,7 +1852,7 @@ describe("createFeatureStore — review iteration 2 regressions", () => {
   it("completes a multi-hop teardown chain", async () => {
     const ran: Array<string> = [];
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Flushed", {})]),
@@ -1882,7 +1882,7 @@ describe("createFeatureStore — review iteration 2 regressions", () => {
     });
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1926,7 +1926,7 @@ describe("Command.batch grouping (review iteration 3)", () => {
   } as any;
 
   const store = (reducer: Record<string, any>) => {
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Go", {}), Action("Stop", {})]),
@@ -1936,7 +1936,7 @@ describe("Command.batch grouping (review iteration 3)", () => {
       render: () => null,
     });
     return createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -1985,7 +1985,7 @@ describe("createFeatureStore — a dead mount does not swallow work", () => {
     const failing = Layer.effectDiscard(Effect.fail("nope"));
     const ran: Array<string> = [];
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Go", {})]),
@@ -2001,7 +2001,7 @@ describe("createFeatureStore — a dead mount does not swallow work", () => {
     });
 
     const s = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -2051,7 +2051,7 @@ describe("createFeatureStore — teardown belongs to the mount that started it",
       ),
     );
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Noop", {})]),
@@ -2072,7 +2072,7 @@ describe("createFeatureStore — teardown belongs to the mount that started it",
     });
 
     const s = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -2118,7 +2118,7 @@ describe("createFeatureStore — teardown belongs to the mount that started it",
       ),
     );
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Noop", {}), Action("SecondHop", {})]),
@@ -2148,7 +2148,7 @@ describe("createFeatureStore — teardown belongs to the mount that started it",
     });
 
     const s = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -2178,7 +2178,7 @@ describe("createFeatureStore — teardown belongs to the mount that started it",
     // survived, because that path queues after the sweep.
     const log: Array<string> = [];
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Noop", {})]),
@@ -2202,7 +2202,7 @@ describe("createFeatureStore — teardown belongs to the mount that started it",
     });
 
     const s = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -2228,7 +2228,7 @@ describe("createFeatureStore — teardown belongs to the mount that started it",
     const failing = Layer.effectDiscard(Effect.fail("nope"));
     const ran: Array<string> = [];
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Noop", {})]),
@@ -2245,7 +2245,7 @@ describe("createFeatureStore — teardown belongs to the mount that started it",
     });
 
     const s = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -2278,7 +2278,7 @@ describe("createFeatureStore — teardown belongs to the mount that started it",
     const failing = Layer.effectDiscard(Effect.fail("nope"));
     const defects: Array<unknown> = [];
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Go", {})]),
@@ -2300,7 +2300,7 @@ describe("createFeatureStore — teardown belongs to the mount that started it",
     });
 
     const s = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -2381,7 +2381,7 @@ describe("createFeatureStore — recovery after a dead mount (review iteration 4
       Effect.suspend(() => (failLayer ? Effect.fail("nope") : Effect.void)),
     );
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Retry", {})]),
@@ -2397,7 +2397,7 @@ describe("createFeatureStore — recovery after a dead mount (review iteration 4
     });
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence: {
         props: Schema.toEquivalence(Schema.Struct({})),
@@ -2430,7 +2430,7 @@ describe("createFeatureStore — teardown drains to quiescence (review iteration
 
   const make = (reducer: Record<string, any>) => {
     const defects: Array<unknown> = [];
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({}),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Go", {}), Action("Flushed", {})]),
@@ -2440,7 +2440,7 @@ describe("createFeatureStore — teardown drains to quiescence (review iteration
       render: () => null,
     });
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: {},
       equivalence,
       runtime: testRuntime(),
@@ -2581,7 +2581,7 @@ describe("createFeatureStore — teardown drains to quiescence (review iteration
 // ---------------------------------------------------------------------------
 // The command leaf — `Command.effect`, `keyed`, `batch`
 //
-// Written against the redesigned surface. The `Command` and `Blueprint.run`
+// Written against the redesigned surface. The `Command` and `Feature.run`
 // blocks above still drive the pre-redesign one; they are migrated in place
 // during /implement, not here.
 // ---------------------------------------------------------------------------
@@ -2671,7 +2671,7 @@ describe("Command — the effect leaf", () => {
   });
 });
 
-describe("Blueprint.run — the effect leaf", () => {
+describe("Feature.run — the effect leaf", () => {
   /**
    * A cancellable log-writing command: `id:start`, then `id:done` after `ms`,
    * with `id:ensuring` however the fiber ends — so an assertion can tell
@@ -3333,7 +3333,7 @@ describe("createFeatureStore — devtools", () => {
     const defects: Array<unknown> = [];
     const emitted: Array<{ readonly _tag: string }> = [];
 
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({ id: Schema.String }),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Bump", {}), Action("Land", {})]),
@@ -3345,7 +3345,7 @@ describe("createFeatureStore — devtools", () => {
     } as any);
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: { id: "a" },
       equivalence,
       runtime: ManagedRuntime.make(devtoolsLayer(sink)) as unknown as ManagedRuntime.ManagedRuntime<
@@ -3895,7 +3895,7 @@ describe("createFeatureStore — devtools", () => {
   });
 
   it("emits the `Unmounted` transition and the teardown command", () => {
-    // `stop` bypasses `fold` entirely and calls `blueprint.reduce` directly, so
+    // `stop` bypasses `fold` entirely and calls `feature.reduce` directly, so
     // this needs its own emission site or teardown never appears in the log.
     const { store, recorder } = setup({
       reducer: {
@@ -4030,7 +4030,7 @@ describe("createFeatureStore — devtools", () => {
 
   it("behaves identically with no devtools layer installed", async () => {
     const defects: Array<unknown> = [];
-    const blueprint = define({
+    const feature = define({
       props: Schema.Struct({ id: Schema.String }),
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Bump", {})]),
@@ -4047,7 +4047,7 @@ describe("createFeatureStore — devtools", () => {
     } as any);
 
     const store = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: { id: "a" },
       equivalence,
       runtime: testRuntime(),
@@ -4112,14 +4112,14 @@ describe("Children", () => {
     ).toThrow(/node.*state.*props/s);
   });
 
-  const internalsOf = (blueprint: object): Record<string, unknown> => {
-    const slot = Object.getOwnPropertySymbols(blueprint).find(
+  const internalsOf = (feature: object): Record<string, unknown> => {
+    const slot = Object.getOwnPropertySymbols(feature).find(
       (symbol) => symbol.description === "@tea/internals",
     );
-    return (blueprint as unknown as Record<symbol, Record<string, unknown>>)[slot!];
+    return (feature as unknown as Record<symbol, Record<string, unknown>>)[slot!];
   };
 
-  const feature = (props: Schema.Struct<any>) =>
+  const makeFeature = (props: Schema.Struct<any>) =>
     define({
       props: props as never,
       state: Schema.Struct({ count: Schema.Number }),
@@ -4138,10 +4138,10 @@ describe("Children", () => {
     readonly initial: Record<string, unknown>;
     readonly sink: DevtoolsSink;
   }) => {
-    const blueprint = feature(options.props);
+    const feature = makeFeature(options.props);
 
     return createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: options.initial,
       equivalence: {
         props: Schema.toEquivalence(options.props),
@@ -4215,7 +4215,7 @@ describe("Children", () => {
     expect(() => validate({ children: (row: { id: string }) => row.id })).not.toThrow();
 
     // And it is opaque on exactly the same terms as the bare form.
-    expect(internalsOf(feature(Schema.Struct({ children: RenderProp }))).opaqueProps).toEqual([
+    expect(internalsOf(makeFeature(Schema.Struct({ children: RenderProp }))).opaqueProps).toEqual([
       ["children", "<children>"],
     ]);
     const equivalent = Schema.toEquivalence(Schema.Struct({ children: RenderProp }));
@@ -4228,16 +4228,17 @@ describe("Children", () => {
     // whole. Both have to resolve, or redaction silently stops happening.
     const expected = [["children", "<children>"]];
 
-    expect(internalsOf(feature(Schema.Struct({ children: Children }))).opaqueProps).toEqual(
+    expect(internalsOf(makeFeature(Schema.Struct({ children: Children }))).opaqueProps).toEqual(
       expected,
     );
     expect(
-      internalsOf(feature(Schema.Struct({ children: Schema.optionalKey(Children) }))).opaqueProps,
+      internalsOf(makeFeature(Schema.Struct({ children: Schema.optionalKey(Children) })))
+        .opaqueProps,
     ).toEqual(expected);
     expect(
-      internalsOf(feature(Schema.Struct({ children: Schema.optional(Children) }))).opaqueProps,
+      internalsOf(makeFeature(Schema.Struct({ children: Schema.optional(Children) }))).opaqueProps,
     ).toEqual(expected);
-    expect(internalsOf(feature(Schema.Struct({ id: Schema.String }))).opaqueProps).toEqual([]);
+    expect(internalsOf(makeFeature(Schema.Struct({ id: Schema.String }))).opaqueProps).toEqual([]);
   });
 
   it("never raises `PropsChanged` on its own", () => {
@@ -4271,7 +4272,7 @@ describe("Children", () => {
     const Props = Schema.Struct({ id: Schema.String, children: Schema.optionalKey(Children) });
     const seen: Array<unknown> = [];
 
-    const blueprint = define({
+    const feature = define({
       props: Props as never,
       state: Schema.Struct({ count: Schema.Number }),
       action: Action.of([Action("Bump", {})]),
@@ -4288,7 +4289,7 @@ describe("Children", () => {
     });
 
     const mounted = createFeatureStore({
-      blueprint: blueprint as any,
+      feature: feature as any,
       props: { id: "a", children: node() },
       equivalence: {
         props: Schema.toEquivalence(Props),

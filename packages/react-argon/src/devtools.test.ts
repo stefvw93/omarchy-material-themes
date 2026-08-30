@@ -813,7 +813,7 @@ describe("createConsoleDevtools", () => {
     const afterFirst = printed(spy);
     sink.onEvent(transition({ instance: "2" }));
 
-    // A second mount of the same blueprint starts its own clock. Keying by
+    // A second mount of the same feature starts its own clock. Keying by
     // `name` alone would report the gap between two unrelated features.
     expect(printed(spy).slice(afterFirst.length)).not.toMatch(/\+\d/);
   });

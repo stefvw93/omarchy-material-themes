@@ -200,7 +200,7 @@ untouched — no existing `component(bp)` call changes.
 - [x] A dying command emits **exactly one** `Defect` (`from` = the action tag, `handled: true` when an `Error` handler takes it), followed by a `Transition` for `Error` with `cause: { _tag: "Defect", from }`. That second event is not a duplicate — see Expected Behavior.
 - [x] With no `Error` handler declared, the same defect emits one `Defect` with `handled: false`, and the error still reaches the store's `defect` sink.
 - [x] A throwing `on<Tag>` handler emits one `Defect` with `handled: false` and does **not** reach the feature's `Error` handler.
-- [x] `stop()` emits the `Unmounted` `Transition` and the teardown `Command` event, even though teardown bypasses `fold` and calls `blueprint.reduce` directly. The transition is emitted **even when the `Unmounted` handler throws** — `reduce` discards that handler's state either way, so there is no next state to be wrong about, and the console logger evicts its elapsed entry on this event.
+- [x] `stop()` emits the `Unmounted` `Transition` and the teardown `Command` event, even though teardown bypasses `fold` and calls `feature.reduce` directly. The transition is emitted **even when the `Unmounted` handler throws** — `reduce` discards that handler's state either way, so there is no next state to be wrong about, and the console logger evicts its elapsed entry on this event.
 - [x] `summarizeDefect` is total **including for an `Error` subclass with a throwing `message` or `stack` getter**. `instanceof Error` is not a guarantee that reading a property is safe, and both funnels call the summarizer before routing — see Expected Behavior.
 - [x] `instance` is stable across `stop(); start()` on one store, and differs between two stores of the same `name`.
 - [x] `name` comes from `component(bp, { name })` and falls back to `"TeaFeature"`.
@@ -261,7 +261,7 @@ untouched — no existing `component(bp)` call changes.
 | `:2105-2122`               | `foldOne` emits `Transition` (after a successful reduce, before the command event) and `Command` at the `offer` call                                               |
 | `:2162-2168`               | `raiseDefect(error, from, cause)` — emits `Defect` at the top, before the routing branch                                                                           |
 | `:2217`, `:2244`           | Interpreter `emit`/`onExit` supply `{ _tag: "Command", action: ctx.tag, key: ctx.key }`                                                                            |
-| `:2478-2492`               | `stop()` emits the `Unmounted` transition and the teardown `Command` event — it bypasses `fold` and calls `blueprint.reduce` directly                              |
+| `:2478-2492`               | `stop()` emits the `Unmounted` transition and the teardown `Command` event — it bypasses `fold` and calls `feature.reduce` directly                                |
 | `:2696`, `:2752`           | `component` passes its existing `name` to the store (today it only sets `displayName`)                                                                             |
 
 ### Sink resolution
@@ -346,7 +346,7 @@ Elapsed uses `performance.now()` in a `Map` keyed by `${name}#${instance}`.
 - **A summariser that can throw defeats both error funnels, which is why `summarizeDefect` is total for `Error` subclasses too.** Both `emitOutput`'s catch and `raiseDefect` summarize _before_ they route. A throw inside the summariser therefore skips the routing entirely: in `emitOutput` the original error escapes into `fold`'s catch and lands in the **feature's own `Error` handler** — precisely what that code path exists to prevent, since a throwing `on<Tag>` prop is the parent's bug — and in `raiseDefect` it skips both `defect()` and the `Error` fold, surfacing as a raw throw out of the interpreter's exit hook. `instanceof Error` does not make a property read safe: a subclass may define `message` or `stack` as a getter, and a library error that formats its message lazily from torn-down state does exactly that. Every property read goes through one defused helper, and an unreadable field is treated the same as an absent one.
 - **The `Defect` event is emitted in `raiseDefect` only.** `onExit` already calls `raiseDefect`, so emitting in both would double every dying command. `handled` comes from the branch that already exists: `from === "Error" || !handles("Error")` → `handled: false`. `emitOutput`'s catch calls `defect()` **directly**, never `raiseDefect` (deliberately), so it needs its own emission with `handled: false`.
 - **A dropped command logs as dropped, not as issued** — hence `offer` returning a boolean.
-- **StrictMode double-invokes the `useState` initialiser**, burning an instance id. Ids are unique, not gapless. The counter is a single module-global integer — not per name, not per runtime — so ids are unique per page and two mounts of one blueprint need not be numbered `1` and `2`.
+- **StrictMode double-invokes the `useState` initialiser**, burning an instance id. Ids are unique, not gapless. The counter is a single module-global integer — not per name, not per runtime — so ids are unique per page and two mounts of one feature need not be numbered `1` and `2`.
 - `diff` is deliberately shallow: deep-diffing unknown state is unbounded work on a value the library does not own — the same argument `hooksEquivalence` already makes.
 
 ## Known limitations
@@ -360,7 +360,7 @@ Elapsed uses `performance.now()` in a `Map` keyed by `${name}#${instance}`.
 
 ## Open work
 
-### 1. `Blueprint.run` does not emit
+### 1. `Feature.run` does not emit
 
 `run` has no `ManagedRuntime`, no `name` and no `instance`, and its `emitted` /
 `outputs` arrays already cover most of what a headless assertion wants. Its body
@@ -386,7 +386,7 @@ owns when `start` runs and the effect scheduling is React's:
   that runs while React is rendering.
 - A dying command reports one `Defect` and then the recovery fold.
 - Unmounting reports `Unmounted`.
-- Two mounts of one blueprint are distinguishable by `instance`, which is the
+- Two mounts of one feature are distinguishable by `instance`, which is the
   reason that field exists.
 - StrictMode's double mount stays coherent.
 

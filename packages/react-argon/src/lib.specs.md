@@ -2,7 +2,7 @@
 
 ## Overview & Purpose
 
-A feature is declared as a **blueprint**: schema-typed props and state, a tagged
+A **feature** is declared with `define` and built with `create`: schema-typed props and state, a tagged
 action vocabulary, an optional outbound output vocabulary, optional ambient
 hooks, and a reducer. The reducer is pure — it returns the next state and,
 optionally, a `Command` describing work to do. The runtime interprets commands
@@ -10,11 +10,11 @@ as Effects.
 
 Three consumers, one core:
 
-- `blueprint.reduce(action, snapshot)` — the reducer as one pure function. No
+- `feature.reduce(action, snapshot)` — the reducer as one pure function. No
   React, no Effect runtime.
-- `blueprint.run(actions, options)` — folds a sequence to quiescence and reports
+- `feature.run(actions, options)` — folds a sequence to quiescence and reports
   what was emitted. No React.
-- `component(blueprint)` — the React binding, over `createFeatureStore`.
+- `component(feature)` — the React binding, over `createFeatureStore`.
 
 `reduce`, `run` and the store share one command interpreter. Two
 implementations of grouping and cancellation would have to agree forever.
@@ -71,7 +71,7 @@ node. Children are for rendering, not for reducing.
 
 The mechanism is one annotation key, `"@tea/opaque"`, whose value is the
 placeholder. `define(...).create` collects the annotated fields off the props
-schema once and stores them in the blueprint's internals; a feature that
+schema once and stores them in the feature's internals; a feature that
 declares none pays nothing at the report site. `Schema.optional(x)` is
 `optionalKey(UndefinedOr(x))`, so the collection also looks one level into a
 union.
@@ -93,7 +93,7 @@ encodability contract.
 `render` is one function, and a feature whose view is large has nowhere to
 split it. A fragment written as its own component needs `state` and `dispatch`
 typed to the feature, and the only ways to get them today are by hand through
-props, or by promoting the fragment to a blueprint of its own with outputs —
+props, or by promoting the fragment to a feature of its own with outputs —
 the right tool for a child _feature_, the wrong one for a paragraph of the
 parent's view. `WallhavenInputs` in the frontend is 149 lines for two selects,
 an empty state and an empty action vocabulary; the paginator and result grids
@@ -117,7 +117,7 @@ can read"; a fragment sees nothing `render` could not.
 
 Design points, each with its reason:
 
-- **It hangs off the FC, not the blueprint.** A blueprint's public surface is
+- **It hangs off the FC, not the `Feature` value.** A `Feature`'s public surface is
   `reduce` and `run`, and it knows no runtime. `component` is where React
   enters, so it is where a React hook belongs. Two `component(bp)` calls — two
   runtimes, or two names — get two contexts and cannot see each other.
@@ -133,12 +133,13 @@ Design points, each with its reason:
 - **Nearest mount wins** under nesting, as any context does.
 - **View fragment ≠ child feature.** A fragment is part of its feature's
   `render`, split across files — Elm's `view` decomposed into helpers, minus the
-  explicit model argument. A child feature is a blueprint, and talks through
-  validated props and `on<Tag>`. Nothing prevents a blueprint rendered under
+  explicit model argument. A child feature is a `Feature` of its own — built with `create`, mounted
+  with `component` — and talks through validated props and `on<Tag>`.
+  Nothing prevents a child feature rendered under
   `<Seed>` from calling `Seed.useFeature()`; it is a smell, because that
-  blueprint's inputs stop being visible in its props schema. Documented, not
+  feature's inputs stop being visible in its props schema. Documented, not
   enforced — the enforcement would cost a runtime check on every hook call to
-  catch a mistake the type of the blueprint's own `render` already discourages.
+  catch a mistake the type of the feature's own `render` already discourages.
 - **`Children.as<(x) => ReactNode>()` stays** as the explicit form: a fragment
   the parent supplies, reusable outside the feature, handed exactly what it
   needs. `useFeature` is for fragments that belong to the feature.
@@ -261,7 +262,7 @@ landed with every box checked again.
 - [x] `Next.state(next)` returns the state whether `next` is a bare state or a `[state, command]` tuple.
 - [x] `Next.command(next)` returns the command for a tuple, `undefined` for a bare state.
 
-### `Blueprint.reduce`
+### `Feature.reduce`
 
 - [x] Dispatches by `_tag` to the matching handler (declared or lifecycle) and returns its `Next`.
 - [x] An unhandled _lifecycle_ action leaves state unchanged and does not throw.
@@ -269,7 +270,7 @@ landed with every box checked again.
 - [x] Every tag-keyed lookup uses `Object.hasOwn`, so `constructor`/`toString` and the rest of `Object.prototype` cannot pose as handlers, lifecycle tags, or declared outputs.
 - [x] `Unmounted`'s handler runs but its returned state is discarded — only its command matters. `reduce` and `run` agree on this.
 
-### `Blueprint.run`
+### `Feature.run`
 
 - [x] Seeded actions are processed but are not recorded in `emitted`.
 - [x] Actions a command emits feed back into the reducer loop; `emitted` collects them.
@@ -283,8 +284,8 @@ landed with every box checked again.
 
 ### React binding (`createRuntime` → `component`)
 
-- [x] `Blueprint` carries its internals behind a module-private `unique symbol`; `reduce` and `run` remain the entire public surface.
-- [x] `component(blueprint)` renders `render({ state, props, hooks, dispatch })` and re-renders when a command changes state.
+- [x] `Feature` carries its internals behind a module-private `unique symbol`; `reduce` and `run` remain the entire public surface.
+- [x] `component(feature)` renders `render({ state, props, hooks, dispatch })` and re-renders when a command changes state.
 - [x] Incoming props are split by derived name (`outputTags.map(t => "on" + t)`), so a declared prop merely starting with `on` is left alone.
 - [x] `validateProps` runs the schema with `onExcessProperty: "error"` and **throws** — a malformed prop is the parent's defect and belongs at the error boundary. It runs on mount and on props-identity change, not on a state-driven re-render.
 - [x] An output leaves through its `on<Tag>` prop with `_tag` stripped and never re-enters the reducer; a missing handler throws to the boundary rather than into this feature's `Error` handler.
@@ -309,7 +310,7 @@ landed with every box checked again.
 - [x] `useFeature()` returns the `RenderSnapshot` of the nearest enclosing mount of **that component**: `state`, `props`, `hooks`, `dispatch` — the same object `render` received on the same render, by identity.
 - [x] `dispatch` obtained through `useFeature` is the store's own: reference-stable for the mount, routes a declared output to its `on<Tag>` prop without touching the reducer, and reports `cause: { _tag: "Dispatch" }` — a fragment's dispatch is indistinguishable from `render`'s.
 - [x] After a fold moves state, a fragment reading `state` re-renders and sees the new state on the same render as the root — never one render behind.
-- [x] Two `component()` calls over one blueprint are independent: `A.useFeature()` under `<B>` throws, even though both wrap the same blueprint.
+- [x] Two `component()` calls over one feature are independent: `A.useFeature()` under `<B>` throws, even though both wrap the same feature.
 - [x] Nested mounts of one component: a fragment resolves the nearest.
 - [x] Called outside any mount of its component, throws `TypeError` with message `` `${name}.useFeature() called outside <${name}>` ``, `name` being the `component` option or `"TeaFeature"`.
 - [x] A node the parent passes as `children` and the feature renders inside its tree may call `useFeature()` — the provider is positional, so this is React's compound-component shape (`<Select><SelectItem/></Select>`) and works by construction. Not a target, not prevented.
@@ -368,7 +369,7 @@ contextual inference are therefore written as direct calls plus
 
 ### Browser coverage (`/e2e`)
 
-`src/lib/tea.browser.test.tsx` covers the React binding: that a blueprint paints,
+`src/lib/tea.browser.test.tsx` covers the React binding: that a feature paints,
 that a real click repaints, that an output crosses into a parent's `on<Tag>`
 prop. Nothing in the leaf change alters any of that, and it still passes
 unchanged — which is the point of running it.
@@ -409,7 +410,7 @@ function` and no implementation, deliberately: they are illustrations of the
   boundary, not runnable demos, and `main.tsx` never mounts them. The `declare`s
   are module-private, so a test cannot inject past them either. Their commands
   are covered headlessly instead — `cart.tsx` ships
-  `checkoutAnnouncesTheOrder`, a `blueprint.run` assertion, as its own
+  `checkoutAnnouncesTheOrder`, a `feature.run` assertion, as its own
   documented test story. Making them mountable means writing demo behaviour that
   does not exist today, which is a change to what the examples _say_, not a
   migration of how they say it.
@@ -588,7 +589,7 @@ Two things it did **not** close, both recorded under Known limitations in
 fiber _died_ emits no `Unmounted` — which is item #1's to fix, since the same
 `release()` is why the store cannot re-arm from `component` either.
 
-### 4. `Blueprint.run` discards a dying command
+### 4. `Feature.run` discards a dying command
 
 `commandInterpreter`'s `onExit` is optional, and `run` is the caller that omits
 it. `forkLeaf` forks and returns, so nothing awaits the fiber: a feature whose
