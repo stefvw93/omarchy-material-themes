@@ -1567,6 +1567,38 @@ const hooksEquivalence = Equivalence.Record(
 const noHooks: AnyHooks = Object.freeze({});
 
 /**
+ * What `component` returns: the mountable `FC`, carrying the one hook a view
+ * fragment under it needs.
+ *
+ * `useFeature` returns the `RenderSnapshot` of the nearest enclosing mount of
+ * **this** component — the same `{ state, props, hooks, dispatch }` object
+ * `render` received on that render — so a fragment split out of `render` into
+ * its own file sees exactly what `render` sees, and nothing more. Outside any
+ * mount of the component it throws, naming the component.
+ *
+ *     export const Seed = component(seed, { name: "Seed" });
+ *
+ *     const Paginator = () => {
+ *       const { state, dispatch } = Seed.useFeature();
+ *       …
+ *     };
+ *
+ * A fragment is part of its feature's view; a child *feature* is a blueprint
+ * and talks through props and `on<Tag>`. A blueprint reaching into an
+ * ancestor's `useFeature` compiles, and hides that input from its own props
+ * schema — documented as a smell, not prevented.
+ */
+export type FeatureComponent<
+  Props,
+  State,
+  Action,
+  Output extends { readonly _tag: string },
+  H extends AnyHooks,
+> = FC<Simplify<Props & OutputProps<Output>>> & {
+  readonly useFeature: () => RenderSnapshot<Props, State, Action | Output, H>;
+};
+
+/**
  * The runtime is a root provider.
  */
 export const createRuntime: <RootR, RootE>(
@@ -1585,7 +1617,7 @@ export const createRuntime: <RootR, RootE>(
     >(
       blueprint: Blueprint<Props, State, Action, Output, H, R>,
       options?: { readonly name?: string },
-    ): FC<Simplify<Props & OutputProps<Output>>>;
+    ): FeatureComponent<Props, State, Action, Output, H>;
 
     <
       Props,
@@ -1601,7 +1633,7 @@ export const createRuntime: <RootR, RootE>(
         readonly layer: Layer.Layer<Exclude<R, RootR>, LayerError, RootR>;
         readonly name?: string;
       },
-    ): FC<Simplify<Props & OutputProps<Output>>>;
+    ): FeatureComponent<Props, State, Action, Output, H>;
   };
 
   /**
@@ -1615,9 +1647,22 @@ export const createRuntime: <RootR, RootE>(
   const component = (
     blueprint: Blueprint<any, any, any, any, any, any>,
     componentOptions: { readonly layer?: Layer.Layer<any, any, any>; readonly name?: string } = {},
-  ): FC<any> => {
+  ): FeatureComponent<any, any, any, any, any> => {
     const { render, useUnsafeHooks, props: propsSchema, outputTags } = blueprint[internals];
     const name = componentOptions.name ?? "TeaFeature";
+
+    // One context per `component()` call, so two components over one
+    // blueprint cannot see each other's mounts. `undefined` is the no-mount
+    // signal `useFeature` turns into a named throw.
+    const Snapshot = createContext<RenderSnapshot<any, any, any, any> | undefined>(undefined);
+
+    const useFeature = (): RenderSnapshot<any, any, any, any> => {
+      const snapshot = useContext(Snapshot);
+      if (snapshot === undefined) {
+        throw new TypeError(`${name}.useFeature() called outside <${name}>`);
+      }
+      return snapshot;
+    };
     const useFeatureHooks: HookSpec<any, any, AnyHooks> = useUnsafeHooks ?? (() => noHooks);
     const outputPropNames = new Set(outputTags.map((tag) => `on${tag}`));
 
@@ -1716,11 +1761,22 @@ export const createRuntime: <RootR, RootE>(
         return () => store.stop();
       }, [store]);
 
-      return render({ state, props, hooks, dispatch: store.dispatch });
+      // One object for `render` and for the provider, so a fragment's
+      // `useFeature()` is the snapshot `render` had, by identity. Fresh per
+      // render, deliberately: consumers re-render with the root, which is the
+      // set the root's own re-render already covers.
+      const snapshot: RenderSnapshot<any, any, any, any> = {
+        state,
+        props,
+        hooks,
+        dispatch: store.dispatch,
+      };
+
+      return createElement(Snapshot.Provider, { value: snapshot }, render(snapshot));
     };
 
     Feature.displayName = name;
-    return Feature;
+    return Object.assign(Feature, { useFeature });
   };
 
   return {

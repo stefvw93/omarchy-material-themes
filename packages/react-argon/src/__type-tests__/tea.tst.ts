@@ -1,6 +1,6 @@
 import { Effect, Layer, Schema } from "effect";
 import { expect, test } from "tstyche";
-import type { ReactNode } from "react";
+import type { ComponentProps, FC, ReactNode } from "react";
 import {
   Action,
   type AnyVocabulary,
@@ -12,10 +12,12 @@ import {
   type Dispatcher,
   type Disjoint,
   type Exhaustive,
+  type FeatureComponent,
   type MemberOf,
   type Message,
   type NoPropCollision,
   type OutputProps,
+  type RenderSnapshot,
   type ServicesOf,
   type TagsOf,
 } from "../lib";
@@ -952,4 +954,81 @@ test("a blueprint's string-keyed surface stays exactly `reduce` and `run`", () =
   // Asserted on the string keys specifically: a slot added as a plain property
   // would show up here, which is the regression this pins.
   expect<Extract<keyof typeof cart, string>>().type.toBe<"reduce" | "run">();
+});
+
+// ---------------------------------------------------------------------------
+// React binding — `component(bp).useFeature`
+// ---------------------------------------------------------------------------
+
+test("`useFeature` returns the `RenderSnapshot` typed to the feature", () => {
+  const Feature = createRuntime(Layer.empty).component(cart);
+  const snapshot = Feature.useFeature();
+
+  expect(snapshot.state).type.toBe<{ readonly count: number }>();
+  expect(snapshot.props).type.toBe<{ readonly customerId: string }>();
+  expect(snapshot.hooks).type.toBe<{}>();
+
+  // Declared actions and outputs both dispatch — the store routes by tag — and
+  // an undeclared tag or a declared tag with the wrong payload does not.
+  expect(snapshot.dispatch).type.toBeCallableWith({ _tag: "Added" });
+  expect(snapshot.dispatch).type.toBeCallableWith({ _tag: "OrderPlaced", orderId: "o1" });
+  expect(snapshot.dispatch).type.not.toBeCallableWith({ _tag: "Removed" });
+  expect(snapshot.dispatch).type.not.toBeCallableWith({ _tag: "OrderPlaced" });
+
+  // The whole snapshot is nameable without reconstructing the generics.
+  expect<ReturnType<typeof Feature.useFeature>>().type.toBe<
+    RenderSnapshot<
+      { readonly customerId: string },
+      { readonly count: number },
+      { readonly _tag: "Added" } | { readonly _tag: "OrderPlaced"; readonly orderId: string },
+      {}
+    >
+  >();
+});
+
+test("`useFeature` is on both `component` overloads, and on a feature with no outputs", () => {
+  const needsBar = define({
+    props: Schema.Struct({}),
+    state: Schema.Struct({ count: Schema.Number }),
+    action: Action.of([Action("B", {})]),
+  }).create({
+    initialState: () => ({ count: 0 }),
+    reducer: { B: () => [{ count: 1 }, Command.effect(() => barEffect)] as const },
+    render: () => null,
+  });
+
+  const WithLayer = createRuntime(fooLayer).component(needsBar, { layer: barFromFoo });
+  const Plain = createRuntime(Layer.empty).component(cart);
+
+  expect(WithLayer).type.toHaveProperty("useFeature");
+  expect(Plain).type.toHaveProperty("useFeature");
+
+  // No outputs: `dispatch` takes the actions alone, and `never` widens nothing.
+  expect(WithLayer.useFeature().dispatch).type.toBeCallableWith({ _tag: "B" });
+  expect(WithLayer.useFeature().dispatch).type.not.toBeCallableWith({
+    _tag: "OrderPlaced",
+    orderId: "o1",
+  });
+});
+
+test("`FeatureComponent` is still an `FC`, so JSX and `FC`-typed slots accept it", () => {
+  const Feature = createRuntime(Layer.empty).component(cart);
+
+  expect(Feature).type.toBeAssignableTo<FC<ComponentProps<typeof Feature>>>();
+  expect(Feature).type.toBeAssignableTo<
+    FeatureComponent<
+      { readonly customerId: string },
+      { readonly count: number },
+      { readonly _tag: "Added" },
+      { readonly _tag: "OrderPlaced"; readonly orderId: string },
+      {}
+    >
+  >();
+
+  // The added member changes nothing about what JSX accepts.
+  expect(Feature).type.toBeCallableWith({
+    customerId: "c1",
+    onOrderPlaced: (payload: { readonly orderId: string }) => void payload.orderId,
+  });
+  expect(Feature).type.not.toBeCallableWith({ customerId: "c1" });
 });

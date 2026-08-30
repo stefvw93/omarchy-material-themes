@@ -88,6 +88,61 @@ a state schema declaring `Children` would put raw ReactNodes into every event.
 `define` throws on one rather than silently breaking the devtools
 encodability contract.
 
+## `useFeature`, the snapshot from inside the subtree
+
+`render` is one function, and a feature whose view is large has nowhere to
+split it. A fragment written as its own component needs `state` and `dispatch`
+typed to the feature, and the only ways to get them today are by hand through
+props, or by promoting the fragment to a blueprint of its own with outputs —
+the right tool for a child _feature_, the wrong one for a paragraph of the
+parent's view. `WallhavenInputs` in the frontend is 149 lines for two selects,
+an empty state and an empty action vocabulary; the paginator and result grids
+in `Seed`'s render stay inline for the same reason.
+
+`component(bp)` therefore hands back an `FC` carrying one hook:
+
+```ts
+export const Seed = component(seed, { name: "Seed" });
+
+// a plain React component, anywhere under <Seed>
+const Paginator = () => {
+  const { state, dispatch } = Seed.useFeature();
+  return <PaginationNext onClick={() => dispatch(NextPage.make({}))} />;
+};
+```
+
+It returns the `RenderSnapshot` — `{ state, props, hooks, dispatch }` — the
+exact object `render` was handed on that render. One type for "what the view
+can read"; a fragment sees nothing `render` could not.
+
+Design points, each with its reason:
+
+- **It hangs off the FC, not the blueprint.** A blueprint's public surface is
+  `reduce` and `run`, and it knows no runtime. `component` is where React
+  enters, so it is where a React hook belongs. Two `component(bp)` calls — two
+  runtimes, or two names — get two contexts and cannot see each other.
+- **The context value is the per-render snapshot object**, not the store plus a
+  selector. The subtree re-renders with the root on every fold regardless — the
+  root's `useSyncExternalStore` re-renders it, and its children with it — so a
+  selector only pays under `memo`, of which there is none. The store's
+  `subscribe`/`getSnapshot` pair is there if that changes; adding a selector
+  later is non-breaking.
+- **Outside a mount of its component it throws**, naming the component. A
+  `undefined` default would push the failure to the first property read, one
+  frame away from the cause.
+- **Nearest mount wins** under nesting, as any context does.
+- **View fragment ≠ child feature.** A fragment is part of its feature's
+  `render`, split across files — Elm's `view` decomposed into helpers, minus the
+  explicit model argument. A child feature is a blueprint, and talks through
+  validated props and `on<Tag>`. Nothing prevents a blueprint rendered under
+  `<Seed>` from calling `Seed.useFeature()`; it is a smell, because that
+  blueprint's inputs stop being visible in its props schema. Documented, not
+  enforced — the enforcement would cost a runtime check on every hook call to
+  catch a mistake the type of the blueprint's own `render` already discourages.
+- **`Children.as<(x) => ReactNode>()` stays** as the explicit form: a fragment
+  the parent supplies, reusable outside the feature, handed exactly what it
+  needs. `useFeature` is for fragments that belong to the feature.
+
 ## The command model
 
 A `Command` is a small ADT. The leaf is an `Effect`; everything Effect can
@@ -248,6 +303,19 @@ landed with every box checked again.
 - [x] `createRuntime` takes **one** parameter. `RuntimeOptions` and its unwired `onEvent` are removed; observation is a service installed through the root layer instead. Spec'd in `devtools.specs.md`.
 - [x] The store reports transitions, commands issued, outputs emitted and defects to a synchronously-resolved `Devtools` sink, and allocates nothing at those sites when no sink is installed. Emission points are listed in `devtools.specs.md`.
 
+### Feature context (`component(bp).useFeature`)
+
+- [x] `component(bp, options)` returns `FeatureComponent<Props, State, Action, Output, H>` — `FC<Simplify<Props & OutputProps<Output>>> & { readonly useFeature: () => RenderSnapshot<Props, State, Action | Output, H> }`. Every existing call site compiles unchanged: the intersection adds a member and removes none.
+- [x] `useFeature()` returns the `RenderSnapshot` of the nearest enclosing mount of **that component**: `state`, `props`, `hooks`, `dispatch` — the same object `render` received on the same render, by identity.
+- [x] `dispatch` obtained through `useFeature` is the store's own: reference-stable for the mount, routes a declared output to its `on<Tag>` prop without touching the reducer, and reports `cause: { _tag: "Dispatch" }` — a fragment's dispatch is indistinguishable from `render`'s.
+- [x] After a fold moves state, a fragment reading `state` re-renders and sees the new state on the same render as the root — never one render behind.
+- [x] Two `component()` calls over one blueprint are independent: `A.useFeature()` under `<B>` throws, even though both wrap the same blueprint.
+- [x] Nested mounts of one component: a fragment resolves the nearest.
+- [x] Called outside any mount of its component, throws `TypeError` with message `` `${name}.useFeature() called outside <${name}>` ``, `name` being the `component` option or `"TeaFeature"`.
+- [x] A node the parent passes as `children` and the feature renders inside its tree may call `useFeature()` — the provider is positional, so this is React's compound-component shape (`<Select><SelectItem/></Select>`) and works by construction. Not a target, not prevented.
+- [x] `validateProps`, `sync`, `start`/`stop`, StrictMode behaviour and every devtools emission are untouched. The provider is one element around `render`'s output.
+- [x] `FeatureComponent` is exported, so a fragment can type a prop as `typeof Seed` or the snapshot as `ReturnType<typeof Seed.useFeature>` without reconstructing the generics.
+
 ### Type-level (TSTyche)
 
 - [x] `Disjoint`, `NoPropCollision`, `Exhaustive`/`Excess`, `ServiceOf`/`ServicesOf` reject what they document and accept what they document.
@@ -261,6 +329,9 @@ landed with every box checked again.
 - [x] `Command.cancel` is `Command<never>` and takes exactly one string. An object target — `{ tag }` or `{ tag, key }` — is a compile error, as are a number and a zero-argument call.
 - [x] `ignore`/`queue`/`stream` are absent from the constructor set, and the `Stream` and `Guarded` variants are absent from the ADT.
 - [x] `restart` is a constructor-set member, not an ADT variant, and preserves `A` and `R` in both forms. The two-argument form keeps contextual `A` (the same rule as `keyed`); the `.pipe` form severs it, pinned with `@ts-expect-error` on identical terms.
+- [x] `Seed.useFeature()` is typed `RenderSnapshot<Props, State, Action | Output, H>`: `state` is the state schema's `Type`, `props` the props schema's `Type` side (decoded, `children` as declared), `hooks` is `H`, and `dispatch` accepts every declared action and output and rejects an undeclared tag and a declared tag with the wrong payload.
+- [x] `useFeature` is present on **both** `component` overloads — with and without `layer` — and on a feature with no outputs (`Output` = `never`) `dispatch` accepts the actions alone.
+- [x] `Seed` remains assignable to `FC<…>` where an `FC` is expected: the added member does not change what JSX accepts.
 
 **How `A` reaches the leaf.** `A` appears only inside `Dispatcher<A>`, in a
 parameter position, so nothing in the argument can infer it — it is resolved from
@@ -307,6 +378,20 @@ show: a parent passes a node that changes on every tick, the node reaches the
 DOM and stays current, and the reducer's `PropsChanged` never fires. A second
 test mounts a render prop — children the feature _calls_, with state only it
 has — and repaints it from a dispatch.
+
+`useFeature` is a React-binding change, so its coverage is browser-only — there
+is no node seam for a context, and `component` is not unit-tested in node
+today. Four tests, each pinning one criterion the node suite cannot:
+
+- A fragment two levels below `render` reads `state` and dispatches from a real
+  click; the root and the fragment repaint together, and the fragment's DOM
+  shows the post-fold state on the same paint as the root's.
+- A fragment dispatches a declared **output**; it reaches the parent's
+  `on<Tag>` prop with `_tag` stripped, and the reducer never sees it.
+- A fragment rendered outside any `<Seed>` throws, and the message reaching a
+  boundary names the component.
+- Two mounts of one component each carry a fragment; each fragment reads its
+  own mount's state and a dispatch in one leaves the other untouched.
 
 `src/examples/search.browser.test.tsx` is the leaf change's own browser test, and
 search is the right demo for it: the debounce is only meaningful against real
@@ -369,6 +454,13 @@ function` and no implementation, deliberately: they are illustrations of the
 - Teardown runs in-band, on the fiber that owns the scope, with the feature's own
   services still alive — then the scope closes. Bounded as a whole; an abandoned
   teardown is reported as a defect rather than silently closing.
+- `useFeature` is one `createContext<RenderSnapshot | undefined>(undefined)`
+  **per `component()` call**, created inside `component` next to `Feature`, so
+  its identity is the component's. `Feature` builds the snapshot once and hands
+  the same object to `render` and to the provider:
+  `createElement(Snapshot.Provider, { value: snapshot }, render(snapshot))`.
+  The hook is attached with `Object.assign(Feature, { useFeature })` after
+  `displayName`, and the throw uses the same `name`.
 
 ## Expected Behavior & Edge Cases
 
@@ -390,6 +482,19 @@ function` and no implementation, deliberately: they are illustrations of the
   the flat namespace. A user group named `"Unmounted"` cannot collide
   observably: the teardown sweep interrupts every user fiber before that
   command is interpreted.
+- **`useFeature` inside `render` itself is wrong, and under nesting it is
+  silently wrong.** `render` is a plain call in `Feature`'s body, so a hook in
+  it is `Feature`'s hook, and `useContext` there reads the provider _above_
+  `Feature` — not the one `Feature` is about to mount. Outside nesting that
+  throws; with an outer mount of the same component it returns the outer
+  snapshot. `render` already has the snapshot as its argument; there is no
+  reason to reach for the hook there, and a guard would cost every fragment's
+  call to catch a mistake with no motive.
+- The provider re-renders its consumers on every root render, since the
+  snapshot is a fresh object each time. That is the same set of components the
+  root's own re-render already re-renders; a `memo`'d fragment that reads the
+  context loses the memo, which is the correct outcome for a component reading
+  changing state.
 
 ## Known limitations
 

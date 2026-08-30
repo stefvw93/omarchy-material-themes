@@ -568,3 +568,124 @@ test("`children` can be a render prop, called with the feature's own state", asy
   await click("pick");
   await vi.waitFor(() => expect(text("row")).toBe("row b"));
 });
+
+// ---------------------------------------------------------------------------
+// `useFeature` — the snapshot from inside the subtree
+// ---------------------------------------------------------------------------
+
+// A feature whose view is split into fragments two levels deep. `Inner` reads
+// the snapshot through the hook, never through props — that is the whole
+// point, and the reason the fragments are plain components rather than
+// blueprints of their own.
+
+const Tally = define({
+  props: Schema.Struct({ step: Schema.Number }),
+  state: Schema.Struct({ count: Schema.Number }),
+  action: Action.of([Action("Bumped", {})]),
+  output: Action.of([Reached]),
+}).create({
+  initialState: () => ({ count: 0 }),
+  reducer: { Bumped: (_action, { state, props }) => ({ count: state.count + props.step }) },
+  render: ({ state }) => (
+    <div>
+      <span data-testid="root-count">{state.count}</span>
+      <Outer />
+    </div>
+  ),
+});
+
+const Outer = () => (
+  <section>
+    <Inner />
+  </section>
+);
+
+const Inner = () => {
+  const { state, props, dispatch } = TallyView.useFeature();
+  return (
+    <div>
+      <span data-testid="inner-count">{state.count}</span>
+      <span data-testid="inner-step">{props.step}</span>
+      <button data-testid="inner-bump" onClick={() => dispatch({ _tag: "Bumped" })}>
+        bump
+      </button>
+      <button data-testid="inner-reach" onClick={() => dispatch(Reached.make({ at: state.count }))}>
+        reach
+      </button>
+    </div>
+  );
+};
+
+const TallyView = component(Tally, { name: "Tally" });
+
+test("a fragment two levels down reads state and dispatches, repainting with the root", async () => {
+  await mount(<TallyView step={3} onReached={() => {}} />);
+  await vi.waitFor(() => {
+    expect(text("root-count")).toBe("0");
+    expect(text("inner-count")).toBe("0");
+    expect(text("inner-step")).toBe("3");
+  });
+
+  await click("inner-bump");
+
+  // One `act` flush, one commit: root and fragment show the post-fold state
+  // together, not the fragment one render behind.
+  expect(text("root-count")).toBe("3");
+  expect(text("inner-count")).toBe("3");
+});
+
+test("a fragment's output leaves through the parent's `on<Tag>` prop", async () => {
+  const reached = vi.fn();
+  await mount(<TallyView step={1} onReached={reached} />);
+  await vi.waitFor(() => expect(text("inner-count")).toBe("0"));
+
+  await click("inner-bump");
+  await click("inner-reach");
+
+  // The fragment's `dispatch` is the store's own: routed by tag, `_tag`
+  // stripped at the prop, the reducer never in the path.
+  await vi.waitFor(() => expect(reached).toHaveBeenCalledTimes(1));
+  expect(reached).toHaveBeenCalledWith({ at: 1 });
+});
+
+test("`useFeature` outside any mount of its component throws, naming the component", async () => {
+  const errors: Array<unknown> = [];
+
+  await mount(
+    <ErrorBoundary onError={(error) => void errors.push(error)}>
+      <Inner />
+    </ErrorBoundary>,
+  );
+
+  await vi.waitFor(() => expect(errors.length).toBeGreaterThan(0));
+  expect(String(errors[0])).toMatch(/Tally\.useFeature\(\) called outside <Tally>/);
+});
+
+test("two mounts of one component each hand their fragments their own snapshot", async () => {
+  await mount(
+    <div>
+      <div data-testid="a">
+        <TallyView step={1} onReached={() => {}} />
+      </div>
+      <div data-testid="b">
+        <TallyView step={10} onReached={() => {}} />
+      </div>
+    </div>,
+  );
+
+  const within = (scope: string, testId: string) =>
+    container?.querySelector(`[data-testid="${scope}"] [data-testid="${testId}"]`);
+
+  await vi.waitFor(() => {
+    expect(within("a", "inner-step")?.textContent).toBe("1");
+    expect(within("b", "inner-step")?.textContent).toBe("10");
+  });
+
+  await act(async () =>
+    within("a", "inner-bump")?.dispatchEvent(new MouseEvent("click", { bubbles: true })),
+  );
+
+  // Nearest mount wins: `a`'s fragment moved `a`'s state, and `b` saw nothing.
+  expect(within("a", "inner-count")?.textContent).toBe("1");
+  expect(within("b", "inner-count")?.textContent).toBe("0");
+});
