@@ -1788,7 +1788,12 @@ export const createRuntime: <RootR, RootE>(
       // it moved — folding first means both reads see the same state.
       // Defensive rather than a measured fix; see `tea.specs.md`. Hook order
       // stays stable: called unconditionally, just later in the body.
-      const state = useSyncExternalStore(store.subscribe, store.getSnapshot);
+      // The third argument is the server snapshot: without it React throws
+      // `Missing getServerSnapshot` under `renderToString`. The same reader is
+      // correct on both sides — the server never folds (no effects run, so no
+      // `start`), and hydration reads the same deterministic
+      // `initialState(props)` the server rendered.
+      const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
 
       // `Mounted` stays in an effect: it must not fire for a render React
       // throws away. `start`/`stop` rather than a single `dispose` lets the

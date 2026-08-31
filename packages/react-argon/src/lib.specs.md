@@ -331,6 +331,7 @@ landed with every box checked again.
 - [x] `PropsChanged`/`HookChanged` are detected **by value** — props via `Schema.toEquivalence`, hooks via `Equivalence.Record(Equivalence.strictEqual())`.
 - [x] `store.sync` folds during render, so a props-driven change paints on the render that carried the props. Moving the fold into an effect is **deferred** — see Deferred decisions.
 - [x] `store.sync` is idempotent: called twice with equivalent props and hooks it raises nothing the second time, so a discarded render costs nothing.
+- [x] `renderToString` renders a feature server-side: `initialState(props)` paints, `validateProps` still throws on bad props, `useFeature` fragments resolve their provider, and **nothing folds** — no `Mounted`, no commands, no store arming, because the arming lives in an effect and effects do not run on the server. `useSyncExternalStore` is passed its server snapshot, without which React throws under `renderToString`.
 - [x] A defect from a command, or a feature `layer` that fails to build, reaches the `Error` handler; with none declared it is rethrown during render, the only place a boundary can catch it.
 - [x] Services come from the root `ManagedRuntime`; `component(bp, { layer })` satisfies the residue `Exclude<R, RootR>`.
 - [x] `createRuntime` takes **one** parameter. `RuntimeOptions` and its unwired `onEvent` are removed; observation is a service installed through the root layer instead. Spec'd in `devtools.specs.md`.
