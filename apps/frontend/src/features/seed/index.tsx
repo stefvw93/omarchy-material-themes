@@ -260,7 +260,7 @@ const reducer = SeedDefinition.reducer({
 
 const render = SeedDefinition.render(({ state, dispatch }) => (
   <div className="grid grid-cols-12 flex-1 min-h-0 gap-2 p-2">
-    <div className="col-span-6 flex flex-col flex-1 min-h-0 gap-2">
+    <div className="col-span-6 xl:col-span-8 flex flex-col flex-1 min-h-0 gap-2">
       <Tabs
         value={state.inputType}
         onValueChange={(value) => dispatch(SetInputKind.make({ inputType: value }))}
@@ -293,7 +293,9 @@ const render = SeedDefinition.render(({ state, dispatch }) => (
       </Tabs>
     </div>
 
-    <OutputPanel />
+    <div className="col-span-6 xl:col-span-4 h-full" id="output">
+      <OutputPanel />
+    </div>
   </div>
 ));
 

@@ -32,7 +32,7 @@ export const OutputPanel = () => {
   const { state, dispatch } = Seed.useFeature();
 
   return (
-    <div className="col-span-6 flex flex-col gap-2" id="output">
+    <div className="flex flex-col gap-2">
       {state.selectedImageUrl ? (
         <div className="relative w-full aspect-video">
           <img
