@@ -1,4 +1,4 @@
-import { Task } from "react-argon";
+import { Task } from "@wych/react";
 import { ClickedImageThumb, ClickedWallhavenPaginator, Seed } from "@/features/seed";
 import type { WallhavenSearchPayload } from "@/features/wallhaven/service";
 import { Skeleton } from "@/components/ui/skeleton";

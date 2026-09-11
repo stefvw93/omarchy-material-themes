@@ -1,4 +1,4 @@
-import { Task } from "react-argon";
+import { Task } from "@wych/react";
 import {
   ApplyColors,
   CommitContrastLevel,

@@ -16,7 +16,7 @@ import {
   WallhavenSearchParams,
 } from "@/features/wallhaven/service";
 import { Schema } from "effect";
-import { Action, define } from "react-argon";
+import { Action, define } from "@wych/react";
 import BONK from "@/assets/bonk.png";
 
 const CATEGORIES: { value: WALLHAVEN_CATEGORY; label: string }[] = WALLHAVEN_CATEGORIES.map(

@@ -25,7 +25,6 @@
     "effect": "catalog:",
     "effect-platform-tauri": "workspace:*",
     "react": "catalog:",
-    "react-argon": "workspace:*",
     "react-colorful": "catalog:",
     "react-day-picker": "catalog:",
     "react-dom": "catalog:",

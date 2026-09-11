@@ -1,5 +1,5 @@
 import { Effect, Layer } from "effect";
-import { consoleDevtoolsLayer, createRuntime } from "react-argon";
+import { consoleDevtoolsLayer, createRuntime } from "@wych/react";
 import { WallhavenService } from "./wallhaven/service";
 import { PexelsService } from "./pexels/service";
 import { TauriHttpClient, TauriFileSystem } from "effect-platform-tauri";

@@ -1,5 +1,5 @@
 import { Effect, Schema } from "effect";
-import { Action, Task, Children, define } from "react-argon";
+import { Action, Task, Children, define } from "@wych/react";
 import { component } from "../shared";
 import { Input } from "@/components/ui/input";
 import {

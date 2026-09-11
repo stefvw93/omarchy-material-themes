@@ -1,4 +1,4 @@
-import { Task } from "react-argon";
+import { Task } from "@wych/react";
 import { Seed } from "@/features/seed";
 
 /** The pexels tab's body. Reads the feature; dispatches nothing yet. */
