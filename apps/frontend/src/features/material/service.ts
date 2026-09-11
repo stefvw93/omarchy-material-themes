@@ -1,6 +1,5 @@
 import {
   argbFromRgb,
-  Contrast,
   DynamicScheme,
   Hct,
   QuantizerCelebi,
@@ -16,6 +15,7 @@ import {
 import { Context, Effect, flow, Layer, Match, Option, pipe, Schema } from "effect";
 import { HttpClient } from "effect/unstable/http";
 import { buildAnsiColors } from "./ansi";
+import { buildSurfaceColors } from "./surfaces";
 import { HexColor, OmarchyColors, SchemeKind } from "./colors";
 import { MaterialWorkerEventData, MaterialWorkerMessageData } from "./protocol";
 
@@ -174,44 +174,24 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
               const hexFromArgb = (argb: number) => pipe(unsafeHexFromArgb(argb), decodeHexColor);
 
               const ansi = buildAnsiColors(scheme, imageHues);
+              const surfaces = buildSurfaceColors(scheme);
 
               const colors: OmarchyColors = {
                 mode: scheme.isDark ? "dark" : "light",
 
                 accent: yield* hexFromArgb(scheme.primary),
                 selection: yield* hexFromArgb(scheme.primaryContainer),
-                muted: yield* hexFromArgb(scheme.onSurfaceVariant),
+                muted: yield* hexFromArgb(surfaces.muted),
 
-                background: yield* hexFromArgb(scheme.surface),
-                dark_background: yield* hexFromArgb(scheme.surfaceContainer),
-                darker_background: yield* hexFromArgb(scheme.surfaceDim),
-                lighter_background: yield* hexFromArgb(scheme.surfaceBright),
+                background: yield* hexFromArgb(surfaces.background),
+                dark_background: yield* hexFromArgb(surfaces.dark_background),
+                darker_background: yield* hexFromArgb(surfaces.darker_background),
+                lighter_background: yield* hexFromArgb(surfaces.lighter_background),
 
-                foreground: yield* hexFromArgb(scheme.onSurface),
-                dark_foreground: yield* hexFromArgb(
-                  (() => {
-                    const hct = Hct.fromInt(scheme.onSurface);
-                    const tone = Contrast.darkerUnsafe(hct.tone, 2);
-                    hct.tone = tone;
-                    return hct.toInt();
-                  })(),
-                ),
-                light_foreground: yield* hexFromArgb(
-                  (() => {
-                    const hct = Hct.fromInt(scheme.onSurface);
-                    const tone = Contrast.lighterUnsafe(hct.tone, 2);
-                    hct.tone = tone;
-                    return hct.toInt();
-                  })(),
-                ),
-                bright_foreground: yield* hexFromArgb(
-                  (() => {
-                    const hct = Hct.fromInt(scheme.onSurface);
-                    const tone = Contrast.lighterUnsafe(hct.tone, 3);
-                    hct.tone = tone;
-                    return hct.toInt();
-                  })(),
-                ),
+                foreground: yield* hexFromArgb(surfaces.foreground),
+                dark_foreground: yield* hexFromArgb(surfaces.dark_foreground),
+                light_foreground: yield* hexFromArgb(surfaces.light_foreground),
+                bright_foreground: yield* hexFromArgb(surfaces.bright_foreground),
 
                 red: yield* hexFromArgb(ansi.red),
                 yellow: yield* hexFromArgb(ansi.yellow),

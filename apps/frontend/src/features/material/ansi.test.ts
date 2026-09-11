@@ -11,6 +11,7 @@ import {
 import { describe, expect, it } from "@effect/vitest";
 import { ANCHOR, buildAnsiColors, MIN_SEPARATION, SLOTS } from "./ansi";
 import type { AnsiColors, AnsiSlot } from "./ansi";
+import { buildSurfaceColors } from "./surfaces";
 
 const KINDS = {
   expressive: SchemeExpressive,
@@ -73,8 +74,20 @@ function tone(argb: number) {
   return Hct.fromInt(argb).tone;
 }
 
+function chroma(argb: number) {
+  return Hct.fromInt(argb).chroma;
+}
+
+/** The most chroma sRGB can show for this hue at any tone. */
+function peakChroma(hue: number) {
+  let peak = 0;
+  for (let t = 0; t <= 100; t++) peak = Math.max(peak, Hct.from(hue, 200, t).chroma);
+  return peak;
+}
+
+/** The tone the terminal actually draws on: Omarchy's `background`, not Material's `surface`. */
 function surfaceTone(scheme: DynamicScheme) {
-  return Hct.fromInt(scheme.surface).tone;
+  return Hct.fromInt(buildSurfaceColors(scheme).background).tone;
 }
 
 /** Shortest arc between two hues, 0..180. */
@@ -100,6 +113,40 @@ describe("buildAnsiColors", () => {
 
       for (const [base, bright] of BRIGHT_PAIRS) {
         expect(tone(ansi[bright]), `${bright} vs ${base}`).toBeGreaterThan(tone(ansi[base]));
+      }
+    });
+
+    it.each(everyCombination())("$label — bright is more chromatic than base", (c) => {
+      for (const contrastLevel of CONTRAST_LEVELS) {
+        const { ansi } = build(c.kind, c.seed, c.isDark, contrastLevel);
+
+        for (const [base, bright] of BRIGHT_PAIRS) {
+          expect(chroma(ansi[bright]), `${bright} vs ${base} @ ${contrastLevel}`).toBeGreaterThan(
+            chroma(ansi[base]),
+          );
+        }
+      }
+    });
+
+    // Regression: bright was a fixed light tone with chroma pushed to the gamut edge,
+    // but the gamut for red at that tone is tiny, so bright_red came out pink. Bright
+    // must keep most of the chroma its hue is capable of, not just be lighter.
+    it.each(everyCombination())("$label — bright keeps most of its hue's peak chroma", (c) => {
+      const { ansi } = build(c.kind, c.seed, c.isDark);
+
+      for (const [, bright] of BRIGHT_PAIRS) {
+        const hct = Hct.fromInt(ansi[bright]);
+        expect(hct.chroma / peakChroma(hct.hue), bright).toBeGreaterThan(0.65);
+      }
+    });
+
+    // Only up to the default level: raising contrast in a dark theme can only lighten
+    // red, and sRGB has no vivid red above tone ~62, so a high-contrast red goes pink.
+    it.each([-1, 0])("red stays red rather than pink at contrastLevel %s", (contrastLevel) => {
+      for (const isDark of [true, false]) {
+        const { ansi } = build("vibrant", "sunset", isDark, contrastLevel);
+        const hct = Hct.fromInt(ansi.bright_red);
+        expect(hct.chroma / peakChroma(hct.hue), isDark ? "dark" : "light").toBeGreaterThan(0.65);
       }
     });
   });
@@ -131,10 +178,12 @@ describe("buildAnsiColors", () => {
       const high = build("expressive", "sunset", true, 1).ansi;
 
       for (const slot of SLOTS) {
+        // A couple of degrees of slack: the same hue round-trips through 8-bit RGB
+        // differently at a different tone, and low-chroma blues round coarsest.
         expect(
           hueDistance(Hct.fromInt(low[slot]).hue, Hct.fromInt(high[slot]).hue),
           slot,
-        ).toBeLessThan(1);
+        ).toBeLessThan(3);
       }
     });
   });

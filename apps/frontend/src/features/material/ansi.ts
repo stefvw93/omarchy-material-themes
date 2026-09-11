@@ -6,6 +6,7 @@ import {
   sanitizeDegreesDouble,
   Variant,
 } from "@material/material-color-utilities";
+import { buildSurfaceColors } from "./surfaces";
 
 export type AnsiSlot = "red" | "orange" | "yellow" | "green" | "cyan" | "blue" | "magenta";
 
@@ -48,13 +49,27 @@ export const MIN_SEPARATION = 22;
 const SOURCE_CHROMA_FLOOR = 26;
 
 /**
- * How much more luminous a `bright_` slot is than its base. Kept small on purpose:
- * sRGB's max achievable chroma falls off sharply as tone climbs for red/orange/blue/
- * magenta (e.g. red's gamut ceiling roughly halves from tone 72 to tone 84), so a big
- * step reads as pale rather than vivid. A small step keeps bright tones near the base's
- * chroma headroom; `bright()` below then maxes out that headroom instead of scaling it.
+ * The share of a hue's peak sRGB chroma a `bright_` slot must keep. Bright tones are
+ * anchored at the highest tone that still clears this, because "brighter" in a terminal
+ * means vivid, not pale: the gamut for red collapses from chroma ~111 at tone 52 to ~37
+ * at tone 76, so a red pushed up to a fixed light tone reads as pink no matter how much
+ * chroma is requested. Each hue peaks somewhere different (red ~52, blue ~60, yellow ~84,
+ * green ~88), which is why the tone has to be found per slot rather than shared.
  */
-const BRIGHT_STEP = 4;
+const VIVID_SHARE = 0.75;
+
+/** How far below its bright variant a base slot sits, before contrast has its say. */
+const BASE_STEP = 8;
+
+/** The least a bright variant may sit above its base once contrast has moved the base. */
+const MIN_BRIGHT_GAP = 4;
+
+/**
+ * Base chroma is capped at this share of what its bright variant achieves, so bright is
+ * always the more vivid of the pair. Without the cap a vibrant scheme can hand the base a
+ * chroma the gamut only supports at its lower tone, and the base outshines its bright.
+ */
+const BASE_CHROMA_SHARE = 0.85;
 
 /**
  * Deliberately past what any hue/tone can display, so `Hct.from` always clips it down
@@ -164,6 +179,35 @@ function enforceSeparation(hues: Record<AnsiSlot, number>) {
   return hues;
 }
 
+/** The most chroma sRGB can display for this hue at this tone. */
+function maxChroma(hue: number, tone: number) {
+  return Hct.from(hue, BRIGHT_CHROMA_CEILING, tone).chroma;
+}
+
+const vividToneCache = new Map<number, number>();
+
+/**
+ * The highest tone at which `hue` still shows `VIVID_SHARE` of its peak chroma — the
+ * lightest it can go before it starts to wash out. Cached per whole degree: the gamut
+ * boundary changes smoothly with hue, and each lookup costs two hundred gamut solves.
+ */
+function vividTone(hue: number) {
+  const key = Math.round(sanitizeDegreesDouble(hue));
+  const cached = vividToneCache.get(key);
+  if (cached !== undefined) return cached;
+
+  let peak = 0;
+  for (let tone = 0; tone <= 100; tone++) peak = Math.max(peak, maxChroma(key, tone));
+
+  let result = 0;
+  for (let tone = 0; tone <= 100; tone++) {
+    if (maxChroma(key, tone) >= VIVID_SHARE * peak) result = tone;
+  }
+
+  vividToneCache.set(key, result);
+  return result;
+}
+
 /**
  * Walks a tone away from the surface until it clears `ratio`, staying inside
  * [`min`, `max`]. Contrast is the only thing allowed to touch tone — it never widens
@@ -194,7 +238,9 @@ function contrastedTone(tone: number, surfaceTone: number, ratio: number, min = 
 export function buildAnsiColors(scheme: DynamicScheme, imageHues: readonly number[]): AnsiColors {
   const policy = ANSI_POLICY[scheme.variant];
   const primaryHue = Hct.fromInt(scheme.primary).hue;
-  const surfaceTone = Hct.fromInt(scheme.surface).tone;
+  // The terminal draws on Omarchy's `background`, which in dark mode is not Material's
+  // `surface` — contrast has to be measured against what the colours actually sit on.
+  const surfaceTone = Hct.fromInt(buildSurfaceColors(scheme).background).tone;
 
   // Even a "source" policy needs a floor: a greyscale wallpaper has almost no chroma,
   // and inheriting it verbatim would collapse every slot into the same unreadable grey.
@@ -208,22 +254,9 @@ export function buildAnsiColors(scheme: DynamicScheme, imageHues: readonly numbe
         );
 
   const ratio = clampDouble(3, 11, 4.5 + scheme.contrastLevel * 2.5);
-
-  // Light themes start darker than dark themes so there is headroom above the base
-  // tone for the bright variants to climb into without failing contrast.
-  const baseTone = contrastedTone(scheme.isDark ? 72 : 38, surfaceTone, ratio);
-
-  // `bright_` always means more luminous, in both modes. In a light theme that pulls
-  // against contrast, so bright takes a relaxed floor plus a hard stop above the base
-  // tone: it may sit closer to the surface than its base, but never darker than it.
-  const brightTone = contrastedTone(
-    baseTone + BRIGHT_STEP,
-    surfaceTone,
-    Math.max(3, ratio * 0.75),
-    baseTone + 4,
-  );
-
-  const brownTone = contrastedTone(baseTone - (scheme.isDark ? 20 : 6), surfaceTone, ratio);
+  // Bright takes a relaxed floor: in a light theme "brighter" and "higher contrast"
+  // pull in opposite directions, so it trades ratio for luminance.
+  const brightRatio = Math.max(3, ratio * 0.75);
 
   const searchWindow = policy.drift * 2;
   const hues = {} as Record<AnsiSlot, number>;
@@ -238,11 +271,38 @@ export function buildAnsiColors(scheme: DynamicScheme, imageHues: readonly numbe
 
   enforceSeparation(hues);
 
+  /**
+   * Tones are settled per slot, from the hue outwards: bright sits at the lightest tone
+   * where the hue is still vivid, the base a step below it, and contrast then moves each
+   * away from the background as far as it must. `bright_` always means more luminous
+   * *and* more chromatic than its base, in both modes.
+   */
+  const tones = (slot: AnsiSlot) => {
+    const hue = hues[slot];
+    const base = contrastedTone(vividTone(hue) - BASE_STEP, surfaceTone, ratio);
+    const bright = Math.max(
+      contrastedTone(vividTone(hue), surfaceTone, brightRatio),
+      base + MIN_BRIGHT_GAP,
+    );
+    return { base, bright };
+  };
+
   const toArgb = (hue: number, targetChroma: number, tone: number) =>
     Hct.from(hue, targetChroma, tone).toInt();
 
-  const base = (slot: AnsiSlot) => toArgb(hues[slot], chroma, baseTone);
-  const bright = (slot: AnsiSlot) => toArgb(hues[slot], BRIGHT_CHROMA_CEILING, brightTone);
+  const base = (slot: AnsiSlot) => {
+    const { base: tone, bright } = tones(slot);
+    const brightChroma = maxChroma(hues[slot], bright);
+    return toArgb(hues[slot], Math.min(chroma, brightChroma * BASE_CHROMA_SHARE), tone);
+  };
+  const bright = (slot: AnsiSlot) => toArgb(hues[slot], BRIGHT_CHROMA_CEILING, tones(slot).bright);
+
+  // Brown is not its own hue — it is orange held down in chroma and tone.
+  const brownTone = contrastedTone(
+    tones("orange").base - (scheme.isDark ? 20 : 6),
+    surfaceTone,
+    ratio,
+  );
 
   return {
     red: base("red"),
@@ -252,7 +312,6 @@ export function buildAnsiColors(scheme: DynamicScheme, imageHues: readonly numbe
     cyan: base("cyan"),
     blue: base("blue"),
     magenta: base("magenta"),
-    // Brown is not its own hue — it is orange held down in chroma and tone.
     brown: toArgb(hues.orange, chroma * 0.45, brownTone),
 
     bright_red: bright("red"),
