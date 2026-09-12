@@ -7,7 +7,23 @@ const notImplementedError = PlatformError.systemError({
   module: "@effect-platform-tauri/FileSystem",
   method: "<not implemented>",
 });
+
 const notImplemented = () => Effect.fail(notImplementedError);
+
+const wrap =
+  <Args extends any[], Resolved>(methodName: string, fn: (...args: Args) => Promise<Resolved>) =>
+  (...args: Args) =>
+    Effect.tryPromise({
+      try: () => fn(...args),
+      catch: (cause) =>
+        PlatformError.systemError({
+          _tag: errorTagOfCause(cause),
+          module: "@effect-platform-tauri/FileSystem",
+          method: methodName,
+          pathOrDescriptor: args[0],
+          cause,
+        }),
+    });
 
 const readDirectory: FileSystem.FileSystem["readDirectory"] = (path, options) => {
   if (options?.recursive) {
@@ -23,7 +39,7 @@ const readDirectory: FileSystem.FileSystem["readDirectory"] = (path, options) =>
   }
 
   return Effect.tryPromise({
-    try: () => TauriFS.readDir(path),
+    try: () => TauriFS.readDir(path, {}),
     catch: (cause) =>
       PlatformError.systemError({
         _tag: errorTagOfCause(cause),
@@ -35,43 +51,41 @@ const readDirectory: FileSystem.FileSystem["readDirectory"] = (path, options) =>
   }).pipe(Effect.map((entries) => entries.map((e) => e.name)));
 };
 
-const makeDirectory: FileSystem.FileSystem["makeDirectory"] = (path, options) => {
-  return Effect.tryPromise({
-    try: () => TauriFS.mkdir(path, options),
+const access: FileSystem.FileSystem["access"] = (path, _options) =>
+  Effect.tryPromise({
+    try: () => TauriFS.exists(path),
     catch: (cause) =>
       PlatformError.systemError({
         _tag: errorTagOfCause(cause),
         module: "@effect-platform-tauri/FileSystem",
-        method: "makeDirectory",
+        method: "access",
         pathOrDescriptor: path,
         cause,
       }),
-  });
-};
-
-const writeFile: FileSystem.FileSystem["writeFile"] = (path, content, options) => {
-  return Effect.tryPromise({
-    try: () => TauriFS.writeFile(path, content, options),
-    catch: (cause) =>
-      PlatformError.systemError({
-        _tag: errorTagOfCause(cause),
-        module: "@effect-platform-tauri/FileSystem",
-        method: "writeFile",
-        pathOrDescriptor: path,
-        cause,
-      }),
-  });
-};
+  }).pipe(
+    Effect.flatMap((found) =>
+      found
+        ? Effect.void
+        : Effect.fail(
+            PlatformError.systemError({
+              _tag: "NotFound",
+              module: "@effect-platform-tauri/FileSystem",
+              method: "access",
+              pathOrDescriptor: path,
+            }),
+          ),
+    ),
+  );
 
 const tauriFS = FileSystem.make({
-  access: notImplemented,
+  access,
   chmod: notImplemented,
   chown: notImplemented,
   copy: notImplemented,
   copyFile: notImplemented,
   glob: notImplemented,
   link: notImplemented,
-  makeDirectory,
+  makeDirectory: wrap("makeDirectory", TauriFS.mkdir),
   makeTempDirectory: notImplemented,
   makeTempDirectoryScoped: notImplemented,
   makeTempFile: notImplemented,
@@ -81,16 +95,16 @@ const tauriFS = FileSystem.make({
   readFile: notImplemented,
   readLink: notImplemented,
   realPath: notImplemented,
-  remove: notImplemented,
+  remove: wrap("remove", TauriFS.remove),
   rename: notImplemented,
   stat: notImplemented,
   symlink: notImplemented,
   truncate: notImplemented,
   utimes: notImplemented,
+  writeFile: wrap("writeFile", TauriFS.writeFile),
   watch(_path, _options) {
     return Stream.fail(notImplementedError);
   },
-  writeFile,
 });
 
 /**

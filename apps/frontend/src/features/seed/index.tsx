@@ -15,7 +15,7 @@ import { WallhavenInputs } from "./components/wallhaven-inputs";
 import { WallhavenResults } from "./components/wallhaven-results";
 import { PexelsResults } from "./components/pexels-results";
 import { OutputPanel } from "./components/output-panel";
-import { OmarchyTheme } from "../omarchy-theme";
+import { ApplyOmarchyColors } from "./tasks";
 
 const InputKind = Schema.Union([
   Schema.Literal("file"),
@@ -43,7 +43,7 @@ const PexelsCurated = Task("PexelsCurated", {
 const CreateOmarchyColors = Task("CreateOmarchyColors", {
   success: OmarchyColors,
   onError: Task.message,
-  run: (state: State) =>
+  run: (state: SeedState) =>
     Effect.gen(function* () {
       if (!state.selectedImageUrl) {
         return yield* Effect.fail(new Error("No image selected"));
@@ -61,22 +61,7 @@ const CreateOmarchyColors = Task("CreateOmarchyColors", {
     }),
 });
 
-const ApplyOmarchyColors = Task("ApplyOmarchyColors", {
-  success: Schema.Void,
-  onError: Task.message,
-  run: (state: State) =>
-    Effect.gen(function* () {
-      if (state.omarchyColors._tag !== "Resolved") return;
-      if (!state.selectedImageUrl) return;
-
-      const omarchyTheme = yield* OmarchyTheme;
-      yield* omarchyTheme.writeColors(state.omarchyColors.value);
-      yield* omarchyTheme.writeBackgroundImage(state.selectedImageUrl);
-      yield* omarchyTheme.setTheme("omaterial-dev");
-    }),
-});
-
-const State = Schema.Struct({
+const SeedState = Schema.Struct({
   inputType: InputKind,
   selectedImageUrl: Schema.UndefinedOr(Schema.URLFromString).pipe(Schema.optional),
   schemeKind: SchemeKind,
@@ -88,7 +73,7 @@ const State = Schema.Struct({
   omarchyColors: Task.schema(OmarchyColors),
   omarchyTheme: Task.schema(Schema.Void),
 });
-type State = typeof State.Type;
+export type SeedState = typeof SeedState.Type;
 
 //
 // Actions
@@ -130,7 +115,7 @@ const SeedAction = Action.of([
 
 const SeedDefinition = define({
   props: Props,
-  state: State,
+  state: SeedState,
   action: SeedAction,
 });
 
@@ -260,7 +245,7 @@ const reducer = SeedDefinition.reducer({
 
 const render = SeedDefinition.render(({ state, dispatch }) => (
   <div className="grid grid-cols-12 flex-1 min-h-0 gap-2 p-2 min-w-2xl">
-    <div className="col-span-5 sm:col-span-6 xl:col-span-8 flex flex-col flex-1 min-h-0 gap-2">
+    <div className="col-span-5 lg:col-span-6 xl:col-span-8 flex flex-col flex-1 min-h-0 gap-2">
       <Tabs
         value={state.inputType}
         onValueChange={(value) => dispatch(SetInputKind.make({ inputType: value }))}
@@ -293,7 +278,7 @@ const render = SeedDefinition.render(({ state, dispatch }) => (
       </Tabs>
     </div>
 
-    <div className="col-span-7 sm:col-span-6 xl:col-span-4 h-full" id="output">
+    <div className="col-span-7 lg:col-span-6 xl:col-span-4 h-full" id="output">
       <OutputPanel />
     </div>
   </div>

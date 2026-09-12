@@ -1,5 +1,9 @@
 import { Task } from "@wych/react";
 import { Seed } from "@/features/seed";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const GRID =
+  "grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 overflow-auto gap-2";
 
 /** The pexels tab's body. Reads the feature; dispatches nothing yet. */
 export const PexelsResults = () => {
@@ -9,11 +13,20 @@ export const PexelsResults = () => {
     <div className="flex flex-col flex-1 min-h-0">
       {Task.match(state.curated, {
         Idle: () => <></>,
-        Pending: () => "Loading...",
+        Pending: () => (
+          <div className="flex flex-col flex-1 min-h-0 gap-2 @container" aria-hidden>
+            <div className={GRID}>
+              {Array.from({ length: 24 }, (_, index) => (
+                <Skeleton key={index} className="aspect-video" />
+              ))}
+            </div>
+            <Skeleton className="h-6 w-16" />
+          </div>
+        ),
         Rejected: (rejected) => `Error: ${rejected.error}`,
         Resolved: (resolved) => (
           <div className="flex flex-col flex-1 min-h-0 gap-2 @container">
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 overflow-auto gap-2">
+            <div className={GRID}>
               {resolved.value.map((item) => (
                 // `thumbs.large` maxes out around 432x243, so keep cells
                 // small enough that they are not upscaled on HiDPI.

@@ -9,7 +9,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { ImageGrid } from "./image-grid";
+import { ImageGrid, ImageGridSkeleton } from "./image-grid";
 
 /** The wallhaven tab's body: skeletons while searching, the grid and its pager once resolved. */
 export const WallhavenResults = () => {
@@ -21,10 +21,12 @@ export const WallhavenResults = () => {
         Idle: () => <></>,
         Pending: () => (
           <div className="flex flex-col flex-1 min-h-0 gap-2">
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 gap-2 pr-px">
-              {Array.from({ length: 24 }, (_, index) => (
-                <Skeleton key={index} className="aspect-video" />
-              ))}
+            <ImageGridSkeleton />
+            {/* Mirrors the paginator: previous + "n of m" + next, default button height. */}
+            <div className="flex justify-center gap-0.5 h-8" aria-hidden>
+              <Skeleton className="w-24" />
+              <Skeleton className="w-12" />
+              <Skeleton className="w-24" />
             </div>
           </div>
         ),
