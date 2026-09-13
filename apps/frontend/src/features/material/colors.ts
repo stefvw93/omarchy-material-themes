@@ -8,8 +8,25 @@ export const HexColor = Schema.String.check(
     examples: ["#ff0000", "#f00"],
   }),
 );
-
 export type HexColor = typeof HexColor.Type;
+
+export const RGBAColor = Schema.String.check(Schema.isPattern(/^rgba\([0-9a-fA-F]{8}\)$/)).pipe(
+  Schema.annotate({
+    description: "A Hyprland rgba color string.",
+    examples: ["rgba(584e51aa)"],
+  }),
+);
+export type RGBAColor = typeof RGBAColor.Type;
+
+export const GradientAngle = Schema.String.check(Schema.isPattern(/^[0-9]{1,3}deg$/)).pipe(
+  Schema.annotate({
+    description: "A Hyprland gradient angle descriptor.",
+    examples: ["45deg"],
+  }),
+);
+export type GradientAngle = typeof GradientAngle.Type;
+
+export const HyprlandGradient = Schema.Tuple([RGBAColor, RGBAColor, GradientAngle]);
 
 export const Mode = Schema.Union([Schema.Literal("dark"), Schema.Literal("light")]);
 export type Mode = typeof Mode.Type;
@@ -60,6 +77,9 @@ export const OmarchyColors = Schema.Struct({
   bright_cyan: HexColor,
   bright_blue: HexColor,
   bright_magenta: HexColor,
+
+  hyprland_active_border: Schema.Union([HyprlandGradient, RGBAColor]),
+  hyprland_inactive_border: Schema.Union([HyprlandGradient, RGBAColor]),
 });
 
 export type OmarchyColors = typeof OmarchyColors.Type;

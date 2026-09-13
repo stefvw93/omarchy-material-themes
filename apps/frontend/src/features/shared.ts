@@ -1,10 +1,11 @@
-import { Effect, Layer } from "effect";
+import { Effect, Layer, Path } from "effect";
 import { consoleDevtoolsLayer, createRuntime } from "@wych/react";
 import { WallhavenService } from "./wallhaven/service";
 import { PexelsService } from "./pexels/service";
 import { TauriHttpClient, TauriFileSystem } from "effect-platform-tauri";
 import { MaterialService } from "./material/service";
 import { OmarchyTheme } from "./omarchy-theme";
+import { ThemeOutputDirectoryLive } from "./omarchy-theme/shared";
 
 export const MainLayer = Layer.mergeAll(
   WallhavenService.layer,
@@ -12,6 +13,8 @@ export const MainLayer = Layer.mergeAll(
   MaterialService.layer,
   import.meta.env.DEV ? Layer.mergeAll(consoleDevtoolsLayer(), OmarchyTheme.dev) : Layer.empty,
 ).pipe(
+  Layer.provide(Path.layer),
+  Layer.provide(ThemeOutputDirectoryLive),
   Layer.provide(TauriHttpClient.layer),
   Layer.provide(TauriFileSystem.layer),
   Layer.tapError(Effect.logError),

@@ -19,7 +19,7 @@ export const ApplyOmarchyColors = Task("ApplyOmarchyColors", {
 
       yield* Effect.all(
         [
-          omarchyTheme.writeColors(state.omarchyColors.value),
+          omarchyTheme.writeColorsToml(state.omarchyColors.value),
           omarchyTheme.writeBackgroundImage(state.selectedImageUrl),
           omarchyTheme.writeHyprlandLua(),
           omarchyTheme.writeShell(),
