@@ -3,7 +3,7 @@ import { Schema, Effect } from "effect";
 import { OmarchyTheme } from "../omarchy-theme";
 import type { SeedState } from ".";
 
-export const ApplyOmarchyColors = Task("ApplyOmarchyColors", {
+export const ApplyOmarchyTheme = Task("ApplyOmarchyTheme", {
   success: Schema.Void,
   onError: Task.errorMessage,
   run: (state: SeedState) =>
@@ -19,7 +19,7 @@ export const ApplyOmarchyColors = Task("ApplyOmarchyColors", {
           omarchyTheme.writeColorsToml(state.omarchyColors.value),
           omarchyTheme.writeBackgroundImage(state.selectedImageUrl),
           omarchyTheme.writeHyprlandLua(state.omarchyColors.value),
-          omarchyTheme.writeShell(),
+          omarchyTheme.writeShellBarToml(state.omarchyColors.value),
         ],
         { concurrency: "unbounded" },
       );

@@ -15,7 +15,7 @@ import { WallhavenInputs } from "./components/wallhaven-inputs";
 import { WallhavenResults } from "./components/wallhaven-results";
 import { PexelsResults } from "./components/pexels-results";
 import { OutputPanel } from "./components/output-panel";
-import { ApplyOmarchyColors } from "./tasks";
+import { ApplyOmarchyTheme } from "./tasks";
 import { useTheme } from "@/components/theme-provider";
 
 const InputKind = Schema.Union([
@@ -101,7 +101,7 @@ const SeedAction = Action.of([
   ...PexelsCurated.actions,
   ...WallhavenSearch.actions,
   ...CreateOmarchyColors.actions,
-  ...ApplyOmarchyColors.actions,
+  ...ApplyOmarchyTheme.actions,
   ApplyColors,
   CommitContrastLevel,
   ClickedImageThumb,
@@ -212,7 +212,7 @@ const reducer = SeedDefinition.reducer({
     wallhavenSearchParams,
   }),
 
-  ApplyColors: (_, { state }) => Task.start(state, "omarchyTheme", ApplyOmarchyColors.run),
+  ApplyColors: (_, { state }) => Task.start(state, "omarchyTheme", ApplyOmarchyTheme.run),
 
   SearchWallhaven: (payload, { state }) =>
     Task.start(state, "search", WallhavenSearch.run(payload)),
@@ -244,11 +244,11 @@ const reducer = SeedDefinition.reducer({
     omarchyColors: Task.resolved(payload.value),
   }),
 
-  ApplyOmarchyColorsRejected: (payload, { state }) => ({
+  ApplyOmarchyThemeRejected: (payload, { state }) => ({
     ...state,
     omarchyTheme: Task.rejected(payload.error),
   }),
-  ApplyOmarchyColorsResolved: (payload, { state }) => ({
+  ApplyOmarchyThemeResolved: (payload, { state }) => ({
     ...state,
     omarchyTheme: Task.resolved(payload.value),
   }),
