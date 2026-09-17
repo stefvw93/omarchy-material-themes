@@ -42,7 +42,9 @@ hl.config({
       enabled = true,
       size = 6,
       passes = 3,
-      popups = true
+      popups = true,
+      -- Blur everything behind the scratchpad (special workspace).
+      special = true,
     },
     shadow = {
       enabled = true,
@@ -84,13 +86,20 @@ hl.config({
   }
 })
 
--- Bar panels open as the omarchy-keyboard-panel layer; tooltips are popups
--- of omarchy-bar. ignore_alpha keeps the transparent parts unblurred.
+-- Every shell surface is its own layer: bar, panels (omarchy-keyboard-panel),
+-- notifications, OSD, menu, polkit, clipboard, emojis, reminders. Tooltips
+-- and dropdowns are popups of the bar, covered by blur_popups. Each surface
+-- paints its card at background-alpha 0.9. Menu-style layers (launcher,
+-- clipboard, emojis, polkit) are full-screen with a 0.32 scrim, so
+-- ignore_alpha sits between scrim and card: the card blurs, the scrim and
+-- the transparent parts do not.
 hl.layer_rule({
-  match = { namespace = "^(omarchy-bar|omarchy-keyboard-panel)$" },
+  match = {
+    namespace = "^omarchy-(bar|keyboard-panel|notifications|osd|menu|polkit|clipboard|emojis|reminders)$",
+  },
   blur = true,
   blur_popups = true,
-  ignore_alpha = 0.2,
+  ignore_alpha = 0.5,
 })
 
 -- Smart gaps: drop the gaps when a single plain tiled window fills the

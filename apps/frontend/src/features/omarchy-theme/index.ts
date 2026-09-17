@@ -6,15 +6,41 @@ import { HttpClient } from "effect/unstable/http";
 import { OmarchyThemeError, type ThemeFileWriter } from "./shared";
 import { writeHyprlandLua } from "./files/hyprland.lua";
 import { writeColorsToml } from "./files/colors.toml";
-import { writeShellBarToml } from "./files/shell.toml";
+import {
+  writeShellBarToml,
+  writeShellHyprlandToml,
+  writeShellControlsToml,
+  writeShellSpacingToml,
+  writeShellPopupsToml,
+  writeShellTooltipsToml,
+  writeShellFontToml,
+  writeShellNotificationsToml,
+  writeShellLauncherToml,
+  writeShellMenuToml,
+  writeShellPolkitToml,
+  writeShellLockToml,
+  writeShellImagePickerToml,
+} from "./files/shell.toml";
 
 export interface OmarchyThemeImpl {
   clean: () => Effect.Effect<void, PlatformError.PlatformError, never>;
   setTheme: (name: string) => Effect.Effect<void, OmarchyThemeError, never>;
   writeBackgroundImage: (url: URL) => Effect.Effect<void, OmarchyThemeError, never>;
   writeColorsToml: ThemeFileWriter<OmarchyColors>;
-  writeShellBarToml: ThemeFileWriter<OmarchyColors>;
   writeHyprlandLua: ThemeFileWriter<OmarchyColors>;
+  writeShellBarToml: ThemeFileWriter<OmarchyColors>;
+  writeShellHyprlandToml: ThemeFileWriter<OmarchyColors>;
+  writeShellControlsToml: ThemeFileWriter<OmarchyColors>;
+  writeShellSpacingToml: ThemeFileWriter<OmarchyColors>;
+  writeShellPopupsToml: ThemeFileWriter<OmarchyColors>;
+  writeShellTooltipsToml: ThemeFileWriter<OmarchyColors>;
+  writeShellFontToml: ThemeFileWriter<OmarchyColors>;
+  writeShellNotificationsToml: ThemeFileWriter<OmarchyColors>;
+  writeShellLauncherToml: ThemeFileWriter<OmarchyColors>;
+  writeShellMenuToml: ThemeFileWriter<OmarchyColors>;
+  writeShellPolkitToml: ThemeFileWriter<OmarchyColors>;
+  writeShellLockToml: ThemeFileWriter<OmarchyColors>;
+  writeShellImagePickerToml: ThemeFileWriter<OmarchyColors>;
 }
 
 const imageContentTypeToExtension: Record<string, string> = {
@@ -90,6 +116,18 @@ export class OmarchyTheme extends Context.Service<OmarchyTheme, OmarchyThemeImpl
         writeColorsToml: yield* writeColorsToml,
         writeHyprlandLua: yield* writeHyprlandLua,
         writeShellBarToml: yield* writeShellBarToml,
+        writeShellHyprlandToml: yield* writeShellHyprlandToml,
+        writeShellControlsToml: yield* writeShellControlsToml,
+        writeShellSpacingToml: yield* writeShellSpacingToml,
+        writeShellPopupsToml: yield* writeShellPopupsToml,
+        writeShellTooltipsToml: yield* writeShellTooltipsToml,
+        writeShellFontToml: yield* writeShellFontToml,
+        writeShellNotificationsToml: yield* writeShellNotificationsToml,
+        writeShellLauncherToml: yield* writeShellLauncherToml,
+        writeShellMenuToml: yield* writeShellMenuToml,
+        writeShellPolkitToml: yield* writeShellPolkitToml,
+        writeShellLockToml: yield* writeShellLockToml,
+        writeShellImagePickerToml: yield* writeShellImagePickerToml,
       };
 
       return impl;
