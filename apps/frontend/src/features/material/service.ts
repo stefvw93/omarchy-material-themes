@@ -172,10 +172,6 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
             Effect.gen(function* () {
               const decodeHexColor = Schema.decodeEffect(HexColor);
               const hexFromArgb = (argb: number) => pipe(unsafeHexFromArgb(argb), decodeHexColor);
-              const rgbaFromHex = (hex: HexColor) => {
-                const code = hex.replace("#", "");
-                return code.length === 6 ? `rgba(${code}ff)` : `rgba(${code})`;
-              };
 
               const ansi = buildAnsiColors(scheme, imageHues);
               const surfaces = buildSurfaceColors(scheme);
@@ -214,15 +210,67 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
                 orange: yield* hexFromArgb(ansi.orange),
                 brown: yield* hexFromArgb(ansi.brown),
 
-                hyprland_active_border: [
-                  yield* hexFromArgb(scheme.primary).pipe(Effect.map(rgbaFromHex)),
-                  yield* hexFromArgb(scheme.outline).pipe(Effect.map(rgbaFromHex)),
-                  45,
-                ],
+                // material
 
-                hyprland_inactive_border: yield* hexFromArgb(scheme.outlineVariant).pipe(
-                  Effect.map(rgbaFromHex),
-                ),
+                omaterial_background: scheme.background,
+                omaterial_error: scheme.error,
+                omaterial_errorContainer: scheme.errorContainer,
+                omaterial_errorDim: scheme.errorDim,
+                omaterial_errorPaletteKeyColor: scheme.errorPaletteKeyColor,
+                omaterial_inverseOnSurface: scheme.inverseOnSurface,
+                omaterial_inversePrimary: scheme.inversePrimary,
+                omaterial_inverseSurface: scheme.inverseSurface,
+                omaterial_neutralPaletteKeyColor: scheme.neutralPaletteKeyColor,
+                omaterial_neutralVariantPaletteKeyColor: scheme.neutralVariantPaletteKeyColor,
+                omaterial_onBackground: scheme.onBackground,
+                omaterial_onError: scheme.onError,
+                omaterial_onErrorContainer: scheme.onErrorContainer,
+                omaterial_onPrimary: scheme.onPrimary,
+                omaterial_onPrimaryContainer: scheme.onPrimaryContainer,
+                omaterial_onPrimaryFixed: scheme.onPrimaryFixed,
+                omaterial_onPrimaryFixedVariant: scheme.onPrimaryFixedVariant,
+                omaterial_onSecondary: scheme.onSecondary,
+                omaterial_onSecondaryContainer: scheme.onSecondaryContainer,
+                omaterial_onSecondaryFixed: scheme.onSecondaryFixed,
+                omaterial_onSecondaryFixedVariant: scheme.onSecondaryFixedVariant,
+                omaterial_onSurface: scheme.onSurface,
+                omaterial_onSurfaceVariant: scheme.onSurfaceVariant,
+                omaterial_onTertiary: scheme.onTertiary,
+                omaterial_onTertiaryContainer: scheme.onTertiaryContainer,
+                omaterial_onTertiaryFixed: scheme.onTertiaryFixed,
+                omaterial_onTertiaryFixedVariant: scheme.onTertiaryFixedVariant,
+                omaterial_outline: scheme.outline,
+                omaterial_outlineVariant: scheme.outlineVariant,
+                omaterial_primary: scheme.primary,
+                omaterial_primaryContainer: scheme.primaryContainer,
+                omaterial_primaryDim: scheme.primaryDim,
+                omaterial_primaryFixed: scheme.primaryFixed,
+                omaterial_primaryFixedDim: scheme.primaryFixedDim,
+                omaterial_primaryPaletteKeyColor: scheme.primaryPaletteKeyColor,
+                omaterial_scrim: scheme.scrim,
+                omaterial_secondary: scheme.secondary,
+                omaterial_secondaryContainer: scheme.secondaryContainer,
+                omaterial_secondaryDim: scheme.secondaryDim,
+                omaterial_secondaryFixed: scheme.secondaryFixed,
+                omaterial_secondaryFixedDim: scheme.secondaryFixedDim,
+                omaterial_secondaryPaletteKeyColor: scheme.secondaryPaletteKeyColor,
+                omaterial_shadow: scheme.shadow,
+                omaterial_surface: scheme.surface,
+                omaterial_surfaceBright: scheme.surfaceBright,
+                omaterial_surfaceContainer: scheme.surfaceContainer,
+                omaterial_surfaceContainerHigh: scheme.surfaceContainerHigh,
+                omaterial_surfaceContainerHighest: scheme.surfaceContainerHighest,
+                omaterial_surfaceContainerLow: scheme.surfaceContainerLow,
+                omaterial_surfaceContainerLowest: scheme.surfaceContainerLowest,
+                omaterial_surfaceDim: scheme.surfaceDim,
+                omaterial_surfaceTint: scheme.surfaceTint,
+                omaterial_surfaceVariant: scheme.surfaceVariant,
+                omaterial_tertiary: scheme.tertiary,
+                omaterial_tertiaryContainer: scheme.tertiaryContainer,
+                omaterial_tertiaryDim: scheme.tertiaryDim,
+                omaterial_tertiaryFixed: scheme.tertiaryFixed,
+                omaterial_tertiaryFixedDim: scheme.tertiaryFixedDim,
+                omaterial_tertiaryPaletteKeyColor: scheme.tertiaryPaletteKeyColor,
               };
 
               return colors;

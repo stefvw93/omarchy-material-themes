@@ -34,7 +34,6 @@ export class PexelsService extends Context.Service<
   static readonly layer = Layer.succeed(this, {
     curated: Effect.promise(async () => {
       const data = await import("./assets/curated.json");
-      console.log(data.default);
       return data.default;
     }),
   });

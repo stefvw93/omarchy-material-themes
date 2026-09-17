@@ -71,5 +71,6 @@ const createOmarchyColors = (
       options.contrastLevel,
     );
     const colors = yield* material.schemeToOmarchyColors(scheme, hues);
+
     return colors;
   });

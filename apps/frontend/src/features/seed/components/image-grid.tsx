@@ -1,20 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { PexelsPhoto } from "@/features/pexels/service";
 import type { WallhavenItem } from "@/features/wallhaven/service";
 import { cn } from "@/lib/utils";
 import type { FC, PropsWithChildren } from "react";
 
-// 216px is based on the max width of `thumbs.large` (432px)
+// 216px is based on the max width of wallhavens `thumbs.large` (432px)
 const COLS = "grid-cols-[repeat(auto-fill,minmax(216px,1fr))]";
 const GRID = cn("grid content-start flex-1 min-h-0 gap-2 pr-px", COLS);
 
-export const ImageGrid: FC<
-  PropsWithChildren<{
-    readonly onItemClick: (item: WallhavenItem) => void;
-    readonly items: readonly WallhavenItem[];
-  }>
-> = (props) => {
+export type ImageGridProps = PropsWithChildren<
+  | {
+      readonly variant: "wallhaven";
+      readonly onItemClick: (item: WallhavenItem) => void;
+      readonly items: readonly WallhavenItem[];
+    }
+  | {
+      readonly variant: "pexels";
+      readonly onItemClick: (item: PexelsPhoto) => void;
+      readonly items: readonly PexelsPhoto[];
+    }
+>;
+
+export const ImageGrid: FC<ImageGridProps> = (props) => {
   return (
     <ScrollArea className="min-h-0">
       <div className={GRID}>
@@ -28,7 +37,12 @@ export const ImageGrid: FC<
             onClick={() => props.onItemClick(item)}
           >
             <img
-              src={item.thumbs.large.toString()}
+              src={props.variant === "wallhaven" ? item.thumbs.large.toString() : undefined}
+              srcSet={
+                props.variant === "wallhaven"
+                  ? undefined
+                  : `${item.src.large.toString()}, ${item.src.medium.toString()} w1024`
+              }
               loading="lazy"
               decoding="async"
               className="size-full absolute object-cover inset-0"

@@ -2,13 +2,14 @@ import * as TauriFS from "@tauri-apps/plugin-fs";
 import { Effect, FileSystem, Layer, PlatformError, Stream } from "effect";
 import { errorTagOfCause } from "./utils";
 
-const notImplementedError = PlatformError.systemError({
-  _tag: "Unknown",
-  module: "@effect-platform-tauri/FileSystem",
-  method: "<not implemented>",
-});
+const notImplementedError = (name: string) =>
+  PlatformError.systemError({
+    _tag: "Unknown",
+    module: "@effect-platform-tauri/FileSystem",
+    method: `${name}: not implemented`,
+  });
 
-const notImplemented = () => Effect.fail(notImplementedError);
+const notImplemented = (name: string) => () => Effect.fail(notImplementedError(name));
 
 const wrap =
   <Args extends any[], Resolved>(methodName: string, fn: (...args: Args) => Promise<Resolved>) =>
@@ -79,31 +80,31 @@ const access: FileSystem.FileSystem["access"] = (path, _options) =>
 
 const tauriFS = FileSystem.make({
   access,
-  chmod: notImplemented,
-  chown: notImplemented,
-  copy: notImplemented,
-  copyFile: notImplemented,
-  glob: notImplemented,
-  link: notImplemented,
+  chmod: notImplemented("chmod"),
+  chown: notImplemented("chown"),
+  copy: notImplemented("copy"),
+  copyFile: notImplemented("copyFile"),
+  glob: notImplemented("glob"),
+  link: notImplemented("link"),
   makeDirectory: wrap("makeDirectory", TauriFS.mkdir),
-  makeTempDirectory: notImplemented,
-  makeTempDirectoryScoped: notImplemented,
-  makeTempFile: notImplemented,
-  makeTempFileScoped: notImplemented,
-  open: notImplemented,
+  makeTempDirectory: notImplemented("makeTempDirectory"),
+  makeTempDirectoryScoped: notImplemented("makeTempDirectoryScoped"),
+  makeTempFile: notImplemented("makeTempFile"),
+  makeTempFileScoped: notImplemented("makeTempFileScoped"),
+  open: notImplemented("open"),
   readDirectory,
-  readFile: notImplemented,
-  readLink: notImplemented,
-  realPath: notImplemented,
+  readFile: notImplemented("readFile"),
+  readLink: notImplemented("readLink"),
+  realPath: notImplemented("realPath"),
   remove: wrap("remove", TauriFS.remove),
-  rename: notImplemented,
-  stat: notImplemented,
-  symlink: notImplemented,
-  truncate: notImplemented,
-  utimes: notImplemented,
+  rename: notImplemented("rename"),
+  stat: notImplemented("stat"),
+  symlink: notImplemented("symlink"),
+  truncate: notImplemented("truncate"),
+  utimes: notImplemented("utimes"),
   writeFile: wrap("writeFile", TauriFS.writeFile),
   watch(_path, _options) {
-    return Stream.fail(notImplementedError);
+    return Stream.fail(notImplementedError("watch"));
   },
 });
 

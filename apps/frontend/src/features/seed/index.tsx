@@ -29,7 +29,10 @@ const Props = Schema.Struct({
 
 const WallhavenSearch = Task("WallhavenSearch", {
   success: WallhavenSearchPayload,
-  onError: Task.message,
+  onError: (cause) => {
+    console.log(cause);
+    return Task.message(cause);
+  },
   run: (params: typeof WallhavenSearchParams.Type) =>
     Effect.flatMap(WallhavenService, (wallhaven) => wallhaven.search(params)),
 });

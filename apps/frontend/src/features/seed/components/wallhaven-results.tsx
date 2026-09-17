@@ -34,6 +34,7 @@ export const WallhavenResults = () => {
         Resolved: (resolved) => (
           <div className="flex flex-col flex-1 min-h-0 gap-2">
             <ImageGrid
+              variant="wallhaven"
               onItemClick={(item) => dispatch(ClickedImageThumb.make({ url: item.path }))}
               items={resolved.value.data}
             />

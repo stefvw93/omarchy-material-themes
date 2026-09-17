@@ -1,45 +1,32 @@
 import { Task } from "@wych/react";
-import { Seed } from "@/features/seed";
+import { ClickedImageThumb, Seed } from "@/features/seed";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const GRID =
-  "grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] content-start flex-1 min-h-0 overflow-auto gap-2";
+import { ImageGrid, ImageGridSkeleton } from "./image-grid";
 
 /** The pexels tab's body. Reads the feature; dispatches nothing yet. */
 export const PexelsResults = () => {
-  const { state } = Seed.useFeature();
+  const { state, dispatch } = Seed.useFeature();
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
       {Task.match(state.curated, {
         Idle: () => <></>,
         Pending: () => (
-          <div className="flex flex-col flex-1 min-h-0 gap-2 @container" aria-hidden>
-            <div className={GRID}>
-              {Array.from({ length: 24 }, (_, index) => (
-                <Skeleton key={index} className="aspect-video" />
-              ))}
-            </div>
+          <div className="flex flex-col flex-1 min-h-0 gap-2">
+            <ImageGridSkeleton />
             <Skeleton className="h-6 w-16" />
           </div>
         ),
         Rejected: (rejected) => `Error: ${rejected.error}`,
         Resolved: (resolved) => (
-          <div className="flex flex-col flex-1 min-h-0 gap-2 @container">
-            <div className={GRID}>
-              {resolved.value.map((item) => (
-                // `thumbs.large` maxes out around 432x243, so keep cells
-                // small enough that they are not upscaled on HiDPI.
-                <button key={item.id} type="button" className="aspect-video relative">
-                  <img
-                    src={item.src.medium.toString()}
-                    loading="lazy"
-                    decoding="async"
-                    className="size-full absolute object-cover"
-                  />
-                </button>
-              ))}
-            </div>
+          <div className="flex flex-col flex-1 min-h-0 gap-2">
+            <ImageGrid
+              onItemClick={(item) =>
+                dispatch(ClickedImageThumb.make({ url: new URL(item.src.original) }))
+              }
+              items={resolved.value}
+              variant="pexels"
+            />
             <p>{`${resolved.value.length} total`}</p>
           </div>
         ),
