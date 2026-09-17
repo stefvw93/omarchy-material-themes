@@ -26,6 +26,15 @@ local omaterial_tab_locked_dim_bg = "${hexToHyprlandRgb(input.muted)}"
 local omaterial_border_active = "${hexToHyprlandRgb(input.accent)}"
 local omaterial_border_inactive = "${hexToHyprlandRgb(input.muted)}"
 
+-- Direction the light comes from, in degrees: 0 = right, 90 = top,
+-- counter-clockwise. The shadow is cast on the opposite side.
+local omaterial_light_angle = 90
+local omaterial_shadow_distance = 4
+local omaterial_shadow_vector = {
+  -math.cos(math.rad(omaterial_light_angle)) * omaterial_shadow_distance,
+  math.sin(math.rad(omaterial_light_angle)) * omaterial_shadow_distance, -- screen y points down
+}
+
 hl.config({
   general = {
     gaps_in = omaterial_gaps_in,
@@ -39,8 +48,8 @@ hl.config({
 
   group = {
     col = {
-      -- border_active =
-      -- border_inactive =
+      border_active = { colors = { "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_primary)}", "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_outline)}" }, angle = 55 },
+      border_inactive = "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_outlineVariant)}",
     },
   },
 
@@ -49,9 +58,47 @@ hl.config({
       enabled = true,
       size = 6,
       passes = 3,
-      popups = true,
+      popups = true
     },
+    shadow = {
+      enabled = true,
+      color = "${flow(hexFromArgb, (hex) => hex + "4d", hexToHyprlandRgb)(input.omaterial_shadow)}",
+      color_inactive = "${flow(hexFromArgb, (hex) => hex + "1a", hexToHyprlandRgb)(input.omaterial_shadow)}",
+      range = 15,
+      offset = omaterial_shadow_vector,
+      render_power = 1
+    }
   },
+
+  group = {
+    groupbar = {
+      enabled = true,
+      render_titles = true,
+      height = 24,
+      gaps_in = omaterial_tab_gap_between,  -- horizontal gap between tabs (2)
+      keep_upper_gap = false,
+      gaps_out = 2,
+      indicator_height = 0,
+      indicator_gap = omaterial_tab_gap_below - omaterial_tab_gap_above,
+      text_padding = 4,
+
+      -- Fill: opaque gradient boxes, square corners.
+      gradients = true,
+      gradient_rounding = 0,
+      gradient_round_only_edges = false,
+      round_only_edges = false,
+      blur = true,
+
+      text_color = omaterial_tab_active_text,
+      text_color_inactive = omaterial_tab_inactive_text,
+      col = {
+        active = omaterial_tab_active_bg,
+        inactive = omaterial_tab_inactive_bg,
+        locked_active = omaterial_tab_locked_bg,
+        locked_inactive = omaterial_tab_locked_dim_bg,
+      },
+    },
+  }
 })
 
 -- Bar panels open as the omarchy-keyboard-panel layer; tooltips are popups
@@ -79,93 +126,6 @@ hl.window_rule({
   border_size = 0,
   rounding = 0,
 })
-
--- ============================================================================
--- >>> OMATERIAL EXPERIMENT: Material 3 window tabs (groupbar) — BEGIN
--- Hand-written on 2026-09-17 to prototype a new tab look. Copy this block into
--- the omaterial hyprland.lua generator once approved, replacing the literal
--- hex values with the matching colors.toml keys (noted per line).
---
--- Design intent (Material 3 "filled tonal" tabs):
---   * Opaque tab pills, no transparency, no blur.
---   * Active tab   = accent (primary) fill, dark_background (on-primary) text.
---   * Inactive tab = lighter_background (surface container) fill,
---                    light_foreground (on-surface-variant) text.
---   * No indicator line under the tabs (indicator_height = 0).
---   * Square-cornered tabs. Gaps are derived from the window gaps:
---       window gap  = general.gaps_out  (== 2 * general.gaps_in, since the
---                     visible gap between two tiled windows is gaps_in on
---                     each side)
---       gap above   = general.border_size  (1px)
---       gap below   = window gap / 2       (2px)
---       gap between = window gap / 2       (2px)
---                     both tighter than the window gaps so the tabs and
---                     the window read as one unit
---     The bar box starts at the window's OUTER edge and overlaps the border,
---     so a gap above of exactly border_size puts the pill top flush with a
---     neighbouring window's content, with the border line visible above the
---     pills (a gap of 0 would paint the pills over the border line). Air
---     around a lone group comes from the general gaps (see the smart-gaps
---     exception above), not from the bar.
--- ============================================================================
--- Inputs: keep in sync with the \`general\` block at the top of this file.
-
-
--- Validate the inputs against what Hyprland actually has configured, and the
--- assumption that gaps are uniform (gaps_out == 2 * gaps_in).
-do
-  local cfg_gaps_in  = hl.get_config("general.gaps_in")
-  local cfg_gaps_out = hl.get_config("general.gaps_out")
-  local cfg_border   = hl.get_config("general.border_size")
-  -- assert(type(cfg_gaps_in) == "table" and cfg_gaps_in.top == omaterial_gaps_in, "omaterial tabs: omaterial_gaps_in out of sync with general.gaps_in")
-  -- assert(type(cfg_gaps_out) == "table" and cfg_gaps_out.top == omaterial_gaps_out, "omaterial tabs: omaterial_gaps_out out of sync with general.gaps_out")
-  -- assert(cfg_border == omaterial_border_size, "omaterial tabs: omaterial_border_size out of sync with general.border_size")
-  -- assert(omaterial_gaps_out == 2 * omaterial_gaps_in, "omaterial tabs: gaps_out must equal 2 * gaps_in for the tab gaps to line up")
-end
-
-
-
-hl.config({
-  group = {
-    groupbar = {
-      enabled = true,
-      render_titles = true,
-      font_size = 11,
-      font_family = "monospace",
-      font_weight_active = "bold",
-      font_weight_inactive = "normal",
-
-      -- Geometry: 24px pills. Hyprland lays the bar out as:
-      --   [gaps_out] pill [indicator_gap + indicator_height + gaps_out]
-      -- so gaps_out is the gap above and the gap below is topped up with
-      -- indicator_gap. Values come from the derivation at the top of the block.
-      height = 24,
-      gaps_in = omaterial_tab_gap_between,  -- horizontal gap between tabs (2)
-      keep_upper_gap = true,
-      gaps_out = omaterial_tab_gap_above,   -- gap above the pills (1, the border)
-      indicator_height = 0,          -- kill the thin line under each tab
-      indicator_gap = omaterial_tab_gap_below - omaterial_tab_gap_above, -- tops the gap below up to 2
-
-      -- Fill: opaque gradient boxes, square corners.
-      gradients = true,
-      gradient_rounding = 0,
-      gradient_round_only_edges = false,
-      round_only_edges = false,
-      blur = false,
-
-      text_color = omaterial_tab_active_text,
-      text_color_inactive = omaterial_tab_inactive_text,
-      col = {
-        active = omaterial_tab_active_bg,
-        inactive = omaterial_tab_inactive_bg,
-        locked_active = omaterial_tab_locked_bg,
-        locked_inactive = omaterial_tab_locked_dim_bg,
-      },
-    },
-  },
-})
--- <<< OMATERIAL EXPERIMENT: Material 3 window tabs (groupbar) — END
--- ============================================================================
 `,
 );
 
