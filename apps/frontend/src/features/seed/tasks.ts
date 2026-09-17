@@ -21,7 +21,7 @@ export const ApplyOmarchyColors = Task("ApplyOmarchyColors", {
         [
           omarchyTheme.writeColorsToml(state.omarchyColors.value),
           omarchyTheme.writeBackgroundImage(state.selectedImageUrl),
-          omarchyTheme.writeHyprlandLua(),
+          omarchyTheme.writeHyprlandLua(state.omarchyColors.value),
           omarchyTheme.writeShell(),
         ],
         { concurrency: "unbounded" },

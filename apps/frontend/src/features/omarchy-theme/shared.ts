@@ -16,13 +16,9 @@ export const ThemeOutputDirectory = Context.Service<ThemePath>(
   "app/features/omarchy-theme/ThemeOutputDirectory",
 );
 
-export const ThemeOutputDirectoryLive = Layer.effect(
+export const ThemeOutputDirectoryLive = Layer.succeed(
   ThemeOutputDirectory,
-  Effect.gen(function* () {
-    const fs = yield* FileSystem.FileSystem;
-    const temp = yield* fs.makeTempDirectory();
-    return ThemePath(temp);
-  }),
+  ThemePath(`/home/stef/.config/omarchy/themes/omaterial-dev`),
 );
 
 export type ThemeFileWriter<Input = undefined> = Input extends undefined

@@ -10,7 +10,7 @@ export const HexColor = Schema.String.check(
 );
 export type HexColor = typeof HexColor.Type;
 
-export const RGBAColor = Schema.String.check(Schema.isPattern(/^rgba\([0-9a-fA-F]{8}\)$/)).pipe(
+export const RGBAColor = Schema.String.check(Schema.isPattern(/^rgba\([0-9a-fA-F]{6,8}\)$/)).pipe(
   Schema.annotate({
     description: "A Hyprland rgba color string.",
     examples: ["rgba(584e51aa)"],
@@ -18,15 +18,11 @@ export const RGBAColor = Schema.String.check(Schema.isPattern(/^rgba\([0-9a-fA-F
 );
 export type RGBAColor = typeof RGBAColor.Type;
 
-export const GradientAngle = Schema.String.check(Schema.isPattern(/^[0-9]{1,3}deg$/)).pipe(
-  Schema.annotate({
-    description: "A Hyprland gradient angle descriptor.",
-    examples: ["45deg"],
-  }),
-);
+export const GradientAngle = Schema.Number;
 export type GradientAngle = typeof GradientAngle.Type;
 
 export const HyprlandGradient = Schema.Tuple([RGBAColor, RGBAColor, GradientAngle]);
+export type HyprlandGradient = typeof HyprlandGradient.Type;
 
 export const Mode = Schema.Union([Schema.Literal("dark"), Schema.Literal("light")]);
 export type Mode = typeof Mode.Type;

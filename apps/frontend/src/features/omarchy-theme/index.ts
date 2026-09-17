@@ -12,7 +12,7 @@ export interface OmarchyThemeImpl {
   setTheme: (name: string) => Effect.Effect<void, OmarchyThemeError, never>;
   writeBackgroundImage: (url: URL) => Effect.Effect<void, OmarchyThemeError, never>;
   writeColorsToml: ThemeFileWriter<OmarchyColors>;
-  writeHyprlandLua: ThemeFileWriter;
+  writeHyprlandLua: ThemeFileWriter<OmarchyColors>;
   writeShell: () => Effect.Effect<void, PlatformError.PlatformError, never>;
 }
 

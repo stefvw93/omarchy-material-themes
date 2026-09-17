@@ -172,7 +172,10 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
             Effect.gen(function* () {
               const decodeHexColor = Schema.decodeEffect(HexColor);
               const hexFromArgb = (argb: number) => pipe(unsafeHexFromArgb(argb), decodeHexColor);
-              const rgbaFromHex = (hex: HexColor) => `rgba(${hex.replace("#", "")})`;
+              const rgbaFromHex = (hex: HexColor) => {
+                const code = hex.replace("#", "");
+                return code.length === 6 ? `rgba(${code}ff)` : `rgba(${code})`;
+              };
 
               const ansi = buildAnsiColors(scheme, imageHues);
               const surfaces = buildSurfaceColors(scheme);
@@ -212,11 +215,12 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
                 brown: yield* hexFromArgb(ansi.brown),
 
                 hyprland_active_border: [
-                  yield* hexFromArgb(scheme.outlineVariant).pipe(Effect.map(rgbaFromHex)),
                   yield* hexFromArgb(scheme.primary).pipe(Effect.map(rgbaFromHex)),
-                  "45deg",
+                  yield* hexFromArgb(scheme.outline).pipe(Effect.map(rgbaFromHex)),
+                  45,
                 ],
-                hyprland_inactive_border: yield* hexFromArgb(scheme.outline).pipe(
+
+                hyprland_inactive_border: yield* hexFromArgb(scheme.outlineVariant).pipe(
                   Effect.map(rgbaFromHex),
                 ),
               };
