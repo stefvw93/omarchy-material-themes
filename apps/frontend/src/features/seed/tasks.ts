@@ -5,10 +5,7 @@ import type { SeedState } from ".";
 
 export const ApplyOmarchyColors = Task("ApplyOmarchyColors", {
   success: Schema.Void,
-  onError: (cause) => {
-    console.log({ cause });
-    return Task.message(cause);
-  },
+  onError: Task.errorMessage,
   run: (state: SeedState) =>
     Effect.gen(function* () {
       if (state.omarchyColors._tag !== "Resolved") return;

@@ -1,4 +1,4 @@
-import { Effect, Schema } from "effect";
+import { Cause, Effect, Schema } from "effect";
 import { Action, Task, Children, define } from "@wych/react";
 import { component } from "../shared";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import { WallhavenResults } from "./components/wallhaven-results";
 import { PexelsResults } from "./components/pexels-results";
 import { OutputPanel } from "./components/output-panel";
 import { ApplyOmarchyColors } from "./tasks";
+import { useTheme } from "@/components/theme-provider";
 
 const InputKind = Schema.Union([
   Schema.Literal("file"),
@@ -30,8 +31,9 @@ const Props = Schema.Struct({
 const WallhavenSearch = Task("WallhavenSearch", {
   success: WallhavenSearchPayload,
   onError: (cause) => {
-    console.log(cause);
-    return Task.message(cause);
+    const error: unknown = Cause.squash(cause);
+    if (!(error instanceof Error)) return String(error);
+    return error.message !== "" ? error.message : error.name;
   },
   run: (params: typeof WallhavenSearchParams.Type) =>
     Effect.flatMap(WallhavenService, (wallhaven) => wallhaven.search(params)),
@@ -39,13 +41,13 @@ const WallhavenSearch = Task("WallhavenSearch", {
 
 const PexelsCurated = Task("PexelsCurated", {
   success: Schema.Array(PexelsPhoto),
-  onError: Task.message,
+  onError: Task.errorMessage,
   run: (_: void) => Effect.flatMap(PexelsService, (pexels) => pexels.curated),
 });
 
 const CreateOmarchyColors = Task("CreateOmarchyColors", {
   success: OmarchyColors,
-  onError: Task.message,
+  onError: Task.errorMessage,
   run: (state: SeedState) =>
     Effect.gen(function* () {
       if (!state.selectedImageUrl) {
@@ -120,6 +122,10 @@ const SeedDefinition = define({
   props: Props,
   state: SeedState,
   action: SeedAction,
+  useUnsafeHooks() {
+    const theme = useTheme();
+    return { theme };
+  },
 });
 
 const initialState = SeedDefinition.initialState(() => ({
@@ -169,8 +175,10 @@ const reducer = SeedDefinition.reducer({
     return next;
   },
 
-  SetMode: (payload, { state }) =>
-    Task.start({ ...state, mode: payload.mode }, "omarchyColors", CreateOmarchyColors.run),
+  SetMode: (payload, { state, hooks }) => {
+    hooks.theme.setTheme(payload.mode);
+    return Task.start({ ...state, mode: payload.mode }, "omarchyColors", CreateOmarchyColors.run);
+  },
 
   ClickedWallhavenPaginator: (payload, { state }) => {
     const searchParams = {

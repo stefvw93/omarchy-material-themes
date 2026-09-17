@@ -19,7 +19,7 @@
     "@tauri-apps/api": "catalog:",
     "@tauri-apps/plugin-fs": "catalog:",
     "@tauri-apps/plugin-http": "~2.5.9",
-    "@wych/react": "catalog:",
+    "@wych/react": "^0.4.1",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "date-fns": "catalog:",

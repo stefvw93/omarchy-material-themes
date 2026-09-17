@@ -32,7 +32,7 @@ hl.config({
     gaps_out = omaterial_gaps_out,
     border_size = omaterial_border_size,
     col = {
-      active_border = { colors = { "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_primary)}", "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_outline)}" }, angle = 65 },
+      active_border = { colors = { "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_primary)}", "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_outline)}" }, angle = 55 },
       inactive_border = "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_outlineVariant)}"
     },
   },
