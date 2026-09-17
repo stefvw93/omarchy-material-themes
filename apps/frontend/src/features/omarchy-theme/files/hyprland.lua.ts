@@ -29,7 +29,7 @@ local omaterial_border_inactive = "${hexToHyprlandRgb(input.muted)}"
 -- Direction the light comes from, in degrees: 0 = right, 90 = top,
 -- counter-clockwise. The shadow is cast on the opposite side.
 local omaterial_light_angle = 90
-local omaterial_shadow_distance = 4
+local omaterial_shadow_distance = 8
 local omaterial_shadow_vector = {
   -math.cos(math.rad(omaterial_light_angle)) * omaterial_shadow_distance,
   math.sin(math.rad(omaterial_light_angle)) * omaterial_shadow_distance, -- screen y points down
@@ -64,9 +64,10 @@ hl.config({
       enabled = true,
       color = "${flow(hexFromArgb, (hex) => hex + "4d", hexToHyprlandRgb)(input.omaterial_shadow)}",
       color_inactive = "${flow(hexFromArgb, (hex) => hex + "1a", hexToHyprlandRgb)(input.omaterial_shadow)}",
-      range = 15,
+      range = 60,
       offset = omaterial_shadow_vector,
-      render_power = 1
+      render_power = 4,
+      scale = 1
     }
   },
 
