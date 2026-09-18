@@ -30,13 +30,6 @@ hl.config({
     },
   },
 
-  group = {
-    col = {
-      border_active = { colors = { "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_primary)}", "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_outline)}" }, angle = 55 },
-      border_inactive = "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_outlineVariant)}",
-    },
-  },
-
   decoration = {
     blur = {
       enabled = true,
@@ -58,6 +51,10 @@ hl.config({
   },
 
   group = {
+    col = {
+      border_active = { colors = { "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_primary)}", "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_outline)}" }, angle = 55 },
+      border_inactive = "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_outlineVariant)}",
+    },
     groupbar = {
       enabled = true,
       render_titles = true,
@@ -108,7 +105,7 @@ hl.layer_rule({
 -- sit flush against the top bar.
 local omaterial_lone_window = "w[t1] w[tg0]"
 
-hl.workspace_rule({ workspace = omaterial_lone_window, gaps_out = 0, gaps_in = 0 })
+local omaterial_lone_window_gaps = hl.workspace_rule({ workspace = omaterial_lone_window, gaps_out = 0, gaps_in = 0 })
 hl.workspace_rule({ workspace = "f[1]", gaps_out = 0, gaps_in = 0 })
 
 -- Drop border and rounding on lone window so it sits flush against the edges.
@@ -123,6 +120,18 @@ hl.window_rule({
   border_size = 0,
   rounding = 0,
 })
+
+-- Hyprland (0.56) evaluates w[tg0] while the group being dismantled is still
+-- registered, so ungrouping the last window of a group leaves the lone-window
+-- rules stale until the next relayout. Re-enabling the gap rule after the
+-- toggle schedules a refresh of all rules and layouts once the group is gone.
+if _G.omarchy_default_bindings ~= false then
+  hl.unbind("SUPER + G")
+  o.bind("SUPER + G", "Toggle window grouping", function()
+    hl.dispatch(hl.dsp.group.toggle())
+    omaterial_lone_window_gaps:set_enabled(true)
+  end)
+end
 `,
 );
 
