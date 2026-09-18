@@ -15,6 +15,7 @@ import { WallhavenInputs } from "./components/wallhaven-inputs";
 import { WallhavenResults } from "./components/wallhaven-results";
 import { PexelsResults } from "./components/pexels-results";
 import { OutputPanel } from "./components/output-panel";
+import { ThemePreview } from "./components/theme-preview";
 import { ApplyOmarchyTheme } from "./tasks";
 import { useTheme } from "@/components/theme-provider";
 
@@ -256,6 +257,7 @@ const reducer = SeedDefinition.reducer({
 
 const render = SeedDefinition.render(({ state, dispatch }) => (
   <div className="grid grid-cols-12 flex-1 min-h-0 gap-2 p-2 min-w-2xl">
+    <ThemePreview />
     <div className="col-span-5 lg:col-span-6 xl:col-span-8 flex flex-col flex-1 min-h-0 gap-2">
       <Tabs
         value={state.inputType}
