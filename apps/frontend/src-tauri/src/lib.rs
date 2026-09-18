@@ -1,11 +1,15 @@
 use std::process::Command;
 
+/// Runs `omarchy theme set` off the main thread. A sync command would run on
+/// the GTK main loop and freeze the webview for as long as the script takes.
 #[tauri::command]
-fn set_theme(name: String) -> Result<(), String> {
-    let output = Command::new("omarchy")
-        .args(["theme", "set", &name])
-        .output()
-        .map_err(|e| format!("failed to run omarchy: {e}"))?;
+async fn set_theme(name: String) -> Result<(), String> {
+    let output = tauri::async_runtime::spawn_blocking(move || {
+        Command::new("omarchy").args(["theme", "set", &name]).output()
+    })
+    .await
+    .map_err(|e| format!("failed to join set_theme task: {e}"))?
+    .map_err(|e| format!("failed to run omarchy: {e}"))?;
 
     if !output.status.success() {
         return Err(String::from_utf8_lossy(&output.stderr).into_owned());

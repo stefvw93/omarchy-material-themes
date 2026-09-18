@@ -23,6 +23,9 @@ hl.config({
   general = {
     gaps_in = 2,
     gaps_out = 4,
+    -- Gap between the outgoing and incoming workspace while they slide, so
+    -- the two read as separate cards.
+    gaps_workspaces = 32,
     border_size = 1,
     col = {
       active_border = { colors = { "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_primary)}", "${flow(hexFromArgb, hexToHyprlandRgb)(input.omaterial_outline)}" }, angle = 55 },
@@ -83,6 +86,51 @@ hl.config({
   }
 })
 
+-- Material 3 motion. Spring tokens from androidx.compose.material3
+-- (tokens/StandardMotionTokens.kt, tokens/ExpressiveMotionTokens.kt): mass 1,
+-- stiffness, and a damping *ratio*. Hyprland springs take the damping
+-- *coefficient*, c = 2 * ratio * sqrt(stiffness * mass). Springs run on
+-- physical time, so \`speed\` is required but has no effect.
+--
+-- Spatial springs move things (position, size), effects springs change
+-- colour and opacity. Expressive's spatial springs overshoot (ratio 0.8 is
+-- ~1.5%), which on a full-screen slide flashes a strip of wallpaper past the
+-- edge, so the workspace slide uses the standard scheme.
+local omaterial_motion_schemes = {
+  standard = {
+    spatial_fast = { stiffness = 1400, ratio = 0.9 },
+    spatial_default = { stiffness = 700, ratio = 0.9 },
+    spatial_slow = { stiffness = 300, ratio = 0.9 },
+    effects_fast = { stiffness = 3800, ratio = 1.0 },
+    effects_default = { stiffness = 1600, ratio = 1.0 },
+    effects_slow = { stiffness = 800, ratio = 1.0 },
+  },
+  expressive = {
+    spatial_fast = { stiffness = 800, ratio = 0.6 },
+    spatial_default = { stiffness = 380, ratio = 0.8 },
+    spatial_slow = { stiffness = 200, ratio = 0.8 },
+    effects_fast = { stiffness = 3800, ratio = 1.0 },
+    effects_default = { stiffness = 1600, ratio = 1.0 },
+    effects_slow = { stiffness = 800, ratio = 1.0 },
+  },
+}
+local omaterial_motion_scheme = "standard"
+
+for name, token in pairs(omaterial_motion_schemes[omaterial_motion_scheme]) do
+  hl.curve("omaterial_" .. name, {
+    type = "spring",
+    mass = 1,
+    stiffness = token.stiffness,
+    dampening = 2 * token.ratio * math.sqrt(token.stiffness),
+  })
+end
+
+-- Workspaces slide sideways like macOS spaces; the scratchpad drops in from
+-- the top. Both settle on the default spatial spring (~300ms for standard).
+
+hl.animation({ leaf = "workspaces", enabled = true, speed = 3, spring = "omaterial_spatial_default", style = "slide" })
+hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 3, spring = "omaterial_spatial_default", style = "slidevert" })
+
 -- Every shell surface is its own layer: bar, panels (omarchy-keyboard-panel),
 -- notifications, OSD, menu, polkit, clipboard, emojis, reminders. Tooltips
 -- and dropdowns are popups of the bar, covered by blur_popups. Each surface
@@ -90,6 +138,7 @@ hl.config({
 -- clipboard, emojis, polkit) are full-screen with a 0.32 scrim, so
 -- ignore_alpha sits between scrim and card: the card blurs, the scrim and
 -- the transparent parts do not.
+
 hl.layer_rule({
   match = {
     namespace = "^omarchy-(bar|keyboard-panel|notifications|osd|menu|polkit|clipboard|emojis|reminders)$",
@@ -103,14 +152,27 @@ hl.layer_rule({
 -- workspace. A group counts as one tiled window (w[t1]), so w[tg0] (zero
 -- tiled groups) is added to keep groups gapped; otherwise the tab bar would
 -- sit flush against the top bar.
+
 local omaterial_lone_window = "w[t1] w[tg0]"
 
-local omaterial_lone_window_gaps = hl.workspace_rule({ workspace = omaterial_lone_window, gaps_out = 0, gaps_in = 0 })
-hl.workspace_rule({ workspace = "f[1]", gaps_out = 0, gaps_in = 0 })
+hl.workspace_rule({
+  workspace = omaterial_lone_window,
+  gaps_out = 0,
+  gaps_in = 0,
+})
+
+hl.workspace_rule({
+  workspace = "f[1]",
+  gaps_out = 0,
+  gaps_in = 0,
+})
 
 -- Drop border and rounding on lone window so it sits flush against the edges.
 hl.window_rule({
-  match = { float = false, workspace = omaterial_lone_window },
+  match = {
+    float = false,
+    workspace = omaterial_lone_window,
+  },
   border_size = 0,
   rounding = 0,
 })
@@ -120,18 +182,6 @@ hl.window_rule({
   border_size = 0,
   rounding = 0,
 })
-
--- Hyprland (0.56) evaluates w[tg0] while the group being dismantled is still
--- registered, so ungrouping the last window of a group leaves the lone-window
--- rules stale until the next relayout. Re-enabling the gap rule after the
--- toggle schedules a refresh of all rules and layouts once the group is gone.
-if _G.omarchy_default_bindings ~= false then
-  hl.unbind("SUPER + G")
-  o.bind("SUPER + G", "Toggle window grouping", function()
-    hl.dispatch(hl.dsp.group.toggle())
-    omaterial_lone_window_gaps:set_enabled(true)
-  end)
-end
 `,
 );
 
