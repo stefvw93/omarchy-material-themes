@@ -195,11 +195,13 @@ const reducer = SeedDefinition.reducer({
   },
 
   ClickedImageThumb: (payload, { state }) =>
-    Task.start(
-      { ...state, selectedImageUrl: payload.url },
-      "omarchyColors",
-      CreateOmarchyColors.run,
-    ),
+    payload.url !== state.selectedImageUrl
+      ? Task.start(
+          { ...state, selectedImageUrl: payload.url },
+          "omarchyColors",
+          CreateOmarchyColors.run,
+        )
+      : state,
 
   SetSchemeKind: (payload, { state }) =>
     Task.start(

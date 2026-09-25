@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ColorsGrid } from "./colors-grid";
+import { Spinner } from "@/components/ui/spinner";
 
 const CONSTRUCTORS = Object.keys(MaterialService.schemeContstructors).map((key) => ({
   value: key,
@@ -118,7 +119,12 @@ export const OutputPanel = () => {
         Resolved: (resolved) => <ColorsGrid omarchyColors={resolved.value} />,
       })}
 
-      <Button onClick={() => dispatch(ApplyColors.make({}))}>Apply</Button>
+      <Button
+        disabled={Task.isPending(state.omarchyTheme)}
+        onClick={() => dispatch(ApplyColors.make({}))}
+      >
+        {Task.isPending(state.omarchyTheme) ? <Spinner /> : "Apply"}
+      </Button>
     </div>
   );
 };
