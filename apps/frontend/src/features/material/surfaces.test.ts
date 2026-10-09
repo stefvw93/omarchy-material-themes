@@ -7,7 +7,7 @@ import {
   SchemeRainbow,
   SchemeVibrant,
 } from "@material/material-color-utilities";
-import { describe, expect, it } from "@effect/vitest";
+import { describe, expect, it } from "vite-plus/test";
 import { buildSurfaceColors } from "./surfaces";
 
 const KINDS = {

@@ -8,7 +8,7 @@ import {
   SchemeRainbow,
   SchemeVibrant,
 } from "@material/material-color-utilities";
-import { describe, expect, it } from "@effect/vitest";
+import { describe, expect, it } from "vite-plus/test";
 import { ANCHOR, buildAnsiColors, MIN_SEPARATION, SLOTS } from "./ansi";
 import type { AnsiColors, AnsiSlot } from "./ansi";
 import { buildSurfaceColors } from "./surfaces";
