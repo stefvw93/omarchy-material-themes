@@ -9,12 +9,14 @@ type TauriPathsDict = Omit<
   number
 >;
 
-const notImplementedError = PlatformError.systemError({
-  _tag: "Unknown",
-  module: "@effect-platform-tauri/Paths",
-  method: "<not implemented>",
-});
-const notImplemented = () => Effect.fail(notImplementedError);
+const notImplemented = (name: string) =>
+  Effect.fail(
+    PlatformError.systemError({
+      _tag: "Unknown",
+      module: "@effect-platform-tauri/Paths",
+      method: `${name}: not implemented`,
+    }),
+  );
 
 const wrap = (method: () => PromiseLike<string>) =>
   Effect.tryPromise({
@@ -41,7 +43,8 @@ export const layer = Layer.effect(
 
     const proxy = new Proxy(paths as UnsafeMutable<TauriPathsDict>, {
       get: (target, prop) => {
-        if (!(prop in target)) return notImplemented;
+        // An Effect, like the implemented entries: `yield* paths.Config` must fail, not yield a function.
+        if (!(prop in target)) return notImplemented(String(prop));
         return target[prop as keyof TauriPathsDict];
       },
     });

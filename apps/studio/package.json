@@ -1,0 +1,52 @@
+{
+  "name": "@stef/studio",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vp dev",
+    "build": "tsc && vp build",
+    "preview": "vp preview",
+    "tauri": "tauri",
+    "pexels": "node --env-file=.env pexels.ts",
+    "test": "vp test --passWithNoTests"
+  },
+  "dependencies": {
+    "@base-ui/react": "catalog:",
+    "@fontsource-variable/jetbrains-mono": "catalog:",
+    "@material/material-color-utilities": "catalog:",
+    "@phosphor-icons/react": "catalog:",
+    "@stef/effect-platform-tauri": "workspace:*",
+    "@stef/theme-engine": "workspace:*",
+    "@tauri-apps/api": "catalog:",
+    "@tauri-apps/plugin-fs": "catalog:",
+    "@tauri-apps/plugin-http": "catalog:",
+    "@wych/react": "catalog:",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "cn": "catalog:",
+    "date-fns": "catalog:",
+    "effect": "catalog:",
+    "react": "catalog:",
+    "react-colorful": "catalog:",
+    "react-day-picker": "catalog:",
+    "react-dom": "catalog:",
+    "shadcn": "catalog:",
+    "tailwind-merge": "catalog:",
+    "tw-animate-css": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@stef/config": "workspace:*",
+    "@tailwindcss/vite": "catalog:",
+    "@tauri-apps/cli": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "pexels": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

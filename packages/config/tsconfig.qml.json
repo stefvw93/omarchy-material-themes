@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    // Code bundled for Quickshell's QML (V4) engine. es2017 lib makes built-ins
+    // the engine lacks (Object.fromEntries, Array.prototype.at, ...) type errors.
+    // See packages/effect-platform-qml/SPIKE.md.
+    "target": "es2017",
+    "lib": ["es2017"],
+    "types": []
+  }
+}

@@ -26,6 +26,24 @@ const wrap =
         }),
     });
 
+/** Copies only the keys that are set: Tauri's option types don't accept explicit `undefined`. */
+const defined = <T extends object>(options: T): { [K in keyof T]?: Exclude<T[K], undefined> } =>
+  Object.fromEntries(Object.entries(options).filter(([, v]) => v !== undefined)) as {
+    [K in keyof T]?: Exclude<T[K], undefined>;
+  };
+
+const mkdir = wrap("makeDirectory", TauriFS.mkdir);
+const makeDirectory: FileSystem.FileSystem["makeDirectory"] = (path, options) =>
+  mkdir(path, defined({ recursive: options?.recursive, mode: options?.mode }));
+
+const rm = wrap("remove", TauriFS.remove);
+const remove: FileSystem.FileSystem["remove"] = (path, options) =>
+  rm(path, defined({ recursive: options?.recursive }));
+
+const write = wrap("writeFile", TauriFS.writeFile);
+const writeFile: FileSystem.FileSystem["writeFile"] = (path, data, options) =>
+  write(path, data, defined({ mode: options?.mode }));
+
 const readDirectory: FileSystem.FileSystem["readDirectory"] = (path, options) => {
   if (options?.recursive) {
     return Effect.fail(
@@ -86,7 +104,7 @@ const tauriFS = FileSystem.make({
   copyFile: notImplemented("copyFile"),
   glob: notImplemented("glob"),
   link: notImplemented("link"),
-  makeDirectory: wrap("makeDirectory", TauriFS.mkdir),
+  makeDirectory,
   makeTempDirectory: notImplemented("makeTempDirectory"),
   makeTempDirectoryScoped: notImplemented("makeTempDirectoryScoped"),
   makeTempFile: notImplemented("makeTempFile"),
@@ -96,13 +114,13 @@ const tauriFS = FileSystem.make({
   readFile: notImplemented("readFile"),
   readLink: notImplemented("readLink"),
   realPath: notImplemented("realPath"),
-  remove: wrap("remove", TauriFS.remove),
+  remove,
   rename: notImplemented("rename"),
   stat: notImplemented("stat"),
   symlink: notImplemented("symlink"),
   truncate: notImplemented("truncate"),
   utimes: notImplemented("utimes"),
-  writeFile: wrap("writeFile", TauriFS.writeFile),
+  writeFile,
   watch(_path, _options) {
     return Stream.fail(notImplementedError("watch"));
   },

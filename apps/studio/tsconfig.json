@@ -1,0 +1,10 @@
+{
+  "extends": "@stef/config/tsconfig.dom.json",
+  "compilerOptions": {
+    "allowArbitraryExtensions": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}

@@ -1,19 +1,4 @@
 {
-  "compilerOptions": {
-    "target": "es2017",
-    "lib": ["es2017"],
-    "moduleDetection": "force",
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "noUnusedLocals": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true,
-    "allowImportingTsExtensions": true
-  },
+  "extends": "@stef/config/tsconfig.qml.json",
   "include": ["src", "spike"]
 }

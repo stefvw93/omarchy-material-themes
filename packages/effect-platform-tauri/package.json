@@ -1,17 +1,9 @@
 {
-  "name": "effect-platform-tauri",
+  "name": "@stef/effect-platform-tauri",
   "version": "0.0.0",
-  "description": "A starter for creating a TypeScript package.",
-  "homepage": "https://github.com/author/library#readme",
-  "bugs": {
-    "url": "https://github.com/author/library/issues"
-  },
+  "private": true,
+  "description": "Tauri-backed implementations of Effect platform services (FileSystem, HttpClient, Paths).",
   "license": "MIT",
-  "author": "Author Name <author.name@mail.com>",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/author/library.git"
-  },
   "files": [
     "dist"
   ],
@@ -24,15 +16,13 @@
     "exports": {
       ".": "./dist/index.mjs",
       "./package.json": "./package.json"
-    },
-    "access": "public"
+    }
   },
   "scripts": {
     "build": "vp pack",
     "dev": "vp pack --watch",
     "test": "echo 'No tests yet'",
-    "check": "vp check",
-    "prepublishOnly": "vp run build"
+    "check": "vp check"
   },
   "dependencies": {
     "@tauri-apps/plugin-fs": "catalog:",
@@ -40,10 +30,10 @@
     "effect": "catalog:"
   },
   "devDependencies": {
+    "@stef/config": "workspace:*",
     "@tauri-apps/api": "catalog:",
-    "@types/node": "^26.1.1",
-    "bumpp": "^11.1.0",
-    "typescript": "^7.0.2",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
   },

@@ -1,0 +1,26 @@
+{
+  "name": "@stef/theme-engine",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Material You scheme generation and Omarchy theme file writers.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "check": "vp check",
+    "test": "vp test"
+  },
+  "dependencies": {
+    "@material/material-color-utilities": "catalog:",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@stef/config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}
