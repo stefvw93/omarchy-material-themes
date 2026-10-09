@@ -1,6 +1,6 @@
 import { type DynamicScheme, sourceColorFromImageBytes } from "@material/material-color-utilities";
 import { Context, Effect, flow, Layer, Match, Option, Schema } from "effect";
-import { HttpClient } from "effect/unstable/http";
+import { HttpClient } from "effect/http";
 import {
   createScheme as engineCreateScheme,
   imageHues,

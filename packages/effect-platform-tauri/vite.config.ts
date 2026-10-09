@@ -2,9 +2,8 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   pack: {
-    dts: {
-      tsgo: true,
-    },
+    // TypeScript 7: the declaration generator defaults to tsgo.
+    dts: true,
     exports: {
       devExports: true,
     },

@@ -1,6 +1,6 @@
 # Phase 0 spike: Effect inside Quickshell's QML engine
 
-**Verdict: viable.** Effect v4 (rc.118) runs inside the QML engine (Qt 6.11.2, Quickshell 0.3.1). This needs four build-time shims and one output patch, all wired into `vite.config.ts`.
+**Verdict: viable.** Effect 4.0 (verified on rc.118 and 4.0.2) runs inside the QML engine (Qt 6.11.2, Quickshell 0.3.1). This needs four build-time shims and one output patch, all wired into `vite.config.ts`.
 
 To reproduce, run `vp run spike`, which builds `spike/spike.ts` and runs it in a headless `qs -p`.
 

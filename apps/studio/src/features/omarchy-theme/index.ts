@@ -1,7 +1,7 @@
 import { Context, Effect, FileSystem, Layer, Path, PlatformError } from "effect";
 import { configDir } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api/core";
-import { HttpClient } from "effect/unstable/http";
+import { HttpClient } from "effect/http";
 import {
   makeThemeWriters,
   OmarchyThemeError,

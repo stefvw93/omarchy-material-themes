@@ -1,5 +1,5 @@
 import { Layer } from "effect";
-import { FetchHttpClient } from "effect/unstable/http";
+import { FetchHttpClient } from "effect/http";
 import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 
 export const TauriFetchLayer = Layer.succeed(FetchHttpClient.Fetch, tauriFetch);

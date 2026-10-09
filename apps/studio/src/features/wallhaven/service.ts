@@ -9,7 +9,7 @@ import {
   Schema,
   SchemaTransformation,
 } from "effect";
-import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http";
+import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 import { HexColor } from "@stef/theme-engine";
 
 /** Order is significant: it defines the bit position in the `categories` param. */

@@ -43,7 +43,7 @@ const WallhavenSearch = Task("WallhavenSearch", {
 
 const PexelsCurated = Task("PexelsCurated", {
   success: Schema.Array(PexelsPhoto),
-  run: (_: void) => Effect.flatMap(PexelsService, (pexels) => pexels.curated),
+  run: () => Effect.flatMap(PexelsService, (pexels) => pexels.curated),
 });
 
 type ColorsInput = Pick<SeedState, "selectedImageUrl" | "schemeKind" | "mode" | "contrastLevel">;
