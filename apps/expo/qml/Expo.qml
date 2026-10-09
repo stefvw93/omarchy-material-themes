@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import QtQuick
 import qs.Commons
 import qs.Ui
+import "lib/core.mjs" as Core
 import "lib/kit.mjs" as Kit
 import "lib/meta.mjs" as Meta
 
@@ -18,6 +19,32 @@ Item {
   // Shape and motion, live from ~/.config/omarchy/stef/tokens.json.
   Tokens { id: tokens }
 
+  // The Effect core (src/core.ts) tracks which windows exist and hands
+  // changed snapshots to relayout(); this file lays them out and draws them.
+  HostTimers { id: timers }
+  property var core: null
+  readonly property var coreHost: ({
+    startTimer: timers.start,
+    stopTimer: timers.stop,
+    log: function(message) { console.warn("stef.expo core: " + message) },
+    refresh: function() {
+      Hyprland.refreshToplevels()
+      Hyprland.refreshWorkspaces()
+    },
+    toplevels: function() {
+      var out = []
+      var toplevels = Hyprland.toplevels.values
+      for (var i = 0; i < toplevels.length; i++) {
+        var t = toplevels[i]
+        out.push({ ipc: t.lastIpcObject, address: t.address, title: t.title, ref: t })
+      }
+      return out
+    },
+    relayout: function(groups) { root.relayout(groups) },
+  })
+  Component.onCompleted: root.core = Core.start(root.coreHost) // qmllint disable missing-property
+  Component.onDestruction: if (root.core) root.core.dispose()
+
   property var shell: null
   property var manifest: null
 
@@ -26,7 +53,6 @@ Item {
   property var flat: []
   property int selectedIndex: -1
   property string selectedAddress: ""
-  property string layoutSignature: ""
 
   // Shares the [menu] surface tokens, like the emoji picker, so themes that
   // style the menu also style the overview.
@@ -87,18 +113,15 @@ Item {
     root.selectedAddress = active ? normalizeAddress(active.address) : ""
     root.clock = 0
     root.opened = true
-    root.rebuild()
     clockAnimation.restart()
-    Hyprland.refreshToplevels()
-    Hyprland.refreshWorkspaces()
-    refreshTimer.restart()
+    root.core.dispatch({ _tag: "Open", monX: root.monX, monY: root.monY })
     Qt.callLater(function() { keyCatcher.forceActiveFocus() })
   }
 
   function close() {
     root.opened = false
-    root.layoutSignature = ""
     root.groups = []
+    if (root.core) root.core.dispatch({ _tag: "Close" })
     root.flat = []
     root.selectedIndex = -1
   }
@@ -115,62 +138,6 @@ Item {
   }
 
   function normalizeAddress(address) { return Kit.normalizeAddress(address) } // qmllint disable missing-property
-
-  function workspaceLabel(ws) {
-    if (ws.id < 0) {
-      var name = String(ws.name || "").replace(/^special:/, "")
-      return name ? name.charAt(0).toUpperCase() + name.slice(1) : "Special"
-    }
-    return String(ws.name || ws.id)
-  }
-
-  function rebuild() {
-    if (!root.opened) return
-    var byWs = {}
-    var toplevels = Hyprland.toplevels.values
-    for (var i = 0; i < toplevels.length; i++) {
-      var t = toplevels[i]
-      var ipc = t.lastIpcObject
-      if (!ipc || !ipc.workspace || !ipc.at || !ipc.size) continue
-      if (ipc.mapped === false) continue
-      var wsId = ipc.workspace.id
-      if (!byWs[wsId]) byWs[wsId] = { id: wsId, name: ipc.workspace.name, windows: [] }
-      byWs[wsId].windows.push({
-        toplevel: t,
-        address: normalizeAddress(ipc.address || t.address),
-        title: ipc.title || t.title || "",
-        appClass: ipc["class"] || "",
-        floating: !!ipc.floating,
-        rx: ipc.at[0] - root.monX,
-        ry: ipc.at[1] - root.monY,
-        rw: ipc.size[0],
-        rh: ipc.size[1],
-      })
-    }
-
-    var list = []
-    for (var key in byWs) list.push(byWs[key])
-    // Regular workspaces in order, special workspaces (scratchpad) last.
-    list.sort(function(a, b) {
-      if ((a.id < 0) !== (b.id < 0)) return a.id < 0 ? 1 : -1
-      return Math.abs(a.id) - Math.abs(b.id)
-    })
-    for (var g = 0; g < list.length; g++) {
-      list[g].label = workspaceLabel(list[g])
-      // Reading order within a workspace: tiled left-to-right then
-      // top-to-bottom, floating last (drawn on top).
-      list[g].windows.sort(Kit.compareReadingOrder) // qmllint disable missing-property
-    }
-
-    // Skip unchanged snapshots so delegates (and their live captures) aren't
-    // recreated for nothing.
-    var signature = JSON.stringify(list.map(function(g) {
-      return [g.id, g.windows.map(function(w) { return [w.address, w.rx, w.ry, w.rw, w.rh] })]
-    }))
-    if (signature === root.layoutSignature) return
-    root.layoutSignature = signature
-    root.relayout(list)
-  }
 
   // Lays tiles out in the grid that makes them as large as possible, and
   // records each window's center in overview coordinates for arrow-key
@@ -290,27 +257,11 @@ Item {
       Hyprland.dispatch('hl.dsp.focus({ workspace = "' + group.id + '" })')
   }
 
-  // Structural window/workspace events only; keyboard layout and title events
-  // fire on ordinary key presses and must not disturb the selection.
-  readonly property var refreshEvents: [
-    "openwindow", "closewindow", "movewindow", "movewindowv2", "changefloatingmode",
-    "createworkspace", "createworkspacev2", "destroyworkspace", "destroyworkspacev2",
-    "moveworkspace", "moveworkspacev2", "fullscreen", "pin",
-  ]
-
-  // Refresh the IPC snapshot and rebuild a moment later so lastIpcObject is
-  // current.
+  // Hyprland events go to the core, which picks the structural ones.
   Connections {
     target: Hyprland
     enabled: root.opened
-    function onRawEvent(event) {
-      if (root.refreshEvents.indexOf(event.name) < 0) return
-      if (!refreshTimer.running) {
-        Hyprland.refreshToplevels()
-        Hyprland.refreshWorkspaces()
-        refreshTimer.restart()
-      }
-    }
+    function onRawEvent(event) { root.core.dispatch({ _tag: "RawEvent", name: event.name }) }
   }
 
   // Long enough for the last tile and its windows to settle; delegates
@@ -323,12 +274,6 @@ Item {
     from: 0
     to: 3000
     duration: 3000
-  }
-
-  Timer {
-    id: refreshTimer
-    interval: 80
-    onTriggered: root.rebuild()
   }
 
   PanelWindow { // qmllint disable uncreatable-type

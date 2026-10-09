@@ -148,6 +148,45 @@ ShellRoot {
   }
 }, Effect.scoped);
 
+/**
+ * Runs the app's `tests/*.engine.qml` in a headless `qs`, each with the built
+ * plugin linked as `plugin/` (so `import "plugin/lib/core.mjs" as Core`
+ * works). A test prints `ENGINE-PASS` or `ENGINE-FAIL <why>`.
+ */
+export const checkEngineTests = Effect.fn("PluginKit.checkEngineTests")(function* (
+  root: string,
+  outDir: string,
+) {
+  const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const testDir = path.join(root, "tests");
+  if (!(yield* fs.exists(testDir))) return 0;
+  const tests = (yield* fs.readDirectory(testDir)).filter((f) => f.endsWith(".engine.qml"));
+  for (const test of tests) {
+    yield* Effect.scoped(
+      Effect.gen(function* () {
+        const tmp = yield* fs.makeTempDirectoryScoped();
+        yield* fs.symlink(outDir, path.join(tmp, "plugin"));
+        yield* fs.copyFile(path.join(testDir, test), path.join(tmp, "shell.qml"));
+        const lines = yield* runUntil(
+          "qs",
+          ["-p", path.join(tmp, "shell.qml")],
+          { env: { QT_QPA_PLATFORM: "offscreen" }, extendEnv: true },
+          (line) => /ENGINE-(PASS|FAIL)/.test(line),
+          "15 seconds",
+        );
+        if (!lines.some((l) => l.includes("ENGINE-PASS"))) {
+          return yield* new PluginCheckError({
+            check: "engine",
+            message: `${test}:\n${lines.filter((l) => /ENGINE|Error|error|warn/i.test(l)).join("\n")}`,
+          });
+        }
+      }),
+    );
+  }
+  return tests.length;
+});
+
 /** Syntax-checks the Hyprland hook and runs its plain-Lua tests (fake `hl`). */
 export const checkLua = Effect.fn("PluginKit.checkLua")(function* (
   root: string,

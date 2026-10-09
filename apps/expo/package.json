@@ -7,9 +7,16 @@
   "scripts": {
     "build": "plugin-kit build",
     "build:dev": "plugin-kit build --dev",
-    "verify": "plugin-kit check"
+    "verify": "plugin-kit check",
+    "test": "vp test"
+  },
+  "dependencies": {
+    "@stef/effect-platform-qml": "workspace:*",
+    "@stef/qml-kit": "workspace:*",
+    "effect": "catalog:"
   },
   "devDependencies": {
+    "@effect/vitest": "catalog:",
     "@stef/config": "workspace:*",
     "@stef/plugin-kit": "workspace:*",
     "@types/node": "catalog:",

@@ -8,5 +8,6 @@ export default definePlugin({
   description: "Mission Control style overview of all workspaces with live window thumbnails",
   kinds: ["overlay"],
   entryPoints: { overlay: "Expo.qml" },
+  libs: { core: "src/core.ts" },
   files: ["README.md"],
 });

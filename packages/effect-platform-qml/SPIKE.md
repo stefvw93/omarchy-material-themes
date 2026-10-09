@@ -42,3 +42,16 @@ The Effect paths exercised here don't touch them. Plugin code must not use them 
 - Move the shims, the inject map and `qmlCompat` into `@stef/plugin-kit`'s preset, so every plugin bundle gets them.
 - In the bundle check, assert the engine logs no warnings beyond the known `usedbeforedeclared` lints, and run the spike as part of `verify`.
 - Measure inside the live `omarchy-shell` as well, to confirm it runs on the same engine under load.
+
+## Using it in a plugin
+
+A plugin's core is an Effect program over a stream of intents, started from QML with `runCore` (see `apps/expo/src/core.ts`):
+
+```qml
+HostTimers { id: timers }            // vendored from @stef/qml-kit
+property var core: null
+Component.onCompleted: core = Core.start({ startTimer: timers.start, stopTimer: timers.stop, log: …, /* plugin needs */ })
+Component.onDestruction: if (core) core.dispose()
+```
+
+The core is unit-tested in Node with `TestClock`, and `tests/*.engine.qml` runs it in the real engine on QML Timers (`plugin-kit check`).

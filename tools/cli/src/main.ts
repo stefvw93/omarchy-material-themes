@@ -10,7 +10,14 @@ import {
   type SmokeTest,
   variantId,
 } from "@stef/omarchy";
-import { buildPlugin, checkBundles, checkLua, checkQml, checkTokens } from "@stef/plugin-kit";
+import {
+  buildPlugin,
+  checkBundles,
+  checkEngineTests,
+  checkLua,
+  checkQml,
+  checkTokens,
+} from "@stef/plugin-kit";
 import { Console, Effect, Layer, Path } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
 import { deploy, undeployDev } from "./deploy.ts";
@@ -53,6 +60,7 @@ const check = Command.make("check", { app }, ({ app: name }) =>
     yield* checkQml(a.root, out);
     yield* checkBundles(out);
     yield* checkTokens(out);
+    yield* checkEngineTests(a.root, out);
     yield* checkLua(a.root, a.config);
     yield* Console.log(`${a.config.id}: qml, bundles, tokens, lua ok`);
   }),
