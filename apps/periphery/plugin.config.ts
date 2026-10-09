@@ -16,4 +16,5 @@ export default definePlugin({
     hyprland: "src/hyprland/index.ts",
   },
   files: ["README.md"],
+  smoke: "smoke.ts",
 });

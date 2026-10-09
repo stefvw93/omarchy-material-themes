@@ -17,6 +17,6 @@ export default defineConfig({
   test: {
     // Delegate to each workspace's own vite.config.ts so `vp test` from the
     // repo root behaves the same as running it inside a package.
-    projects: ["packages/*", "apps/*"],
+    projects: ["packages/*", "apps/*", "tools/*"],
   },
 });

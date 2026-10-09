@@ -1,0 +1,27 @@
+{
+  "name": "@stef/cli",
+  "version": "0.0.0",
+  "private": true,
+  "description": "stef: build, check, deploy and develop the omarchy-stef plugins.",
+  "bin": {
+    "stef": "./src/main.ts"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "vp test --passWithNoTests"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@stef/hyprland": "workspace:*",
+    "@stef/omarchy": "workspace:*",
+    "@stef/plugin-kit": "workspace:*",
+    "@stef/tokens": "workspace:*",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@stef/config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

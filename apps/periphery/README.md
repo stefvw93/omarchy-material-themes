@@ -69,13 +69,15 @@ Hover a card: it gets your theme's active border, and the active window's border
 The source is the `apps/periphery` app of the `omarchy-stef` monorepo, built with `@stef/plugin-kit`. The deployed folder is build output: the shell reloads plugins on any write under `~/.config/omarchy/plugins/`, so nothing is edited there.
 
 ```bash
-vp install                # from the repo root
+vp install                     # from the repo root
 cd apps/periphery
-vp test run               # TypeScript logic
-vp run verify             # build, QML lint, bundles in Quickshell's engine, Lua hook tests
-vp run build              # dist/prod/stef.periphery (vp run build:dev: stef.periphery.dev)
-rsync -a --delete dist/prod/stef.periphery/ ~/.config/omarchy/plugins/stef.periphery/
-omarchy restart shell
+vp test run                    # TypeScript logic
+vp run verify                  # build, QML lint, bundles + tokens in Quickshell's engine, Lua hook tests
+stef deploy periphery          # build and install into ~/.config/omarchy/plugins/stef.periphery
+stef dev periphery             # live dev variant stef.periphery.dev; Ctrl+C restores prod
+stef smoke periphery           # live checks against the running session
 ```
+
+(`stef` is `pnpm stef` from the repo root, or `node tools/cli/src/main.ts`.)
 
 The logic is TypeScript in `src/<module>/` (spec, code, tests), bundled to `lib/*.mjs` for the QML to import. [CLAUDE.md](CLAUDE.md) has the workflow: spec → `declare` → failing tests → implementation → `vp run verify`.

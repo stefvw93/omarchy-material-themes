@@ -1,0 +1,24 @@
+{
+  "name": "@stef/omarchy",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Omarchy as Effect services: paths, the shell's plugin IPC, plugin install and the Hyprland hooks file.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "vp test"
+  },
+  "dependencies": {
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/platform-node": "catalog:",
+    "@stef/config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

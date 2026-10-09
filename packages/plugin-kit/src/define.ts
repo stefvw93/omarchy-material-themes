@@ -14,6 +14,11 @@ export interface PluginConfig extends Omit<PluginManifest, "schemaVersion"> {
   readonly libs?: Readonly<Record<string, string>>;
   /** Extra files copied to the plugin root as-is, e.g. `README.md`. */
   readonly files?: ReadonlyArray<string>;
+  /**
+   * Live checks against the running session, run by `stef smoke`: a module
+   * whose default export is `(ctx: { id }) => Effect` (see `SmokeTest`).
+   */
+  readonly smoke?: string;
 }
 
 export const definePlugin = <const C extends PluginConfig>(config: C): C => config;

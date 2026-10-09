@@ -11,7 +11,10 @@
     "verify": "plugin-kit check"
   },
   "dependencies": {
-    "@stef/qml-kit": "workspace:*"
+    "@stef/hyprland": "workspace:*",
+    "@stef/omarchy": "workspace:*",
+    "@stef/qml-kit": "workspace:*",
+    "effect": "catalog:"
   },
   "devDependencies": {
     "@stef/config": "workspace:*",

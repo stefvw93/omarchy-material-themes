@@ -32,7 +32,7 @@ In this order. Don't skip a step; say so if a step doesn't apply.
 3. **Test.** Write tests in `<module>.test.ts` against the spec, not against the code. Run them: they must fail.
 4. **Implement.** Replace the `declare`s until the tests pass. The signatures stay as declared; if they must change, go back to step 2.
 5. **Validate.** `vp run verify` until clean.
-6. **Wire and deploy.** Change the QML, `vp run build`, then deploy (until the `stef` CLI lands: `rsync -a --delete dist/prod/stef.periphery/ ~/.config/omarchy/plugins/stef.periphery/`), `omarchy restart shell`, toggle the mode (`omarchy-shell shell toggle stef.periphery '{}'`).
+6. **Wire and deploy.** Change the QML, then either `stef dev periphery` (the dev variant `stef.periphery.dev` runs in the real shell and rebuilds on every change; Ctrl+C puts prod back) or `stef deploy periphery`. Then `stef smoke periphery`.
 7. **Hand-check.** Hover, clicks, drags and keys can't be tested from here (below). Don't wait for them: carry on, and list them at the end of the report, saying exactly what to try and what should happen. Never claim they work.
 
 When a test disagrees with the spec, fix the test. When the spec disagrees with what the user wants, stop and ask.

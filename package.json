@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "ready": "vp check && vp run -r test && vp run -r build && vp run -r verify",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "stef": "node tools/cli/src/main.ts"
   },
   "devDependencies": {
+    "@stef/cli": "workspace:*",
     "@types/node": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
