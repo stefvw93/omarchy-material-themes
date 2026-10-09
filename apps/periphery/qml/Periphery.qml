@@ -12,6 +12,7 @@ import qs.Ui
 // singletons (Color, Style) or the lib/*.mjs bundles, which qmllint can't see
 // into; `uncreatable-type` is Quickshell's PanelWindow, created as intended.
 import "lib/hyprland.mjs" as Hypr
+import "lib/kit.mjs" as Kit
 import "lib/meta.mjs" as Meta
 import "lib/layout.mjs" as Layout
 import "lib/selection.mjs" as Selection
@@ -33,6 +34,9 @@ import "lib/selection.mjs" as Selection
 // card is drawn on an Overlay surface so it stays above the focus windows.
 Item {
   id: root
+
+  // Shape and motion, live from ~/.config/omarchy/stef/tokens.json.
+  Tokens { id: tokens }
 
   property var shell: null
   property var manifest: null
@@ -143,9 +147,9 @@ Item {
   readonly property var inactiveBorder: Border.surfaceSpec("popups", "border", root.border, root.windowBorder)
   property string fontFamily: Style.font.menuFamily // qmllint disable missing-property
 
-  readonly property int bandMargin: Style.space(16)
-  readonly property int cardGap: Style.space(10)
-  readonly property int groupGap: Style.space(20)
+  readonly property int bandMargin: Style.space(tokens.value.periphery.bandMargin)
+  readonly property int cardGap: Style.space(tokens.value.periphery.cardGap)
+  readonly property int groupGap: Style.space(tokens.value.periphery.groupGap)
   readonly property int headerHeight: Style.font.body + Style.spacing.sm * 2 // qmllint disable missing-property
   // How far a group's map may stretch vertically to use a tall band.
   readonly property real maxStretch: 6
@@ -155,8 +159,8 @@ Item {
   readonly property real animSpeed: 1
   function ms(duration) { return Math.round(duration / root.animSpeed) }
 
-  readonly property int slideDuration: ms(320)
-  readonly property int fadeDuration: ms(150)
+  readonly property int slideDuration: ms(tokens.value.periphery.slideDuration)
+  readonly property int fadeDuration: ms(tokens.value.periphery.fadeDuration)
   // Qt SpringAnimation, tuned to the theme's spatial_default spring
   // (stiffness 700, damping ratio 0.9): settles in ~340 ms, no overshoot.
   readonly property real springStrength: 11.2 * animSpeed * animSpeed
@@ -178,7 +182,7 @@ Item {
   // to look like decoration:blur (size 6, 3 passes; matched by eye against
   // a real foot window, as dual-kawase has no exact radius; contrast 0.89
   // and vibrancy 0.17 map to MultiEffect -0.11 and 0.17).
-  readonly property int ghostBlur: 96
+  readonly property int ghostBlur: tokens.value.periphery.ghostBlur
   readonly property real ghostBlurContrast: -0.11
   readonly property real ghostBlurSaturation: 0.17
 
@@ -203,17 +207,14 @@ Item {
     } catch (e) {}
     var mon = Hyprland.focusedMonitor
     if (mon) {
-      var scale = mon.scale > 0 ? mon.scale : 1
+      var geometry = Kit.monitorGeometry(mon, Quickshell.screens) // qmllint disable missing-property
       root.targetMonitor = mon
       root.monId = mon.id
-      root.monX = mon.x
-      root.monY = mon.y
-      root.monW = mon.width / scale
-      root.monH = mon.height / scale
-      var screens = Quickshell.screens
-      root.targetScreen = null
-      for (var i = 0; i < screens.length; i++)
-        if (screens[i].name === mon.name) root.targetScreen = screens[i]
+      root.monX = geometry.x
+      root.monY = geometry.y
+      root.monW = geometry.w
+      root.monH = geometry.h
+      root.targetScreen = geometry.screen
     }
     root.opened = true
     root.shownWorkspace = root.currentWorkspaceId()
@@ -372,11 +373,7 @@ Item {
     else root.open("{}")
   }
 
-  function normalizeAddress(address) {
-    if (!address) return ""
-    var a = String(address)
-    return a.indexOf("0x") === 0 ? a : "0x" + a
-  }
+  function normalizeAddress(address) { return Kit.normalizeAddress(address) } // qmllint disable missing-property
 
   function activateWindow(address) {
     Hyprland.dispatch('hl.dsp.focus({ window = "address:' + address + '" })')

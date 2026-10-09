@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import QtQuick
 import qs.Commons
 import qs.Ui
+import "lib/kit.mjs" as Kit
 import "lib/meta.mjs" as Meta
 
 // Mission Control style overview: one miniature per occupied workspace with
@@ -13,6 +14,9 @@ import "lib/meta.mjs" as Meta
 // walk windows in order, Up/Down move spatially, Enter focuses, 1-9 jump to a workspace.
 Item {
   id: root
+
+  // Shape and motion, live from ~/.config/omarchy/stef/tokens.json.
+  Tokens { id: tokens }
 
   property var shell: null
   property var manifest: null
@@ -38,38 +42,30 @@ Item {
   readonly property int cornerRadius: Style.cornerRadius
   property string fontFamily: Style.font.menuFamily // qmllint disable missing-property
 
-  readonly property int outerMargin: Style.space(48)
-  readonly property int tileGap: Style.space(24)
-  readonly property int tilePadding: Style.space(8)
+  readonly property int outerMargin: Style.space(tokens.value.expo.outerMargin)
+  readonly property int tileGap: Style.space(tokens.value.expo.tileGap)
+  readonly property int tilePadding: Style.space(tokens.value.expo.tilePadding)
   readonly property int headerHeight: Style.font.title + Style.spacing.md * 2 // qmllint disable missing-property
   readonly property int selectionWidth: Math.max(2, Style.space(3))
 
-  // Motion mirrors the Omaterial theme's Material 3 springs
-  // (~/.local/state/omarchy/current/theme/hyprland.lua, "standard" scheme):
-  // tiles move on spatial_default and fade on effects_default, staggered in
-  // reading order. Hyprland's layersIn fade brings in the blurred backdrop.
-  readonly property var springSpatial: ({ stiffness: 700, ratio: 0.9 })
-  readonly property var springEffects: ({ stiffness: 1600, ratio: 1.0 })
-  readonly property int tileStagger: 80
-  readonly property int windowStagger: 35
-  readonly property int windowLead: 70
-  readonly property real tileScaleFrom: 0.92
-  readonly property real windowScaleFrom: 0.94
-  readonly property int riseDistance: Style.space(24)
+  // Motion uses the tokens' Material 3 scheme, the one Hyprland's curves come
+  // from: tiles move on spatial_default and fade on effects_default,
+  // staggered in reading order. Hyprland's layersIn fade brings in the
+  // blurred backdrop.
+  readonly property var springSpatial: tokens.springs.spatial_default
+  readonly property var springEffects: tokens.springs.effects_default
+  readonly property int tileStagger: tokens.value.expo.tileStagger
+  readonly property int windowStagger: tokens.value.expo.windowStagger
+  readonly property int windowLead: tokens.value.expo.windowLead
+  readonly property real tileScaleFrom: tokens.value.expo.tileScaleFrom
+  readonly property real windowScaleFrom: tokens.value.expo.windowScaleFrom
+  readonly property int riseDistance: Style.space(tokens.value.expo.rise)
   // Milliseconds since open; every delegate derives its progress from it.
   property real clock: 0
 
   // Damped spring step response (mass 1) at t ms, as Hyprland evaluates the
   // theme's curves: 0 before start, settling on 1.
-  function spring(ms, token) {
-    if (ms <= 0) return 0
-    var t = ms / 1000
-    var w = Math.sqrt(token.stiffness)
-    var z = token.ratio
-    if (z >= 1) return 1 - Math.exp(-w * t) * (1 + w * t)
-    var wd = w * Math.sqrt(1 - z * z)
-    return 1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + (z * w / wd) * Math.sin(wd * t))
-  }
+  function spring(ms, token) { return Kit.springStep(ms, token) } // qmllint disable missing-property
 
   property var targetScreen: null
   property real monX: 0
@@ -80,15 +76,12 @@ Item {
   function open(payloadJson) {
     var mon = Hyprland.focusedMonitor
     if (mon) {
-      var scale = mon.scale > 0 ? mon.scale : 1
-      root.monX = mon.x
-      root.monY = mon.y
-      root.monW = mon.width / scale
-      root.monH = mon.height / scale
-      var screens = Quickshell.screens
-      root.targetScreen = null
-      for (var i = 0; i < screens.length; i++)
-        if (screens[i].name === mon.name) root.targetScreen = screens[i]
+      var geometry = Kit.monitorGeometry(mon, Quickshell.screens) // qmllint disable missing-property
+      root.monX = geometry.x
+      root.monY = geometry.y
+      root.monW = geometry.w
+      root.monH = geometry.h
+      root.targetScreen = geometry.screen
     }
     var active = Hyprland.activeToplevel
     root.selectedAddress = active ? normalizeAddress(active.address) : ""
@@ -121,11 +114,7 @@ Item {
     else root.open("{}")
   }
 
-  function normalizeAddress(address) {
-    if (!address) return ""
-    var a = String(address)
-    return a.indexOf("0x") === 0 ? a : "0x" + a
-  }
+  function normalizeAddress(address) { return Kit.normalizeAddress(address) } // qmllint disable missing-property
 
   function workspaceLabel(ws) {
     if (ws.id < 0) {
@@ -170,11 +159,7 @@ Item {
       list[g].label = workspaceLabel(list[g])
       // Reading order within a workspace: tiled left-to-right then
       // top-to-bottom, floating last (drawn on top).
-      list[g].windows.sort(function(a, b) {
-        if (a.floating !== b.floating) return a.floating ? 1 : -1
-        if (Math.abs(a.rx - b.rx) > 4) return a.rx - b.rx
-        return a.ry - b.ry
-      })
+      list[g].windows.sort(Kit.compareReadingOrder) // qmllint disable missing-property
     }
 
     // Skip unchanged snapshots so delegates (and their live captures) aren't

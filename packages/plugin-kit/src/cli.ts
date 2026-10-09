@@ -5,7 +5,7 @@
 import { NodeRuntime, NodeServices } from "@effect/platform-node";
 import { Console, Effect, Path } from "effect";
 import { buildPlugin } from "./build.ts";
-import { checkBundles, checkLua, checkQml } from "./check.ts";
+import { checkBundles, checkLua, checkQml, checkTokens } from "./check.ts";
 import type { PluginConfig } from "./define.ts";
 
 const [command, ...flags] = process.argv.slice(2);
@@ -30,6 +30,8 @@ const program = Effect.gen(function* () {
       yield* Console.log("qml ok");
       yield* checkBundles(outDir);
       yield* Console.log("bundles ok");
+      yield* checkTokens(outDir);
+      yield* Console.log("tokens ok");
       yield* checkLua(root, config);
       if (config.hyprHook !== undefined) yield* Console.log("lua ok");
       return;

@@ -1,5 +1,7 @@
 // Layout: the other workspaces' windows as cards in the bands. See specs.md.
 
+import { readingOrder } from "@stef/qml-kit";
+
 /** A window on another workspace, as the caller reads it from Hyprland. */
 export interface LayoutWindow {
   address: string;
@@ -63,14 +65,8 @@ export function assignBands(ids: readonly number[], current: number): Bands {
   return { left, right };
 }
 
-/** A group's windows in reading order (a sorted copy). */
-export function readingOrder<W extends LayoutWindow>(windows: readonly W[]): W[] {
-  return [...windows].sort((a, b) => {
-    if (a.floating !== b.floating) return a.floating ? 1 : -1;
-    if (Math.abs(a.rx - b.rx) > 4) return a.rx - b.rx;
-    return a.ry - b.ry;
-  });
-}
+/** A group's windows in reading order (a sorted copy). Shared with expo via @stef/qml-kit. */
+export { readingOrder };
 
 interface Group<W extends LayoutWindow> {
   id: number;

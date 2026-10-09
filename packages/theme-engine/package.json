@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@material/material-color-utilities": "catalog:",
+    "@stef/motion": "workspace:*",
+    "@stef/tokens": "workspace:*",
     "effect": "catalog:"
   },
   "devDependencies": {

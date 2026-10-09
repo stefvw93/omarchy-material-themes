@@ -10,6 +10,9 @@
     "test": "vp test",
     "verify": "plugin-kit check"
   },
+  "dependencies": {
+    "@stef/qml-kit": "workspace:*"
+  },
   "devDependencies": {
     "@stef/config": "workspace:*",
     "@stef/plugin-kit": "workspace:*",

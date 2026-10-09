@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { qmlPackOptions } from "@stef/effect-platform-qml/build";
 import { Effect, FileSystem, Path, Schema } from "effect";
 import { build as pack } from "vite-plus/pack";
@@ -20,6 +21,9 @@ export const rewriteHookPluginId = (source: string, id: string) =>
           message: 'hypr hook has no `local PLUGIN_ID = "…" -- plugin-kit:id` line',
         }),
       );
+
+/** @stef/qml-kit: bundled into every plugin as `lib/kit.mjs`, its QML vendored to the root. */
+const kitEntry = fileURLToPath(import.meta.resolve("@stef/qml-kit"));
 
 /** `lib/meta.mjs`: what QML imports as `import "lib/meta.mjs" as Meta`. */
 export const metaModule = (id: string, mode: BuildMode) =>
@@ -69,8 +73,19 @@ export const buildPlugin = Effect.fn("PluginKit.build")(function* (
   yield* fs.makeDirectory(libDir, { recursive: true });
 
   const qmlDir = path.join(root, config.qml ?? "qml");
-  for (const file of yield* fs.readDirectory(qmlDir)) {
+  const ownQml = yield* fs.readDirectory(qmlDir);
+  for (const file of ownQml) {
     yield* fs.copyFile(path.join(qmlDir, file), path.join(outDir, file));
+  }
+
+  const kitQmlDir = path.join(path.dirname(kitEntry), "..", "qml");
+  for (const file of yield* fs.readDirectory(kitQmlDir)) {
+    if (ownQml.includes(file)) {
+      return yield* new PluginBuildError({
+        message: `qml/${file} clashes with @stef/qml-kit's ${file}`,
+      });
+    }
+    yield* fs.copyFile(path.join(kitQmlDir, file), path.join(outDir, file));
   }
 
   for (const file of config.files ?? []) {
@@ -82,8 +97,11 @@ export const buildPlugin = Effect.fn("PluginKit.build")(function* (
     yield* fs.writeFileString(path.join(outDir, "hypr.lua"), yield* rewriteHookPluginId(hook, id));
   }
 
-  if (config.libs !== undefined && Object.keys(config.libs).length > 0) {
-    const entry = config.libs;
+  if (config.libs?.["kit"] !== undefined) {
+    return yield* new PluginBuildError({ message: "lib name `kit` is reserved for @stef/qml-kit" });
+  }
+  {
+    const entry = { ...config.libs, kit: kitEntry };
     yield* Effect.tryPromise({
       try: () =>
         pack({

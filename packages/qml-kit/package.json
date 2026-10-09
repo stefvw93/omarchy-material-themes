@@ -1,0 +1,24 @@
+{
+  "name": "@stef/qml-kit",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Logic and QML shared by the Omarchy plugins, vendored into each by @stef/plugin-kit.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./qml/*": "./qml/*",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "vp test"
+  },
+  "dependencies": {
+    "@stef/motion": "workspace:*",
+    "@stef/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@stef/config": "workspace:*",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

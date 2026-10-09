@@ -22,3 +22,7 @@ A Mission Control style overview for Omarchy: one miniature per occupied workspa
 ## Development
 
 From this directory: `vp run build` builds `dist/prod/stef.expo`, `vp run build:dev` builds `stef.expo.dev`, and `vp run verify` lints the QML and loads the bundles in Quickshell's engine.
+
+## Tokens
+
+Spacing, staggers and springs come from the shared design tokens (`@stef/tokens`). Override any of them in `~/.config/omarchy/stef/tokens.json`, e.g. `{ "expo": { "tileGap": 32 }, "motion": { "scheme": "expressive" } }`. An open exposé picks the change up live.

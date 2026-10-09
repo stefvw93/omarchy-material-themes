@@ -87,6 +87,67 @@ export const checkBundles = Effect.fn("PluginKit.checkBundles")(function* (outDi
   }
 }, Effect.scoped);
 
+/**
+ * Instantiates the plugin's vendored `Tokens.qml` in a headless `qs` with a
+ * throwaway $HOME: the baked-in defaults must load, and writing
+ * ~/.config/omarchy/stef/tokens.json must reach `tokens.value` live.
+ */
+export const checkTokens = Effect.fn("PluginKit.checkTokens")(function* (outDir: string) {
+  const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const tmp = yield* fs.makeTempDirectoryScoped();
+  const home = path.join(tmp, "home");
+  yield* fs.makeDirectory(path.join(home, ".config/omarchy/stef"), { recursive: true });
+  yield* fs.symlink(outDir, path.join(tmp, "plugin"));
+  yield* fs.writeFileString(
+    path.join(tmp, "shell.qml"),
+    `import Quickshell
+import Quickshell.Io
+import QtQuick
+import "plugin"
+
+ShellRoot {
+  Tokens {
+    id: tokens
+    function report() {
+      console.log("TOKENS gaps.inner=" + tokens.value.gaps.inner + " scheme=" + tokens.value.motion.scheme
+        + " spatial=" + tokens.springs.spatial_default.stiffness)
+      if (tokens.value.gaps.inner === 7 && tokens.springs.spatial_default.stiffness === 380)
+        console.log("TOKENS-DONE")
+    }
+    // springs is a binding on value: it settles after onValueChanged runs.
+    onValueChanged: report()
+    onSpringsChanged: report()
+  }
+  FileView { id: writer; path: Quickshell.env("HOME") + "/.config/omarchy/stef/tokens.json" }
+  Timer {
+    interval: 300; running: true
+    onTriggered: writer.setText(JSON.stringify({ gaps: { inner: 7 }, motion: { scheme: "expressive" } }))
+  }
+  Component.onCompleted: console.log("TOKENS gaps.inner=" + tokens.value.gaps.inner + " scheme=" + tokens.value.motion.scheme
+    + " spatial=" + tokens.springs.spatial_default.stiffness)
+}
+`,
+  );
+
+  const lines = yield* runUntil(
+    "qs",
+    ["-p", path.join(tmp, "shell.qml")],
+    { env: { QT_QPA_PLATFORM: "offscreen", HOME: home }, extendEnv: true },
+    (line) => line.includes("TOKENS-DONE"),
+    "10 seconds",
+  );
+  const seen = lines.filter((l) => l.includes("TOKENS gaps"));
+  const defaults = seen.some((l) => l.includes("gaps.inner=2 scheme=standard spatial=700"));
+  const live = seen.some((l) => l.includes("gaps.inner=7 scheme=expressive spatial=380"));
+  if (!defaults || !live) {
+    return yield* new PluginCheckError({
+      check: "tokens",
+      message: `Tokens.qml: defaults ${defaults ? "ok" : "missing"}, live override ${live ? "ok" : "missing"}\n${lines.join("\n")}`,
+    });
+  }
+}, Effect.scoped);
+
 /** Syntax-checks the Hyprland hook and runs its plain-Lua tests (fake `hl`). */
 export const checkLua = Effect.fn("PluginKit.checkLua")(function* (
   root: string,
