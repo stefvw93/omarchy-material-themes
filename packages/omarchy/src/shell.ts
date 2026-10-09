@@ -42,7 +42,7 @@ export class OmarchyShell extends Context.Service<OmarchyShell, OmarchyShellImpl
     OmarchyShell,
     Effect.gen(function* () {
       const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-      const run = (args: ReadonlyArray<string>) =>
+      return makeOmarchyShell((args) =>
         Effect.scoped(
           Effect.gen(function* () {
             const handle = yield* spawner.spawn(ChildProcess.make("omarchy-shell", [...args]));
@@ -53,36 +53,44 @@ export class OmarchyShell extends Context.Service<OmarchyShell, OmarchyShellImpl
                 message: `omarchy-shell ${args.join(" ")} exited ${exitCode}: ${output.trim()}`,
               });
             }
-            return output.trim();
+            return output;
           }),
         ).pipe(
           Effect.catchTag("PlatformError", (cause) =>
             Effect.fail(new OmarchyError({ message: `omarchy-shell ${args.join(" ")}`, cause })),
           ),
-        );
-
-      const expectOk = (args: ReadonlyArray<string>) =>
-        Effect.flatMap(run(args), (out) =>
-          out === "ok"
-            ? Effect.void
-            : Effect.fail(new OmarchyError({ message: `omarchy-shell ${args.join(" ")}: ${out}` })),
-        );
-
-      return {
-        listPlugins: Effect.flatMap(run(["shell", "listPlugins"]), (out) =>
-          Schema.decodeUnknownEffect(Schema.fromJsonString(Schema.Array(PluginInfo)))(out).pipe(
-            Effect.mapError(
-              (cause) => new OmarchyError({ message: "listPlugins: unexpected output", cause }),
-            ),
-          ),
         ),
-        setPluginEnabled: (id, enabled) =>
-          expectOk(["shell", "setPluginEnabled", id, String(enabled)]),
-        rescanPlugins: Effect.asVoid(run(["shell", "rescanPlugins"])),
-        toggle: (id, payload = {}) =>
-          Effect.asVoid(run(["shell", "toggle", id, JSON.stringify(payload)])),
-        ipc: (target, method, ...args) => run(["-q", target, method, ...args]),
-      } satisfies OmarchyShellImpl;
+      );
     }),
   );
 }
+
+/**
+ * The service over a way to run `omarchy-shell <args>` and get its output:
+ * a child process in Node, a Tauri command in Studio.
+ */
+export const makeOmarchyShell = (
+  run: (args: ReadonlyArray<string>) => Effect.Effect<string, OmarchyError>,
+): OmarchyShellImpl => {
+  const text = (args: ReadonlyArray<string>) => Effect.map(run(args), (out) => out.trim());
+  const expectOk = (args: ReadonlyArray<string>) =>
+    Effect.flatMap(text(args), (out) =>
+      out === "ok"
+        ? Effect.void
+        : Effect.fail(new OmarchyError({ message: `omarchy-shell ${args.join(" ")}: ${out}` })),
+    );
+  return {
+    listPlugins: Effect.flatMap(text(["shell", "listPlugins"]), (out) =>
+      Schema.decodeUnknownEffect(Schema.fromJsonString(Schema.Array(PluginInfo)))(out).pipe(
+        Effect.mapError(
+          (cause) => new OmarchyError({ message: "listPlugins: unexpected output", cause }),
+        ),
+      ),
+    ),
+    setPluginEnabled: (id, enabled) => expectOk(["shell", "setPluginEnabled", id, String(enabled)]),
+    rescanPlugins: Effect.asVoid(text(["shell", "rescanPlugins"])),
+    toggle: (id, payload = {}) =>
+      Effect.asVoid(text(["shell", "toggle", id, JSON.stringify(payload)])),
+    ipc: (target, method, ...args) => text(["-q", target, method, ...args]),
+  };
+};

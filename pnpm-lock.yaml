@@ -404,9 +404,21 @@ importers:
       '@stef/effect-platform-tauri':
         specifier: workspace:*
         version: link:../../packages/effect-platform-tauri
+      '@stef/hyprland':
+        specifier: workspace:*
+        version: link:../../packages/hyprland
+      '@stef/motion':
+        specifier: workspace:*
+        version: link:../../packages/motion
+      '@stef/omarchy':
+        specifier: workspace:*
+        version: link:../../packages/omarchy
       '@stef/theme-engine':
         specifier: workspace:*
         version: link:../../packages/theme-engine
+      '@stef/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
       '@tauri-apps/api':
         specifier: 'catalog:'
         version: 2.11.1
@@ -588,6 +600,9 @@ importers:
 
   packages/omarchy:
     dependencies:
+      '@stef/tokens':
+        specifier: workspace:*
+        version: link:../tokens
       effect:
         specifier: 'catalog:'
         version: 4.0.2

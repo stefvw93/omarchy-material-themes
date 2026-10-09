@@ -44,6 +44,9 @@ const write = wrap("writeFile", TauriFS.writeFile);
 const writeFile: FileSystem.FileSystem["writeFile"] = (path, data, options) =>
   write(path, data, defined({ mode: options?.mode }));
 
+const read = wrap("readFile", TauriFS.readFile);
+const readFile: FileSystem.FileSystem["readFile"] = (path) => read(path);
+
 const readDirectory: FileSystem.FileSystem["readDirectory"] = (path, options) => {
   if (options?.recursive) {
     return Effect.fail(
@@ -111,7 +114,7 @@ const tauriFS = FileSystem.make({
   makeTempFileScoped: notImplemented("makeTempFileScoped"),
   open: notImplemented("open"),
   readDirectory,
-  readFile: notImplemented("readFile"),
+  readFile,
   readLink: notImplemented("readLink"),
   realPath: notImplemented("realPath"),
   remove,

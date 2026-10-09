@@ -12,6 +12,7 @@
     "test": "vp test"
   },
   "dependencies": {
+    "@stef/tokens": "workspace:*",
     "effect": "catalog:"
   },
   "devDependencies": {

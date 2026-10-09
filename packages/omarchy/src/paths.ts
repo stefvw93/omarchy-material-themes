@@ -42,6 +42,12 @@ export class OmarchyPaths extends Context.Service<OmarchyPaths, OmarchyPathsImpl
   /** Paths under the real $HOME. */
   static readonly layer = Layer.effect(
     OmarchyPaths,
-    Effect.suspend(() => OmarchyPaths.make(process.env["HOME"] ?? "/")),
+    Effect.suspend(() =>
+      OmarchyPaths.make(
+        (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env[
+          "HOME"
+        ] ?? "/",
+      ),
+    ),
   );
 }

@@ -5,18 +5,29 @@
   "windows": ["main"],
   "permissions": [
     "core:default",
+    "fs:read-all",
     "fs:write-all",
     "fs:allow-remove",
     {
       "identifier": "fs:scope",
-      "allow": ["$HOME/.config/omarchy/themes/**"]
+      "allow": [
+        "$HOME/.config/omarchy/themes/**",
+        "$HOME/.config/omarchy/stef/**",
+        "$HOME/.config/hypr/stef/**"
+      ]
     },
     {
       "identifier": "http:default",
       "allow": [
-        { "url": "https://wallhaven.cc/*" },
-        { "url": "https://*.wallhaven.cc/*" },
-        { "url": "https://images.pexels.com/*" }
+        {
+          "url": "https://wallhaven.cc/*"
+        },
+        {
+          "url": "https://*.wallhaven.cc/*"
+        },
+        {
+          "url": "https://images.pexels.com/*"
+        }
       ]
     }
   ]
