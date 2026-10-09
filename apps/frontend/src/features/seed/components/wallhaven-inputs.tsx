@@ -51,7 +51,7 @@ type WallhavenInputsState = typeof WallhavenInputsState.Type;
 // Actions
 //
 
-const WallhavenInputsActions = Action.of([]);
+const WallhavenInputsActions = [] as const;
 
 //
 // Outputs
@@ -60,7 +60,7 @@ const WallhavenInputsActions = Action.of([]);
 const Change = Action.output("Change", WallhavenSearchParams.fields);
 const Submit = Action.output("Submit", WallhavenSearchParams.fields);
 
-const WallhavenInputsOutputs = Action.of([Change, Submit]);
+const WallhavenInputsOutputs = [Change, Submit];
 
 //
 // Definition
@@ -69,8 +69,8 @@ const WallhavenInputsOutputs = Action.of([Change, Submit]);
 const WallhavenInputsDefinition = define({
   props: WallhavenInputsProps,
   state: WallhavenInputsState,
-  action: WallhavenInputsActions,
-  output: WallhavenInputsOutputs,
+  actions: WallhavenInputsActions,
+  outputs: WallhavenInputsOutputs,
 });
 
 //

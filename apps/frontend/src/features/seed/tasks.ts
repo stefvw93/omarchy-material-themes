@@ -1,37 +1,33 @@
 import { Task } from "@wych/react";
 import { Schema, Effect } from "effect";
 import { OmarchyTheme } from "../omarchy-theme";
-import type { SeedState } from ".";
+import type { OmarchyColors } from "../material/colors";
 
 export const ApplyOmarchyTheme = Task("ApplyOmarchyTheme", {
   success: Schema.Void,
-  onError: Task.errorMessage,
-  run: (state: SeedState) =>
+  run: ({ imageUrl, colors }: { readonly imageUrl: URL; readonly colors: OmarchyColors }) =>
     Effect.gen(function* () {
-      if (state.omarchyColors._tag !== "Resolved") return;
-      if (!state.selectedImageUrl) return;
-
       const omarchyTheme = yield* OmarchyTheme;
       yield* omarchyTheme.clean();
 
       yield* Effect.all(
         [
-          omarchyTheme.writeBackgroundImage(state.selectedImageUrl),
-          omarchyTheme.writeColorsToml(state.omarchyColors.value),
-          omarchyTheme.writeHyprlandLua(state.omarchyColors.value),
-          omarchyTheme.writeShellBarToml(state.omarchyColors.value),
-          omarchyTheme.writeShellControlsToml(state.omarchyColors.value),
-          omarchyTheme.writeShellFontToml(state.omarchyColors.value),
-          omarchyTheme.writeShellHyprlandToml(state.omarchyColors.value),
-          omarchyTheme.writeShellImagePickerToml(state.omarchyColors.value),
-          omarchyTheme.writeShellLauncherToml(state.omarchyColors.value),
-          omarchyTheme.writeShellLockToml(state.omarchyColors.value),
-          omarchyTheme.writeShellMenuToml(state.omarchyColors.value),
-          omarchyTheme.writeShellNotificationsToml(state.omarchyColors.value),
-          omarchyTheme.writeShellPolkitToml(state.omarchyColors.value),
-          omarchyTheme.writeShellPopupsToml(state.omarchyColors.value),
-          omarchyTheme.writeShellSpacingToml(state.omarchyColors.value),
-          omarchyTheme.writeShellTooltipsToml(state.omarchyColors.value),
+          omarchyTheme.writeBackgroundImage(imageUrl),
+          omarchyTheme.writeColorsToml(colors),
+          omarchyTheme.writeHyprlandLua(colors),
+          omarchyTheme.writeShellBarToml(colors),
+          omarchyTheme.writeShellControlsToml(colors),
+          omarchyTheme.writeShellFontToml(colors),
+          omarchyTheme.writeShellHyprlandToml(colors),
+          omarchyTheme.writeShellImagePickerToml(colors),
+          omarchyTheme.writeShellLauncherToml(colors),
+          omarchyTheme.writeShellLockToml(colors),
+          omarchyTheme.writeShellMenuToml(colors),
+          omarchyTheme.writeShellNotificationsToml(colors),
+          omarchyTheme.writeShellPolkitToml(colors),
+          omarchyTheme.writeShellPopupsToml(colors),
+          omarchyTheme.writeShellSpacingToml(colors),
+          omarchyTheme.writeShellTooltipsToml(colors),
         ],
         { concurrency: "unbounded" },
       );

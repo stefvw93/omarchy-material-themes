@@ -1,5 +1,6 @@
 import { Cause, Effect, Schema } from "effect";
 import { Action, Task, Children, define } from "@wych/react";
+import type { Draft } from "@wych/react";
 import { component } from "../shared";
 import { Input } from "@/components/ui/input";
 import {
@@ -42,25 +43,25 @@ const WallhavenSearch = Task("WallhavenSearch", {
 
 const PexelsCurated = Task("PexelsCurated", {
   success: Schema.Array(PexelsPhoto),
-  onError: Task.errorMessage,
   run: (_: void) => Effect.flatMap(PexelsService, (pexels) => pexels.curated),
 });
 
+type ColorsInput = Pick<SeedState, "selectedImageUrl" | "schemeKind" | "mode" | "contrastLevel">;
+
 const CreateOmarchyColors = Task("CreateOmarchyColors", {
   success: OmarchyColors,
-  onError: Task.errorMessage,
-  run: (state: SeedState) =>
+  run: (input: ColorsInput) =>
     Effect.gen(function* () {
-      if (!state.selectedImageUrl) {
+      if (!input.selectedImageUrl) {
         return yield* Effect.fail(new Error("No image selected"));
       }
 
       const material = yield* MaterialService;
 
-      const colors = yield* material.createOmarchyColorsFromImage(state.selectedImageUrl, {
-        schemeKind: state.schemeKind,
-        isDark: state.mode === "dark",
-        contrastLevel: state.contrastLevel,
+      const colors = yield* material.createOmarchyColorsFromImage(input.selectedImageUrl, {
+        schemeKind: input.schemeKind,
+        isDark: input.mode === "dark",
+        contrastLevel: input.contrastLevel,
       });
 
       return colors;
@@ -74,12 +75,8 @@ const SeedState = Schema.Struct({
   wallhavenSearchParams: WallhavenSearchParams,
   mode: Mode,
   contrastLevel: ContrastLevel,
-  search: Task.schema(WallhavenSearchPayload),
-  curated: Task.schema(Schema.Array(PexelsPhoto)),
-  omarchyColors: Task.schema(OmarchyColors),
-  omarchyTheme: Task.schema(Schema.Void),
 });
-export type SeedState = typeof SeedState.Type;
+type SeedState = typeof SeedState.Type;
 
 //
 // Actions
@@ -98,11 +95,7 @@ export const SetSchemeKind = Action("SetSchemeKind", { schemeKind: SchemeKind })
 const SetWallhavenSearchParams = Action("SetWallhavenSearchParams", WallhavenSearchParams.fields);
 export const ApplyColors = Action("ApplyColors", {});
 
-const SeedAction = Action.of([
-  ...PexelsCurated.actions,
-  ...WallhavenSearch.actions,
-  ...CreateOmarchyColors.actions,
-  ...ApplyOmarchyTheme.actions,
+const SeedAction = [
   ApplyColors,
   CommitContrastLevel,
   ClickedImageThumb,
@@ -113,7 +106,7 @@ const SeedAction = Action.of([
   SetMode,
   SetSchemeKind,
   SetWallhavenSearchParams,
-]);
+];
 
 //
 // Definitions
@@ -122,7 +115,13 @@ const SeedAction = Action.of([
 const SeedDefinition = define({
   props: Props,
   state: SeedState,
-  action: SeedAction,
+  tasks: {
+    search: WallhavenSearch,
+    curated: PexelsCurated,
+    omarchyColors: CreateOmarchyColors,
+    omarchyTheme: ApplyOmarchyTheme,
+  },
+  actions: SeedAction,
   useUnsafeHooks() {
     const theme = useTheme();
     return { theme };
@@ -142,162 +141,128 @@ const initialState = SeedDefinition.initialState(() => ({
     topRange: "1y",
     atleast: "2560x1440",
   },
-  search: Task.idle,
-  curated: Task.idle,
-  omarchyColors: Task.idle,
-  omarchyTheme: Task.idle,
 }));
 
+// Task inputs are read from `state` or the payload, never from `draft`: the
+// draft is revoked once the fold ends, before the task's effect runs.
 const reducer = SeedDefinition.reducer({
-  Mounted: (_, { state }) => {
-    if (state.inputType === "wallhaven") {
-      return Task.start(state, "search", WallhavenSearch.run(state.wallhavenSearchParams));
-    }
+  Mounted: (_, { state, draft, tasks }) =>
+    state.inputType === "wallhaven" ? tasks.search.start(state.wallhavenSearchParams) : draft,
 
-    return state;
+  SetContrastLevel: ({ contrastLevel }, { draft }) => {
+    draft.contrastLevel = contrastLevel;
+    return draft;
   },
 
-  SetContrastLevel: (payload, { state }) => ({ ...state, ...payload }),
-
-  CommitContrastLevel: (payload, { state }) =>
-    Task.start({ ...state, ...payload }, "omarchyColors", CreateOmarchyColors.run),
-
-  SetInputKind: (payload, { state }) => {
-    const next = { ...state, inputType: payload.inputType };
-
-    if (payload.inputType === "pexels") {
-      return Task.start(next, "curated", PexelsCurated.run());
-    }
-
-    if (payload.inputType === "wallhaven") {
-      return Task.start(next, "search", WallhavenSearch.run(state.wallhavenSearchParams));
-    }
-
-    return next;
+  CommitContrastLevel: ({ contrastLevel }, { state, draft, tasks }) => {
+    draft.contrastLevel = contrastLevel;
+    return tasks.omarchyColors.start({ ...state, contrastLevel });
   },
 
-  SetMode: (payload, { state, hooks }) => {
-    hooks.theme.setTheme(payload.mode);
-    return Task.start({ ...state, mode: payload.mode }, "omarchyColors", CreateOmarchyColors.run);
+  SetInputKind: ({ inputType }, { state, draft, tasks }) => {
+    draft.inputType = inputType;
+
+    if (inputType === "pexels") {
+      return tasks.curated.start();
+    }
+
+    if (inputType === "wallhaven") {
+      return tasks.search.start(state.wallhavenSearchParams);
+    }
+
+    return draft;
   },
 
-  ClickedWallhavenPaginator: (payload, { state }) => {
+  SetMode: ({ mode }, { state, draft, tasks, hooks }) => {
+    hooks.theme.setTheme(mode);
+    draft.mode = mode;
+    return tasks.omarchyColors.start({ ...state, mode });
+  },
+
+  ClickedWallhavenPaginator: (payload, { state, draft, tasks }) => {
     const searchParams = {
       ...state.wallhavenSearchParams,
       page: payload.page || state.wallhavenSearchParams.page || 1,
     };
 
-    return Task.start(
-      { ...state, wallhavenSearchParams: searchParams },
-      "search",
-      WallhavenSearch.run(searchParams),
-    );
+    draft.wallhavenSearchParams.page = searchParams.page;
+    return tasks.search.start(searchParams);
   },
 
-  ClickedImageThumb: (payload, { state }) =>
-    payload.url !== state.selectedImageUrl
-      ? Task.start(
-          { ...state, selectedImageUrl: payload.url },
-          "omarchyColors",
-          CreateOmarchyColors.run,
-        )
-      : state,
+  ClickedImageThumb: ({ url }, { state, draft, tasks }) => {
+    if (url === state.selectedImageUrl) return draft;
 
-  SetSchemeKind: (payload, { state }) =>
-    Task.start(
-      { ...state, schemeKind: payload.schemeKind },
-      "omarchyColors",
-      CreateOmarchyColors.run,
-    ),
+    draft.selectedImageUrl = url;
+    return tasks.omarchyColors.start({ ...state, selectedImageUrl: url });
+  },
 
-  SetWallhavenSearchParams: (wallhavenSearchParams, { state }) => ({
-    ...state,
-    wallhavenSearchParams,
-  }),
+  SetSchemeKind: ({ schemeKind }, { state, draft, tasks }) => {
+    draft.schemeKind = schemeKind;
+    return tasks.omarchyColors.start({ ...state, schemeKind });
+  },
 
-  ApplyColors: (_, { state }) => Task.start(state, "omarchyTheme", ApplyOmarchyTheme.run),
+  SetWallhavenSearchParams: (wallhavenSearchParams, { draft }) => {
+    // The payload's arrays are readonly; the fold freezes the finished state either way.
+    draft.wallhavenSearchParams = wallhavenSearchParams as Draft<typeof wallhavenSearchParams>;
+    return draft;
+  },
 
-  SearchWallhaven: (payload, { state }) =>
-    Task.start(state, "search", WallhavenSearch.run(payload)),
+  ApplyColors: (_, { state, draft, tasks }) =>
+    Task.isResolved(state.omarchyColors) && state.selectedImageUrl
+      ? tasks.omarchyTheme.start({
+          imageUrl: state.selectedImageUrl,
+          colors: state.omarchyColors.value,
+        })
+      : draft,
 
-  WallhavenSearchResolved: (payload, { state }) => ({
-    ...state,
-    search: Task.resolved(payload.value),
-  }),
-  WallhavenSearchRejected: (payload, { state }) => ({
-    ...state,
-    search: Task.rejected(payload.error),
-  }),
-
-  PexelsCuratedResolved: (payload, { state }) => ({
-    ...state,
-    curated: Task.resolved(payload.value),
-  }),
-  PexelsCuratedRejected: (payload, { state }) => ({
-    ...state,
-    curated: Task.rejected(payload.error),
-  }),
-
-  CreateOmarchyColorsRejected: (payload, { state }) => ({
-    ...state,
-    omarchyColors: Task.rejected(payload.error),
-  }),
-  CreateOmarchyColorsResolved: (payload, { state }) => ({
-    ...state,
-    omarchyColors: Task.resolved(payload.value),
-  }),
-
-  ApplyOmarchyThemeRejected: (payload, { state }) => ({
-    ...state,
-    omarchyTheme: Task.rejected(payload.error),
-  }),
-  ApplyOmarchyThemeResolved: (payload, { state }) => ({
-    ...state,
-    omarchyTheme: Task.resolved(payload.value),
-  }),
+  SearchWallhaven: (payload, { tasks }) => tasks.search.start(payload),
 });
 
-const render = SeedDefinition.render(({ state, dispatch }) => (
-  <div className="grid grid-cols-12 flex-1 min-h-0 gap-2 p-2 min-w-2xl">
-    <ThemePreview />
-    <div className="col-span-5 lg:col-span-6 xl:col-span-8 flex flex-col flex-1 min-h-0 gap-2">
-      <Tabs
-        value={state.inputType}
-        onValueChange={(value) => dispatch(SetInputKind.make({ inputType: value }))}
-        className="flex-1 min-h-0"
-      >
-        <TabsList>
-          <TabsTrigger value="file">File</TabsTrigger>
-          <TabsTrigger value="wallhaven">Wallhaven</TabsTrigger>
-          <TabsTrigger value="pexels">Pexels</TabsTrigger>
-        </TabsList>
+const render = SeedDefinition.render((snapshot) => {
+  const { state, dispatch } = snapshot;
 
-        <TabsContent value="file" className="flex flex-col gap-2">
-          Add a file.
-          <Input type="file" accept="image/*" />
-        </TabsContent>
+  return (
+    <div className="grid grid-cols-12 flex-1 min-h-0 gap-2 p-2 min-w-2xl">
+      <ThemePreview />
+      <div className="col-span-5 lg:col-span-6 xl:col-span-8 flex flex-col flex-1 min-h-0 gap-2">
+        <Tabs
+          value={state.inputType}
+          onValueChange={(value) => dispatch(SetInputKind.make({ inputType: value }))}
+          className="flex-1 min-h-0"
+        >
+          <TabsList>
+            <TabsTrigger value="file">File</TabsTrigger>
+            <TabsTrigger value="wallhaven">Wallhaven</TabsTrigger>
+            <TabsTrigger value="pexels">Pexels</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="wallhaven" className="flex flex-col flex-1 min-h-0 gap-2">
-          <WallhavenInputs
-            value={state.wallhavenSearchParams}
-            loading={Task.isPending(state.search)}
-            onChange={(params) => dispatch(SetWallhavenSearchParams.make(params))}
-            onSubmit={(params) => dispatch(SearchWallhaven.make(params))}
-          />
-          <WallhavenResults />
-        </TabsContent>
+          <TabsContent value="file" className="flex flex-col gap-2">
+            Add a file.
+            <Input type="file" accept="image/*" />
+          </TabsContent>
 
-        <TabsContent value="pexels" className="flex flex-col flex-1 min-h-0 gap-2">
-          <PexelsResults />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="wallhaven" className="flex flex-col flex-1 min-h-0 gap-2">
+            <WallhavenInputs
+              value={state.wallhavenSearchParams}
+              loading={Task.isPending(state.search)}
+              onChange={(params) => dispatch(SetWallhavenSearchParams.make(params))}
+              onSubmit={(params) => dispatch(SearchWallhaven.make(params))}
+            />
+            <WallhavenResults />
+          </TabsContent>
+
+          <TabsContent value="pexels" className="flex flex-col flex-1 min-h-0 gap-2">
+            <PexelsResults />
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      <div className="col-span-7 lg:col-span-6 xl:col-span-4 h-full" id="output">
+        <OutputPanel />
+      </div>
     </div>
-
-    <div className="col-span-7 lg:col-span-6 xl:col-span-4 h-full" id="output">
-      <OutputPanel />
-    </div>
-  </div>
-));
+  );
+});
 
 export const Seed = component(
   SeedDefinition.create({
