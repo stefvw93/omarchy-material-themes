@@ -1,0 +1,21 @@
+{
+  "name": "@stef/periphery",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Periphery exposé: tiling in a centred focus area, other workspaces as live cards in the side bands.",
+  "type": "module",
+  "scripts": {
+    "build": "plugin-kit build",
+    "build:dev": "plugin-kit build --dev",
+    "test": "vp test",
+    "verify": "plugin-kit check"
+  },
+  "devDependencies": {
+    "@stef/config": "workspace:*",
+    "@stef/plugin-kit": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

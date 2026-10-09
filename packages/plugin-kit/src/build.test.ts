@@ -1,0 +1,93 @@
+import { Effect, Exit, Schema } from "effect";
+import { describe, expect, it } from "vite-plus/test";
+import { manifestFor, metaModule, rewriteHookPluginId } from "./build.ts";
+import { definePlugin } from "./define.ts";
+import { PluginManifest } from "./manifest.ts";
+
+const config = definePlugin({
+  id: "stef.example",
+  name: "Example",
+  version: "1.0.0",
+  author: "Stef",
+  kinds: ["overlay"],
+  entryPoints: { overlay: "Example.qml" },
+});
+
+describe("manifestFor", () => {
+  it("writes the prod manifest in Omarchy's field order", () => {
+    const manifest = Effect.runSync(manifestFor(config, "prod"));
+    expect(Object.keys(manifest)).toEqual([
+      "schemaVersion",
+      "id",
+      "name",
+      "version",
+      "author",
+      "kinds",
+      "entryPoints",
+    ]);
+    expect(manifest).toMatchObject({ schemaVersion: 1, id: "stef.example", name: "Example" });
+  });
+
+  it("gives dev builds their own id and name", () => {
+    const manifest = Effect.runSync(manifestFor(config, "dev"));
+    expect(manifest.id).toBe("stef.example.dev");
+    expect(manifest.name).toBe("Example (dev)");
+  });
+
+  it("rejects an entry point that escapes the plugin folder", () => {
+    const exit = Effect.runSyncExit(
+      manifestFor({ ...config, entryPoints: { overlay: "../Evil.qml" } }, "prod"),
+    );
+    expect(Exit.isFailure(exit)).toBe(true);
+  });
+});
+
+describe("PluginManifest", () => {
+  const decode = Schema.decodeUnknownExit(PluginManifest);
+  const base = {
+    schemaVersion: 1,
+    id: "stef.x",
+    name: "X",
+    version: "1",
+    kinds: ["panel"],
+    entryPoints: { panel: "X.qml" },
+  };
+
+  it.each([
+    ["schemaVersion 2", { schemaVersion: 2 }],
+    ["an id with a slash", { id: "stef/x" }],
+    ["an id with ..", { id: "stef..x" }],
+    ["empty kinds", { kinds: [] }],
+    ["an unknown kind", { kinds: ["widget"] }],
+    ["an absolute entry point", { entryPoints: { panel: "/etc/X.qml" } }],
+  ])("rejects %s, like PluginRegistry.validateManifest", (_, patch) => {
+    expect(Exit.isFailure(decode({ ...base, ...patch }))).toBe(true);
+  });
+
+  it("accepts a valid manifest", () => {
+    expect(Exit.isSuccess(decode(base))).toBe(true);
+  });
+});
+
+describe("rewriteHookPluginId", () => {
+  const hook = 'local x = 1\nlocal PLUGIN_ID = "stef.example" -- plugin-kit:id\nprint(PLUGIN_ID)\n';
+
+  it("points the hook at the built id", () => {
+    const out = Effect.runSync(rewriteHookPluginId(hook, "stef.example.dev"));
+    expect(out).toContain('local PLUGIN_ID = "stef.example.dev" -- plugin-kit:id');
+    expect(out).not.toContain('"stef.example"');
+  });
+
+  it("fails when the marked line is missing", () => {
+    const exit = Effect.runSyncExit(rewriteHookPluginId("print(1)\n", "stef.example"));
+    expect(Exit.isFailure(exit)).toBe(true);
+  });
+});
+
+describe("metaModule", () => {
+  it("exports the id and mode as constants", () => {
+    expect(metaModule("stef.example.dev", "dev")).toContain(
+      'export const pluginId = "stef.example.dev";',
+    );
+  });
+});
