@@ -1,3 +1,4 @@
+import { motionSchemes, schemeRoles, settleTime } from "@stef/qml-kit";
 import { Effect, FileSystem, Path, Schema } from "effect";
 import type { PluginConfig } from "./define.ts";
 import { run, runUntil } from "./process.ts";
@@ -110,22 +111,26 @@ ShellRoot {
   Tokens {
     id: tokens
     function report() {
-      console.log("TOKENS gaps.inner=" + tokens.value.gaps.inner + " scheme=" + tokens.value.motion.scheme
-        + " spatial=" + tokens.springs.spatial_default.stiffness)
-      if (tokens.value.gaps.inner === 7 && tokens.springs.spatial_default.stiffness === 380)
+      console.log("TOKENS density=" + tokens.value.density + " scheme=" + tokens.value.motion.scheme
+        + " spatial=" + tokens.springs.spatial_default.stiffness + " margin=" + tokens.m3.expo.outerMargin)
+      if (tokens.value.density === -2 && tokens.springs.spatial_default.stiffness === 380
+          && tokens.m3.expo.outerMargin === 24)
         console.log("TOKENS-DONE")
     }
-    // springs is a binding on value: it settles after onValueChanged runs.
+    // springs and m3 are bindings on value: they settle after onValueChanged runs.
     onValueChanged: report()
     onSpringsChanged: report()
+    onM3Changed: report()
   }
   FileView { id: writer; path: Quickshell.env("HOME") + "/.config/omarchy/stef/tokens.json" }
   Timer {
     interval: 300; running: true
-    onTriggered: writer.setText(JSON.stringify({ gaps: { inner: 7 }, motion: { scheme: "expressive" } }))
+    onTriggered: writer.setText(JSON.stringify({
+      version: 2, density: -2, motion: { scheme: "expressive" }, expo: { outerMargin: "space300" }
+    }))
   }
-  Component.onCompleted: console.log("TOKENS gaps.inner=" + tokens.value.gaps.inner + " scheme=" + tokens.value.motion.scheme
-    + " spatial=" + tokens.springs.spatial_default.stiffness)
+  Component.onCompleted: console.log("TOKENS density=" + tokens.value.density + " scheme=" + tokens.value.motion.scheme
+    + " spatial=" + tokens.springs.spatial_default.stiffness + " margin=" + tokens.m3.expo.outerMargin)
 }
 `,
   );
@@ -137,13 +142,147 @@ ShellRoot {
     (line) => line.includes("TOKENS-DONE"),
     "10 seconds",
   );
-  const seen = lines.filter((l) => l.includes("TOKENS gaps"));
-  const defaults = seen.some((l) => l.includes("gaps.inner=2 scheme=standard spatial=700"));
-  const live = seen.some((l) => l.includes("gaps.inner=7 scheme=expressive spatial=380"));
+  const seen = lines.filter((l) => l.includes("TOKENS density"));
+  const defaults = seen.some((l) => l.includes("density=0 scheme=standard spatial=700 margin=48"));
+  const live = seen.some((l) => l.includes("density=-2 scheme=expressive spatial=380 margin=24"));
   if (!defaults || !live) {
     return yield* new PluginCheckError({
       check: "tokens",
       message: `Tokens.qml: defaults ${defaults ? "ok" : "missing"}, live override ${live ? "ok" : "missing"}\n${lines.join("\n")}`,
+    });
+  }
+}, Effect.scoped);
+
+/**
+ * Instantiates the vendored `Scheme.qml` in a headless `qs` with a throwaway
+ * $HOME: an Omaterial theme's omaterial.json gives the exact roles, and after
+ * a switch to a theme without one (theme.name rewritten) the roles fall back
+ * to the Omarchy colours.
+ */
+export const checkScheme = Effect.fn("PluginKit.checkScheme")(function* (outDir: string) {
+  const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const tmp = yield* fs.makeTempDirectoryScoped();
+  const home = path.join(tmp, "home");
+  const current = path.join(home, ".local/state/omarchy/current");
+  yield* fs.makeDirectory(path.join(current, "theme"), { recursive: true });
+  const system: Record<string, string> = {};
+  for (const role of schemeRoles) system[role] = role === "primary" ? "#123456" : "#abcdef";
+  yield* fs.writeFileString(
+    path.join(current, "theme/omaterial.json"),
+    JSON.stringify({ source: { mode: "light" }, system }),
+  );
+  yield* fs.writeFileString(path.join(current, "theme.name"), "omaterial-test");
+  yield* fs.symlink(outDir, path.join(tmp, "plugin"));
+  yield* fs.writeFileString(
+    path.join(tmp, "shell.qml"),
+    `import Quickshell
+import Quickshell.Io
+import QtQuick
+import "plugin"
+
+ShellRoot {
+  id: root
+  property bool sawExact: false
+  Scheme {
+    id: scheme
+    omarchy: ({ background: "#101315", foreground: "#cacccc", accent: "#7aa2f7", muted: "#707880", urgent: "#a55555" })
+    // exact, mode and color are bindings on resolved: read resolved itself here.
+    onResolvedChanged: {
+      var r = scheme.resolved
+      console.log("SCHEME exact=" + r.exact + " mode=" + r.mode + " primary=" + r.color.primary
+        + " surface=" + r.color.surface)
+      if (r.exact) root.sawExact = true
+      else if (root.sawExact && r.color.surface === "#101315") console.log("SCHEME-DONE")
+    }
+  }
+  // Switch to a theme without omaterial.json, as omarchy-theme-set does.
+  FileView { id: json; path: Quickshell.env("HOME") + "/.local/state/omarchy/current/theme/omaterial.json" }
+  FileView { id: name; path: Quickshell.env("HOME") + "/.local/state/omarchy/current/theme.name" }
+  Timer {
+    interval: 400; running: root.sawExact
+    onTriggered: { json.setText("{}"); name.setText("tokyo-night") }
+  }
+}
+`,
+  );
+  const lines = yield* runUntil(
+    "qs",
+    ["-p", path.join(tmp, "shell.qml")],
+    { env: { QT_QPA_PLATFORM: "offscreen", HOME: home }, extendEnv: true },
+    (line) => line.includes("SCHEME-DONE"),
+    "10 seconds",
+  );
+  const seen = lines.filter((l) => l.includes("SCHEME exact"));
+  const exact = seen.some((l) => l.includes("exact=true mode=light primary=#123456"));
+  const fallback = seen.some((l) =>
+    l.includes("exact=false mode=dark primary=#7aa2f7 surface=#101315"),
+  );
+  if (!exact || !fallback) {
+    return yield* new PluginCheckError({
+      check: "scheme",
+      message: `Scheme.qml: omaterial.json ${exact ? "ok" : "missing"}, fallback ${fallback ? "ok" : "missing"}\n${lines.join("\n")}`,
+    });
+  }
+}, Effect.scoped);
+
+/**
+ * Runs the vendored `SpringValue.qml` from 0 to 1 on spatial_default in a
+ * headless `qs`: it must settle at the target within the spring's settle time
+ * (plus a few frames), as Hyprland's curve would. A SpringValue that isn't
+ * animated must keep following its target binding through jumps.
+ */
+export const checkSpring = Effect.fn("PluginKit.checkSpring")(function* (outDir: string) {
+  const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const tmp = yield* fs.makeTempDirectoryScoped();
+  yield* fs.symlink(outDir, path.join(tmp, "plugin"));
+  const spring = motionSchemes.standard.spatial_default;
+  const limitMs = settleTime(spring) + 100;
+  yield* fs.writeFileString(
+    path.join(tmp, "shell.qml"),
+    `import Quickshell
+import QtQuick
+import "plugin"
+
+ShellRoot {
+  id: root
+  property double started: 0
+  // A target binding must survive changes while not animated (jumps).
+  property real bound: 0
+  SpringValue { id: b; animated: false; target: root.bound }
+  SpringValue {
+    id: s
+    spring: ({ stiffness: ${spring.stiffness}, ratio: ${spring.ratio} })
+    onRunningChanged: if (!running && started > 0)
+      console.log("SPRING-DONE value=" + s.value + " ms=" + (Date.now() - started))
+  }
+  Timer {
+    interval: 200; running: true
+    onTriggered: {
+      root.bound = 5
+      root.bound = 7
+      console.log("SPRING-BIND value=" + b.value)
+      started = Date.now(); s.target = 1
+    }
+  }
+}
+`,
+  );
+  const lines = yield* runUntil(
+    "qs",
+    ["-p", path.join(tmp, "shell.qml")],
+    { env: { QT_QPA_PLATFORM: "offscreen" }, extendEnv: true },
+    (line) => line.includes("SPRING-DONE"),
+    "10 seconds",
+  );
+  const bindingKept = lines.some((l) => l.includes("SPRING-BIND value=7"));
+  const done = lines.find((l) => l.includes("SPRING-DONE"));
+  const ms = Number(/ms=(\d+)/.exec(done ?? "")?.[1]);
+  if (!done?.includes("value=1 ") || !(ms <= limitMs) || !bindingKept) {
+    return yield* new PluginCheckError({
+      check: "spring",
+      message: `SpringValue.qml: expected to settle at 1 within ${limitMs} ms, and to keep following a bound target while not animated\n${lines.join("\n")}`,
     });
   }
 }, Effect.scoped);

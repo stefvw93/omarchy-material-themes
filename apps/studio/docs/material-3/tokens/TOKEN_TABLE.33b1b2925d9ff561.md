@@ -1,0 +1,385 @@
+# Tokens: Switch (TOKEN_TABLE.33b1b2925d9ff561)
+
+Source: <https://m3.material.io/_dsm/data/dsdb-m3/2026-09-23_06-10-05/TOKEN_TABLE.33b1b2925d9ff561.json>, design system 'Google Material 3' revision 7989 (2026-05-27T22:44:15.009106Z).
+Used on: <https://m3.material.io/components/switch>
+
+Each token lists its value per context. `->` shows the reference chain (component token -> system token -> reference token); the resolved value is what the baseline scheme produces in that context. Contexts with identical chain and value are merged.
+
+## md.comp.switch — Switch
+
+For switches.
+
+- **md.comp.switch.disabled.handle.elevation** (Switch disabled handle elevation)
+  - -> md.sys.elevation.level0 = 0dp
+- **md.comp.switch.disabled.handle.opacity** (Switch disabled handle opacity)
+  - opacity 0.38
+- **md.comp.switch.disabled.selected.handle.color** (Switch disabled selected handle color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface -> md.ref.palette.neutral6 = #141218
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface -> md.ref.palette.neutral98 = #fef7ff
+- **md.comp.switch.disabled.selected.handle.opacity** (Switch disabled selected handle opacity)
+  - opacity 1
+- **md.comp.switch.disabled.selected.icon.color** (Switch disabled selected icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.switch.disabled.selected.icon.opacity** (Switch disabled selected icon opacity)
+  - opacity 0.38
+- **md.comp.switch.disabled.selected.track.color** (Switch disabled selected track color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.switch.disabled.track.opacity** (Switch disabled track opacity)
+  - opacity 0.12
+- **md.comp.switch.disabled.unselected.handle.color** (Switch disabled unselected handle color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.switch.disabled.unselected.handle.opacity** (Switch disabled unselected handle opacity)
+  - opacity 0.38
+- **md.comp.switch.disabled.unselected.icon.color** (Switch disabled unselected icon color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.switch.disabled.unselected.icon.opacity** (Switch disabled unselected icon opacity)
+  - opacity 0.38
+- **md.comp.switch.disabled.unselected.track.color** (Switch disabled unselected track color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.switch.disabled.unselected.track.outline.color** (Switch disabled unselected track outline color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.switch.focus.indicator.color** (Switch focus indicator color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary20 = #332d41
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary40 = #625b71
+- **md.comp.switch.focus.indicator.offset** (Switch focus indicator offset)
+  - -> md.sys.state.focus-indicator.outer-offset = 2dp
+- **md.comp.switch.focus.indicator.thickness** (Switch focus indicator thickness)
+  - -> md.sys.state.focus-indicator.thickness = 3dp
+- **md.comp.switch.handle.elevation** (Switch handle elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.switch.handle.height** (Switch handle height)
+  - 20dp
+- **md.comp.switch.handle.shadow-color** (Switch handle shadow color)
+  - -> md.sys.color.shadow -> md.ref.palette.neutral0 = #000000 [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark; Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]
+- **md.comp.switch.handle.shape** (Switch handle shape)
+  - -> md.sys.shape.corner.full = circular
+- **md.comp.switch.handle.width** (Switch handle width)
+  - 20dp
+- **md.comp.switch.pressed.handle.height** (Switch pressed handle height)
+  - 28dp
+- **md.comp.switch.pressed.handle.width** (Switch pressed handle width)
+  - 28dp
+- **md.comp.switch.selected.focus.handle.color** (Switch selected focus handle color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary60 = #9a82db
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary40 = #6750a4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary90 = #eaddff
+- **md.comp.switch.selected.focus.icon.color** (Switch selected focus icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.switch.selected.focus.state-layer.color** (Switch selected focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.switch.selected.focus.state-layer.opacity** (Switch selected focus state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.switch.selected.focus.track.color** (Switch selected focus track color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.switch.selected.handle.color** (Switch selected handle color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.switch.selected.handle.height** (Switch selected handle height)
+  - 24dp
+- **md.comp.switch.selected.handle.width** (Switch selected handle width)
+  - 24dp
+- **md.comp.switch.selected.hover.handle.color** (Switch selected hover handle color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary60 = #9a82db
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary40 = #6750a4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary90 = #eaddff
+- **md.comp.switch.selected.hover.icon.color** (Switch selected hover icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.switch.selected.hover.state-layer.color** (Switch selected hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.switch.selected.hover.state-layer.opacity** (Switch selected hover state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.switch.selected.hover.track.color** (Switch selected hover track color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.switch.selected.icon.color** (Switch selected icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.switch.selected.icon.size** (Switch selected icon size)
+  - 16dp
+- **md.comp.switch.selected.pressed.handle.color** (Switch selected pressed handle color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary60 = #9a82db
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary40 = #6750a4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary90 = #eaddff
+- **md.comp.switch.selected.pressed.icon.color** (Switch selected pressed icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.switch.selected.pressed.state-layer.color** (Switch selected pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.switch.selected.pressed.state-layer.opacity** (Switch selected pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+- **md.comp.switch.selected.pressed.track.color** (Switch selected pressed track color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.switch.selected.track.color** (Switch selected track color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.switch.state-layer.shape** (Switch state layer shape)
+  - -> md.sys.shape.corner.full = circular
+- **md.comp.switch.state-layer.size** (Switch state layer size)
+  - 40dp
+- **md.comp.switch.track.height** (Switch track height)
+  - 32dp
+- **md.comp.switch.track.outline.width** (Switch track outline width)
+  - 2dp
+- **md.comp.switch.track.shape** (Switch track shape)
+  - -> md.sys.shape.corner.full = circular
+- **md.comp.switch.track.width** (Switch track width)
+  - 52dp
+- **md.comp.switch.unselected.focus.handle.color** (Switch unselected focus handle color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.switch.unselected.focus.icon.color** (Switch unselected focus icon color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.switch.unselected.focus.state-layer.color** (Switch unselected focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.switch.unselected.focus.state-layer.opacity** (Switch unselected focus state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.switch.unselected.focus.track.color** (Switch unselected focus track color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.switch.unselected.focus.track.outline.color** (Switch unselected focus track outline color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant95 = #f5eefa
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant70 = #aea9b4
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant30 = #49454f
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant60 = #938f99
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant50 = #79747e
+- **md.comp.switch.unselected.handle.color** (Switch unselected handle color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant95 = #f5eefa
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant70 = #aea9b4
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant30 = #49454f
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant60 = #938f99
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant50 = #79747e
+- **md.comp.switch.unselected.handle.height** (Switch unselected handle height)
+  - 16dp
+- **md.comp.switch.unselected.handle.width** (Switch unselected handle width)
+  - 16dp
+- **md.comp.switch.unselected.hover.handle.color** (Switch unselected hover handle color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.switch.unselected.hover.icon.color** (Switch unselected hover icon color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.switch.unselected.hover.state-layer.color** (Switch unselected hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.switch.unselected.hover.state-layer.opacity** (Switch unselected hover state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.switch.unselected.hover.track.color** (Switch unselected hover track color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.switch.unselected.hover.track.outline.color** (Switch unselected hover track outline color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant95 = #f5eefa
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant70 = #aea9b4
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant30 = #49454f
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant60 = #938f99
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant50 = #79747e
+- **md.comp.switch.unselected.icon.color** (Switch unselected icon color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.switch.unselected.icon.size** (Switch unselected icon size)
+  - 16dp
+- **md.comp.switch.unselected.pressed.handle.color** (Switch unselected pressed handle color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.switch.unselected.pressed.icon.color** (Switch unselected pressed icon color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.switch.unselected.pressed.state-layer.color** (Switch unselected pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.switch.unselected.pressed.state-layer.opacity** (Switch unselected pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+- **md.comp.switch.unselected.pressed.track.color** (Switch unselected pressed track color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.switch.unselected.pressed.track.outline.color** (Switch unselected pressed track outline color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant95 = #f5eefa
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant70 = #aea9b4
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant30 = #49454f
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant60 = #938f99
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant50 = #79747e
+- **md.comp.switch.unselected.track.color** (Switch unselected track color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.switch.unselected.track.outline.color** (Switch track outline color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant95 = #f5eefa
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant70 = #aea9b4
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant30 = #49454f
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant60 = #938f99
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant50 = #79747e
+- **md.comp.switch.with-icon.handle.height** (Switch with icon handle height)
+  - 24dp
+- **md.comp.switch.with-icon.handle.width** (Switch with icon handle width)
+  - 24dp
+
+## md.ref.palette
+
+- **md.ref.palette.neutral-variant0** (Neutral Variant 0)
+- **md.ref.palette.neutral-variant100** (Neutral Variant 100)
+- **md.ref.palette.neutral-variant20** (Neutral Variant 20)
+- **md.ref.palette.neutral-variant30** (Neutral Variant 30)
+- **md.ref.palette.neutral-variant50** (Neutral Variant 50)
+- **md.ref.palette.neutral-variant60** (Neutral Variant 60)
+- **md.ref.palette.neutral-variant70** (Neutral Variant 70)
+- **md.ref.palette.neutral-variant80** (Neutral Variant 80)
+- **md.ref.palette.neutral-variant90** (Neutral Variant 90)
+- **md.ref.palette.neutral-variant95** (Neutral Variant 95)
+- **md.ref.palette.neutral0** (Neutral 0)
+- **md.ref.palette.neutral10** (Neutral 10)
+- **md.ref.palette.neutral100** (Neutral 100)
+- **md.ref.palette.neutral22** (Neutral 22)
+- **md.ref.palette.neutral6** (Neutral 6)
+- **md.ref.palette.neutral90** (Neutral 90)
+- **md.ref.palette.neutral98** (Neutral 98)
+- **md.ref.palette.primary0** (Primary 0)
+- **md.ref.palette.primary10** (Primary 10)
+- **md.ref.palette.primary100** (Primary 100)
+- **md.ref.palette.primary20** (Primary 20)
+- **md.ref.palette.primary30** (Primary 30)
+- **md.ref.palette.primary40** (Primary 40)
+- **md.ref.palette.primary50** (Primary 50)
+- **md.ref.palette.primary60** (Primary 60)
+- **md.ref.palette.primary80** (Primary 80)
+- **md.ref.palette.primary90** (Primary 90)
+- **md.ref.palette.primary95** (Primary 95)
+- **md.ref.palette.secondary20** (Secondary 20)
+- **md.ref.palette.secondary30** (Secondary 30)
+- **md.ref.palette.secondary40** (Secondary 40)
+- **md.ref.palette.secondary80** (Secondary 80)
+- **md.ref.palette.secondary90** (Secondary 90)
+- **md.ref.palette.secondary95** (Secondary 95)
+
+## md.sys.color
+
+- **md.sys.color.on-primary** (On primary) — Text and icons shown against the primary color
+- **md.sys.color.on-surface** (On surface) — Text and icons shown against the surface color
+- **md.sys.color.on-surface-variant** (On surface variant) — For text and icons to indicate active or inactive component state
+- **md.sys.color.outline** (Outline) — Subtle color used for boundaries
+- **md.sys.color.primary** (Primary) — Main color used across screens and components
+- **md.sys.color.primary-container** (Primary container) — Standout container color for key components
+- **md.sys.color.secondary** (Secondary) — Accent color used across screens and components
+- **md.sys.color.shadow** (Shadow) — For shadows applied to elevated components
+- **md.sys.color.surface** (Surface) — Surface color for components like cards, sheets, and menus
+- **md.sys.color.surface-container-highest** (Surface Container Highest)
+
+## md.sys.elevation
+
+- **md.sys.elevation.level0** (0)
+- **md.sys.elevation.level1** (+1)
+
+## md.sys.shape
+
+- **md.sys.shape.corner.full** (Fully rounded) — Use for: Badge, Buttons, Icon buttons, Sliders, Switches, Search bar
+
+## md.sys.state
+
+- **md.sys.state.focus.state-layer-opacity** (Focus state layer opacity)
+- **md.sys.state.hover.state-layer-opacity** (Hover state layer opacity)
+- **md.sys.state.pressed.state-layer-opacity** (Pressed state layer opacity)
+
+## md.sys.state.focus-indicator
+
+- **md.sys.state.focus-indicator.outer-offset** (Focus indicator outer offset)
+- **md.sys.state.focus-indicator.thickness** (Focus indicator thickness)
+

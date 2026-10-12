@@ -1,0 +1,791 @@
+# Tokens: Time pickers (TOKEN_TABLE.39f4b152dd9bd292)
+
+Source: <https://m3.material.io/_dsm/data/dsdb-m3/2026-09-23_06-10-05/TOKEN_TABLE.39f4b152dd9bd292.json>, design system 'Google Material 3' revision 7989 (2026-05-27T22:44:15.009106Z).
+Used on: <https://m3.material.io/components/time-pickers>
+
+Each token lists its value per context. `->` shows the reference chain (component token -> system token -> reference token); the resolved value is what the baseline scheme produces in that context. Contexts with identical chain and value are merged.
+
+## md.comp.time-input — Time picker - Input
+
+For input time pickers.
+
+- **md.comp.time-input.container.color** (Time input container color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-high -> md.ref.palette.neutral17 = #2b2930
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-high -> md.ref.palette.neutral92 = #ece6f0
+- **md.comp.time-input.container.elevation** (Time input container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.time-input.container.shape** (Time input container shape)
+  - -> md.sys.shape.corner.extra-large = rounded_corners 28dp
+- **md.comp.time-input.focus.indicator.color** (Time input focus indicator color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary20 = #332d41
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary40 = #625b71
+- **md.comp.time-input.focus.indicator.outline.offset** (Time input focus indicator offset)
+  - -> md.sys.state.focus-indicator.outer-offset = 2dp
+- **md.comp.time-input.focus.indicator.thickness** (Time input focus indicator thickness)
+  - -> md.sys.state.focus-indicator.thickness = 3dp
+- **md.comp.time-input.headline.color** (Time input headline color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-input.headline.font** (Time input headline font)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.label-medium.font -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.label-medium.font -> md.ref.typeface.plain = Roboto
+- **md.comp.time-input.headline.line-height** (Time input headline line height)
+  - -> md.sys.typescale.label-medium.line-height = 16pt
+- **md.comp.time-input.headline.size** (Time input headline size)
+  - -> md.sys.typescale.label-medium.size = 12pt
+- **md.comp.time-input.headline.tracking** (Time input headline tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.label-medium.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.label-medium.tracking = 0.5pt
+- **md.comp.time-input.headline.type** (Time input headline type)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0.5pt
+- **md.comp.time-input.headline.weight** (Time input headline weight)
+  - -> md.sys.typescale.label-medium.weight -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.comp.time-input.period-selector.container.height** (Time input period selector container height)
+  - 72dp
+- **md.comp.time-input.period-selector.container.shape** (Time input period selector container shape)
+  - -> md.sys.shape.corner.small = rounded_corners 8dp
+- **md.comp.time-input.period-selector.container.width** (Time input period selector container width)
+  - 52dp
+- **md.comp.time-input.period-selector.focus.state-layer.opacity** (Time input period selector focus state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.time-input.period-selector.hover.state-layer.opacity** (Time input period selector hover state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.time-input.period-selector.label-text.font** (Time input period selector label text font)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.sys.typescale.title-medium.font -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.sys.typescale.title-medium.font -> md.ref.typeface.plain = Roboto
+- **md.comp.time-input.period-selector.label-text.line-height** (Time input period selector label text line height)
+  - -> md.sys.typescale.title-medium.line-height = 24pt
+- **md.comp.time-input.period-selector.label-text.size** (Time input period selector label text size)
+  - -> md.sys.typescale.title-medium.size = 16pt
+- **md.comp.time-input.period-selector.label-text.tracking** (Time input period selector label text tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.title-medium.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.title-medium.tracking = 0.15pt
+- **md.comp.time-input.period-selector.label-text.type** (Type style)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 700; fontSize 16pt; lineHeight 24pt; fontTracking 0.15pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0.15pt
+- **md.comp.time-input.period-selector.label-text.weight** (Time input period selector label text weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.sys.typescale.title-medium.weight -> md.ref.typeface.weight-bold = weight 700
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.sys.typescale.title-medium.weight -> md.ref.typeface.weight-medium = weight 500
+- **md.comp.time-input.period-selector.outline.color** (Time input period selector outline color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant95 = #f5eefa
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant70 = #aea9b4
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant30 = #49454f
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant60 = #938f99
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant50 = #79747e
+- **md.comp.time-input.period-selector.outline.width** (Time input period selector outline width)
+  - 1dp
+- **md.comp.time-input.period-selector.pressed.state-layer.opacity** (Time input period selector pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+- **md.comp.time-input.period-selector.selected.container.color** (Time input period selector selected container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary80 = #efb8c8
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary60 = #b58392
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary30 = #633b48
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary40 = #7d5260
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+- **md.comp.time-input.period-selector.selected.focus.label-text.color** (Time input period selector selected focus label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-input.period-selector.selected.focus.state-layer.color** (Time input period selector selected focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-input.period-selector.selected.hover.label-text.color** (Time input period selector selected hover label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-input.period-selector.selected.hover.state-layer.color** (Time input period selector selected hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-input.period-selector.selected.label-text.color** (Time input period selector selected label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-input.period-selector.selected.pressed.label-text.color** (Time input period selector selected pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-input.period-selector.selected.pressed.state-layer.color** (Time input period selector selected pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-input.period-selector.unselected.focus.label-text.color** (Time input period selector unselected focus label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-input.period-selector.unselected.focus.state-layer.color** (Time input period selector unselected focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-input.period-selector.unselected.hover.label-text.color** (Time input period selector unselected hover label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-input.period-selector.unselected.hover.state-layer.color** (Time input period selector unselected hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-input.period-selector.unselected.label-text.color** (Time input period selector unselected label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-input.period-selector.unselected.pressed.label-text.color** (Time input period selector unselected pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-input.period-selector.unselected.pressed.state-layer.color** (Time input period selector unselected pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-input.surface-tint-layer.color** (Time input surface tint layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.time-input.time-input-field.container.color** (Time input time input field container color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.time-input.time-input-field.container.height** (Time input time input field container height)
+  - 72dp
+- **md.comp.time-input.time-input-field.container.shape** (Time input time input field container shape)
+  - -> md.sys.shape.corner.small = rounded_corners 8dp
+- **md.comp.time-input.time-input-field.container.width** (Time input time input field container width)
+  - 96dp
+- **md.comp.time-input.time-input-field.focus.container.color** (Time input time input field focus container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary60 = #9a82db
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary40 = #6750a4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary90 = #eaddff
+- **md.comp.time-input.time-input-field.focus.label-text.color** (Time input time input field focus label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.time-input.time-input-field.focus.outline.color** (Time input time input field focus outline color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.time-input.time-input-field.focus.outline.width** (Time input time input field focus outline width)
+  - 2dp
+- **md.comp.time-input.time-input-field.hover.label-text.color** (Time input time input field hover label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-input.time-input-field.hover.state-layer.color** (Time input time input field hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-input.time-input-field.hover.state-layer.opacity** (Time input time input field hover state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.time-input.time-input-field.label-text.color** (Time input time input field label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-input.time-input-field.label-text.font** (Time input time input field label text font)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.display-medium.font -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.display-medium.font -> md.ref.typeface.brand = Roboto
+- **md.comp.time-input.time-input-field.label-text.line-height** (Time input time input field label text line height)
+  - -> md.sys.typescale.display-medium.line-height = 52pt
+- **md.comp.time-input.time-input-field.label-text.size** (Time input time input field label text size)
+  - -> md.sys.typescale.display-medium.size = 45pt
+- **md.comp.time-input.time-input-field.label-text.tracking** (Time input time input field label text tracking)
+  - -> md.sys.typescale.display-medium.tracking = 0pt
+- **md.comp.time-input.time-input-field.label-text.type** (Time input time input field label text type)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 45pt; lineHeight 52pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 500; fontSize 45pt; lineHeight 52pt; fontTracking 0pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 45pt; lineHeight 52pt; fontTracking 0pt
+- **md.comp.time-input.time-input-field.label-text.weight** (Time input time input field label text weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.sys.typescale.display-medium.weight -> md.ref.typeface.weight-medium = weight 500
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.sys.typescale.display-medium.weight -> md.ref.typeface.weight-regular = weight 400
+- **md.comp.time-input.time-input-field.separator.color** (Time input time input field separator color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-input.time-input-field.separator.font** (Time input time input field separator font)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.display-large.font -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.display-large.font -> md.ref.typeface.brand = Roboto
+- **md.comp.time-input.time-input-field.separator.line-height** (Time input time input field separator line height)
+  - -> md.sys.typescale.display-large.line-height = 64pt
+- **md.comp.time-input.time-input-field.separator.size** (Time input time input field separator size)
+  - -> md.sys.typescale.display-large.size = 57pt
+- **md.comp.time-input.time-input-field.separator.tracking** (Time input time input field separator tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.display-large.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.display-large.tracking = -0.25pt
+- **md.comp.time-input.time-input-field.separator.type** (Type style)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 57pt; lineHeight 64pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 500; fontSize 57pt; lineHeight 64pt; fontTracking -0.25pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 57pt; lineHeight 64pt; fontTracking -0.25pt
+- **md.comp.time-input.time-input-field.separator.weight** (Time input time input field separator weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.sys.typescale.display-large.weight -> md.ref.typeface.weight-medium = weight 500
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.sys.typescale.display-large.weight -> md.ref.typeface.weight-regular = weight 400
+- **md.comp.time-input.time-input-field.supporting-text.color** (Time input time input field supporting text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-input.time-input-field.supporting-text.font** (Time input time input field supporting text font)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.body-small.font -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.body-small.font -> md.ref.typeface.plain = Roboto
+- **md.comp.time-input.time-input-field.supporting-text.line-height** (Time input time input field supporting text line height)
+  - -> md.sys.typescale.body-small.line-height = 16pt
+- **md.comp.time-input.time-input-field.supporting-text.size** (Time input time input field supporting text size)
+  - -> md.sys.typescale.body-small.size = 12pt
+- **md.comp.time-input.time-input-field.supporting-text.tracking** (Time input time input field supporting text tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.body-small.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.body-small.tracking = 0.4pt
+- **md.comp.time-input.time-input-field.supporting-text.type** (Type style)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 12pt; lineHeight 16pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 12pt; lineHeight 16pt; fontTracking 0.4pt
+- **md.comp.time-input.time-input-field.supporting-text.weight** (Time input time input field supporting text weight)
+  - -> md.sys.typescale.body-small.weight -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+
+## md.comp.time-picker — Time picker - Dial
+
+For dial time pickers.
+
+- **md.comp.time-picker.clock-dial.color** (Time picker clock dial color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.time-picker.clock-dial.color.ignore** (Time picker clock dial color ignore)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-picker.clock-dial.container.size** (Time picker clock dial container size)
+  - 256dp
+- **md.comp.time-picker.clock-dial.label-text.font** (Time picker clock dial label text font)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.body-large.font -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.body-large.font -> md.ref.typeface.plain = Roboto
+- **md.comp.time-picker.clock-dial.label-text.line-height** (Time picker clock dial label text line height)
+  - -> md.sys.typescale.body-large.line-height = 24pt
+- **md.comp.time-picker.clock-dial.label-text.size** (Time picker clock dial label text size)
+  - -> md.sys.typescale.body-large.size = 16pt
+- **md.comp.time-picker.clock-dial.label-text.tracking** (Time picker clock dial label text tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.body-large.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.body-large.tracking = 0.5pt
+- **md.comp.time-picker.clock-dial.label-text.type** (Time picker clock dial label text type)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 16pt; lineHeight 24pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 16pt; lineHeight 24pt; fontTracking 0.5pt
+- **md.comp.time-picker.clock-dial.label-text.weight** (Time picker clock dial label text weight)
+  - -> md.sys.typescale.body-large.weight -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.comp.time-picker.clock-dial.selected.label-text.color** (Time picker clock dial selected label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.time-picker.clock-dial.selector.center.container.color** (Time picker clock dial selector center container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.time-picker.clock-dial.selector.center.container.shape** (Time picker clock dial selector center container shape)
+  - -> md.sys.shape.corner.full = circular
+- **md.comp.time-picker.clock-dial.selector.center.container.size** (Time picker clock dial selector center container size)
+  - 8dp
+- **md.comp.time-picker.clock-dial.selector.handle.container.color** (Time picker clock dial selector handle container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.time-picker.clock-dial.selector.handle.container.shape** (Time picker clock dial selector handle container shape)
+  - -> md.sys.shape.corner.full = circular
+- **md.comp.time-picker.clock-dial.selector.handle.container.size** (Time picker clock dial selector handle container size)
+  - 48dp
+- **md.comp.time-picker.clock-dial.selector.track.container.color** (Time picker clock dial selector track container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.time-picker.clock-dial.selector.track.container.width** (Time picker clock dial selector track container width)
+  - 2dp
+- **md.comp.time-picker.clock-dial.shape** (Time picker clock dial shape)
+  - -> md.sys.shape.corner.full = circular
+- **md.comp.time-picker.clock-dial.shape.ignore** (Time picker clock dial shape ignore)
+  - -> md.sys.shape.corner.full = circular
+- **md.comp.time-picker.clock-dial.unselected.label-text.color** (Time picker clock dial unselected label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-picker.container.color** (Time picker container color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-high -> md.ref.palette.neutral17 = #2b2930
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-high -> md.ref.palette.neutral92 = #ece6f0
+- **md.comp.time-picker.container.elevation** (Time picker container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.time-picker.container.shape** (Time picker container shape)
+  - -> md.sys.shape.corner.extra-large = rounded_corners 28dp
+- **md.comp.time-picker.headline.color** (Time picker headline color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-picker.headline.font** (Time picker headline font)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.label-medium.font -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.label-medium.font -> md.ref.typeface.plain = Roboto
+- **md.comp.time-picker.headline.line-height** (Time picker headline line height)
+  - -> md.sys.typescale.label-medium.line-height = 16pt
+- **md.comp.time-picker.headline.size** (Time picker headline size)
+  - -> md.sys.typescale.label-medium.size = 12pt
+- **md.comp.time-picker.headline.tracking** (Time picker headline tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.label-medium.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.label-medium.tracking = 0.5pt
+- **md.comp.time-picker.headline.type** (Time picker headline type)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0.5pt
+- **md.comp.time-picker.headline.weight** (Time picker headline weight)
+  - -> md.sys.typescale.label-medium.weight -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.comp.time-picker.period-selector.container.shape** (Time picker period selector container shape)
+  - -> md.sys.shape.corner.small = rounded_corners 8dp
+- **md.comp.time-picker.period-selector.focus.state-layer.opacity** (Time picker period selector focus state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.time-picker.period-selector.horizontal.container.height** (Time picker period selector horizontal container height)
+  - 38dp
+- **md.comp.time-picker.period-selector.horizontal.container.width** (Time picker period selector horizontal container width)
+  - 216dp
+- **md.comp.time-picker.period-selector.hover.state-layer.opacity** (Time picker period selector hover state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.time-picker.period-selector.label-text.font** (Time picker period selector label text font)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.sys.typescale.title-medium.font -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.sys.typescale.title-medium.font -> md.ref.typeface.plain = Roboto
+- **md.comp.time-picker.period-selector.label-text.line-height** (Time picker period selector label text line height)
+  - -> md.sys.typescale.title-medium.line-height = 24pt
+- **md.comp.time-picker.period-selector.label-text.size** (Time picker period selector label text size)
+  - -> md.sys.typescale.title-medium.size = 16pt
+- **md.comp.time-picker.period-selector.label-text.tracking** (Time picker period selector label text tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.title-medium.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.title-medium.tracking = 0.15pt
+- **md.comp.time-picker.period-selector.label-text.type** (Time picker period selector label text type)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 700; fontSize 16pt; lineHeight 24pt; fontTracking 0.15pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0.15pt
+- **md.comp.time-picker.period-selector.label-text.weight** (Time picker period selector label text weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.sys.typescale.title-medium.weight -> md.ref.typeface.weight-bold = weight 700
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.sys.typescale.title-medium.weight -> md.ref.typeface.weight-medium = weight 500
+- **md.comp.time-picker.period-selector.outline.color** (Time picker period selector outline color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant95 = #f5eefa
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant70 = #aea9b4
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant30 = #49454f
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.outline -> md.ref.palette.neutral-variant60 = #938f99
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.outline -> md.ref.palette.neutral-variant50 = #79747e
+- **md.comp.time-picker.period-selector.outline.width** (Time picker period selector outline width)
+  - 1dp
+- **md.comp.time-picker.period-selector.pressed.state-layer.opacity** (Time picker period selector pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+- **md.comp.time-picker.period-selector.selected.container.color** (Time picker period selector selected container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary80 = #efb8c8
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary60 = #b58392
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary30 = #633b48
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary40 = #7d5260
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+- **md.comp.time-picker.period-selector.selected.focus.label-text.color** (Time picker period selector selected focus label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-picker.period-selector.selected.focus.state-layer.color** (Time picker period selector selected focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-picker.period-selector.selected.hover.label-text.color** (Time picker period selector selected hover label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-picker.period-selector.selected.hover.state-layer.color** (Time picker period selector selected hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-picker.period-selector.selected.label-text.color** (Time picker period selector selected label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-picker.period-selector.selected.pressed.label-text.color** (Time picker period selector selected pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-picker.period-selector.selected.pressed.state-layer.color** (Time picker period selector selected pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.time-picker.period-selector.unselected.focus.label-text.color** (Time picker period selector unselected focus label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-picker.period-selector.unselected.focus.state-layer.color** (Time picker period selector unselected focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-picker.period-selector.unselected.hover.label-text.color** (Time picker period selector unselected hover label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-picker.period-selector.unselected.hover.state-layer.color** (Time picker period selector unselected hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-picker.period-selector.unselected.label-text.color** (Time picker period selector unselected label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-picker.period-selector.unselected.pressed.label-text.color** (Time picker period selector unselected pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-picker.period-selector.unselected.pressed.state-layer.color** (Time picker period selector unselected pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface-variant -> md.ref.palette.neutral-variant30 = #49454f
+- **md.comp.time-picker.period-selector.vertical.container.height** (Time picker period selector vertical container height)
+  - 80dp
+- **md.comp.time-picker.period-selector.vertical.container.width** (Time picker period selector vertical container width)
+  - 52dp
+- **md.comp.time-picker.surface-tint-layer.color** (Time picker surface tint layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.time-picker.time-selector.24h-vertical.container.width** (Time picker time selector 24h vertical container width)
+  - 114dp
+- **md.comp.time-picker.time-selector.container.height** (Time picker time selector container height)
+  - 80dp
+- **md.comp.time-picker.time-selector.container.shape** (Time picker time selector container shape)
+  - -> md.sys.shape.corner.small = rounded_corners 8dp
+- **md.comp.time-picker.time-selector.container.width** (Time picker time selector container width)
+  - 96dp
+- **md.comp.time-picker.time-selector.focus.state-layer.opacity** (Time picker time selector focus state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.time-picker.time-selector.hover.state-layer.opacity** (Time picker time selector hover state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.time-picker.time-selector.label-text.font** (Time picker time selector label text font)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.display-large.font -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.display-large.font -> md.ref.typeface.brand = Roboto
+- **md.comp.time-picker.time-selector.label-text.line-height** (Time picker time selector label text line height)
+  - -> md.sys.typescale.display-large.line-height = 64pt
+- **md.comp.time-picker.time-selector.label-text.size** (Time picker time selector label text size)
+  - -> md.sys.typescale.display-large.size = 57pt
+- **md.comp.time-picker.time-selector.label-text.tracking** (Time picker time selector label text tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.display-large.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.display-large.tracking = -0.25pt
+- **md.comp.time-picker.time-selector.label-text.type** (Time picker time selector label text type)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 57pt; lineHeight 64pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 500; fontSize 57pt; lineHeight 64pt; fontTracking -0.25pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 57pt; lineHeight 64pt; fontTracking -0.25pt
+- **md.comp.time-picker.time-selector.label-text.weight** (Time picker time selector label text weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.sys.typescale.display-large.weight -> md.ref.typeface.weight-medium = weight 500
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.sys.typescale.display-large.weight -> md.ref.typeface.weight-regular = weight 400
+- **md.comp.time-picker.time-selector.pressed.state-layer.opacity** (Time picker time selector pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+- **md.comp.time-picker.time-selector.selected.container.color** (Time picker time selector selected container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary60 = #9a82db
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary40 = #6750a4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary90 = #eaddff
+- **md.comp.time-picker.time-selector.selected.focus.label-text.color** (Time picker time selector selected focus label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.time-picker.time-selector.selected.focus.state-layer.color** (Time picker time selector selected focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.time-picker.time-selector.selected.hover.label-text.color** (Time picker time selector selected hover label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.time-picker.time-selector.selected.hover.state-layer.color** (Time picker time selector selected hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.time-picker.time-selector.selected.label-text.color** (Time picker time selector selected label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.time-picker.time-selector.selected.pressed.label-text.color** (Time picker time selector selected pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.time-picker.time-selector.selected.pressed.state-layer.color** (Time picker time selector selected pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.time-picker.time-selector.separator.color** (Time picker time selector separator color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-picker.time-selector.separator.font** (Time picker time selector separator font)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.display-large.font -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.display-large.font -> md.ref.typeface.brand = Roboto
+- **md.comp.time-picker.time-selector.separator.line-height** (Time picker time selector separator line height)
+  - -> md.sys.typescale.display-large.line-height = 64pt
+- **md.comp.time-picker.time-selector.separator.size** (Time picker time selector separator size)
+  - -> md.sys.typescale.display-large.size = 57pt
+- **md.comp.time-picker.time-selector.separator.tracking** (Time picker time selector separator tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.display-large.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.display-large.tracking = -0.25pt
+- **md.comp.time-picker.time-selector.separator.type** (Time picker time selector separator type)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 57pt; lineHeight 64pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 500; fontSize 57pt; lineHeight 64pt; fontTracking -0.25pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 57pt; lineHeight 64pt; fontTracking -0.25pt
+- **md.comp.time-picker.time-selector.separator.weight** (Time picker time selector separator weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.sys.typescale.display-large.weight -> md.ref.typeface.weight-medium = weight 500
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.sys.typescale.display-large.weight -> md.ref.typeface.weight-regular = weight 400
+- **md.comp.time-picker.time-selector.unselected.container.color** (Time picker time selector unselected container color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-highest -> md.ref.palette.neutral90 = #e6e0e9
+- **md.comp.time-picker.time-selector.unselected.focus.label-text.color** (Time picker time selector unselected focus label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-picker.time-selector.unselected.focus.state-layer.color** (Time picker time selector unselected focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-picker.time-selector.unselected.hover.label-text.color** (Time picker time selector unselected hover label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-picker.time-selector.unselected.hover.state-layer.color** (Time picker time selector unselected hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-picker.time-selector.unselected.label-text.color** (Time picker time selector unselected label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-picker.time-selector.unselected.pressed.label-text.color** (Time picker time selector unselected pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.time-picker.time-selector.unselected.pressed.state-layer.color** (Time picker time selector unselected pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+
+## md.ref.palette
+
+- **md.ref.palette.neutral-variant0** (Neutral Variant 0)
+- **md.ref.palette.neutral-variant100** (Neutral Variant 100)
+- **md.ref.palette.neutral-variant20** (Neutral Variant 20)
+- **md.ref.palette.neutral-variant30** (Neutral Variant 30)
+- **md.ref.palette.neutral-variant50** (Neutral Variant 50)
+- **md.ref.palette.neutral-variant60** (Neutral Variant 60)
+- **md.ref.palette.neutral-variant70** (Neutral Variant 70)
+- **md.ref.palette.neutral-variant80** (Neutral Variant 80)
+- **md.ref.palette.neutral-variant90** (Neutral Variant 90)
+- **md.ref.palette.neutral-variant95** (Neutral Variant 95)
+- **md.ref.palette.neutral0** (Neutral 0)
+- **md.ref.palette.neutral10** (Neutral 10)
+- **md.ref.palette.neutral100** (Neutral 100)
+- **md.ref.palette.neutral17** (Neutral 17)
+- **md.ref.palette.neutral22** (Neutral 22)
+- **md.ref.palette.neutral90** (Neutral 90)
+- **md.ref.palette.neutral92** (Neutral 92)
+- **md.ref.palette.primary0** (Primary 0)
+- **md.ref.palette.primary10** (Primary 10)
+- **md.ref.palette.primary100** (Primary 100)
+- **md.ref.palette.primary20** (Primary 20)
+- **md.ref.palette.primary30** (Primary 30)
+- **md.ref.palette.primary40** (Primary 40)
+- **md.ref.palette.primary60** (Primary 60)
+- **md.ref.palette.primary80** (Primary 80)
+- **md.ref.palette.primary90** (Primary 90)
+- **md.ref.palette.primary95** (Primary 95)
+- **md.ref.palette.secondary20** (Secondary 20)
+- **md.ref.palette.secondary30** (Secondary 30)
+- **md.ref.palette.secondary40** (Secondary 40)
+- **md.ref.palette.secondary80** (Secondary 80)
+- **md.ref.palette.secondary90** (Secondary 90)
+- **md.ref.palette.secondary95** (Secondary 95)
+- **md.ref.palette.tertiary0** (Tertiary 0)
+- **md.ref.palette.tertiary100** (Tertiary 100)
+- **md.ref.palette.tertiary30** (Tertiary 30)
+- **md.ref.palette.tertiary40** (Tertiary 40)
+- **md.ref.palette.tertiary60** (Tertiary 60)
+- **md.ref.palette.tertiary80** (Tertiary 80)
+- **md.ref.palette.tertiary90** (Tertiary 90)
+
+## md.ref.typeface
+
+- **md.ref.typeface.brand** (Brand typeface)
+- **md.ref.typeface.plain** (Plain typeface)
+- **md.ref.typeface.weight-bold** (Bold weight)
+- **md.ref.typeface.weight-medium** (Medium weight)
+- **md.ref.typeface.weight-regular** (Regular weight)
+
+## md.sys.color
+
+- **md.sys.color.on-primary** (On primary) — Text and icons shown against the primary color
+- **md.sys.color.on-primary-container** (On primary container) — Contrast-passing color shown against the primary container
+- **md.sys.color.on-surface** (On surface) — Text and icons shown against the surface color
+- **md.sys.color.on-surface-variant** (On surface variant) — For text and icons to indicate active or inactive component state
+- **md.sys.color.on-tertiary-container** (On tertiary container) — Contrast-passing color shown against the tertiary container
+- **md.sys.color.outline** (Outline) — Subtle color used for boundaries
+- **md.sys.color.primary** (Primary) — Main color used across screens and components
+- **md.sys.color.primary-container** (Primary container) — Standout container color for key components
+- **md.sys.color.secondary** (Secondary) — Accent color used across screens and components
+- **md.sys.color.surface-container-high** (Surface Container High)
+- **md.sys.color.surface-container-highest** (Surface Container Highest)
+- **md.sys.color.surface-tint** (Surface tint)
+- **md.sys.color.tertiary-container** (Tertiary container) — Contrasting container color, for components like input fields
+
+## md.sys.elevation
+
+- **md.sys.elevation.level3** (+3)
+
+## md.sys.shape
+
+- **md.sys.shape.corner.extra-large** (Extra large rounding)
+- **md.sys.shape.corner.full** (Fully rounded) — Use for: Badge, Buttons, Icon buttons, Sliders, Switches, Search bar
+- **md.sys.shape.corner.small** (Small rounding)
+
+## md.sys.state
+
+- **md.sys.state.focus.state-layer-opacity** (Focus state layer opacity)
+- **md.sys.state.hover.state-layer-opacity** (Hover state layer opacity)
+- **md.sys.state.pressed.state-layer-opacity** (Pressed state layer opacity)
+
+## md.sys.state.focus-indicator
+
+- **md.sys.state.focus-indicator.outer-offset** (Focus indicator outer offset)
+- **md.sys.state.focus-indicator.thickness** (Focus indicator thickness)
+
+## md.sys.typescale
+
+- **md.sys.typescale.body-large.font** (Body Large font name)
+- **md.sys.typescale.body-large.line-height** (Body Large line height)
+- **md.sys.typescale.body-large.size** (Body Large font size)
+- **md.sys.typescale.body-large.tracking** (Body Large font tracking)
+- **md.sys.typescale.body-large.weight** (Body Large font weight)
+- **md.sys.typescale.body-small.font** (Body Small font name)
+- **md.sys.typescale.body-small.line-height** (Body Small line height)
+- **md.sys.typescale.body-small.size** (Body Small font size)
+- **md.sys.typescale.body-small.tracking** (Body Small font tracking)
+- **md.sys.typescale.body-small.weight** (Body Small font weight)
+- **md.sys.typescale.display-large.font** (Display Large font name)
+- **md.sys.typescale.display-large.line-height** (Display Large line height)
+- **md.sys.typescale.display-large.size** (Display Large font size)
+- **md.sys.typescale.display-large.tracking** (Display Large font tracking)
+- **md.sys.typescale.display-large.weight** (Display Large font weight)
+- **md.sys.typescale.display-medium.font** (Display Medium font name)
+- **md.sys.typescale.display-medium.line-height** (Display Medium line height)
+- **md.sys.typescale.display-medium.size** (Display Medium font size)
+- **md.sys.typescale.display-medium.tracking** (Display Medium font tracking)
+- **md.sys.typescale.display-medium.weight** (Display Medium font weight)
+- **md.sys.typescale.label-medium.font** (Label Medium font name)
+- **md.sys.typescale.label-medium.line-height** (Label Medium line height)
+- **md.sys.typescale.label-medium.size** (Label Medium font size)
+- **md.sys.typescale.label-medium.tracking** (Label Medium font tracking)
+- **md.sys.typescale.label-medium.weight** (Label Medium font weight)
+- **md.sys.typescale.title-medium.font** (Title Medium font name)
+- **md.sys.typescale.title-medium.line-height** (Title Medium line height)
+- **md.sys.typescale.title-medium.size** (Title Medium font size)
+- **md.sys.typescale.title-medium.tracking** (Title Medium font tracking)
+- **md.sys.typescale.title-medium.weight** (Title Medium font weight)
+

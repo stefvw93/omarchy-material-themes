@@ -9,17 +9,19 @@
     "preview": "vp preview",
     "tauri": "tauri",
     "pexels": "node --env-file=.env pexels.ts",
-    "test": "vp test --passWithNoTests"
+    "test": "vp test --passWithNoTests",
+    "m3-docs": "pnpm --filter @stef/m3 m3-spec"
   },
   "dependencies": {
     "@base-ui/react": "catalog:",
-    "@fontsource-variable/jetbrains-mono": "catalog:",
     "@material/material-color-utilities": "catalog:",
     "@phosphor-icons/react": "catalog:",
     "@stef/effect-platform-tauri": "workspace:*",
     "@stef/hyprland": "workspace:*",
+    "@stef/m3": "workspace:*",
     "@stef/motion": "workspace:*",
     "@stef/omarchy": "workspace:*",
+    "@stef/qml-kit": "workspace:*",
     "@stef/theme-engine": "workspace:*",
     "@stef/tokens": "workspace:*",
     "@tauri-apps/api": "catalog:",

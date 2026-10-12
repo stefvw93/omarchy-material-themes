@@ -1,0 +1,1264 @@
+# Tokens: Extended FAB (TOKEN_TABLE.36500f77b86d20a5)
+
+Source: <https://m3.material.io/_dsm/data/dsdb-m3/2026-09-23_06-10-05/TOKEN_TABLE.36500f77b86d20a5.json>, design system 'Google Material 3' revision 7989 (2026-05-27T22:44:15.009106Z).
+Used on: <https://m3.material.io/components/extended-fab>
+
+Each token lists its value per context. `->` shows the reference chain (component token -> system token -> reference token); the resolved value is what the baseline scheme produces in that context. Contexts with identical chain and value are merged.
+
+## md.comp.extended-fab — Extended FAB - Size - Baseline
+
+For baseline extended FABs. For expressive, use the small extended FAB token set `md.comp.extended-fab.small` instead.
+
+- **md.comp.extended-fab.container.height** (Extended FAB container height)
+  - 56dp
+- **md.comp.extended-fab.container.shape** (Extended FAB container shape)
+  - -> md.sys.shape.corner.large = rounded_corners 16dp
+- **md.comp.extended-fab.icon-label-space** (Extended FAB icon label space)
+  - -> md.sys.measurement.space150 = 12dp
+- **md.comp.extended-fab.icon.size** (Extended FAB icon size)
+  - 24dp
+- **md.comp.extended-fab.label-text** (Extended FAB label text)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.sys.typescale.label-large = Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=14 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: -> md.sys.typescale.label-large = Roboto; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: -> md.sys.typescale.label-large = Roboto; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+- **md.comp.extended-fab.leading-space** (Extended FAB leading space)
+  - -> md.sys.measurement.space200 = 16dp
+- **md.comp.extended-fab.trailing-space** (Extended FAB trailing space)
+  - -> md.sys.measurement.space250 = 20dp
+
+## md.comp.extended-fab.branded — Extended FAB - Color - Branded
+
+For branded color extended FABs. Not recommended with expressive extended FABs.
+
+- **md.comp.extended-fab.branded.container.color** (Extended FAB (branded) container color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-high -> md.ref.palette.neutral17 = #2b2930
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-high -> md.ref.palette.neutral92 = #ece6f0
+- **md.comp.extended-fab.branded.container.elevation** (Extended FAB (branded) container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.branded.container.height** (Extended FAB (branded) container height)
+  - 56dp
+- **md.comp.extended-fab.branded.container.shadow-color** (Branded extended FAB container shadow color)
+  - -> md.sys.color.shadow -> md.ref.palette.neutral0 = #000000 [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark; Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]
+- **md.comp.extended-fab.branded.container.shape** (Extended FAB (branded) container shape)
+  - -> md.sys.shape.corner.large = rounded_corners 16dp
+- **md.comp.extended-fab.branded.container.surface-tint-layer.color** (Extended FAB (branded) container surface tint layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.branded.focus.container.elevation** (Branded extended FAB focus container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.branded.focus.indicator.color** (Extended FAB (branded) focus indicator color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary20 = #332d41
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary40 = #625b71
+- **md.comp.extended-fab.branded.focus.indicator.outline.offset** (Extended FAB (branded) focus indicator offset)
+  - -> md.sys.state.focus-indicator.outer-offset = 2dp
+- **md.comp.extended-fab.branded.focus.indicator.thickness** (Extended FAB (branded) focus indicator thickness)
+  - -> md.sys.state.focus-indicator.thickness = 3dp
+- **md.comp.extended-fab.branded.focus.label-text.color** (Extended FAB (branded) focus color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.branded.focus.state-layer.color** (Extended FAB (branded) focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.branded.focus.state-layer.opacity** (Extended FAB (branded) focus state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.extended-fab.branded.hover.container.elevation** (Extended FAB (branded) hover container elevation)
+  - -> md.sys.elevation.level4 = 8dp
+- **md.comp.extended-fab.branded.hover.label-text.color** (Extended FAB (branded) hover color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.branded.hover.state-layer.color** (Extended FAB (branded) hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.branded.hover.state-layer.opacity** (Extended FAB (branded) hover state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.extended-fab.branded.icon.size** (Extended FAB (branded) icon size)
+  - 36dp
+- **md.comp.extended-fab.branded.label-text.color** (Extended FAB (branded) color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-surface -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-surface -> md.ref.palette.neutral10 = #1d1b20
+- **md.comp.extended-fab.branded.label-text.font** (Extended FAB (branded) font)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.sys.typescale.label-large.font -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.sys.typescale.label-large.font -> md.ref.typeface.plain = Roboto
+- **md.comp.extended-fab.branded.label-text.line-height** (Extended FAB (branded) height)
+  - -> md.sys.typescale.label-large.line-height = 20pt
+- **md.comp.extended-fab.branded.label-text.size** (Extended FAB (branded) size)
+  - -> md.sys.typescale.label-large.size = 14pt
+- **md.comp.extended-fab.branded.label-text.tracking** (Extended FAB (branded) tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.label-large.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.label-large.tracking = 0.1pt
+- **md.comp.extended-fab.branded.label-text.type** (Label text type style)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+- **md.comp.extended-fab.branded.label-text.weight** (Extended FAB (branded) weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.sys.typescale.label-large.weight -> md.ref.typeface.weight-bold = weight 700
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.sys.typescale.label-large.weight -> md.ref.typeface.weight-medium = weight 500
+- **md.comp.extended-fab.branded.lowered.container.color** (Extended FAB (branded) lowered container color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-low -> md.ref.palette.neutral10 = #1d1b20
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-low -> md.ref.palette.neutral96 = #f7f2fa
+- **md.comp.extended-fab.branded.lowered.container.elevation** (Branded extended FAB lowered container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.branded.lowered.focus.container.elevation** (Branded extended FAB lowered focus container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.branded.lowered.hover.container.elevation** (Branded extended FAB lowered hover container elevation)
+  - -> md.sys.elevation.level2 = 3dp
+- **md.comp.extended-fab.branded.lowered.pressed.container.elevation** (Branded extended FAB lowered pressed container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.branded.pressed.container.elevation** (Extended FAB (branded) pressed container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.branded.pressed.label-text.color** (Extended FAB (branded) pressed color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.branded.pressed.state-layer.color** (Extended FAB (branded) pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.branded.pressed.state-layer.opacity** (Extended FAB (branded) pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+
+## md.comp.extended-fab.large — Extended FAB - Size - Large
+
+For large extended FABs.
+
+- **md.comp.extended-fab.large.container.height** (Extended FAB large container height)
+  - 96dp
+- **md.comp.extended-fab.large.container.shape** (Extended FAB large container shape)
+  - -> md.sys.shape.corner.extra-large = rounded_corners 28dp
+- **md.comp.extended-fab.large.icon-label-space** (Extended FAB large icon label space)
+  - -> md.sys.measurement.space200 = 16dp
+- **md.comp.extended-fab.large.icon.size** (Extended FAB large icon size)
+  - 36dp
+- **md.comp.extended-fab.large.label-text** (Extended FAB large label text)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.sys.typescale.headline-small = Roboto Flex; weight 400; fontSize 24pt; lineHeight 32pt; fontTracking 0pt; axes CRSV=0 wdth=100 wght=400 slnt=0 opsz=24 GRAD=0 ROND=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: -> md.sys.typescale.headline-small = Roboto; weight 500; fontSize 24pt; lineHeight 32pt; fontTracking 0pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: -> md.sys.typescale.headline-small = Roboto; weight 400; fontSize 24pt; lineHeight 32pt; fontTracking 0pt
+- **md.comp.extended-fab.large.leading-space** (Extended FAB large leading space)
+  - 28dp
+- **md.comp.extended-fab.large.trailing-space** (Extended FAB large trailing space)
+  - 28dp
+
+## md.comp.extended-fab.medium — Extended FAB - Size - Medium
+
+For medium extended FABs.
+
+- **md.comp.extended-fab.medium.container.height** (Extended FAB medium container height)
+  - 80dp
+- **md.comp.extended-fab.medium.container.shape** (Extended FAB medium container shape)
+  - -> md.sys.shape.corner.large-increased = rounded_corners 20dp
+- **md.comp.extended-fab.medium.icon-label-space** (Extended FAB medium icon label space)
+  - -> md.sys.measurement.space150 = 12dp
+- **md.comp.extended-fab.medium.icon.size** (Extended FAB medium icon size)
+  - 28dp
+- **md.comp.extended-fab.medium.label-text** (Extended FAB medium label text)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.sys.typescale.title-large = Roboto Flex; weight 400; fontSize 22pt; lineHeight 28pt; fontTracking 0pt; axes wdth=100 wght=400 slnt=0 opsz=22 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: -> md.sys.typescale.title-large = Roboto; weight 500; fontSize 22pt; lineHeight 28pt; fontTracking 0pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: -> md.sys.typescale.title-large = Roboto; weight 400; fontSize 22pt; lineHeight 28pt; fontTracking 0pt
+- **md.comp.extended-fab.medium.leading-space** (Extended FAB medium leading space)
+  - 26dp
+- **md.comp.extended-fab.medium.trailing-space** (Extended FAB medium trailing space)
+  - 26dp
+
+## md.comp.extended-fab.primary — Extended FAB - Color - Primary
+
+For primary color extended FABs.
+
+- **md.comp.extended-fab.primary.container.color** (Extended FAB primary container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.primary.container.elevation** (Extended FAB primary container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.primary.container.height** (Extended FAB (primary) container height)
+  - 56dp
+- **md.comp.extended-fab.primary.container.shadow-color** (Extended FAB primary container shadow color)
+  - -> md.sys.color.shadow -> md.ref.palette.neutral0 = #000000 [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark; Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]
+- **md.comp.extended-fab.primary.container.shape** (Extended FAB (primary) container shape)
+  - -> md.sys.shape.corner.large = rounded_corners 16dp
+- **md.comp.extended-fab.primary.focus.container.elevation** (Primary extended FAB focus container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.primary.focus.icon.color** (Extended FAB (primary) focus icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary.focus.indicator.color** (Extended FAB (primary) focus indicator color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary20 = #332d41
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary40 = #625b71
+- **md.comp.extended-fab.primary.focus.indicator.outline.offset** (Extended FAB (primary) focus indicator offset)
+  - -> md.sys.state.focus-indicator.outer-offset = 2dp
+- **md.comp.extended-fab.primary.focus.indicator.thickness** (Extended FAB (primary) focus indicator thickness)
+  - -> md.sys.state.focus-indicator.thickness = 3dp
+- **md.comp.extended-fab.primary.focus.label-text.color** (Extended FAB (primary) focus label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary.focus.state-layer.color** (Extended FAB (primary) focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary.focus.state-layer.opacity** (Extended FAB (primary) focus state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.extended-fab.primary.focused.container.elevation** (Extended FAB primary focused container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.primary.focused.icon.color** (Extended FAB primary focused icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.extended-fab.primary.focused.label-text.color** (Extended FAB primary focused label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.extended-fab.primary.focused.state-layer.color** (Extended FAB primary focused state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.extended-fab.primary.focused.state-layer.opacity** (Extended FAB primary focused state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.extended-fab.primary.hover.container.elevation** (Extended FAB (primary) hover container elevation)
+  - -> md.sys.elevation.level4 = 8dp
+- **md.comp.extended-fab.primary.hover.icon.color** (Extended FAB (primary) hover icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary.hover.label-text.color** (Extended FAB (primary) hover label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary.hover.state-layer.color** (Extended FAB (primary) hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary.hover.state-layer.opacity** (Extended FAB (primary) hover state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.extended-fab.primary.hovered.container.elevation** (Extended FAB primary hovered container elevation)
+  - -> md.sys.elevation.level4 = 8dp
+- **md.comp.extended-fab.primary.hovered.icon.color** (Extended FAB primary hovered icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.extended-fab.primary.hovered.label-text.color** (Extended FAB primary hovered label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.extended-fab.primary.hovered.state-layer.color** (Extended FAB primary hovered state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.extended-fab.primary.hovered.state-layer.opacity** (Extended FAB primary hovered state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.extended-fab.primary.icon.color** (Extended FAB primary container icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.extended-fab.primary.icon.size** (Extended FAB (primary) icon size)
+  - 24dp
+- **md.comp.extended-fab.primary.label-text.color** (Extended FAB primary label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.extended-fab.primary.label-text.font** (Extended FAB (primary) font)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.sys.typescale.label-large.font -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.sys.typescale.label-large.font -> md.ref.typeface.plain = Roboto
+- **md.comp.extended-fab.primary.label-text.line-height** (Extended FAB (primary) height)
+  - -> md.sys.typescale.label-large.line-height = 20pt
+- **md.comp.extended-fab.primary.label-text.size** (Extended FAB (primary) size)
+  - -> md.sys.typescale.label-large.size = 14pt
+- **md.comp.extended-fab.primary.label-text.tracking** (Extended FAB (primary) tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.label-large.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.label-large.tracking = 0.1pt
+- **md.comp.extended-fab.primary.label-text.type** (Label text type style)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+- **md.comp.extended-fab.primary.label-text.weight** (Extended FAB (primary) weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.sys.typescale.label-large.weight -> md.ref.typeface.weight-bold = weight 700
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.sys.typescale.label-large.weight -> md.ref.typeface.weight-medium = weight 500
+- **md.comp.extended-fab.primary.lowered.container.elevation** (Primary extended FAB lowered container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.primary.lowered.focus.container.elevation** (Primary extended FAB lowered focus container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.primary.lowered.hover.container.elevation** (Primary extended FAB lowered hover container elevation)
+  - -> md.sys.elevation.level2 = 3dp
+- **md.comp.extended-fab.primary.lowered.pressed.container.elevation** (Primary extended FAB lowered pressed container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.primary.pressed.container.elevation** (Extended FAB primary pressed container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.primary.pressed.icon.color** (Extended FAB primary pressed icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.extended-fab.primary.pressed.label-text.color** (Extended FAB primary pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.extended-fab.primary.pressed.state-layer.color** (Extended FAB primary pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary -> md.ref.palette.primary20 = #381e72
+- **md.comp.extended-fab.primary.pressed.state-layer.opacity** (Extended FAB primary pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+
+## md.comp.extended-fab.primary-container — Extended FAB - Color - Tonal primary
+
+For tonal primary container extended FABs.
+
+- **md.comp.extended-fab.primary-container.container.color** (Extended FAB tonal primary container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary60 = #9a82db
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary-container -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary40 = #6750a4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary-container -> md.ref.palette.primary90 = #eaddff
+- **md.comp.extended-fab.primary-container.container.elevation** (Extended FAB tonal primary container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.primary-container.container.shadow-color** (Extended FAB tonal primary container shadow color)
+  - -> md.sys.color.shadow -> md.ref.palette.neutral0 = #000000 [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark; Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]
+- **md.comp.extended-fab.primary-container.focused.container.elevation** (Extended FAB tonal primary focused container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.primary-container.focused.icon.color** (Extended FAB tonal primary focused icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary-container.focused.label-text.color** (Extended FAB tonal primary focused label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary-container.focused.state-layer.color** (Extended FAB tonal primary focused state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary-container.focused.state-layer.opacity** (Extended FAB tonal primary focused state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.extended-fab.primary-container.hovered.container.elevation** (Extended FAB tonal primary hovered container elevation)
+  - -> md.sys.elevation.level4 = 8dp
+- **md.comp.extended-fab.primary-container.hovered.icon.color** (Extended FAB tonal primary hovered icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary-container.hovered.label-text.color** (Extended FAB tonal primary hovered label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary-container.hovered.state-layer.color** (Extended FAB tonal primary hovered state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary-container.hovered.state-layer.opacity** (Extended FAB tonal primary hovered state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.extended-fab.primary-container.icon.color** (Extended FAB tonal primary container icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary-container.label-text.color** (Extended FAB tonal primary label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary-container.pressed.container.elevation** (Extended FAB tonal primary pressed container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.primary-container.pressed.icon.color** (Extended FAB tonal primary pressed icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary-container.pressed.label-text.color** (Extended FAB tonal primary pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary-container.pressed.state-layer.color** (Extended FAB tonal primary pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-primary-container -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-primary-container -> md.ref.palette.primary30 = #4f378b
+- **md.comp.extended-fab.primary-container.pressed.state-layer.opacity** (Extended FAB tonal primary pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+
+## md.comp.extended-fab.secondary — Extended FAB - Color - Secondary
+
+For secondary color extended FABs.
+
+- **md.comp.extended-fab.secondary.container.color** (Extended FAB secondary container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary20 = #332d41
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary40 = #625b71
+- **md.comp.extended-fab.secondary.container.elevation** (Extended FAB secondary container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.secondary.container.height** (Extended FAB (secondary) container height)
+  - 56dp
+- **md.comp.extended-fab.secondary.container.shadow-color** (Extended FAB secondary container shadow color)
+  - -> md.sys.color.shadow -> md.ref.palette.neutral0 = #000000 [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark; Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]
+- **md.comp.extended-fab.secondary.container.shape** (Extended FAB (secondary) container shape)
+  - -> md.sys.shape.corner.large = rounded_corners 16dp
+- **md.comp.extended-fab.secondary.focus.container.elevation** (Secondary extended FAB focus container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.secondary.focus.icon.color** (Extended FAB (secondary) focus icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary.focus.indicator.color** (Extended FAB (secondary) focus indicator color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary20 = #332d41
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary40 = #625b71
+- **md.comp.extended-fab.secondary.focus.indicator.outline.offset** (Extended FAB (secondary) focus indicator offset)
+  - -> md.sys.state.focus-indicator.outer-offset = 2dp
+- **md.comp.extended-fab.secondary.focus.indicator.thickness** (Extended FAB (secondary) focus indicator thickness)
+  - -> md.sys.state.focus-indicator.thickness = 3dp
+- **md.comp.extended-fab.secondary.focus.label-text.color** (Extended FAB (secondary) focus color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary.focus.state-layer.color** (Extended FAB (secondary) focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary.focus.state-layer.opacity** (Extended FAB (secondary) focus state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.extended-fab.secondary.focused.container.elevation** (Extended FAB secondary focused container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.secondary.focused.icon.color** (Extended FAB secondary focused icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary20 = #332d41
+- **md.comp.extended-fab.secondary.focused.label-text.color** (Extended FAB secondary focused label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary20 = #332d41
+- **md.comp.extended-fab.secondary.focused.state-layer.color** (Extended FAB secondary focused state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary20 = #332d41
+- **md.comp.extended-fab.secondary.focused.state-layer.opacity** (Extended FAB secondary focused state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.extended-fab.secondary.hover.container.elevation** (Extended FAB (secondary) hover container elevation)
+  - -> md.sys.elevation.level4 = 8dp
+- **md.comp.extended-fab.secondary.hover.icon.color** (Extended FAB (secondary) hover icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary.hover.label-text.color** (Extended FAB (secondary) hover color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary.hover.state-layer.color** (Extended FAB (secondary) hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary.hover.state-layer.opacity** (Extended FAB (secondary) hover state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.extended-fab.secondary.hovered.container.elevation** (Extended FAB secondary hovered container elevation)
+  - -> md.sys.elevation.level4 = 8dp
+- **md.comp.extended-fab.secondary.hovered.icon.color** (Extended FAB secondary hovered icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary20 = #332d41
+- **md.comp.extended-fab.secondary.hovered.label-text.color** (Extended FAB secondary hovered label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary20 = #332d41
+- **md.comp.extended-fab.secondary.hovered.state-layer.color** (Extended FAB secondary hovered state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary20 = #332d41
+- **md.comp.extended-fab.secondary.hovered.state-layer.opacity** (Extended FAB secondary hovered state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.extended-fab.secondary.icon.color** (Extended FAB secondary container icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary20 = #332d41
+- **md.comp.extended-fab.secondary.icon.size** (Extended FAB (secondary) icon size)
+  - 24dp
+- **md.comp.extended-fab.secondary.label-text.color** (Extended FAB secondary label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary20 = #332d41
+- **md.comp.extended-fab.secondary.label-text.font** (Extended FAB (secondary) font)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.sys.typescale.label-large.font -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.sys.typescale.label-large.font -> md.ref.typeface.plain = Roboto
+- **md.comp.extended-fab.secondary.label-text.line-height** (Extended FAB (secondary) height)
+  - -> md.sys.typescale.label-large.line-height = 20pt
+- **md.comp.extended-fab.secondary.label-text.size** (Extended FAB (secondary) size)
+  - -> md.sys.typescale.label-large.size = 14pt
+- **md.comp.extended-fab.secondary.label-text.tracking** (Extended FAB (secondary) tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.label-large.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.label-large.tracking = 0.1pt
+- **md.comp.extended-fab.secondary.label-text.type** (Label text type style)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+- **md.comp.extended-fab.secondary.label-text.weight** (Extended FAB (secondary) weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.sys.typescale.label-large.weight -> md.ref.typeface.weight-bold = weight 700
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.sys.typescale.label-large.weight -> md.ref.typeface.weight-medium = weight 500
+- **md.comp.extended-fab.secondary.lowered.container.elevation** (Secondary extended FAB lowered container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.secondary.lowered.focus.container.elevation** (Secondary extended FAB lowered focus container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.secondary.lowered.hover.container.elevation** (Secondary extended FAB lowered hover container elevation)
+  - -> md.sys.elevation.level2 = 3dp
+- **md.comp.extended-fab.secondary.lowered.pressed.container.elevation** (Secondary extended FAB lowered pressed container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.secondary.pressed.container.elevation** (Extended FAB secondary pressed container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.secondary.pressed.icon.color** (Extended FAB secondary pressed icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary20 = #332d41
+- **md.comp.extended-fab.secondary.pressed.label-text.color** (Extended FAB secondary pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary20 = #332d41
+- **md.comp.extended-fab.secondary.pressed.state-layer.color** (Extended FAB secondary pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary -> md.ref.palette.secondary20 = #332d41
+- **md.comp.extended-fab.secondary.pressed.state-layer.opacity** (Extended FAB secondary pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+
+## md.comp.extended-fab.secondary-container — Extended FAB - Color - Tonal secondary
+
+For tonal secondary container extended FABs.
+
+- **md.comp.extended-fab.secondary-container.container.color** (Extended FAB tonal secondary container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary-container -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary-container -> md.ref.palette.secondary60 = #958da5
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.secondary-container -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary-container -> md.ref.palette.secondary40 = #625b71
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.secondary-container -> md.ref.palette.secondary90 = #e8def8
+- **md.comp.extended-fab.secondary-container.container.elevation** (Extended FAB tonal secondary container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.secondary-container.container.shadow-color** (Extended FAB tonal secondary container shadow color)
+  - -> md.sys.color.shadow -> md.ref.palette.neutral0 = #000000 [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark; Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]
+- **md.comp.extended-fab.secondary-container.focused.container.elevation** (Extended FAB tonal secondary focused container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.secondary-container.focused.icon.color** (Extended FAB tonal secondary focused icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary-container.focused.label-text.color** (Extended FAB tonal secondary focused label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary-container.focused.state-layer.color** (Extended FAB tonal secondary focused state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary-container.focused.state-layer.opacity** (Extended FAB tonal secondary focused state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.extended-fab.secondary-container.hovered.container.elevation** (Extended FAB tonal secondary hovered container elevation)
+  - -> md.sys.elevation.level4 = 8dp
+- **md.comp.extended-fab.secondary-container.hovered.icon.color** (Extended FAB tonal secondary hovered icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary-container.hovered.label-text.color** (Extended FAB tonal secondary hovered label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary-container.hovered.state-layer.color** (Extended FAB tonal secondary hovered state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary-container.hovered.state-layer.opacity** (Extended FAB tonal secondary hovered state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.extended-fab.secondary-container.icon.color** (Extended FAB tonal secondary container icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary-container.label-text.color** (Extended FAB tonal secondary label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary-container.pressed.container.elevation** (Extended FAB tonal secondary pressed container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.secondary-container.pressed.icon.color** (Extended FAB tonal secondary pressed icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary-container.pressed.label-text.color** (Extended FAB tonal secondary pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary-container.pressed.state-layer.color** (Extended FAB tonal secondary pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-secondary-container -> md.ref.palette.secondary30 = #4a4458
+- **md.comp.extended-fab.secondary-container.pressed.state-layer.opacity** (Extended FAB tonal secondary pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+
+## md.comp.extended-fab.small — Extended FAB - Size - Small
+
+For expressive small extended FABs.
+
+- **md.comp.extended-fab.small.container.height** (Extended FAB small container height)
+  - 56dp
+- **md.comp.extended-fab.small.container.shape** (Extended FAB small container shape)
+  - -> md.sys.shape.corner.large = rounded_corners 16dp
+- **md.comp.extended-fab.small.icon-label-space** (Extended FAB small icon label space)
+  - -> md.sys.measurement.space100 = 8dp
+- **md.comp.extended-fab.small.icon.size** (Extended FAB small icon size)
+  - 24dp
+- **md.comp.extended-fab.small.label-text** (Extended FAB small label text)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.sys.typescale.title-medium = Roboto Flex; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=16 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: -> md.sys.typescale.title-medium = Roboto; weight 700; fontSize 16pt; lineHeight 24pt; fontTracking 0.15pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: -> md.sys.typescale.title-medium = Roboto; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0.15pt
+- **md.comp.extended-fab.small.leading-space** (Extended FAB small leading space)
+  - -> md.sys.measurement.space200 = 16dp
+- **md.comp.extended-fab.small.trailing-space** (Extended FAB small trailing space)
+  - -> md.sys.measurement.space200 = 16dp
+
+## md.comp.extended-fab.surface — Extended FAB - Color - Surface
+
+For surface color extended FABs. Not recommended with expressive extended FABs.
+
+- **md.comp.extended-fab.surface.container.color** (Extended FAB (primary) container color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-high -> md.ref.palette.neutral17 = #2b2930
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-high -> md.ref.palette.neutral92 = #ece6f0
+- **md.comp.extended-fab.surface.container.elevation** (Extended FAB (primary) container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.surface.container.height** (Extended FAB (primary) container height)
+  - 56dp
+- **md.comp.extended-fab.surface.container.shadow-color** (Surface extended FAB container shadow color)
+  - -> md.sys.color.shadow -> md.ref.palette.neutral0 = #000000 [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark; Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]
+- **md.comp.extended-fab.surface.container.shape** (Extended FAB (primary) container shape)
+  - -> md.sys.shape.corner.large = rounded_corners 16dp
+- **md.comp.extended-fab.surface.container.surface-tint-layer.color** (Extended FAB (primary) container surface tint layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.surface-tint -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.focus.container.elevation** (Surface extended FAB focus container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.surface.focus.icon.color** (Extended FAB (primary) focus icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.focus.indicator.color** (Extended FAB (primary) focus indicator color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary20 = #332d41
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary40 = #625b71
+- **md.comp.extended-fab.surface.focus.indicator.outline.offset** (Extended FAB (primary) focus indicator offset)
+  - -> md.sys.state.focus-indicator.outer-offset = 2dp
+- **md.comp.extended-fab.surface.focus.indicator.thickness** (Extended FAB (primary) focus indicator thickness)
+  - -> md.sys.state.focus-indicator.thickness = 3dp
+- **md.comp.extended-fab.surface.focus.label-text.color** (Extended FAB (primary) focus color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.focus.state-layer.color** (Extended FAB (primary) focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.focus.state-layer.opacity** (Extended FAB (primary) focus state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.extended-fab.surface.hover.container.elevation** (Extended FAB (primary) hover container elevation)
+  - -> md.sys.elevation.level4 = 8dp
+- **md.comp.extended-fab.surface.hover.icon.color** (Extended FAB (primary) hover icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.hover.label-text.color** (Extended FAB (primary) hover color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.hover.state-layer.color** (Extended FAB (primary) hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.hover.state-layer.opacity** (Extended FAB (primary) hover state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.extended-fab.surface.icon.color** (Extended FAB (primary) icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.icon.size** (Extended FAB (primary) icon size)
+  - 24dp
+- **md.comp.extended-fab.surface.label-text.color** (Extended FAB (primary) color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.label-text.font** (Extended FAB (primary) font)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.sys.typescale.label-large.font -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.sys.typescale.label-large.font -> md.ref.typeface.plain = Roboto
+- **md.comp.extended-fab.surface.label-text.line-height** (Extended FAB (primary) height)
+  - -> md.sys.typescale.label-large.line-height = 20pt
+- **md.comp.extended-fab.surface.label-text.size** (Extended FAB (primary) size)
+  - -> md.sys.typescale.label-large.size = 14pt
+- **md.comp.extended-fab.surface.label-text.tracking** (Extended FAB (primary) tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.label-large.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.label-large.tracking = 0.1pt
+- **md.comp.extended-fab.surface.label-text.type** (Label text type style)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+- **md.comp.extended-fab.surface.label-text.weight** (Extended FAB (primary) weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.sys.typescale.label-large.weight -> md.ref.typeface.weight-bold = weight 700
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.sys.typescale.label-large.weight -> md.ref.typeface.weight-medium = weight 500
+- **md.comp.extended-fab.surface.lowered.container.color** (Extended FAB (surface) lowered container color)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.sys.color.surface-container-low -> md.ref.palette.neutral10 = #1d1b20
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.sys.color.surface-container-low -> md.ref.palette.neutral96 = #f7f2fa
+- **md.comp.extended-fab.surface.lowered.container.elevation** (Surface extended FAB lowered container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.surface.lowered.focus.container.elevation** (Surface extended FAB lowered focus container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.surface.lowered.hover.container.elevation** (Surface extended FAB lowered hover container elevation)
+  - -> md.sys.elevation.level2 = 3dp
+- **md.comp.extended-fab.surface.lowered.pressed.container.elevation** (Surface extended FAB lowered pressed container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.surface.pressed.container.elevation** (Extended FAB (primary) pressed container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.surface.pressed.icon.color** (Extended FAB (primary) pressed icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.pressed.label-text.color** (Extended FAB (primary) pressed color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.pressed.state-layer.color** (Extended FAB (primary) pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.comp.extended-fab.surface.pressed.state-layer.opacity** (Extended FAB (primary) pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+
+## md.comp.extended-fab.tertiary — Extended FAB - Color - Tertiary
+
+For tertiary color extended FABs.
+
+- **md.comp.extended-fab.tertiary.container.color** (Extended FAB tertiary container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary -> md.ref.palette.tertiary95 = #ffecf1
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.tertiary -> md.ref.palette.tertiary20 = #492532
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.tertiary -> md.ref.palette.tertiary30 = #633b48
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary -> md.ref.palette.tertiary80 = #efb8c8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.tertiary -> md.ref.palette.tertiary40 = #7d5260
+- **md.comp.extended-fab.tertiary.container.elevation** (Extended FAB tertiary container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.tertiary.container.height** (Extended FAB (tertiary) container height)
+  - 56dp
+- **md.comp.extended-fab.tertiary.container.shadow-color** (Extended FAB tertiary container shadow color)
+  - -> md.sys.color.shadow -> md.ref.palette.neutral0 = #000000 [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark; Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]
+- **md.comp.extended-fab.tertiary.container.shape** (Extended FAB (tertiary) container shape)
+  - -> md.sys.shape.corner.large = rounded_corners 16dp
+- **md.comp.extended-fab.tertiary.focus.container.elevation** (Extended FAB (tertiary) focus container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.tertiary.focus.icon.color** (Extended FAB (tertiary) focus icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary.focus.indicator.color** (Extended FAB (tertiary) focus indicator color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary20 = #332d41
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.secondary -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.secondary -> md.ref.palette.secondary40 = #625b71
+- **md.comp.extended-fab.tertiary.focus.indicator.outline.offset** (Extended FAB (tertiary) focus indicator offset)
+  - -> md.sys.state.focus-indicator.outer-offset = 2dp
+- **md.comp.extended-fab.tertiary.focus.indicator.thickness** (Extended FAB (tertiary) focus indicator thickness)
+  - -> md.sys.state.focus-indicator.thickness = 3dp
+- **md.comp.extended-fab.tertiary.focus.label-text.color** (Extended FAB (tertiary) focus label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary.focus.state-layer.color** (Extended FAB (tertiary) focus state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary.focus.state-layer.opacity** (Extended FAB (tertiary) focus state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.extended-fab.tertiary.focused.container.elevation** (Extended FAB tertiary focused container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.tertiary.focused.icon.color** (Extended FAB tertiary focused icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary20 = #492532
+- **md.comp.extended-fab.tertiary.focused.label-text.color** (Extended FAB tertiary focused label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary20 = #492532
+- **md.comp.extended-fab.tertiary.focused.state-layer.color** (Extended FAB tertiary focused state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary20 = #492532
+- **md.comp.extended-fab.tertiary.focused.state-layer.opacity** (Extended FAB tertiary focused state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.extended-fab.tertiary.hover.container.elevation** (Extended FAB (tertiary) hover container elevation)
+  - -> md.sys.elevation.level4 = 8dp
+- **md.comp.extended-fab.tertiary.hover.icon.color** (Extended FAB (tertiary) hover icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary.hover.label-text.color** (Extended FAB (tertiary) hover label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary.hover.state-layer.color** (Extended FAB (tertiary) hover state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary.hover.state-layer.opacity** (Extended FAB (tertiary) hover state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.extended-fab.tertiary.hovered.container.elevation** (Extended FAB tertiary hovered container elevation)
+  - -> md.sys.elevation.level4 = 8dp
+- **md.comp.extended-fab.tertiary.hovered.icon.color** (Extended FAB tertiary hovered icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary20 = #492532
+- **md.comp.extended-fab.tertiary.hovered.label-text.color** (Extended FAB tertiary hovered label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary20 = #492532
+- **md.comp.extended-fab.tertiary.hovered.state-layer.color** (Extended FAB tertiary hovered state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary20 = #492532
+- **md.comp.extended-fab.tertiary.hovered.state-layer.opacity** (Extended FAB tertiary hovered state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.extended-fab.tertiary.icon.color** (Extended FAB tertiary container icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary20 = #492532
+- **md.comp.extended-fab.tertiary.icon.size** (Extended FAB (tertiary) icon size)
+  - 24dp
+- **md.comp.extended-fab.tertiary.label-text.color** (Extended FAB tertiary label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary20 = #492532
+- **md.comp.extended-fab.tertiary.label-text.font** (Extended FAB (tertiary) label text font)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.sys.typescale.label-large.font -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.sys.typescale.label-large.font -> md.ref.typeface.plain = Roboto
+- **md.comp.extended-fab.tertiary.label-text.line-height** (Extended FAB (tertiary) label text line height)
+  - -> md.sys.typescale.label-large.line-height = 20pt
+- **md.comp.extended-fab.tertiary.label-text.size** (Extended FAB (tertiary) label text size)
+  - -> md.sys.typescale.label-large.size = 14pt
+- **md.comp.extended-fab.tertiary.label-text.tracking** (Extended FAB (tertiary) label text tracking)
+  - [Audience=3P + Font=Variable]: -> md.sys.typescale.label-large.tracking = 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.sys.typescale.label-large.tracking = 0.1pt
+- **md.comp.extended-fab.tertiary.label-text.type** (Label text type style)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+- **md.comp.extended-fab.tertiary.label-text.weight** (Extended FAB (tertiary) label text weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.sys.typescale.label-large.weight -> md.ref.typeface.weight-bold = weight 700
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.sys.typescale.label-large.weight -> md.ref.typeface.weight-medium = weight 500
+- **md.comp.extended-fab.tertiary.lowered.container.elevation** (Extended FAB (tertiary) lowered container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.tertiary.lowered.focus.container.elevation** (Extended FAB (tertiary) lowered focus container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.tertiary.lowered.hover.container.elevation** (Extended FAB (tertiary) lowered hover container elevation)
+  - -> md.sys.elevation.level2 = 3dp
+- **md.comp.extended-fab.tertiary.lowered.pressed.container.elevation** (Extended FAB (tertiary) lowered pressed container elevation)
+  - -> md.sys.elevation.level1 = 1dp
+- **md.comp.extended-fab.tertiary.pressed.container.elevation** (Extended FAB tertiary pressed container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.tertiary.pressed.icon.color** (Extended FAB tertiary pressed icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary20 = #492532
+- **md.comp.extended-fab.tertiary.pressed.label-text.color** (Extended FAB tertiary pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary20 = #492532
+- **md.comp.extended-fab.tertiary.pressed.state-layer.color** (Extended FAB tertiary pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary -> md.ref.palette.tertiary20 = #492532
+- **md.comp.extended-fab.tertiary.pressed.state-layer.opacity** (Extended FAB tertiary pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+
+## md.comp.extended-fab.tertiary-container — Extended FAB - Color - Tonal tertiary
+
+For tonal tertiary container extended FABs.
+
+- **md.comp.extended-fab.tertiary-container.container.color** (Extended FAB tonal tertiary container color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary80 = #efb8c8
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary60 = #b58392
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary30 = #633b48
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary40 = #7d5260
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+- **md.comp.extended-fab.tertiary-container.container.elevation** (Extended FAB tonal tertiary container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.tertiary-container.container.shadow-color** (Extended FAB tonal tertiary container shadow color)
+  - -> md.sys.color.shadow -> md.ref.palette.neutral0 = #000000 [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark; Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]
+- **md.comp.extended-fab.tertiary-container.focused.container.elevation** (Extended FAB tonal tertiary focused container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.tertiary-container.focused.icon.color** (Extended FAB tonal tertiary focused icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary-container.focused.label-text.color** (Extended FAB tonal tertiary focused label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary-container.focused.state-layer.color** (Extended FAB tonal tertiary focused state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary-container.focused.state-layer.opacity** (Extended FAB tonal tertiary focused state layer opacity)
+  - -> md.sys.state.focus.state-layer-opacity = opacity 0.1
+- **md.comp.extended-fab.tertiary-container.hovered.container.elevation** (Extended FAB tonal tertiary hovered container elevation)
+  - -> md.sys.elevation.level4 = 8dp
+- **md.comp.extended-fab.tertiary-container.hovered.icon.color** (Extended FAB tonal tertiary hovered icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary-container.hovered.label-text.color** (Extended FAB tonal tertiary hovered label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary-container.hovered.state-layer.color** (Extended FAB tonal tertiary hovered state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary-container.hovered.state-layer.opacity** (Extended FAB tonal tertiary hovered state layer opacity)
+  - -> md.sys.state.hover.state-layer-opacity = opacity 0.08
+- **md.comp.extended-fab.tertiary-container.icon.color** (Extended FAB tonal tertiary container icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary-container.label-text.color** (Extended FAB tonal tertiary label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary-container.pressed.container.elevation** (Extended FAB tonal tertiary pressed container elevation)
+  - -> md.sys.elevation.level3 = 6dp
+- **md.comp.extended-fab.tertiary-container.pressed.icon.color** (Extended FAB tonal tertiary pressed icon color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary-container.pressed.label-text.color** (Extended FAB tonal tertiary pressed label text color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary-container.pressed.state-layer.color** (Extended FAB tonal tertiary pressed state layer color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.on-tertiary-container -> md.ref.palette.tertiary30 = #633b48
+- **md.comp.extended-fab.tertiary-container.pressed.state-layer.opacity** (Extended FAB tonal tertiary pressed state layer opacity)
+  - -> md.sys.state.pressed.state-layer-opacity = opacity 0.1
+
+## md.ref.palette
+
+- **md.ref.palette.neutral0** (Neutral 0)
+- **md.ref.palette.neutral10** (Neutral 10)
+- **md.ref.palette.neutral100** (Neutral 100)
+- **md.ref.palette.neutral17** (Neutral 17)
+- **md.ref.palette.neutral90** (Neutral 90)
+- **md.ref.palette.neutral92** (Neutral 92)
+- **md.ref.palette.neutral96** (Neutral 96)
+- **md.ref.palette.primary0** (Primary 0)
+- **md.ref.palette.primary10** (Primary 10)
+- **md.ref.palette.primary100** (Primary 100)
+- **md.ref.palette.primary20** (Primary 20)
+- **md.ref.palette.primary30** (Primary 30)
+- **md.ref.palette.primary40** (Primary 40)
+- **md.ref.palette.primary60** (Primary 60)
+- **md.ref.palette.primary80** (Primary 80)
+- **md.ref.palette.primary90** (Primary 90)
+- **md.ref.palette.primary95** (Primary 95)
+- **md.ref.palette.secondary0** (Secondary 0)
+- **md.ref.palette.secondary10** (Secondary 10)
+- **md.ref.palette.secondary100** (Secondary 100)
+- **md.ref.palette.secondary20** (Secondary 20)
+- **md.ref.palette.secondary30** (Secondary 30)
+- **md.ref.palette.secondary40** (Secondary 40)
+- **md.ref.palette.secondary60** (Secondary 60)
+- **md.ref.palette.secondary80** (Secondary 80)
+- **md.ref.palette.secondary90** (Secondary 90)
+- **md.ref.palette.secondary95** (Secondary 95)
+- **md.ref.palette.tertiary0** (Tertiary 0)
+- **md.ref.palette.tertiary10** (Tertiary 10)
+- **md.ref.palette.tertiary100** (Tertiary 100)
+- **md.ref.palette.tertiary20** (Tertiary 20)
+- **md.ref.palette.tertiary30** (Tertiary 30)
+- **md.ref.palette.tertiary40** (Tertiary 40)
+- **md.ref.palette.tertiary60** (Tertiary 60)
+- **md.ref.palette.tertiary80** (Tertiary 80)
+- **md.ref.palette.tertiary90** (Tertiary 90)
+- **md.ref.palette.tertiary95** (Tertiary 95)
+
+## md.ref.typeface
+
+- **md.ref.typeface.brand** (Brand typeface)
+- **md.ref.typeface.plain** (Plain typeface)
+- **md.ref.typeface.weight-bold** (Bold weight)
+- **md.ref.typeface.weight-medium** (Medium weight)
+- **md.ref.typeface.weight-regular** (Regular weight)
+
+## md.sys.color
+
+- **md.sys.color.on-primary** (On primary) — Text and icons shown against the primary color
+- **md.sys.color.on-primary-container** (On primary container) — Contrast-passing color shown against the primary container
+- **md.sys.color.on-secondary** (On secondary) — Text and icons shown against the secondary color
+- **md.sys.color.on-secondary-container** (On secondary container) — Contrast-passing color shown against the secondary container
+- **md.sys.color.on-surface** (On surface) — Text and icons shown against the surface color
+- **md.sys.color.on-tertiary** (On tertiary) — Text and icons shown against the tertiary color
+- **md.sys.color.on-tertiary-container** (On tertiary container) — Contrast-passing color shown against the tertiary container
+- **md.sys.color.primary** (Primary) — Main color used across screens and components
+- **md.sys.color.primary-container** (Primary container) — Standout container color for key components
+- **md.sys.color.secondary** (Secondary) — Accent color used across screens and components
+- **md.sys.color.secondary-container** (Secondary container) — Less prominent container color, for components like tonal buttons
+- **md.sys.color.shadow** (Shadow) — For shadows applied to elevated components
+- **md.sys.color.surface-container-high** (Surface Container High)
+- **md.sys.color.surface-container-low** (Surface Container Low)
+- **md.sys.color.surface-tint** (Surface tint)
+- **md.sys.color.tertiary** (Tertiary) — Contrasting accent color used across screens and components
+- **md.sys.color.tertiary-container** (Tertiary container) — Contrasting container color, for components like input fields
+
+## md.sys.elevation
+
+- **md.sys.elevation.level1** (+1)
+- **md.sys.elevation.level2** (+2)
+- **md.sys.elevation.level3** (+3)
+- **md.sys.elevation.level4** (+4)
+
+## md.sys.measurement
+
+- **md.sys.measurement.space100** (Space 100) — Base measurement
+- **md.sys.measurement.space150** (Space 150) — 1.5 x base measurement
+- **md.sys.measurement.space200** (Space 200) — 2 x base measurement
+- **md.sys.measurement.space250** (Space 250) — 2.5 x base measurement
+
+## md.sys.shape
+
+- **md.sys.shape.corner.extra-large** (Extra large rounding)
+- **md.sys.shape.corner.large** (Large rounding)
+- **md.sys.shape.corner.large-increased** (Large increased rounding)
+
+## md.sys.state
+
+- **md.sys.state.focus.state-layer-opacity** (Focus state layer opacity)
+- **md.sys.state.hover.state-layer-opacity** (Hover state layer opacity)
+- **md.sys.state.pressed.state-layer-opacity** (Pressed state layer opacity)
+
+## md.sys.state.focus-indicator
+
+- **md.sys.state.focus-indicator.outer-offset** (Focus indicator outer offset)
+- **md.sys.state.focus-indicator.thickness** (Focus indicator thickness)
+
+## md.sys.typescale
+
+- **md.sys.typescale.headline-small** (Headline Small)
+- **md.sys.typescale.headline-small.crsv** (Headline Small crsv)
+- **md.sys.typescale.headline-small.fill** (Headline Small fill)
+- **md.sys.typescale.headline-small.font** (Headline Small font name)
+- **md.sys.typescale.headline-small.grad** (Headline Small grad)
+- **md.sys.typescale.headline-small.hexp** (Headline Small hexp)
+- **md.sys.typescale.headline-small.line-height** (Headline Small line height)
+- **md.sys.typescale.headline-small.opsz** (Headline Small opsz)
+- **md.sys.typescale.headline-small.rond** (Headline Small rond)
+- **md.sys.typescale.headline-small.size** (Headline Small font size)
+- **md.sys.typescale.headline-small.slnt** (Headline Small slnt)
+- **md.sys.typescale.headline-small.tracking** (Headline Small font tracking)
+- **md.sys.typescale.headline-small.wdth** (Headline Small wdth)
+- **md.sys.typescale.headline-small.weight** (Headline Small font weight)
+- **md.sys.typescale.headline-small.wght** (Headline Small wght)
+- **md.sys.typescale.label-large** (Label Large)
+- **md.sys.typescale.label-large-fill** (Label Large fill)
+- **md.sys.typescale.label-large.crsv** (Label Large crsv)
+- **md.sys.typescale.label-large.font** (Label Large font name)
+- **md.sys.typescale.label-large.grad** (Label Large grad)
+- **md.sys.typescale.label-large.hexp** (Label Large hexp)
+- **md.sys.typescale.label-large.line-height** (Label Large line height)
+- **md.sys.typescale.label-large.opsz** (Label Large opsz)
+- **md.sys.typescale.label-large.rond** (Label Large rond)
+- **md.sys.typescale.label-large.size** (Label Large font size)
+- **md.sys.typescale.label-large.slnt** (Label Large slnt)
+- **md.sys.typescale.label-large.tracking** (Label Large font tracking)
+- **md.sys.typescale.label-large.wdth** (Label Large wdth)
+- **md.sys.typescale.label-large.weight** (Label Large font weight)
+- **md.sys.typescale.label-large.wght** (Label Large wght)
+- **md.sys.typescale.title-large** (Title Large)
+- **md.sys.typescale.title-large.crsv** (Title Large crsv)
+- **md.sys.typescale.title-large.fill** (Title Large fill)
+- **md.sys.typescale.title-large.font** (Title Large font name)
+- **md.sys.typescale.title-large.grad** (Title Large grad)
+- **md.sys.typescale.title-large.hexp** (Title Large hexp)
+- **md.sys.typescale.title-large.line-height** (Title Large line height)
+- **md.sys.typescale.title-large.opsz** (Title Large opsz)
+- **md.sys.typescale.title-large.rond** (Title Large rond)
+- **md.sys.typescale.title-large.size** (Title Large font size)
+- **md.sys.typescale.title-large.slnt** (Title Large slnt)
+- **md.sys.typescale.title-large.tracking** (Title Large font tracking)
+- **md.sys.typescale.title-large.wdth** (Title Large wdth)
+- **md.sys.typescale.title-large.weight** (Title Large font weight)
+- **md.sys.typescale.title-large.wght** (Title Large wght)
+- **md.sys.typescale.title-medium** (Title Medium)
+- **md.sys.typescale.title-medium.crsv** (Title Medium crsv)
+- **md.sys.typescale.title-medium.fill** (Title Medium fill)
+- **md.sys.typescale.title-medium.font** (Title Medium font name)
+- **md.sys.typescale.title-medium.grad** (Title Medium grad)
+- **md.sys.typescale.title-medium.hexp** (Title Medium hexp)
+- **md.sys.typescale.title-medium.line-height** (Title Medium line height)
+- **md.sys.typescale.title-medium.opsz** (Title Medium opsz)
+- **md.sys.typescale.title-medium.rond** (Title Medium rond)
+- **md.sys.typescale.title-medium.size** (Title Medium font size)
+- **md.sys.typescale.title-medium.slnt** (Title Medium slnt)
+- **md.sys.typescale.title-medium.tracking** (Title Medium font tracking)
+- **md.sys.typescale.title-medium.wdth** (Title Medium wdth)
+- **md.sys.typescale.title-medium.weight** (Title Medium font weight)
+- **md.sys.typescale.title-medium.wght** (Title Medium wght)
+

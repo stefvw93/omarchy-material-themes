@@ -1,14 +1,13 @@
 import Quickshell.Wayland
 import QtQuick
-import qs.Commons
 import qs.Ui
 
 // One window in the periphery: a live thumbnail at the window's aspect.
 // Hovering selects it (the close and fullscreen keys then act on it). Click
 // focuses it (switching workspace); dragging it into the focus area moves it
 // onto the current workspace, onto another workspace group moves it there.
-// Lines marked `qmllint disable missing-property` read the untyped theme
-// singleton Style.
+// Its parts are M3 components (interpretation periphery.components); the
+// host gives their resolved colours and sizes.
 Item {
   id: card
 
@@ -19,58 +18,81 @@ Item {
   readonly property bool selected: host.selected === win.address && !dragging
   readonly property bool dragging: host.dragAddress === win.address
 
+  // No frame yet: an outlined card with the window class.
   Rectangle {
     anchors.fill: parent
     radius: card.host.windowRounding
-    color: card.host.background
+    color: card.host.placeholderColor
+    border.color: card.host.placeholderOutline
+    border.width: card.host.placeholderOutlineWidth
     visible: !thumb.hasContent
 
     Text {
       anchors.centerIn: parent
-      width: parent.width - Style.spacing.sm * 2 // qmllint disable missing-property
+      width: parent.width - card.host.m3.plainTooltip.padding * 2
       textFormat: Text.PlainText
       text: card.win.appClass
-      color: card.host.foreground
-      opacity: 0.7
+      color: card.host.onSurfaceVariant
       font.family: card.host.fontFamily
-      font.pixelSize: Style.font.caption // qmllint disable missing-property
+      font.pixelSize: card.host.typeOf("body-small").size
+      font.weight: card.host.typeOf("body-small").weight
       horizontalAlignment: Text.AlignHCenter
       elide: Text.ElideRight
     }
   }
 
-  ScreencopyView {
-    id: thumb
+  // Rounded like its window and its border below.
+  RoundedClip {
     anchors.fill: parent
-    captureSource: card.host.opened && card.win.toplevel ? card.win.toplevel.wayland : null
-    live: card.host.opened
+    radius: card.host.windowRounding
+
+    ScreencopyView {
+      id: thumb
+      anchors.fill: parent
+      captureSource: card.host.opened && card.win.toplevel ? card.win.toplevel.wayland : null
+      live: card.host.opened
+    }
   }
 
   // The window's border, as Hyprland would draw it: active when selected.
+  // Hyprland moves border colour on the effects fast spring (its `border`
+  // leaf); the active border fading in over the inactive one blends the same.
   BorderOverlay {
-    borderSpec: card.selected ? card.host.activeBorder : card.host.inactiveBorder
+    borderSpec: card.host.inactiveBorder
     radius: card.host.windowRounding
   }
+  SpringValue { id: activeFade; spring: card.host.springEffectsFast; target: card.selected ? 1 : 0 }
+  BorderOverlay {
+    borderSpec: card.host.activeBorder
+    radius: card.host.windowRounding
+    opacity: activeFade.value
+    visible: opacity > 0
+  }
 
+  // The title: a plain tooltip, the card gap above the card's bottom edge.
+  // It fades on the effects fast spring (a small element), like the border.
+  SpringValue { id: tooltipFade; spring: card.host.springEffectsFast; target: card.selected ? 1 : 0 }
   Rectangle {
-    visible: card.selected
+    opacity: tooltipFade.value
+    visible: opacity > 0
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
-    anchors.bottomMargin: Style.spacing.sm // qmllint disable missing-property
-    width: Math.min(parent.width - Style.spacing.sm * 2, label.implicitWidth + Style.spacing.md * 2) // qmllint disable missing-property
-    height: label.implicitHeight + Style.spacing.xs * 2 // qmllint disable missing-property
-    radius: card.host.cornerRadius
-    color: card.host.background
+    anchors.bottomMargin: card.host.cardGap
+    width: Math.min(parent.width - card.host.cardGap * 2, label.implicitWidth + card.host.m3.plainTooltip.padding * 2)
+    height: Math.max(card.host.m3.plainTooltip.height, label.implicitHeight)
+    radius: card.host.tooltipCorner
+    color: card.host.tooltipColor
 
     Text {
       id: label
       anchors.centerIn: parent
-      width: Math.min(implicitWidth, parent.width - Style.spacing.md * 2) // qmllint disable missing-property
+      width: Math.min(implicitWidth, parent.width - card.host.m3.plainTooltip.padding * 2)
       textFormat: Text.PlainText
       text: card.win.title || card.win.appClass
-      color: card.host.selectedText
+      color: card.host.tooltipText
       font.family: card.host.fontFamily
-      font.pixelSize: Style.font.caption // qmllint disable missing-property
+      font.pixelSize: card.host.tooltipType.size
+      font.weight: card.host.tooltipType.weight
       elide: Text.ElideRight
     }
   }

@@ -34,7 +34,7 @@ Headless tests can't cover these.
 ## 2. Code
 
 - [ ] **Periphery Effect core.** Its pure logic already lives in `src/` (layout, selection, hook strings). The QML state machine is still QML: selection, flights, drag and drop, ghosts, and the 80 ms throttled rebuild. Move it into an Effect core the way expo did (`apps/expo/src/core.ts`, `tests/*.engine.qml`). Do it step by step with hand-checks, because most of this behaviour can't be tested headlessly.
-- [ ] **Derive Qt spring constants from tokens.** Periphery's `springStrength` (11.2) and `springDamping` (0.65) were tuned by eye to `spatial_default`. Simulate Qt's `SpringAnimation` integrator (fixed 16 ms ticks) in `@stef/motion`, fit `{spring, damping}` per token, and replace the constants. Today they don't follow `motion.scheme`.
+- [x] **Derive Qt spring constants from tokens.** Replaced by `SpringValue.qml` (qml-kit): the exact M3 spring stepped per frame, from `tokens.m3.springs`. Periphery uses it for every animation and follows `motion.scheme`.
 - [ ] **`tokens.lua` for non-Omaterial themes.** `stef tokens apply` writes `~/.config/hypr/stef/tokens.lua`, but nothing sources it. It has to load _after_ the theme's `hyprland.lua` to win. Decide where, e.g. a `stef hooks install` step or an Omarchy theme hook. Omaterial themes already render the tokens.
 - [ ] **Studio: make token preview permanent.** Today "Preview in Hyprland" lasts until the next config reload. Offer a "write tokens.lua" action, or re-apply the theme from the Tokens page.
 - [ ] **Studio: deploy and dev buttons.** The Plugins page only enables and toggles. Building needs the repo checkout, so it would shell out to `pnpm stef …` with a configured repo path.
@@ -42,6 +42,7 @@ Headless tests can't cover these.
 - [ ] **Studio bundle size.** Vite warns about chunks over 500 kB. Split per page (lazy routes) or with `codeSplitting`.
 - [ ] **Harness and hooks.** `stef harness` runs the plugin in its own `qs`, but `omarchy-shell` can only reach the main shell, so periphery's Hyprland hook still talks to the main shell. Hook-driven behaviour needs `stef dev`. If Omarchy ever lets callers address another instance, route the dev hook to the harness.
 - [ ] **QML: shared view components.** `qml-kit` only shares logic (address, reading order, monitor geometry, springs, tokens). The two plugins' window cards (ScreencopyView plus title pill) are still separate. Unify them once both have Effect cores and their delegates' data has converged.
+- [ ] **Hot reload with a running Effect core can crash the shell.** On 2026-10-12, redeploying `stef.expo.dev` and opening it about a second later segfaulted quickshell inside the QML JS engine (`QV4::Value::sameValueZero`, called from JIT code). The likely cause is the old instance's core running after its JS state was torn down. Until it's understood, redeploy plugins with a core and then `omarchy-restart-shell` instead of hot-reloading. Services never hot-reload at all: the engine caches their component by URL.
 - [ ] **Bundle check: unknown engine warnings.** `plugin-kit check` passes when every bundle loads. It should also fail on QML engine warnings beyond the known `usedbeforedeclared` lints.
 
 ## 3. Tooling and later

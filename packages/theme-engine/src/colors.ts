@@ -1,35 +1,72 @@
+import { type ColorRole, colorRoles } from "@stef/m3";
 import { Schema } from "effect";
 
-export const HexColor = Schema.String.check(
-  Schema.isPattern(/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/),
-).pipe(
-  Schema.annotate({
-    description: "A hex color string (#RGB, #RRGGBB, or #RRGGBBAA).",
-    examples: ["#ff0000", "#f00"],
-  }),
+export const HexColor = Schema.String.check(Schema.isPattern(/^#[0-9a-f]{6}$/)).pipe(
+  Schema.annotate({ description: "A lowercase #rrggbb colour.", examples: ["#6750a4"] }),
 );
 export type HexColor = typeof HexColor.Type;
 
-export const Mode = Schema.Union([Schema.Literal("dark"), Schema.Literal("light")]);
+export const Mode = Schema.Literals(["dark", "light"]);
 export type Mode = typeof Mode.Type;
 
-export const ContrastLevel = Schema.Number.check(Schema.isBetween({ minimum: -1, maximum: 1 }));
-export type ContrastLevel = typeof ContrastLevel.Type;
-
-export const SchemeKind = Schema.Union([
-  Schema.Literal("expressive"),
-  Schema.Literal("fidelity"),
-  Schema.Literal("neutral"),
-  Schema.Literal("vibrant"),
-  Schema.Literal("rainbow"),
+/**
+ * material-color-utilities' scheme variants whose definition is how a seed
+ * becomes the tonal palettes. Fidelity, content and monochrome also override
+ * role tones, which the spec's tone table fixes, so they are not offered.
+ */
+export const Variant = Schema.Literals([
+  "tonal-spot",
+  "neutral",
+  "vibrant",
+  "expressive",
+  "rainbow",
+  "fruit-salad",
 ]);
+export type Variant = typeof Variant.Type;
+
+/** The spec's three contrast levels (Default, Medium, High). */
+export const Contrast = Schema.Literals(["standard", "medium", "high"]);
+export type Contrast = typeof Contrast.Type;
+
+/** Every md.sys.color role the spec defines (not deprecated), as hex. */
+export const SystemColors = Schema.Struct(
+  Object.fromEntries(colorRoles.map((role) => [role, HexColor])) as {
+    readonly [R in ColorRole]: typeof HexColor;
+  },
+);
+export type SystemColors = typeof SystemColors.Type;
+
+/** A static colour's four accent-convention roles, plus the terminal's bright variant. */
+export const StaticColor = Schema.Struct({
+  color: HexColor,
+  onColor: HexColor,
+  colorContainer: HexColor,
+  onColorContainer: HexColor,
+  /** A custom role on the same palette: the terminal's bright_* slot. */
+  bright: HexColor,
+});
+export type StaticColor = typeof StaticColor.Type;
+
+/** Terminal hues besides red (which is the error role). */
+export const StaticHue = Schema.Literals(["yellow", "orange", "green", "cyan", "blue", "magenta"]);
+export type StaticHue = typeof StaticHue.Type;
+
+export const StaticColors = Schema.Struct({
+  yellow: StaticColor,
+  orange: StaticColor,
+  green: StaticColor,
+  cyan: StaticColor,
+  blue: StaticColor,
+  magenta: StaticColor,
+});
+export type StaticColors = typeof StaticColors.Type;
 
 /**
- * Based on existing theme colors.toml: https://github.com/basecamp/omarchy/blob/quattro/themes/matte-black/colors.toml
+ * Omarchy's colors.toml keys, which its app templates (terminals, editors,
+ * btop, …) consume. Based on the shipped themes, e.g.
+ * https://github.com/basecamp/omarchy/blob/quattro/themes/matte-black/colors.toml
  */
 export const OmarchyColors = Schema.Struct({
-  mode: Mode,
-
   accent: HexColor,
   selection: HexColor,
   muted: HexColor,
@@ -59,67 +96,21 @@ export const OmarchyColors = Schema.Struct({
   bright_cyan: HexColor,
   bright_blue: HexColor,
   bright_magenta: HexColor,
-
-  // material
-  omaterial_background: Schema.Number,
-  omaterial_error: Schema.Number,
-  omaterial_errorContainer: Schema.Number,
-  omaterial_errorDim: Schema.Number,
-  omaterial_errorPaletteKeyColor: Schema.Number,
-  omaterial_inverseOnSurface: Schema.Number,
-  omaterial_inversePrimary: Schema.Number,
-  omaterial_inverseSurface: Schema.Number,
-  omaterial_neutralPaletteKeyColor: Schema.Number,
-  omaterial_neutralVariantPaletteKeyColor: Schema.Number,
-  omaterial_onBackground: Schema.Number,
-  omaterial_onError: Schema.Number,
-  omaterial_onErrorContainer: Schema.Number,
-  omaterial_onPrimary: Schema.Number,
-  omaterial_onPrimaryContainer: Schema.Number,
-  omaterial_onPrimaryFixed: Schema.Number,
-  omaterial_onPrimaryFixedVariant: Schema.Number,
-  omaterial_onSecondary: Schema.Number,
-  omaterial_onSecondaryContainer: Schema.Number,
-  omaterial_onSecondaryFixed: Schema.Number,
-  omaterial_onSecondaryFixedVariant: Schema.Number,
-  omaterial_onSurface: Schema.Number,
-  omaterial_onSurfaceVariant: Schema.Number,
-  omaterial_onTertiary: Schema.Number,
-  omaterial_onTertiaryContainer: Schema.Number,
-  omaterial_onTertiaryFixed: Schema.Number,
-  omaterial_onTertiaryFixedVariant: Schema.Number,
-  omaterial_outline: Schema.Number,
-  omaterial_outlineVariant: Schema.Number,
-  omaterial_primary: Schema.Number,
-  omaterial_primaryContainer: Schema.Number,
-  omaterial_primaryDim: Schema.Number,
-  omaterial_primaryFixed: Schema.Number,
-  omaterial_primaryFixedDim: Schema.Number,
-  omaterial_primaryPaletteKeyColor: Schema.Number,
-  omaterial_scrim: Schema.Number,
-  omaterial_secondary: Schema.Number,
-  omaterial_secondaryContainer: Schema.Number,
-  omaterial_secondaryDim: Schema.Number,
-  omaterial_secondaryFixed: Schema.Number,
-  omaterial_secondaryFixedDim: Schema.Number,
-  omaterial_secondaryPaletteKeyColor: Schema.Number,
-  omaterial_shadow: Schema.Number,
-  omaterial_surface: Schema.Number,
-  omaterial_surfaceBright: Schema.Number,
-  omaterial_surfaceContainer: Schema.Number,
-  omaterial_surfaceContainerHigh: Schema.Number,
-  omaterial_surfaceContainerHighest: Schema.Number,
-  omaterial_surfaceContainerLow: Schema.Number,
-  omaterial_surfaceContainerLowest: Schema.Number,
-  omaterial_surfaceDim: Schema.Number,
-  omaterial_surfaceTint: Schema.Number,
-  omaterial_surfaceVariant: Schema.Number,
-  omaterial_tertiary: Schema.Number,
-  omaterial_tertiaryContainer: Schema.Number,
-  omaterial_tertiaryDim: Schema.Number,
-  omaterial_tertiaryFixed: Schema.Number,
-  omaterial_tertiaryFixedDim: Schema.Number,
-  omaterial_tertiaryPaletteKeyColor: Schema.Number,
 });
-
 export type OmarchyColors = typeof OmarchyColors.Type;
+
+/** Everything a theme is coloured with, from one seed. */
+export const ThemePalette = Schema.Struct({
+  source: Schema.Struct({
+    color: HexColor,
+    variant: Variant,
+    contrast: Contrast,
+    mode: Mode,
+    /** The spec (and its content version) the colour role tones come from. */
+    spec: Schema.String,
+  }),
+  system: SystemColors,
+  statics: StaticColors,
+  omarchy: OmarchyColors,
+});
+export type ThemePalette = typeof ThemePalette.Type;

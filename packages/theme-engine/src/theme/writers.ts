@@ -1,72 +1,33 @@
 import { Effect } from "effect";
-import type { OmarchyColors } from "../colors.ts";
+import type { ThemePalette } from "../colors.ts";
 import { writeColorsToml } from "./files/colors.toml.ts";
 import { writeHyprlandLua } from "./files/hyprland.lua.ts";
-import {
-  writeShellBarToml,
-  writeShellControlsToml,
-  writeShellFontToml,
-  writeShellHyprlandToml,
-  writeShellImagePickerToml,
-  writeShellLauncherToml,
-  writeShellLockToml,
-  writeShellMenuToml,
-  writeShellNotificationsToml,
-  writeShellPolkitToml,
-  writeShellPopupsToml,
-  writeShellSpacingToml,
-  writeShellTooltipsToml,
-} from "./files/shell.toml.ts";
+import { writeOmaterialJson } from "./files/omaterial.json.ts";
+import { shellSectionNames, writeShellSection } from "./files/shell.toml.ts";
 import type { ThemeFileWriter } from "./shared.ts";
 
-export type ThemeWriters = Record<
-  | "writeColorsToml"
-  | "writeHyprlandLua"
-  | "writeShellBarToml"
-  | "writeShellHyprlandToml"
-  | "writeShellControlsToml"
-  | "writeShellSpacingToml"
-  | "writeShellPopupsToml"
-  | "writeShellTooltipsToml"
-  | "writeShellFontToml"
-  | "writeShellNotificationsToml"
-  | "writeShellLauncherToml"
-  | "writeShellMenuToml"
-  | "writeShellPolkitToml"
-  | "writeShellLockToml"
-  | "writeShellImagePickerToml",
-  ThemeFileWriter<OmarchyColors>
->;
+/** Writer for each theme file, by file name. */
+export type ThemeWriters = Readonly<Record<string, ThemeFileWriter>>;
 
 /**
  * Every theme file writer, bound to the `FileSystem`, `Path` and
- * `ThemeOutputDirectory` in context. Platform-agnostic: Studio provides Tauri
- * layers, the CLI provides Node ones.
+ * `ThemeOutputDirectory` in context; each reads `ThemeTokens` when it writes.
+ * Platform-agnostic: Studio provides Tauri layers, the CLI Node ones.
  */
 export const makeThemeWriters = Effect.gen(function* () {
-  const writers: ThemeWriters = {
-    writeColorsToml: yield* writeColorsToml,
-    writeHyprlandLua: yield* writeHyprlandLua,
-    writeShellBarToml: yield* writeShellBarToml,
-    writeShellHyprlandToml: yield* writeShellHyprlandToml,
-    writeShellControlsToml: yield* writeShellControlsToml,
-    writeShellSpacingToml: yield* writeShellSpacingToml,
-    writeShellPopupsToml: yield* writeShellPopupsToml,
-    writeShellTooltipsToml: yield* writeShellTooltipsToml,
-    writeShellFontToml: yield* writeShellFontToml,
-    writeShellNotificationsToml: yield* writeShellNotificationsToml,
-    writeShellLauncherToml: yield* writeShellLauncherToml,
-    writeShellMenuToml: yield* writeShellMenuToml,
-    writeShellPolkitToml: yield* writeShellPolkitToml,
-    writeShellLockToml: yield* writeShellLockToml,
-    writeShellImagePickerToml: yield* writeShellImagePickerToml,
+  const writers: Record<string, ThemeFileWriter> = {
+    "colors.toml": yield* writeColorsToml,
+    "hyprland.lua": yield* writeHyprlandLua,
+    "omaterial.json": yield* writeOmaterialJson,
   };
-  return writers;
+  for (const name of shellSectionNames)
+    writers[`shell.${name}.toml`] = yield* writeShellSection(name);
+  return writers as ThemeWriters;
 });
 
-/** Writes every theme file for `colors`, concurrently. */
-export const writeTheme = (writers: ThemeWriters, colors: OmarchyColors) =>
+/** Writes every theme file for `palette`, concurrently. */
+export const writeTheme = (writers: ThemeWriters, palette: ThemePalette) =>
   Effect.all(
-    Object.values(writers).map((write) => write(colors)),
+    Object.values(writers).map((write) => write(palette)),
     { concurrency: "unbounded", discard: true },
   );

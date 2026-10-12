@@ -29,7 +29,7 @@ pnpm stef deploy periphery     # build and install a plugin (add --dev for <id>.
 pnpm stef dev expo             # live dev variant in the real shell; Ctrl+C restores prod
 pnpm stef harness expo         # the dev build in its own qs process
 pnpm stef smoke periphery      # live checks against the running session
-pnpm stef tokens set gaps.inner 6   # design tokens; plugins pick them up live
+pnpm stef tokens set shape.windowCorner large   # M3 token choices; plugins pick them up live
 ```
 
 ## How plugins are built

@@ -1,17 +1,8 @@
 import { Task } from "@wych/react";
-import {
-  ApplyColors,
-  CommitContrastLevel,
-  Seed,
-  SetContrastLevel,
-  SetMode,
-  SetSchemeKind,
-} from "@/features/seed";
-import { schemeConstructors } from "@stef/theme-engine";
+import { ApplyColors, Seed, SetContrast, SetMode, SetVariant } from "@/features/seed";
+import { Contrast, Variant } from "@stef/theme-engine";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Slider } from "@/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -23,10 +14,8 @@ import {
 import { ColorsGrid } from "./colors-grid";
 import { Spinner } from "@/components/ui/spinner";
 
-const CONSTRUCTORS = Object.keys(schemeConstructors).map((key) => ({
-  value: key,
-  label: key,
-}));
+const VARIANTS = Variant.literals.map((value) => ({ value, label: value }));
+const CONTRASTS = Contrast.literals.map((value) => ({ value, label: `${value} contrast` }));
 
 /** The right-hand column: the chosen image, the scheme controls, the colours, apply. */
 export const OutputPanel = () => {
@@ -49,10 +38,10 @@ export const OutputPanel = () => {
       {state.selectedImageUrl ? (
         <div className="flex gap-2">
           <Select
-            items={CONSTRUCTORS}
-            value={state.schemeKind}
+            items={VARIANTS}
+            value={state.variant}
             onValueChange={(value) =>
-              dispatch(SetSchemeKind.make({ schemeKind: value ?? "neutral" }))
+              dispatch(SetVariant.make({ variant: value ?? state.variant }))
             }
           >
             <SelectTrigger>
@@ -60,7 +49,7 @@ export const OutputPanel = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {CONSTRUCTORS.map((item) => (
+                {VARIANTS.map((item) => (
                   <SelectItem key={item.value} value={item.value}>
                     {item.label}
                   </SelectItem>
@@ -88,21 +77,26 @@ export const OutputPanel = () => {
             </SelectContent>
           </Select>
 
-          <div className="flex items-center flex-1 gap-2 pl-1">
-            <Label>contrast</Label>
-            <Slider
-              min={-1}
-              max={1}
-              step={0.1}
-              value={state.contrastLevel}
-              onValueCommitted={(value) =>
-                dispatch(CommitContrastLevel.make({ contrastLevel: value as number }))
-              }
-              onValueChange={(value) =>
-                dispatch(SetContrastLevel.make({ contrastLevel: value as number }))
-              }
-            />
-          </div>
+          <Select
+            items={CONTRASTS}
+            value={state.contrast}
+            onValueChange={(value) =>
+              dispatch(SetContrast.make({ contrast: value ?? state.contrast }))
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="contrast" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {CONTRASTS.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       ) : (
         <div className="flex gap-2 h-8" aria-hidden>
@@ -112,11 +106,11 @@ export const OutputPanel = () => {
         </div>
       )}
 
-      {Task.match(state.omarchyColors, {
+      {Task.match(state.palette, {
         Idle: () => null,
         Pending: () => <ColorsGrid />,
         Rejected: (rejected) => `Error: ${rejected.error}`,
-        Resolved: (resolved) => <ColorsGrid omarchyColors={resolved.value} />,
+        Resolved: (resolved) => <ColorsGrid omarchyColors={resolved.value.omarchy} />,
       })}
 
       <Button

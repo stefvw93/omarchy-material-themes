@@ -1,0 +1,24 @@
+{
+  "name": "@stef/omaterial",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Omaterial: live text resizing for Omaterial themes, following Omarchy's text size.",
+  "type": "module",
+  "scripts": {
+    "build": "plugin-kit build",
+    "build:dev": "plugin-kit build --dev",
+    "verify": "plugin-kit check",
+    "test": "vp test"
+  },
+  "dependencies": {
+    "@stef/qml-kit": "workspace:*",
+    "@stef/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@stef/config": "workspace:*",
+    "@stef/plugin-kit": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

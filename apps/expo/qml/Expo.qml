@@ -5,7 +5,6 @@ import Quickshell.Hyprland
 import Quickshell.Wayland
 import QtQuick
 import qs.Commons
-import qs.Ui
 import "lib/core.mjs" as Core
 import "lib/kit.mjs" as Kit
 import "lib/meta.mjs" as Meta
@@ -16,8 +15,24 @@ import "lib/meta.mjs" as Meta
 Item {
   id: root
 
-  // Shape and motion, live from ~/.config/omarchy/stef/tokens.json.
-  Tokens { id: tokens }
+  // Shape, spacing, type and motion, live from ~/.config/omarchy/stef/tokens.json
+  // (tokens.m3 holds the resolved Material 3 values); type follows the
+  // Omarchy text size.
+  Tokens {
+    id: tokens
+    textBase: Style.fontBaseSize // qmllint disable missing-property
+  }
+  // The theme's M3 colour roles (omaterial.json), or an approximation from
+  // Omarchy's colours under other themes.
+  Scheme {
+    id: scheme
+    omarchy: ({ background: Color.background, foreground: Color.foreground, accent: Color.accent, muted: Color.muted, urgent: Color.urgent }) // qmllint disable missing-property
+  }
+  readonly property var m3: tokens.m3
+  // A component token's colour, through the scheme.
+  function compColor(name) { return scheme.color[root.m3.comp[name].role] }
+  // An M3 type style on a Text: size, line height, weight, tracking.
+  function typeOf(style) { return root.m3.type[style] }
 
   // The Effect core (src/core.ts) tracks which windows exist and hands
   // changed snapshots to relayout(); this file lays them out and draws them.
@@ -54,38 +69,55 @@ Item {
   property int selectedIndex: -1
   property string selectedAddress: ""
 
-  // Shares the [menu] surface tokens, like the emoji picker, so themes that
-  // style the menu also style the overview.
-  property color background: Color.menu.background // qmllint disable missing-property
-  property color foreground: Color.menu.text // qmllint disable missing-property
-  property color border: Color.menu.border // qmllint disable missing-property
-  property var borderSpec: Border.surfaceSpec("menu", "border", border, Math.max(1, Style.space(2)))
-  // Light theme-tinted wash; the compositor blurs what's behind it
-  // (layer rule on omarchy-expo in hypr/looknfeel.lua).
-  property color scrim: Qt.rgba(Color.menu.scrim.r, Color.menu.scrim.g, Color.menu.scrim.b, Math.min(Color.menu.scrim.a, 0.3)) // qmllint disable missing-property
-  property color selectedText: Color.menu.selectedText // qmllint disable missing-property
-  property color accent: Color.accent
-  readonly property int cornerRadius: Style.cornerRadius
+  // Which M3 component each part is: interpretation expo.components.
+  // The scrim; the compositor blurs what's behind it (layer rule on
+  // omarchy-expo in hypr/looknfeel.lua).
+  readonly property color scrim: Qt.alpha(scheme.color.scrim, root.m3.scrimOpacity)
+  readonly property color onSurface: scheme.color["on-surface"]
+  readonly property color onSurfaceVariant: scheme.color["on-surface-variant"]
+  readonly property color miniBackdrop: scheme.color["surface-container-high"]
+  // Workspace tiles: filled cards.
+  readonly property color tileColor: root.compColor("md.comp.filled-card.container.color")
+  readonly property int tileCorner: root.m3.comp["md.comp.filled-card.container.shape"]
+  readonly property color hoverLayer: Qt.alpha(root.compColor("md.comp.filled-card.hover.state-layer.color"), root.m3.comp["md.comp.filled-card.hover.state-layer.opacity"])
+  // The focused workspace: a primary navigation tab's active state.
+  readonly property color activeLabel: root.compColor("md.comp.primary-navigation-tab.with-label-text.active.label-text.color")
+  readonly property color inactiveLabel: root.compColor("md.comp.primary-navigation-tab.with-label-text.inactive.label-text.color")
+  readonly property color activeIndicator: root.compColor("md.comp.primary-navigation-tab.active-indicator.color")
+  readonly property int activeIndicatorHeight: root.m3.comp["md.comp.primary-navigation-tab.active-indicator.height"]
+  // The selected window: the card's focus indicator.
+  readonly property color focusColor: root.compColor("md.comp.filled-card.focus.indicator.color")
+  readonly property int focusThickness: root.m3.comp["md.comp.filled-card.focus.indicator.thickness"]
+  readonly property int focusOffset: root.m3.comp["md.comp.filled-card.focus.indicator.outline.offset"]
+  // A window without a capture: an outlined card.
+  readonly property color placeholderColor: root.compColor("md.comp.outlined-card.container.color")
+  readonly property color placeholderOutline: root.compColor("md.comp.outlined-card.outline.color")
+  readonly property int placeholderOutlineWidth: root.m3.comp["md.comp.outlined-card.outline.width"]
+  // The selected window's title: a plain tooltip.
+  readonly property color tooltipColor: root.compColor("md.comp.plain-tooltip.container.color")
+  readonly property color tooltipText: root.compColor("md.comp.plain-tooltip.supporting-text.color")
+  readonly property int tooltipCorner: root.m3.comp["md.comp.plain-tooltip.container.shape"]
+  readonly property var tooltipType: root.m3.comp["md.comp.plain-tooltip.supporting-text.type"]
   property string fontFamily: Style.font.menuFamily // qmllint disable missing-property
 
-  readonly property int outerMargin: Style.space(tokens.value.expo.outerMargin)
-  readonly property int tileGap: Style.space(tokens.value.expo.tileGap)
-  readonly property int tilePadding: Style.space(tokens.value.expo.tilePadding)
-  readonly property int headerHeight: Style.font.title + Style.spacing.md * 2 // qmllint disable missing-property
-  readonly property int selectionWidth: Math.max(2, Style.space(3))
+  readonly property int outerMargin: root.m3.expo.outerMargin
+  readonly property int tileGap: root.m3.expo.tileGap
+  readonly property int tilePadding: root.m3.expo.tilePadding
+  // The label line, then the tile padding to the miniature.
+  readonly property int headerHeight: root.typeOf("title-medium").lineHeight + root.tilePadding
 
   // Motion uses the tokens' Material 3 scheme, the one Hyprland's curves come
   // from: tiles move on spatial_default and fade on effects_default,
   // staggered in reading order. Hyprland's layersIn fade brings in the
   // blurred backdrop.
-  readonly property var springSpatial: tokens.springs.spatial_default
-  readonly property var springEffects: tokens.springs.effects_default
-  readonly property int tileStagger: tokens.value.expo.tileStagger
-  readonly property int windowStagger: tokens.value.expo.windowStagger
-  readonly property int windowLead: tokens.value.expo.windowLead
-  readonly property real tileScaleFrom: tokens.value.expo.tileScaleFrom
-  readonly property real windowScaleFrom: tokens.value.expo.windowScaleFrom
-  readonly property int riseDistance: Style.space(tokens.value.expo.rise)
+  readonly property var springSpatial: root.m3.springs.spatial_default
+  readonly property var springEffects: root.m3.springs.effects_default
+  readonly property int tileStagger: root.m3.expo.tileStagger
+  readonly property int windowStagger: root.m3.expo.windowStagger
+  readonly property int windowLead: root.m3.expo.windowLead
+  readonly property real tileScaleFrom: root.m3.expo.tileScaleFrom
+  readonly property real windowScaleFrom: root.m3.expo.windowScaleFrom
+  readonly property int riseDistance: root.m3.expo.rise
   // Milliseconds since open; every delegate derives its progress from it.
   property real clock: 0
 
@@ -182,6 +214,7 @@ Item {
       g.h = tileH
       g.miniW = miniW
       g.miniH = miniH
+      g.scale = scale
       for (var j = 0; j < g.windows.length; j++) {
         var win = g.windows[j]
         win.x = Math.max(0, win.rx * scale)
@@ -335,23 +368,22 @@ Item {
       visible: root.opened && root.groups.length === 0
       textFormat: Text.PlainText
       text: "No open windows"
-      color: root.foreground
-      opacity: 0.7
+      color: root.onSurfaceVariant
       font.family: root.fontFamily
-      font.pixelSize: Style.font.heading // qmllint disable missing-property
+      font.pixelSize: root.typeOf("title-large").size
+      font.weight: root.typeOf("title-large").weight
     }
 
     Repeater {
       model: root.groups
 
-      delegate: BorderSurface {
+      delegate: Rectangle {
         id: tile
         required property var modelData
         readonly property real localTime: root.clock - modelData.groupIndex * root.tileStagger
         readonly property real spatial: root.spring(localTime, root.springSpatial)
         readonly property real effects: root.spring(localTime, root.springEffects)
         readonly property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === modelData.id
-        readonly property bool hasSelection: root.selectedIndex >= 0 && root.flat[root.selectedIndex] && root.flat[root.selectedIndex].groupIndex === modelData.groupIndex
 
         x: modelData.x
         y: modelData.y + (1 - spatial) * root.riseDistance
@@ -362,9 +394,17 @@ Item {
         // Fade the tile as one flattened surface; per-item opacity would let
         // the card, backdrop and thumbnails show through each other mid-fade.
         layer.enabled: effects < 0.999
-        radius: root.cornerRadius
-        color: root.background
-        borderSpec: root.borderSpec
+        radius: root.tileCorner
+        color: root.tileColor
+
+        // The card's hover state layer.
+        HoverHandler { id: tileHover }
+        Rectangle {
+          anchors.fill: parent
+          radius: tile.radius
+          color: root.hoverLayer
+          visible: tileHover.hovered
+        }
 
         MouseArea {
           anchors.fill: parent
@@ -374,27 +414,38 @@ Item {
 
         Row {
           x: root.tilePadding
-          height: root.headerHeight
-          spacing: Style.spacing.md // qmllint disable missing-property
+          y: root.tilePadding
+          height: root.typeOf("title-medium").lineHeight
+          spacing: root.tilePadding
 
           Text {
+            id: workspaceLabel
             anchors.verticalCenter: parent.verticalCenter
             textFormat: Text.PlainText
             text: tile.modelData.label
-            color: tile.isActive ? root.selectedText : root.foreground
+            color: tile.isActive ? root.activeLabel : root.inactiveLabel
             font.family: root.fontFamily
-            font.pixelSize: Style.font.title // qmllint disable missing-property
-            font.bold: tile.isActive
+            font.pixelSize: root.typeOf("title-medium").size
+            font.weight: root.typeOf("title-medium").weight
+
+            // The active tab's indicator, under the label.
+            Rectangle {
+              visible: tile.isActive
+              anchors.top: parent.bottom
+              width: parent.width
+              height: root.activeIndicatorHeight
+              color: root.activeIndicator
+            }
           }
 
           Text {
             anchors.verticalCenter: parent.verticalCenter
             textFormat: Text.PlainText
             text: tile.modelData.windows.length + (tile.modelData.windows.length === 1 ? " window" : " windows")
-            color: root.foreground
-            opacity: 0.55
+            color: root.onSurfaceVariant
             font.family: root.fontFamily
-            font.pixelSize: Style.font.bodySmall // qmllint disable missing-property
+            font.pixelSize: root.typeOf("body-small").size
+            font.weight: root.typeOf("body-small").weight
           }
         }
 
@@ -404,14 +455,15 @@ Item {
           y: root.headerHeight + root.tilePadding
           width: tile.modelData.miniW
           height: tile.modelData.miniH
-          clip: true
+          // Thumbnails are the windows at this scale, corners included.
+          readonly property real thumbCorner: root.m3.windowCorner * tile.modelData.scale
 
-          // Empty-workspace backdrop: a faint tint that arrives with the
-          // windows, so the miniature never flashes as a lighter empty slab.
+          // The miniature's backdrop arrives with the windows, so it never
+          // flashes as an empty slab.
           Rectangle {
             anchors.fill: parent
-            radius: root.cornerRadius
-            color: Util.alpha(root.foreground, 0.04)
+            radius: mini.thumbCorner
+            color: root.miniBackdrop
             opacity: root.spring(tile.localTime - root.windowLead, root.springEffects)
           }
 
@@ -434,26 +486,27 @@ Item {
               opacity: root.spring(localTime, root.springEffects)
               scale: root.windowScaleFrom + (1 - root.windowScaleFrom) * spatial
 
+              // No capture yet: an outlined card with the class and title.
               Rectangle {
                 anchors.fill: parent
-                radius: root.cornerRadius
-                color: root.background
-                border.color: root.border
-                border.width: 1
+                radius: mini.thumbCorner
+                color: root.placeholderColor
+                border.color: root.placeholderOutline
+                border.width: root.placeholderOutlineWidth
                 visible: !thumb.hasContent
 
                 Column {
                   anchors.centerIn: parent
-                  width: parent.width - Style.spacing.md * 2 // qmllint disable missing-property
-                  spacing: Style.spacing.xs // qmllint disable missing-property
+                  width: parent.width - root.tilePadding * 2
 
                   Text {
                     width: parent.width
                     textFormat: Text.PlainText
                     text: win.modelData.appClass
-                    color: root.foreground
+                    color: root.onSurface
                     font.family: root.fontFamily
-                    font.pixelSize: Style.font.body // qmllint disable missing-property
+                    font.pixelSize: root.typeOf("body-medium").size
+                    font.weight: root.typeOf("body-medium").weight
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
                   }
@@ -462,51 +515,64 @@ Item {
                     width: parent.width
                     textFormat: Text.PlainText
                     text: win.modelData.title
-                    color: root.foreground
-                    opacity: 0.6
+                    color: root.onSurfaceVariant
                     font.family: root.fontFamily
-                    font.pixelSize: Style.font.caption // qmllint disable missing-property
+                    font.pixelSize: root.typeOf("body-small").size
+                    font.weight: root.typeOf("body-small").weight
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
                   }
                 }
               }
 
-              ScreencopyView {
-                id: thumb
+              // Rounded like its window.
+              RoundedClip {
                 anchors.fill: parent
-                captureSource: root.opened && win.modelData.toplevel ? win.modelData.toplevel.wayland : null
-                live: root.opened
+                radius: mini.thumbCorner
+
+                ScreencopyView {
+                  id: thumb
+                  anchors.fill: parent
+                  captureSource: root.opened && win.modelData.toplevel ? win.modelData.toplevel.wayland : null
+                  live: root.opened
+                }
               }
 
+              // The focus indicator, outside the window by its outer offset.
               Rectangle {
+                visible: win.selected
                 anchors.fill: parent
-                radius: root.cornerRadius
+                anchors.margins: -(root.focusOffset + root.focusThickness)
+                radius: mini.thumbCorner + root.focusOffset + root.focusThickness
                 color: "transparent"
-                border.color: root.accent
-                border.width: root.selectionWidth
-                visible: win.selected
+                border.color: root.focusColor
+                border.width: root.focusThickness
               }
 
+              // The title: a plain tooltip, fading on the effects fast spring
+              // (a small element).
+              SpringValue { id: tooltipFade; spring: root.m3.springs.effects_fast; target: win.selected ? 1 : 0 }
               Rectangle {
-                visible: win.selected
+                opacity: tooltipFade.value
+                visible: opacity > 0
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: Style.spacing.md // qmllint disable missing-property
-                width: Math.min(parent.width - Style.spacing.md * 2, label.implicitWidth + Style.spacing.md * 2) // qmllint disable missing-property
-                height: label.implicitHeight + Style.spacing.xs * 2 // qmllint disable missing-property
-                radius: root.cornerRadius
-                color: root.background
+                anchors.bottomMargin: root.tilePadding
+                width: Math.min(parent.width - root.tilePadding * 2, label.implicitWidth + root.m3.plainTooltip.padding * 2)
+                height: Math.max(root.m3.plainTooltip.height, label.implicitHeight)
+                radius: root.tooltipCorner
+                color: root.tooltipColor
 
                 Text {
                   id: label
                   anchors.centerIn: parent
-                  width: Math.min(implicitWidth, parent.width - Style.spacing.md * 2) // qmllint disable missing-property
+                  width: Math.min(implicitWidth, parent.width - root.m3.plainTooltip.padding * 2)
                   textFormat: Text.PlainText
                   text: win.modelData.title || win.modelData.appClass
-                  color: root.selectedText
+                  color: root.tooltipText
                   font.family: root.fontFamily
-                  font.pixelSize: Style.font.caption // qmllint disable missing-property
+                  font.pixelSize: root.tooltipType.size
+                  font.weight: root.tooltipType.weight
                   elide: Text.ElideRight
                 }
               }
@@ -524,15 +590,6 @@ Item {
           }
         }
 
-        Rectangle {
-          anchors.fill: parent
-          radius: root.cornerRadius
-          color: "transparent"
-          border.color: root.accent
-          border.width: Math.max(1, Style.space(2))
-          visible: tile.isActive
-          opacity: tile.hasSelection ? 1 : 0.6
-        }
       }
     }
   }

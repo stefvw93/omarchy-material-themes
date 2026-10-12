@@ -1,0 +1,43 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`theme files > match the golden output (dark) 1`] = `
+[
+  "colors.toml",
+  "hyprland.lua",
+  "omaterial.json",
+  "shell.bar.toml",
+  "shell.controls.toml",
+  "shell.font.toml",
+  "shell.hyprland.toml",
+  "shell.image-picker.toml",
+  "shell.launcher.toml",
+  "shell.lock.toml",
+  "shell.menu.toml",
+  "shell.notifications.toml",
+  "shell.polkit.toml",
+  "shell.popups.toml",
+  "shell.spacing.toml",
+  "shell.tooltip.toml",
+]
+`;
+
+exports[`theme files > match the golden output (light) 1`] = `
+[
+  "colors.toml",
+  "hyprland.lua",
+  "omaterial.json",
+  "shell.bar.toml",
+  "shell.controls.toml",
+  "shell.font.toml",
+  "shell.hyprland.toml",
+  "shell.image-picker.toml",
+  "shell.launcher.toml",
+  "shell.lock.toml",
+  "shell.menu.toml",
+  "shell.notifications.toml",
+  "shell.polkit.toml",
+  "shell.popups.toml",
+  "shell.spacing.toml",
+  "shell.tooltip.toml",
+]
+`;

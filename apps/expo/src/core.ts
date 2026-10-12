@@ -51,7 +51,29 @@ const IpcWindow = Schema.Struct({
   class: Schema.optional(Schema.String),
   floating: Schema.optionalKey(Schema.Unknown),
 });
-const decodeWindow = Schema.decodeUnknownOption(IpcWindow);
+const decodeIpcWindow = Schema.decodeUnknownOption(IpcWindow);
+
+/**
+ * QML hands lastIpcObject's lists (`at`, `size`) over as sequence wrappers,
+ * which Array.isArray rejects; copy them into arrays first.
+ */
+const isArrayLike = (v: unknown): v is ArrayLike<unknown> =>
+  typeof v === "object" &&
+  v !== null &&
+  !Array.isArray(v) &&
+  typeof (v as { readonly length?: unknown }).length === "number";
+
+const plainArrays = (value: unknown): unknown => {
+  if (typeof value !== "object" || value === null) return value;
+  const o = value as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+  for (const key of Object.keys(o)) {
+    const v = o[key];
+    out[key] = isArrayLike(v) ? Array.prototype.slice.call(v) : v;
+  }
+  return out;
+};
+const decodeWindow = (ipc: unknown) => decodeIpcWindow(plainArrays(ipc));
 
 export interface ExpoWindow {
   readonly toplevel: unknown;

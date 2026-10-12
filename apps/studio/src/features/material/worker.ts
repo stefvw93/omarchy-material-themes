@@ -1,7 +1,11 @@
 /// <reference lib="webworker" />
 import { Effect, ManagedRuntime, Match, Schema } from "effect";
-import type { SchemeKind } from "@stef/theme-engine";
-import { MaterialWorkerEventData, MaterialWorkerMessageData } from "./protocol";
+import { createPalette } from "@stef/theme-engine";
+import {
+  MaterialWorkerEventData,
+  MaterialWorkerMessageData,
+  type PaletteRequest,
+} from "./protocol";
 import { MaterialService } from "./service";
 
 if (
@@ -25,13 +29,13 @@ if (
       Effect.gen(function* () {
         const data = yield* Schema.decodeUnknownEffect(MaterialWorkerEventData)(event.data);
         const result = yield* Match.type<typeof MaterialWorkerEventData.Type>().pipe(
-          Match.tag("CreateOmarchyColors", (data) =>
-            createOmarchyColors(data.imageBytes, data.options).pipe(
-              Effect.andThen((colors) =>
+          Match.tag("CreatePalette", (data) =>
+            paletteFromImage(data.imageBytes, data.options).pipe(
+              Effect.andThen((palette) =>
                 Schema.encodeEffect(MaterialWorkerMessageData)({
-                  _tag: "CreateOmarchyColors",
+                  _tag: "CreatePalette",
                   id: data.id,
-                  ...colors,
+                  palette,
                 }),
               ),
             ),
@@ -61,20 +65,10 @@ if (
   };
 }
 
-const createOmarchyColors = (
-  imageBytes: Uint8Array,
-  options: { schemeKind: typeof SchemeKind.Type; isDark?: boolean; contrastLevel?: number },
-) =>
+/** The image's source colour, then every colour of the theme from it. */
+const paletteFromImage = (imageBytes: Uint8Array, options: PaletteRequest) =>
   Effect.gen(function* () {
     const material = yield* MaterialService;
-    const { sourceArgb, hues } = yield* material.quantizeSource(imageBytes);
-    const scheme = yield* material.createScheme(
-      options.schemeKind,
-      sourceArgb,
-      options.isDark,
-      options.contrastLevel,
-    );
-    const colors = yield* material.schemeToOmarchyColors(scheme, hues);
-
-    return colors;
+    const sourceArgb = yield* material.quantizeSource(imageBytes);
+    return createPalette({ sourceArgb, ...options });
   });

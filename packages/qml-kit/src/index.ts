@@ -3,7 +3,16 @@
  * (`import "lib/kit.mjs" as Kit`). Plain es2017: it runs in Quickshell's
  * engine.
  */
-export { motionSchemes, springStep, type Spring } from "@stef/motion";
+export { motionSchemes, settleTime, springAdvance, springStep, type Spring } from "@stef/motion";
+export {
+  fallbackScheme,
+  type OmarchyColors,
+  resolveM3,
+  type ResolvedM3,
+  schemeOf,
+  schemeRoles,
+  type ThemeScheme,
+} from "./m3.ts";
 export {
   defaultTokens,
   resolveTokens,

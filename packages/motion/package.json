@@ -11,6 +11,9 @@
   "scripts": {
     "test": "vp test"
   },
+  "dependencies": {
+    "@stef/m3": "workspace:*"
+  },
   "devDependencies": {
     "@stef/config": "workspace:*",
     "typescript": "catalog:",

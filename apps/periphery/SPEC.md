@@ -90,7 +90,7 @@ The plugin starts this switch, so it gets ahead of Hyprland:
 1. `flyTo` puts the wallpaper backdrop up over the tiling area, with the ghosts of the current focus windows on their tiles: the screen looks the same.
 2. Two frames later (34 ms), one `hyprctl --batch`: `no_shadow` on the windows of the target workspace, Hyprland's workspace animation off, the focus dispatch. Hyprland switches at once, under the backdrop.
 3. On `activeWorkspaceChanged`, `beginSwitch` reads the cards' live rects, relays out from the cached geometry and flies every ghost: outgoing from their tiles to their new cards, incoming from their cards to their tiles. A hidden workspace can have old tiling; the refresh 80 ms later retargets the ghosts in flight.
-4. When every ghost is on its target to within half a pixel, two checks in a row (at least 120 ms, at most 1.5 s), the ghosts and backdrop go in one frame. Qt does not update `running` for an animation driven by a `Behavior`, so landing is measured, not read. The shadows and Hyprland's workspace animation (`workspaceStyle`) come back.
+4. When every ghost is on its target to within half a pixel, two checks in a row (at least 120 ms, at most 1.5 s), the ghosts and backdrop go in one frame. Landing is measured on the ghost's rect, so a target that moves mid-flight (the 80 ms refresh) still counts only once it is reached. The shadows and Hyprland's workspace animation (`workspaceStyle`) come back.
 
 The real windows' decorations reach past the backdrop: the shadow (60 px range) into the bands and under the translucent bar, and the 1 px border of a window tiled flush against the band (smart gaps: one window, gaps 0). Hence the `no_shadow` during the flight (`value = "unset"` afterwards, so a window rule's `no_shadow` stays), and the backdrop reaching `coverBleed` (2 px) into each band.
 
@@ -104,7 +104,7 @@ When the mode turns on, the plugin reads the theme's workspace animation from `h
 
 Each card is a `ScreencopyView` with `live: true`. Cards update at the screen frame rate. A video on another workspace plays smoothly in its card.
 
-A card without a frame yet shows the window class on the theme background.
+A card without a frame yet is an M3 outlined card showing the window class (body-small, on-surface-variant).
 
 ### Periphery selection
 
@@ -112,7 +112,7 @@ One card at a time can have the focus instead of the windows in the focus area: 
 
 While a card is selected:
 
-- the card draws the theme's active window border and shows its window title (see [Card borders](#card-borders));
+- the card draws the theme's active window border and shows its window title as an M3 plain tooltip, fading in on the effects fast spring (see [Card borders](#card-borders));
 - the active window in the focus area draws its border in the inactive colour (`general:col.inactive_border`);
 - Return (and keypad Enter) goes to the card's window with the Exposé flight, and Escape lets go of the card. These two keys are bound only while a card is selected;
 - the keys bound to the actions below act on the card. Keys are found by action, not by key: any key bound to these actions works, also after a rebind.
@@ -142,7 +142,7 @@ Cards draw their border the way Hyprland draws a window's, in the current theme'
 | At rest                    | Inactive | `[popups] border` (Omarchy themes give it Hyprland's inactive border colour) |
 | Selected, or being dragged | Active   | `[hyprland] active-border`, Hyprland's active-border gradient                |
 
-The width is Hyprland's `general:border_size` and the corner radius `decoration:rounding`, read from `hyprctl getoption` when the mode turns on and after every config reload (a theme switch reloads Hyprland).
+The colour changes on the effects fast spring, as Hyprland animates a window's border (its `border` leaf). The width is Hyprland's `general:border_size` and the corner radius `decoration:rounding`, read from `hyprctl getoption` when the mode turns on and after every config reload (a theme switch reloads Hyprland).
 
 Moving the pointer onto empty band space keeps the selection, the way focus stays on a window when the pointer leaves it for the wallpaper.
 
@@ -174,7 +174,7 @@ A `hyprctl reload` starts a fresh Lua state. The plugin sends its state again on
 | Drag, drop on empty band space | Move the window to the lowest free workspace id.                                                                                                                                                 |
 | Drag, drop on its own group    | No change.                                                                                                                                                                                       |
 
-During a card drag, a live copy of the window follows the pointer above all windows. The focus area or the target group gets an accent outline.
+During a card drag, a live copy of the window follows the pointer above all windows, lifted to the M3 filled card's dragged elevation under the dragged state layer. It grows on the spatial fast spring, a little more over the focus area. The focus area or the target group is shown as the drop target: primary at the hover state-layer opacity, a primary outline, the large corner.
 
 ### Drag of a real window into a band
 
@@ -231,7 +231,7 @@ One full-screen surface draws both bands. A card can then animate from one band 
 2. The refresh calls `Hyprland.refreshToplevels()`. After 80 ms it reads `lastIpcObject` of each toplevel.
 3. `rebuild()` builds the groups, sorts them into bands and runs the solver.
 4. A layout signature skips the rebuild if nothing changed.
-5. A `ListModel` keyed by window address keeps one card delegate per window. A card that changes position moves on a spring. A new card fades in at its position (320 ms).
+5. A `ListModel` keyed by window address keeps one card delegate per window. A card that changes position moves on the spatial default spring. A new card fades in at its position on the effects default spring.
 6. `rebuild()` also caches the tiles of the current workspace (`focusRects`), the start rects of a workspace switch.
 7. A 3 s timer resyncs titles and sizes that change without a structural event. It stops during a drag.
 
@@ -280,27 +280,23 @@ hl.dsp.window.move({ workspace = "2", follow = false, window = "address:0x56c7bf
 
 ### Tunables (top of `Periphery.qml`)
 
-Durations are given at `animSpeed: 1`.
+Motion is Material 3 springs from the tokens' motion scheme (`tokens.m3.springs`, `SpringValue`): spatial default for card and ghost geometry and the cards' travel, effects default for every fade, spatial fast for the drag grow (interpretation `periphery.components`). They follow `motion.scheme` live.
 
-| Property                      | Default                  | Effect                                                                                                                                                                                                                                                                                     |
-| ----------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `ratio`                       | `1.25`                   | Focus area width / monitor height.                                                                                                                                                                                                                                                         |
-| `bandMargin`                  | `Style.space(16)`        | Space between band edge and cards.                                                                                                                                                                                                                                                         |
-| `cardGap`                     | `Style.space(10)`        | Minimum space between cards.                                                                                                                                                                                                                                                               |
-| `groupGap`                    | `Style.space(20)`        | Space between groups.                                                                                                                                                                                                                                                                      |
-| `maxStretch`                  | `6`                      | Maximum vertical stretch of a group's position map.                                                                                                                                                                                                                                        |
-| `animSpeed`                   | `1`                      | Global animation speed. `0.25` plays all animations 4× slower (to inspect them), `2` twice as fast. Scales every duration, the switch timeouts and the springs.                                                                                                                            |
-| `workspaceStyle`              | `slidefade 10%`          | Hyprland's workspace animation style while the mode is on (keyboard switches), with the theme's curve and speed.                                                                                                                                                                           |
-| `slideDuration`               | `320`                    | Card fade-in and fade-out time in ms.                                                                                                                                                                                                                                                      |
-| `cardSlide`                   | 10% of the monitor width | How far arriving and leaving cards travel. Follows `workspaceStyle`: its percentage, on its axis (`vert` styles move vertically), 0 for a style that does not slide.                                                                                                                       |
-| `fadeDuration`                | `150`                    | Ghost, drop outline and drag grow time in ms.                                                                                                                                                                                                                                              |
-| `springStrength`              | `11.2`                   | Qt `SpringAnimation.spring` for cards and ghosts. Matches the theme spring `spatial_default` (stiffness 700 × 16 ms step).                                                                                                                                                                 |
-| `springDamping`               | `0.65`                   | Qt `SpringAnimation.damping`. With `11.2`: ~340 ms, no overshoot. Lower is bouncier. Below `animSpeed` 1 it gets up to 22% extra: Qt steps springs in fixed 16 ms ticks that damp the overshoot at normal speed, and slow motion would otherwise overshoot ~2%.                            |
-| `ghostBlur`                   | `96`                     | Blur radius in px of the wallpaper behind ghosts. Matched by eye to `decoration:blur` size 6, 3 passes (dual-kawase has no exact radius); past 64 px it uses `blurMultiplier`. `ghostBlurContrast` (`-0.11`) and `ghostBlurSaturation` (`0.17`) match its contrast 0.89 and vibrancy 0.17. |
-| `coverBleed`                  | `2`                      | How far the switch backdrop reaches into the bands, to cover a flush window's border. At least `general:border_size`.                                                                                                                                                                      |
-| `switchMinMs` / `switchMaxMs` | `120` / `1500`           | Shortest and longest switch flight before the hand-off.                                                                                                                                                                                                                                    |
+| Property                      | Default                  | Effect                                                                                                                                                                                                                                                                                                                           |
+| ----------------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ratio`                       | `1.25`                   | Focus area width / monitor height.                                                                                                                                                                                                                                                                                               |
+| `bandMargin`                  | `space200` (16dp)        | Space between band edge and cards. Token `periphery.bandMargin`.                                                                                                                                                                                                                                                                 |
+| `cardGap`                     | `space125` (10dp)        | Minimum space between cards, and between a group header and its cards. Token `periphery.cardGap`.                                                                                                                                                                                                                                |
+| `groupGap`                    | `space250` (20dp)        | Space between groups. Token `periphery.groupGap`.                                                                                                                                                                                                                                                                                |
+| `maxStretch`                  | `6`                      | Maximum vertical stretch of a group's position map.                                                                                                                                                                                                                                                                              |
+| `animSpeed`                   | `1`                      | Global animation speed. `0.25` plays all animations 4× slower (to inspect them), `2` twice as fast. Scales the springs (stiffness by speed², which keeps their shape) and the switch timeouts.                                                                                                                                   |
+| `workspaceStyle`              | `slidefade 10%`          | Hyprland's workspace animation style while the mode is on (keyboard switches), with the theme's curve and speed.                                                                                                                                                                                                                 |
+| `cardSlide`                   | 10% of the monitor width | How far arriving and leaving cards travel. Follows `workspaceStyle`: its percentage, on its axis (`vert` styles move vertically), 0 for a style that does not slide.                                                                                                                                                             |
+| `ghostBlur`                   | `96`                     | Token `periphery.ghostBlur` (not M3). Blur radius in px of the wallpaper behind ghosts. Matched by eye to `decoration:blur` size 6, 3 passes (dual-kawase has no exact radius); past 64 px it uses `blurMultiplier`. `ghostBlurContrast` (`-0.11`) and `ghostBlurSaturation` (`0.17`) match its contrast 0.89 and vibrancy 0.17. |
+| `coverBleed`                  | `2`                      | How far the switch backdrop reaches into the bands, to cover a flush window's border. At least `general:border_size`.                                                                                                                                                                                                            |
+| `switchMinMs` / `switchMaxMs` | `120` / `1500`           | Shortest and longest switch flight before the hand-off.                                                                                                                                                                                                                                                                          |
 
-Colours and fonts come from the theme `[menu]` tokens (`Color.menu.*`, `Style.*`) and follow theme changes.
+Colours are the theme's M3 roles (`Scheme.qml`: `omaterial.json`, or approximated from Omarchy's colours under other themes), type is the M3 type scale at the Omarchy text size (`tokens.m3.type`), and the font family is the shell's menu font. All follow theme, token and text-size changes.
 
 ## Constraints and gotchas
 

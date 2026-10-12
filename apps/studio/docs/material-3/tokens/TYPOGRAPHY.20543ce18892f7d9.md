@@ -1,0 +1,1989 @@
+# Tokens: Typography (TYPOGRAPHY.20543ce18892f7d9)
+
+Source: <https://m3.material.io/_dsm/data/dsdb-m3/2026-09-23_06-10-05/TYPOGRAPHY.20543ce18892f7d9.json>, design system 'Google Material 3' revision 7989 (2026-05-27T22:44:15.009106Z).
+Used on: <https://m3.material.io/styles/typography>
+
+Each token lists its value per context. `->` shows the reference chain (component token -> system token -> reference token); the resolved value is what the baseline scheme produces in that context. Contexts with identical chain and value are merged.
+
+## md.ref.typeface — Fonts & weights
+
+Font and weight tokens
+
+- **md.ref.typeface.body-large.line-height** (Body large line height)
+  - [Language height=Extra large]: 41pt
+  - [Language height=Large]: 31pt
+  - [Language height=Medium]: 27pt
+  - [Language height=Small]: 24pt
+- **md.ref.typeface.body-medium.line-height** (Body medium line height)
+  - [Language height=Extra large]: 35pt
+  - [Language height=Large]: 26pt
+  - [Language height=Medium]: 23pt
+  - [Language height=Small]: 20pt
+- **md.ref.typeface.body-small.line-height** (Body small line height)
+  - [Language height=Extra large]: 30pt
+  - [Language height=Large]: 21pt
+  - [Language height=Medium]: 18pt
+  - [Language height=Small]: 16pt
+- **md.ref.typeface.brand** (Brand typeface)
+  - [Audience=3P + Font=Variable]: Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: Roboto
+- **md.ref.typeface.display-large.line-height** (Display large line height)
+  - [Language height=Extra large]: 120pt
+  - [Language height=Large]: 89pt
+  - [Language height=Medium]: 73pt
+  - [Language height=Small]: 64pt
+- **md.ref.typeface.display-medium.line-height** (Display medium line height)
+  - [Language height=Extra large]: 99pt
+  - [Language height=Large]: 71pt
+  - [Language height=Medium]: 56pt
+  - [Language height=Small]: 52pt
+- **md.ref.typeface.display-small.line-height** (Display small line height)
+  - [Language height=Extra large]: 80pt
+  - [Language height=Large]: 57pt
+  - [Language height=Medium]: 47pt
+  - [Language height=Small]: 44pt
+- **md.ref.typeface.emphasized.rond** (Emphasized rond)
+  - ROND=0 [Audience=3P]
+- **md.ref.typeface.headline-large.line-height** (Headline large line height)
+  - [Language height=Extra large]: 75pt
+  - [Language height=Large]: 50pt
+  - [Language height=Medium]: 42pt
+  - [Language height=Small]: 40pt
+- **md.ref.typeface.headline-medium.line-height** (Headline medium line height)
+  - [Language height=Extra large]: 66pt
+  - [Language height=Large]: 45pt
+  - [Language height=Medium]: 38pt
+  - [Language height=Small]: 36pt
+- **md.ref.typeface.headline-small.line-height** (Headline small line height)
+  - [Language height=Extra large]: 59pt
+  - [Language height=Large]: 41pt
+  - [Language height=Medium]: 35pt
+  - [Language height=Small]: 32pt
+- **md.ref.typeface.label-large.line-height** (Label large line height)
+  - [Language height=Extra large]: 36pt
+  - [Language height=Large]: 26pt
+  - [Language height=Medium]: 23pt
+  - [Language height=Small]: 20pt
+- **md.ref.typeface.label-medium.line-height** (Label medium line height)
+  - [Language height=Extra large]: 30pt
+  - [Language height=Large]: 21pt
+  - [Language height=Medium]: 18pt
+  - [Language height=Small]: 16pt
+- **md.ref.typeface.label-small.line-height** (Label small line height)
+  - [Language height=Extra large]: 29pt
+  - [Language height=Large]: 21pt
+  - [Language height=Medium]: 18pt
+  - [Language height=Small]: 16pt
+- **md.ref.typeface.plain** (Plain typeface)
+  - [Audience=3P + Font=Variable]: Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: Roboto
+- **md.ref.typeface.title-large.line-height** (Title large line height)
+  - [Language height=Extra large]: 53pt
+  - [Language height=Large]: 36pt
+  - [Language height=Medium]: 31pt
+  - [Language height=Small]: 28pt
+- **md.ref.typeface.title-medium.line-height** (Title medium line height)
+  - [Language height=Extra large]: 42pt
+  - [Language height=Large]: 31pt
+  - [Language height=Medium]: 27pt
+  - [Language height=Small]: 24pt
+- **md.ref.typeface.title-small.line-height** (Title small line height)
+  - [Language height=Extra large]: 36pt
+  - [Language height=Large]: 26pt
+  - [Language height=Medium]: 23pt
+  - [Language height=Small]: 20pt
+- **md.ref.typeface.variable.brand** (Variable brand typeface)
+  - Roboto Flex [Audience=3P]
+- **md.ref.typeface.variable.plain** (Variable plain typeface)
+  - Roboto Flex [Audience=3P]
+- **md.ref.typeface.variable.wght-bold** (Variable bold wght)
+  - wght=700 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.ref.typeface.variable.wght-medium** (Variable medium wght)
+  - wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.ref.typeface.variable.wght-regular** (Variable regular wght)
+  - wght=400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.ref.typeface.variable.wght-semibold** (Variable semi bold wght)
+  - wght=600 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.ref.typeface.weight-bold** (Bold weight)
+  - weight 700 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.ref.typeface.weight-medium** (Medium weight)
+  - weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.ref.typeface.weight-regular** (Regular weight)
+  - weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.ref.typeface.weight-semibold** (Semi bold weight)
+  - weight 600 [Platform=Compose; Platform=Web; Platform=Android]
+
+## md.sys.typescale — Type scale
+
+Default typography tokens combining font, weight, size, tracking, and line height in the type scale.
+
+- **md.sys.typescale.body-large** (Body Large)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wdth=100 wght=400 slnt=0 opsz=16 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 16pt; lineHeight 24pt; fontTracking 0.5pt
+- **md.sys.typescale.body-large.crsv** (Body Large crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-large.fill** (Body Large fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-large.font** (Body Large font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.body-large.grad** (Body Large grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-large.hexp** (Body Large hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-large.line-height** (Body Large line height)
+  - 24pt
+- **md.sys.typescale.body-large.opsz** (Body Large opsz)
+  - opsz=16 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-large.rond** (Body Large rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-large.size** (Body Large font size)
+  - 16pt
+- **md.sys.typescale.body-large.slnt** (Body Large slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-large.tracking** (Body Large font tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.5pt
+- **md.sys.typescale.body-large.wdth** (Body Large wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-large.weight** (Body Large font weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.body-large.wght** (Body Large wght)
+  - wght=400 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-medium** (Body Medium)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=400 slnt=0 opsz=14 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 14pt; lineHeight 20pt; fontTracking 0.25pt
+- **md.sys.typescale.body-medium.crsv** (Body Medium crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-medium.fill** (Body Medium fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-medium.font** (Body Medium font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.body-medium.grad** (Body Medium grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-medium.hexp** (Body Medium hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-medium.line-height** (Body Medium line height)
+  - 20pt
+- **md.sys.typescale.body-medium.opsz** (Body Medium opsz)
+  - opsz=14 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-medium.rond** (Body Medium rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-medium.size** (Body Medium font size)
+  - 14pt
+- **md.sys.typescale.body-medium.slnt** (Body Medium slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-medium.tracking** (Body Medium font tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.25pt
+- **md.sys.typescale.body-medium.wdth** (Body Medium wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-medium.weight** (Body Medium font weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.body-medium.wght** (Body Medium wght)
+  - wght=400 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-small** (Body Small)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=400 slnt=0 opsz=12 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 12pt; lineHeight 16pt; fontTracking 0.4pt
+- **md.sys.typescale.body-small.crsv** (Body Small crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-small.fill** (Body Small fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-small.font** (Body Small font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.body-small.grad** (Body Small grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-small.hexp** (Body Small hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-small.line-height** (Body Small line height)
+  - 16pt
+- **md.sys.typescale.body-small.opsz** (Body Small opsz)
+  - opsz=12 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-small.rond** (Body Small rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-small.size** (Body Small font size)
+  - 12pt
+- **md.sys.typescale.body-small.slnt** (Body Small slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-small.tracking** (Body Small font tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.4pt
+- **md.sys.typescale.body-small.wdth** (Body Small wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.body-small.weight** (Body Small font weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.body-small.wght** (Body Small wght)
+  - wght=400 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-large** (Display Large)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 57pt; lineHeight 64pt; fontTracking 0pt; axes wdth=100 wght=400 slnt=0 opsz=57 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 500; fontSize 57pt; lineHeight 64pt; fontTracking -0.25pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 57pt; lineHeight 64pt; fontTracking -0.25pt
+- **md.sys.typescale.display-large.crsv** (Display Large crsv)
+  - CRSV=0
+- **md.sys.typescale.display-large.fill** (Display Large fill)
+  - FILL=0
+- **md.sys.typescale.display-large.font** (Display Large font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.display-large.grad** (Display Large grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-large.hexp** (Display Large hexp)
+  - HEXP=0
+- **md.sys.typescale.display-large.line-height** (Display Large line height)
+  - 64pt
+- **md.sys.typescale.display-large.opsz** (Display Large opsz)
+  - opsz=57 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-large.rond** (Display Large rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-large.size** (Display Large font size)
+  - 57pt
+- **md.sys.typescale.display-large.slnt** (Display Large slnt)
+  - slnt=0
+- **md.sys.typescale.display-large.tracking** (Display Large font tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -0.25pt
+- **md.sys.typescale.display-large.wdth** (Display Large wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-large.weight** (Display Large font weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.ref.typeface.weight-medium = weight 500
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.ref.typeface.weight-regular = weight 400
+- **md.sys.typescale.display-large.wght** (Display Large wght)
+  - [Font=iOS bold]: wght=500
+  - [Font=Variable; Font=Static]: wght=400
+- **md.sys.typescale.display-medium** (Display Medium)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 45pt; lineHeight 52pt; fontTracking 0pt; axes wdth=100 wght=400 GRAD=0 HEXP=0 slnt=0 opsz=45 ROND=0 CRSV=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 500; fontSize 45pt; lineHeight 52pt; fontTracking 0pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 45pt; lineHeight 52pt; fontTracking 0pt
+- **md.sys.typescale.display-medium.crsv** (Display Medium crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-medium.fill** (Display Medium fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-medium.font** (Display Medium font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.display-medium.grad** (Display Medium grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-medium.hexp** (Display Medium hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-medium.line-height** (Display Medium line height)
+  - 52pt
+- **md.sys.typescale.display-medium.opsz** (Display Medium opsz)
+  - opsz=45 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-medium.rond** (Display Medium rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-medium.size** (Display Medium font size)
+  - 45pt
+- **md.sys.typescale.display-medium.slnt** (Display Medium slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-medium.tracking** (Display Medium font tracking)
+  - 0pt
+- **md.sys.typescale.display-medium.wdth** (Display Medium wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-medium.weight** (Display Medium font weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.ref.typeface.weight-medium = weight 500
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.ref.typeface.weight-regular = weight 400
+- **md.sys.typescale.display-medium.wght** (Display Medium wght)
+  - [Font=iOS bold]: wght=500
+  - [Font=Variable; Font=Static]: wght=400
+- **md.sys.typescale.display-small** (Display Small)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 36pt; lineHeight 44pt; fontTracking 0pt; axes wdth=100 wght=400 slnt=0 opsz=36 ROND=0 GRAD=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 500; fontSize 36pt; lineHeight 44pt; fontTracking 0pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 36pt; lineHeight 44pt; fontTracking 0pt
+- **md.sys.typescale.display-small.crsv** (Display Small crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-small.fill** (Display Small fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-small.font** (Display Small font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.display-small.grad** (Display Small grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-small.hexp** (Display Small hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-small.line-height** (Display Small line height)
+  - 44pt
+- **md.sys.typescale.display-small.opsz** (Display Small opsz)
+  - opsz=36 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-small.rond** (Display Small rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-small.size** (Display Small font size)
+  - 36pt
+- **md.sys.typescale.display-small.slnt** (Display Small slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-small.tracking** (Display Small font tracking)
+  - 0pt
+- **md.sys.typescale.display-small.wdth** (Display Small wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.display-small.weight** (Display Small font weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.ref.typeface.weight-medium = weight 500
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.ref.typeface.weight-regular = weight 400
+- **md.sys.typescale.display-small.wght** (Display Small wght)
+  - [Font=iOS bold]: wght=500
+  - [Font=Variable; Font=Static]: wght=400
+- **md.sys.typescale.headline-large** (Headline Large)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 32pt; lineHeight 40pt; fontTracking 0pt; axes wdth=100 wght=400 slnt=0 opsz=32 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 500; fontSize 32pt; lineHeight 40pt; fontTracking 0pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 32pt; lineHeight 40pt; fontTracking 0pt
+- **md.sys.typescale.headline-large.crsv** (Headline Large crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-large.fill** (Headline Large fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-large.font** (Headline Large font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.headline-large.grad** (Headline Large grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-large.hexp** (Headline Large hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-large.line-height** (Headline Large line height)
+  - 40pt
+- **md.sys.typescale.headline-large.opsz** (Headline Large opsz)
+  - opsz=32 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-large.rond** (Headline Large rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-large.size** (Headline Large font size)
+  - 32pt
+- **md.sys.typescale.headline-large.slnt** (Headline Large slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-large.tracking** (Headline Large font tracking)
+  - 0pt
+- **md.sys.typescale.headline-large.wdth** (Headline Large wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-large.weight** (Headline Large font weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.ref.typeface.weight-medium = weight 500
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.ref.typeface.weight-regular = weight 400
+- **md.sys.typescale.headline-large.wght** (Headline Large wght)
+  - [Font=iOS bold]: wght=500
+  - [Font=Variable; Font=Static]: wght=400
+- **md.sys.typescale.headline-medium** (Headline Medium)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 28pt; lineHeight 36pt; fontTracking 0pt; axes wdth=100 wght=400 slnt=0 opsz=28 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 500; fontSize 28pt; lineHeight 36pt; fontTracking 0pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 28pt; lineHeight 36pt; fontTracking 0pt
+- **md.sys.typescale.headline-medium.crsv** (Headline Medium crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-medium.fill** (Headline Medium fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-medium.font** (Headline Medium font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.headline-medium.grad** (Headline Medium grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-medium.hexp** (Headline Medium hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-medium.line-height** (Headline Medium line height)
+  - 36pt
+- **md.sys.typescale.headline-medium.opsz** (Headline Medium opsz)
+  - opsz=28 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-medium.rond** (Headline Medium rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-medium.size** (Headline Medium font size)
+  - 28pt
+- **md.sys.typescale.headline-medium.slnt** (Headline Medium slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-medium.tracking** (Headline Medium font tracking)
+  - 0pt
+- **md.sys.typescale.headline-medium.wdth** (Headline Medium wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-medium.weight** (Headline Medium font weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.ref.typeface.weight-medium = weight 500
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.ref.typeface.weight-regular = weight 400
+- **md.sys.typescale.headline-medium.wght** (Headline Medium wght)
+  - [Font=iOS bold]: wght=500
+  - [Font=Variable; Font=Static]: wght=400
+- **md.sys.typescale.headline-small** (Headline Small)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 24pt; lineHeight 32pt; fontTracking 0pt; axes CRSV=0 wdth=100 wght=400 slnt=0 opsz=24 GRAD=0 ROND=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 500; fontSize 24pt; lineHeight 32pt; fontTracking 0pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 24pt; lineHeight 32pt; fontTracking 0pt
+- **md.sys.typescale.headline-small.crsv** (Headline Small crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-small.fill** (Headline Small fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-small.font** (Headline Small font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.headline-small.grad** (Headline Small grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-small.hexp** (Headline Small hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-small.line-height** (Headline Small line height)
+  - 32pt
+- **md.sys.typescale.headline-small.opsz** (Headline Small opsz)
+  - opsz=24 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-small.rond** (Headline Small rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-small.size** (Headline Small font size)
+  - 24pt
+- **md.sys.typescale.headline-small.slnt** (Headline Small slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-small.tracking** (Headline Small font tracking)
+  - 0pt
+- **md.sys.typescale.headline-small.wdth** (Headline Small wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.headline-small.weight** (Headline Small font weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.ref.typeface.weight-medium = weight 500
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.ref.typeface.weight-regular = weight 400
+- **md.sys.typescale.headline-small.wght** (Headline Small wght)
+  - [Font=iOS bold]: wght=500
+  - [Font=Variable; Font=Static]: wght=400
+- **md.sys.typescale.label-large** (Label Large)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=14 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+- **md.sys.typescale.label-large-fill** (Label Large fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-large.crsv** (Label Large crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-large.font** (Label Large font name)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.label-large.grad** (Label Large grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-large.hexp** (Label Large hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-large.line-height** (Label Large line height)
+  - 20pt
+- **md.sys.typescale.label-large.opsz** (Label Large opsz)
+  - opsz=14 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-large.rond** (Label Large rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-large.size** (Label Large font size)
+  - 14pt
+- **md.sys.typescale.label-large.slnt** (Label Large slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-large.tracking** (Label Large font tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.1pt
+- **md.sys.typescale.label-large.wdth** (Label Large wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-large.weight** (Label Large font weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.ref.typeface.weight-bold = weight 700
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.ref.typeface.weight-medium = weight 500
+- **md.sys.typescale.label-large.weight.prominent** (Label Large font weight prominent)
+  - -> md.ref.typeface.weight-bold = weight 700 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.label-large.wght** (Label Large wght)
+  - [Font=iOS bold]: wght=700
+  - [Font=Variable; Font=Static]: wght=500
+- **md.sys.typescale.label-medium** (Label Medium)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=12 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0.5pt
+- **md.sys.typescale.label-medium.crsv** (Label Medium crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-medium.fill** (Label Medium fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-medium.font** (Label Medium font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.label-medium.grad** (Label Medium grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-medium.hexp** (Label Medium hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-medium.line-height** (Label Medium line height)
+  - 16pt
+- **md.sys.typescale.label-medium.opsz** (Label Medium opsz)
+  - opsz=12 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-medium.rond** (Label Medium rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-medium.size** (Label Medium font size)
+  - 12pt
+- **md.sys.typescale.label-medium.slnt** (Label Medium  slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-medium.text-transform** (Label Medium text transform)
+  - {"textTransform":"TEXT_TRANSFORM_NONE"}
+- **md.sys.typescale.label-medium.tracking** (Label Medium font tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.5pt
+- **md.sys.typescale.label-medium.wdth** (Label Medium wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-medium.weight** (Label Medium font weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.label-medium.weight.prominent** (Label Medium font weight prominent)
+  - -> md.ref.typeface.weight-bold = weight 700 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.label-medium.wght** (Label Medium wght)
+  - wght=500 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-small** (Label Small)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 11pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=11 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 11pt; lineHeight 16pt; fontTracking 0.5pt
+- **md.sys.typescale.label-small.crsv** (Label Small crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-small.fill** (Label Small fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-small.font** (Label Small font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.label-small.grad** (Label Small grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-small.hexp** (Label Small hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-small.line-height** (Label Small line height)
+  - 16pt
+- **md.sys.typescale.label-small.opsz** (Label Small opsz)
+  - opsz=11 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-small.rond** (Label Small rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-small.size** (Label Small font size)
+  - 11pt
+- **md.sys.typescale.label-small.slnt** (Label Small slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-small.tracking** (Label Small font tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.5pt
+- **md.sys.typescale.label-small.wdth** (Label Small wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.label-small.weight** (Label Small font weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.label-small.wght** (Label Small wght)
+  - wght=500 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-large** (Title Large)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 400; fontSize 22pt; lineHeight 28pt; fontTracking 0pt; axes wdth=100 wght=400 slnt=0 opsz=22 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 500; fontSize 22pt; lineHeight 28pt; fontTracking 0pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 400; fontSize 22pt; lineHeight 28pt; fontTracking 0pt
+- **md.sys.typescale.title-large.crsv** (Title Large crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-large.fill** (Title Large fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-large.font** (Title Large font name)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.title-large.grad** (Title Large grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-large.hexp** (Title Large hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-large.line-height** (Title Large line height)
+  - 28pt
+- **md.sys.typescale.title-large.opsz** (Title Large opsz)
+  - opsz=22 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-large.rond** (Title Large rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-large.size** (Title Large font size)
+  - 22pt
+- **md.sys.typescale.title-large.slnt** (Title Large slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-large.tracking** (Title Large font tracking)
+  - 0pt
+- **md.sys.typescale.title-large.wdth** (Title Large wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-large.weight** (Title Large font weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.ref.typeface.weight-medium = weight 500
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.ref.typeface.weight-regular = weight 400
+- **md.sys.typescale.title-large.wght** (Title Large wght)
+  - [Font=iOS bold]: wght=500
+  - [Font=Variable; Font=Static]: wght=400
+- **md.sys.typescale.title-medium** (Title Medium)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=16 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 700; fontSize 16pt; lineHeight 24pt; fontTracking 0.15pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0.15pt
+- **md.sys.typescale.title-medium.crsv** (Title Medium crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-medium.fill** (Title Medium fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-medium.font** (Title Medium font name)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.title-medium.grad** (Title Medium grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-medium.hexp** (Title Medium hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-medium.line-height** (Title Medium line height)
+  - 24pt
+- **md.sys.typescale.title-medium.opsz** (Title Medium opsz)
+  - opsz=16 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-medium.rond** (Title Medium rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-medium.size** (Title Medium font size)
+  - 16pt
+- **md.sys.typescale.title-medium.slnt** (Title Medium slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-medium.tracking** (Title Medium font tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.15pt
+- **md.sys.typescale.title-medium.wdth** (Title Medium wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-medium.weight** (Title Medium font weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.ref.typeface.weight-bold = weight 700
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.ref.typeface.weight-medium = weight 500
+- **md.sys.typescale.title-medium.wght** (Title Medium wght)
+  - wght=500 [Font=iOS bold; Font=Variable; Font=Static]
+- **md.sys.typescale.title-small** (Title Small)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=14 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android]: Roboto; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+  - [Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+- **md.sys.typescale.title-small.crsv** (Title Small crsv)
+  - CRSV=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-small.fill** (Title Small fill)
+  - FILL=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-small.font** (Title Small font name)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.title-small.grad** (Title Small grad)
+  - GRAD=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-small.hexp** (Title Small hexp)
+  - HEXP=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-small.line-height** (Title Small line height)
+  - 20pt
+- **md.sys.typescale.title-small.opsz** (Title Small opsz)
+  - opsz=14 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-small.rond** (Title Small rond)
+  - ROND=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-small.size** (Title Small font size)
+  - 14pt
+- **md.sys.typescale.title-small.slnt** (Title Small slnt)
+  - slnt=0 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-small.tracking** (Title Small font tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.1pt
+- **md.sys.typescale.title-small.wdth** (Title Small wdth)
+  - wdth=100 [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.title-small.weight** (Title Small font weight)
+  - [Font=iOS bold + Platform=Compose; Font=iOS bold + Platform=Web; Font=iOS bold + Platform=Android]: -> md.ref.typeface.weight-bold = weight 700
+  - [Font=Variable + Platform=Compose; Font=Static + Platform=Compose; Font=Variable + Platform=Web; Font=Static + Platform=Web; Font=Variable + Platform=Android; Font=Static + Platform=Android]: -> md.ref.typeface.weight-medium = weight 500
+- **md.sys.typescale.title-small.wght** (Title Small wght)
+  - [Font=iOS bold]: wght=700
+  - [Font=Variable; Font=Static]: wght=500
+
+## md.sys.typescale.emphasized — Type scale - Emphasized 
+
+Emphasized typography tokens combining font, weight, size, tracking, and line height in the emphasized type scale.
+
+- **md.sys.typescale.emphasized.body-large** (Emphasized Body Large)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0; axes wdth=100 wght=500 slnt=0 opsz=16 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0.5pt
+- **md.sys.typescale.emphasized.body-large.crsv** (Emphasized Body Large crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.body-large.fill** (Emphasized Body Large fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.body-large.font** (Emphasized Body Large font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.emphasized.body-large.grad** (Emphasized Body Large grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.body-large.hexp** (Emphasized Body Large hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.body-large.line-height** (Emphasized Body Large line height)
+  - 24pt
+- **md.sys.typescale.emphasized.body-large.opsz** (Emphasized Body Large opsz)
+  - opsz=16
+- **md.sys.typescale.emphasized.body-large.rond** (Emphasized Body Large rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.body-large.size** (Emphasized Body Large size)
+  - 16pt
+- **md.sys.typescale.emphasized.body-large.slnt** (Emphasized Body Large slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.body-large.tracking** (Emphasized Body Large tracking)
+  - [Audience=3P + Font=Variable]: 0
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.5pt
+- **md.sys.typescale.emphasized.body-large.wdth** (Emphasized Body Large wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.body-large.weight** (Emphasized Body Large weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.body-large.wght** (Emphasized Body Large wght)
+  - wght=500
+- **md.sys.typescale.emphasized.body-medium** (Emphasized Body Medium)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=14 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0.25pt
+- **md.sys.typescale.emphasized.body-medium.crsv** (Emphasized Body Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.body-medium.fill** (Emphasized Body Medium fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.body-medium.font** (Emphasized Body Medium font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.emphasized.body-medium.grad** (Emphasized Body Medium grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.body-medium.hexp** (Emphasized Body Medium hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.body-medium.line-height** (Emphasized Body Medium line height)
+  - 20pt
+- **md.sys.typescale.emphasized.body-medium.opsz** (Emphasized Body Medium opsz)
+  - opsz=14
+- **md.sys.typescale.emphasized.body-medium.rond** (Emphasized Body Medium rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.body-medium.size** (Emphasized Body Medium size)
+  - 14pt
+- **md.sys.typescale.emphasized.body-medium.slnt** (Emphasized Body Medium slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.body-medium.tracking** (Emphasized Body Medium tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.25pt
+- **md.sys.typescale.emphasized.body-medium.wdth** (Emphasized Body Medium wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.body-medium.weight** (Emphasized Body Medium weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.body-medium.wght** (Emphasized Body Medium wght)
+  - wght=500
+- **md.sys.typescale.emphasized.body-small** (Emphasized Body Small)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=12 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0.4pt
+- **md.sys.typescale.emphasized.body-small.crsv** (Emphasized Body Small crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.body-small.fill** (Emphasized Body Small fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.body-small.font** (Emphasized Body Small font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.emphasized.body-small.grad** (Emphasized Body Small grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.body-small.hexp** (Emphasized Body Small hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.body-small.line-height** (Emphasized Body Small line height)
+  - 16pt
+- **md.sys.typescale.emphasized.body-small.opsz** (Emphasized Body Small opsz)
+  - opsz=12
+- **md.sys.typescale.emphasized.body-small.rond** (Emphasized Body Small rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.body-small.size** (Emphasized Body Small size)
+  - 12pt
+- **md.sys.typescale.emphasized.body-small.slnt** (Emphasized Body Small slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.body-small.tracking** (Emphasized Body Small tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.4pt
+- **md.sys.typescale.emphasized.body-small.wdth** (Emphasized Body Small wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.body-small.weight** (Emphasized Body Small weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.body-small.wght** (Emphasized Body Small wght)
+  - wght=500
+- **md.sys.typescale.emphasized.display-large** (Emphasized Display Large)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 57pt; lineHeight 64pt; fontTracking 0pt; axes wdth=100 FILL=0 wght=500 slnt=0 ROND=0 opsz=57 GRAD=0 CRSV=0 HEXP=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 57pt; lineHeight 64pt; fontTracking -0.25pt
+- **md.sys.typescale.emphasized.display-large.crsv** (Emphasized Display Large crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.display-large.fill** (Emphasized Display Large fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.display-large.font** (Emphasized Display Large font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.emphasized.display-large.grad** (Emphasized Display Large grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.display-large.hexp** (Emphasized Display Large hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.display-large.line-height** (Emphasized Display Large line height)
+  - 64pt
+- **md.sys.typescale.emphasized.display-large.opsz** (Emphasized Display Large opsz)
+  - opsz=57
+- **md.sys.typescale.emphasized.display-large.rond** (Emphasized Display Large rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.display-large.size** (Emphasized Display Large size)
+  - 57pt
+- **md.sys.typescale.emphasized.display-large.slnt** (Emphasized Display Large slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.display-large.tracking** (Emphasized Display Large tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -0.25pt
+- **md.sys.typescale.emphasized.display-large.wdth** (Emphasized Display Large wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.display-large.weight** (Emphasized Display Large weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.display-large.wght** (Emphasized Display Large wght)
+  - wght=500
+- **md.sys.typescale.emphasized.display-medium** (Emphasized Display Medium)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 45pt; lineHeight 52pt; fontTracking 0pt; axes wdth=100 FILL=0 wght=500 slnt=0 ROND=0 opsz=45 GRAD=0 HEXP=0 CRSV=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 45pt; lineHeight 52pt; fontTracking 0pt
+- **md.sys.typescale.emphasized.display-medium.crsv** (Emphasized Display Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.display-medium.fill** (Emphasized Display Medium fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.display-medium.font** (Emphasized Display Medium font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.emphasized.display-medium.grad** (Emphasized Display Medium grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.display-medium.hexp** (Emphasized Display Medium hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.display-medium.line-height** (Emphasized Display Medium line height)
+  - 52pt
+- **md.sys.typescale.emphasized.display-medium.opsz** (Emphasized Display Medium opsz)
+  - opsz=45
+- **md.sys.typescale.emphasized.display-medium.rond** (Emphasized Display Medium rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.display-medium.size** (Emphasized Display Medium size)
+  - 45pt
+- **md.sys.typescale.emphasized.display-medium.slnt** (Emphasized Display Medium slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.display-medium.tracking** (Emphasized Display Medium tracking)
+  - 0pt [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.emphasized.display-medium.wdth** (Emphasized Display Medium wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.display-medium.weight** (Emphasized Display Medium weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.display-medium.wght** (Emphasized Display Medium wght)
+  - wght=500
+- **md.sys.typescale.emphasized.display-small** (Emphasized Display Small)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 36pt; lineHeight 44pt; fontTracking 0pt; axes wdth=100 FILL=0 wght=500 slnt=0 opsz=36 GRAD=0 ROND=0 CRSV=0 HEXP=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 36pt; lineHeight 44pt; fontTracking 0pt
+- **md.sys.typescale.emphasized.display-small.crsv** (Emphasized Display Small crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.display-small.fill** (Emphasized Display Small fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.display-small.font** (Emphasized Display Small font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.emphasized.display-small.grad** (Emphasized Display Small grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.display-small.hexp** (Emphasized Display Small hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.display-small.line-height** (Emphasized Display Small line height)
+  - 44pt
+- **md.sys.typescale.emphasized.display-small.opsz** (Emphasized Display Small opsz)
+  - opsz=36
+- **md.sys.typescale.emphasized.display-small.rond** (Emphasized Display Small rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.display-small.size** (Emphasized Display Small size)
+  - 36pt
+- **md.sys.typescale.emphasized.display-small.slnt** (Emphasized Display Small slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.display-small.tracking** (Emphasized Display Small tracking)
+  - 0pt [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.emphasized.display-small.wdth** (Emphasized Display Small wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.display-small.weight** (Emphasized Display Small weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.display-small.wght** (Emphasized Display Small wght)
+  - wght=500
+- **md.sys.typescale.emphasized.headline-large** (Emphasized Headline Large)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 32pt; lineHeight 40pt; fontTracking 0pt; axes wdth=100 FILL=0 GRAD=0 wght=500 ROND=0 slnt=0 opsz=32 CRSV=0 HEXP=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 32pt; lineHeight 40pt; fontTracking 0pt
+- **md.sys.typescale.emphasized.headline-large.crsv** (Emphasized Headline Large crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.headline-large.fill** (Emphasized Headline Large fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.headline-large.font** (Emphasized Headline Large font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.emphasized.headline-large.grad** (Emphasized Headline Large grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.headline-large.hexp** (Emphasized Headline Large hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.headline-large.line-height** (Emphasized Headline Large line height)
+  - 40pt
+- **md.sys.typescale.emphasized.headline-large.opsz** (Emphasized Headline Large opsz)
+  - opsz=32
+- **md.sys.typescale.emphasized.headline-large.rond** (Emphasized Headline Large rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.headline-large.size** (Emphasized Headline Large size)
+  - 32pt
+- **md.sys.typescale.emphasized.headline-large.slnt** (Emphasized Headline Large slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.headline-large.tracking** (Emphasized Headline Large tracking)
+  - 0pt [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.emphasized.headline-large.wdth** (Emphasized Headline Large wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.headline-large.weight** (Emphasized Headline Large weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.headline-large.wght** (Emphasized Headline Large wght)
+  - wght=500
+- **md.sys.typescale.emphasized.headline-medium** (Emphasized Headline Medium)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 28pt; lineHeight 36pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=28 GRAD=0 ROND=100 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 28pt; lineHeight 36pt; fontTracking 0pt
+- **md.sys.typescale.emphasized.headline-medium.crsv** (Emphasized Headline Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.headline-medium.fill** (Emphasized Headline Medium fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.headline-medium.font** (Emphasized Headline Medium font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.emphasized.headline-medium.grad** (Emphasized Headline Medium grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.headline-medium.hexp** (Emphasized Headline Medium hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.headline-medium.line-height** (Emphasized Headline Medium line height)
+  - 36pt
+- **md.sys.typescale.emphasized.headline-medium.opsz** (Emphasized Headline Medium opsz)
+  - opsz=28
+- **md.sys.typescale.emphasized.headline-medium.rond** (Emphasized Headline Medium rond)
+  - [Font=Variable]: ROND=100
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: ROND=0
+- **md.sys.typescale.emphasized.headline-medium.size** (Emphasized Headline Medium size)
+  - 28pt
+- **md.sys.typescale.emphasized.headline-medium.slnt** (Emphasized Headline Medium slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.headline-medium.tracking** (Emphasized Headline Medium tracking)
+  - 0pt [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.emphasized.headline-medium.wdth** (Emphasized Headline Medium wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.headline-medium.weight** (Emphasized Headline Medium weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.headline-medium.wght** (Emphasized Headline Medium wght)
+  - wght=500
+- **md.sys.typescale.emphasized.headline-small** (Emphasized Headline Small)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 24pt; lineHeight 32pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=24 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 24pt; lineHeight 32pt; fontTracking 0pt
+- **md.sys.typescale.emphasized.headline-small.crsv** (Emphasized Headline Small crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.headline-small.fill** (Emphasized Headline Small fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.headline-small.font** (Emphasized Headline Small font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.emphasized.headline-small.grad** (Emphasized Headline Small grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.headline-small.hexp** (Emphasized Headline Small hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.headline-small.line-height** (Emphasized Headline Small line height)
+  - 32pt
+- **md.sys.typescale.emphasized.headline-small.opsz** (Emphasized Headline Small opsz)
+  - opsz=24
+- **md.sys.typescale.emphasized.headline-small.rond** (Emphasized Headline Small rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.headline-small.size** (Emphasized Headline Small size)
+  - 24pt
+- **md.sys.typescale.emphasized.headline-small.slnt** (Emphasized Headline Small slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.headline-small.tracking** (Emphasized Headline Small tracking)
+  - 0pt [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.emphasized.headline-small.wdth** (Emphasized Headline Small wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.headline-small.weight** (Emphasized Headline Small weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.headline-small.wght** (Emphasized Headline Small wght)
+  - wght=500
+- **md.sys.typescale.emphasized.label-large** (Emphasized Label Large)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=14 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+- **md.sys.typescale.emphasized.label-large.crsv** (Emphasized Label Large crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.label-large.fill** (Emphasized Label Large fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.label-large.font** (Emphasized Label Large font)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.emphasized.label-large.grad** (Emphasized Label Large grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.label-large.hexp** (Emphasized Label Large hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.label-large.line-height** (Emphasized Label Large line height)
+  - 20pt
+- **md.sys.typescale.emphasized.label-large.opsz** (Emphasized Label Large opsz)
+  - opsz=14
+- **md.sys.typescale.emphasized.label-large.rond** (Emphasized Label Large rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.label-large.size** (Emphasized Label Large size)
+  - 14pt
+- **md.sys.typescale.emphasized.label-large.slnt** (Emphasized Label Large slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.label-large.tracking** (Emphasized Label Large tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.1pt
+- **md.sys.typescale.emphasized.label-large.wdth** (Emphasized Label Large wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.label-large.weight** (Emphasized Label Large weight)
+  - -> md.ref.typeface.weight-bold = weight 700 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.label-large.wght** (Emphasized Label Large wght)
+  - wght=600
+- **md.sys.typescale.emphasized.label-medium** (Emphasized Label Medium)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 700; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=12 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 700; fontSize 12pt; lineHeight 16pt; fontTracking 0.5pt
+- **md.sys.typescale.emphasized.label-medium.crsv** (Emphasized Label Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.label-medium.fill** (Emphasized Label Medium fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.label-medium.font** (Emphasized Label Medium font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.emphasized.label-medium.grad** (Emphasized Label Medium grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.label-medium.hexp** (Emphasized Label Medium hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.label-medium.line-height** (Emphasized Label Medium line height)
+  - 16pt
+- **md.sys.typescale.emphasized.label-medium.opsz** (Emphasized Label Medium opsz)
+  - opsz=12
+- **md.sys.typescale.emphasized.label-medium.rond** (Emphasized Label Medium rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.label-medium.size** (Emphasized Label Medium size)
+  - 12pt
+- **md.sys.typescale.emphasized.label-medium.slnt** (Emphasized Label Medium slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.label-medium.tracking** (Emphasized Label Medium tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.5pt
+- **md.sys.typescale.emphasized.label-medium.wdth** (Emphasized Label Medium wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.label-medium.weight** (Emphasized Label Medium weight)
+  - -> md.ref.typeface.weight-bold = weight 700 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.label-medium.wght** (Emphasized Label Medium wght)
+  - wght=600
+- **md.sys.typescale.emphasized.label-small** (Emphasized Label Small)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 700; fontSize 11pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=11 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 700; fontSize 11pt; lineHeight 16pt; fontTracking 0.5pt
+- **md.sys.typescale.emphasized.label-small.crsv** (Emphasized Label Small crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.label-small.fill** (Emphasized Label Small fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.label-small.font** (Emphasized Label Small font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.emphasized.label-small.grad** (Emphasized Label Small grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.label-small.hexp** (Emphasized Label Small hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.label-small.line-height** (Emphasized Label Small line height)
+  - 16pt
+- **md.sys.typescale.emphasized.label-small.opsz** (Emphasized Label Small opsz)
+  - opsz=11
+- **md.sys.typescale.emphasized.label-small.rond** (Emphasized Label Small rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.label-small.size** (Emphasized Label Small size)
+  - 11pt
+- **md.sys.typescale.emphasized.label-small.slnt** (Emphasized Label Small slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.label-small.tracking** (Emphasized Label Small tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.5pt
+- **md.sys.typescale.emphasized.label-small.wdth** (Emphasized Label Small wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.label-small.weight** (Emphasized Label Small weight)
+  - -> md.ref.typeface.weight-bold = weight 700 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.label-small.wght** (Emphasized Label Small wght)
+  - wght=600
+- **md.sys.typescale.emphasized.title-large** (Emphasized Title Large)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 500; fontSize 22pt; lineHeight 28pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=22 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 500; fontSize 22pt; lineHeight 28pt; fontTracking 0pt
+- **md.sys.typescale.emphasized.title-large.crsv** (Emphasized Title Large crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.title-large.fill** (Emphasized Title Large fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.title-large.font** (Emphasized Title Large font)
+  - [Audience=3P + Font=Variable]: -> md.ref.typeface.brand = Roboto Flex
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: -> md.ref.typeface.brand = Roboto
+- **md.sys.typescale.emphasized.title-large.grad** (Emphasized Title Large grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.title-large.hexp** (Emphasized Title Large hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.title-large.line-height** (Emphasized Title Large line height)
+  - 28pt
+- **md.sys.typescale.emphasized.title-large.opsz** (Emphasized Title Large opsz)
+  - opsz=22
+- **md.sys.typescale.emphasized.title-large.rond** (Emphasized Title Large rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.title-large.size** (Emphasized Title Large size)
+  - 22pt
+- **md.sys.typescale.emphasized.title-large.slnt** (Emphasized Title Large slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.title-large.tracking** (Emphasized Title Large tracking)
+  - 0pt [Font=Variable; Font=iOS bold; Font=Static]
+- **md.sys.typescale.emphasized.title-large.wdth** (Emphasized Title Large wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.title-large.weight** (Emphasized Title Large weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.title-large.wght** (Emphasized Title Large wght)
+  - wght=500
+- **md.sys.typescale.emphasized.title-medium** (Emphasized Title Medium)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 700; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=16 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 700; fontSize 16pt; lineHeight 24pt; fontTracking 0.15pt
+- **md.sys.typescale.emphasized.title-medium.crsv** (Emphasized Title Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.title-medium.fill** (Emphasized Title Medium fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.title-medium.font** (Emphasized Title Medium font)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.emphasized.title-medium.grad** (Emphasized Title Medium grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.title-medium.hexp** (Emphasized Title Medium hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.title-medium.line-height** (Emphasized Title Medium line height)
+  - 24pt
+- **md.sys.typescale.emphasized.title-medium.opsz** (Emphasized Title Medium opsz)
+  - opsz=16
+- **md.sys.typescale.emphasized.title-medium.rond** (Emphasized Title Medium rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.title-medium.size** (Emphasized Title Medium size)
+  - 16pt
+- **md.sys.typescale.emphasized.title-medium.slnt** (Emphasized Title Medium slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.title-medium.tracking** (Emphasized Title Medium tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.15pt
+- **md.sys.typescale.emphasized.title-medium.wdth** (Emphasized Title Medium wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.title-medium.weight** (Emphasized Title Medium weight)
+  - -> md.ref.typeface.weight-bold = weight 700 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.title-medium.wght** (Emphasized Title Medium wght)
+  - wght=600
+- **md.sys.typescale.emphasized.title-small** (Emphasized Title Small)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: Roboto Flex; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=14 GRAD=0 ROND=0 CRSV=0 HEXP=0 FILL=0
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: Roboto; weight 700; fontSize 14pt; lineHeight 20pt; fontTracking 0.1pt
+- **md.sys.typescale.emphasized.title-small.crsv** (Emphasized Title Small crsv)
+  - CRSV=0
+- **md.sys.typescale.emphasized.title-small.fill** (Emphasized Title Small fill)
+  - FILL=0
+- **md.sys.typescale.emphasized.title-small.font** (Emphasized Title Small font)
+  - [Audience=3P + Font=Variable + Platform=Compose; Audience=3P + Font=Variable + Platform=Web; Audience=3P + Font=Variable + Platform=Android]: -> md.ref.typeface.plain = Roboto Flex
+  - [Audience=3P + Font=iOS bold + Platform=Compose; Audience=3P + Font=Static + Platform=Compose; Audience=3P + Font=iOS bold + Platform=Web; Audience=3P + Font=Static + Platform=Web; Audience=3P + Font=iOS bold + Platform=Android; Audience=3P + Font=Static + Platform=Android]: -> md.ref.typeface.plain = Roboto
+- **md.sys.typescale.emphasized.title-small.grad** (Emphasized Title Small grad)
+  - GRAD=0
+- **md.sys.typescale.emphasized.title-small.hexp** (Emphasized Title Small hexp)
+  - HEXP=0
+- **md.sys.typescale.emphasized.title-small.line-height** (Emphasized Title Small line height)
+  - 20pt
+- **md.sys.typescale.emphasized.title-small.opsz** (Emphasized Title Small opsz)
+  - opsz=14
+- **md.sys.typescale.emphasized.title-small.rond** (Emphasized Title Small rond)
+  - ROND=0 [Audience=3P + Font=Variable; Audience=3P + Font=iOS bold; Audience=3P + Font=Static]
+- **md.sys.typescale.emphasized.title-small.size** (Emphasized Title Small size)
+  - 14pt
+- **md.sys.typescale.emphasized.title-small.slnt** (Emphasized Title Small slnt)
+  - slnt=0
+- **md.sys.typescale.emphasized.title-small.tracking** (Emphasized Title Small tracking)
+  - [Audience=3P + Font=Variable]: 0pt
+  - [Audience=3P + Font=iOS bold; Audience=3P + Font=Static]: 0.1pt
+- **md.sys.typescale.emphasized.title-small.wdth** (Emphasized Title Small wdth)
+  - wdth=100
+- **md.sys.typescale.emphasized.title-small.weight** (Emphasized Title Small weight)
+  - -> md.ref.typeface.weight-bold = weight 700 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.emphasized.title-small.wght** (Emphasized Title Small wght)
+  - wght=600
+
+## md.sys.typescale.variable — Type scale - Variable
+
+Default typography tokens combining font, weight, size, tracking, and line height in the type scale.
+
+- **md.sys.typescale.variable.body-large** (Body Large)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 400; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 400; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=16 slnt=0 CRSV=0
+- **md.sys.typescale.variable.body-large.crsv** (Body Large crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.body-large.font** (Body Large font name)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.body-large.grad** (Body Large grad)
+  - GRAD=0
+- **md.sys.typescale.variable.body-large.line-height** (Body Large line height)
+  - 24pt
+- **md.sys.typescale.variable.body-large.opsz** (Body Large opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=16
+- **md.sys.typescale.variable.body-large.rond** (Body Large rond)
+  - ROND=0
+- **md.sys.typescale.variable.body-large.size** (Body Large font size)
+  - 16pt
+- **md.sys.typescale.variable.body-large.slnt** (Body Large slnt)
+  - slnt=0
+- **md.sys.typescale.variable.body-large.tracking** (Body Large font tracking)
+  - 0pt
+- **md.sys.typescale.variable.body-large.wdth** (Body Large wdth)
+  - wdth=100
+- **md.sys.typescale.variable.body-large.weight** (Body Large weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.body-large.wght** (Body Large wght)
+  - -> md.ref.typeface.variable.wght-regular = wght=400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.body-medium** (Body Medium)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 400; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 400; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=14 slnt=0 CRSV=0
+- **md.sys.typescale.variable.body-medium.crsv** (Body Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.body-medium.font** (Body Medium font name)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.body-medium.grad** (Body Medium grad)
+  - GRAD=0
+- **md.sys.typescale.variable.body-medium.line-height** (Body Medium line height)
+  - 20pt
+- **md.sys.typescale.variable.body-medium.opsz** (Body Medium opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=14
+- **md.sys.typescale.variable.body-medium.rond** (Body Medium rond)
+  - ROND=0
+- **md.sys.typescale.variable.body-medium.size** (Body Medium font size)
+  - 14pt
+- **md.sys.typescale.variable.body-medium.slnt** (Body Medium slnt)
+  - slnt=0
+- **md.sys.typescale.variable.body-medium.tracking** (Body Medium font tracking)
+  - 0pt
+- **md.sys.typescale.variable.body-medium.wdth** (Body Medium wdth)
+  - wdth=100
+- **md.sys.typescale.variable.body-medium.weight** (Body Medium weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.body-medium.wght** (Body Medium wght)
+  - -> md.ref.typeface.variable.wght-regular = wght=400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.body-small** (Body Small)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 400; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 400; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=12 slnt=0 CRSV=0
+- **md.sys.typescale.variable.body-small.crsv** (Body Small crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.body-small.font** (Body Small font name)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.body-small.grad** (Body Small grad)
+  - GRAD=0
+- **md.sys.typescale.variable.body-small.line-height** (Body Small line height)
+  - 16pt
+- **md.sys.typescale.variable.body-small.opsz** (Body Small opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=12
+- **md.sys.typescale.variable.body-small.rond** (Body Small rond)
+  - ROND=0
+- **md.sys.typescale.variable.body-small.size** (Body Small font size)
+  - 12pt
+- **md.sys.typescale.variable.body-small.slnt** (Body Small slnt)
+  - slnt=0
+- **md.sys.typescale.variable.body-small.tracking** (Body Small font tracking)
+  - 0pt
+- **md.sys.typescale.variable.body-small.wdth** (Body Small wdth)
+  - wdth=100
+- **md.sys.typescale.variable.body-small.weight** (Body Small weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.body-small.wght** (Body Small wght)
+  - -> md.ref.typeface.variable.wght-regular = wght=400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.display-large** (Display Large)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 400; fontSize 57pt; lineHeight 64pt; fontTracking 0pt; axes GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 wght=400 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 400; fontSize 57pt; lineHeight 64pt; fontTracking 0pt; axes GRAD=0 wdth=100 ROND=0 opsz=57 slnt=0 wght=400 CRSV=0
+- **md.sys.typescale.variable.display-large.crsv** (Display Large crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.display-large.font** (Display Large font name)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.display-large.grad** (Display Large grad)
+  - GRAD=0
+- **md.sys.typescale.variable.display-large.line-height** (Display Large line height)
+  - 64pt
+- **md.sys.typescale.variable.display-large.opsz** (Display Large opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=57
+- **md.sys.typescale.variable.display-large.rond** (Display Large rond)
+  - ROND=0
+- **md.sys.typescale.variable.display-large.size** (Display Large font size)
+  - 57pt
+- **md.sys.typescale.variable.display-large.slnt** (Display Large slnt)
+  - slnt=0
+- **md.sys.typescale.variable.display-large.tracking** (Display Large font tracking)
+  - 0pt
+- **md.sys.typescale.variable.display-large.wdth** (Display Large wdth)
+  - wdth=100
+- **md.sys.typescale.variable.display-large.weight** (Display Large weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.display-large.wght** (Display Large wght)
+  - -> md.ref.typeface.variable.wght-regular = wght=400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.display-medium** (Display Medium)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 400; fontSize 45pt; lineHeight 52pt; fontTracking 0pt; axes GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 wght=400 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 400; fontSize 45pt; lineHeight 52pt; fontTracking 0pt; axes GRAD=0 wdth=100 ROND=0 opsz=45 slnt=0 wght=400 CRSV=0
+- **md.sys.typescale.variable.display-medium.crsv** (Display Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.display-medium.font** (Display Medium font name)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.display-medium.grad** (Display Medium grad)
+  - GRAD=0
+- **md.sys.typescale.variable.display-medium.line-height** (Display Medium line height)
+  - 52pt
+- **md.sys.typescale.variable.display-medium.opsz** (Display Medium opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=45
+- **md.sys.typescale.variable.display-medium.rond** (Display Medium rond)
+  - ROND=0
+- **md.sys.typescale.variable.display-medium.size** (Display Medium font size)
+  - 45pt
+- **md.sys.typescale.variable.display-medium.slnt** (Display Medium slnt)
+  - slnt=0
+- **md.sys.typescale.variable.display-medium.tracking** (Display Medium font tracking)
+  - 0pt
+- **md.sys.typescale.variable.display-medium.wdth** (Display Medium wdth)
+  - wdth=100
+- **md.sys.typescale.variable.display-medium.weight** (Display Medium weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.display-medium.wght** (Display Medium wght)
+  - -> md.ref.typeface.variable.wght-regular = wght=400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.display-small** (Display Small)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 400; fontSize 36pt; lineHeight 44pt; fontTracking 0pt; axes GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 wght=400 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 400; fontSize 36pt; lineHeight 44pt; fontTracking 0pt; axes GRAD=0 wdth=100 ROND=0 opsz=36 slnt=0 wght=400 CRSV=0
+- **md.sys.typescale.variable.display-small.crsv** (Display Small crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.display-small.font** (Display Small font name)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.display-small.grad** (Display Small grad)
+  - GRAD=0
+- **md.sys.typescale.variable.display-small.line-height** (Display Small line height)
+  - 44pt
+- **md.sys.typescale.variable.display-small.opsz** (Display Small opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=36
+- **md.sys.typescale.variable.display-small.rond** (Display Small rond)
+  - ROND=0
+- **md.sys.typescale.variable.display-small.size** (Display Small font size)
+  - 36pt
+- **md.sys.typescale.variable.display-small.slnt** (Display Small slnt)
+  - slnt=0
+- **md.sys.typescale.variable.display-small.tracking** (Display Small font tracking)
+  - 0pt
+- **md.sys.typescale.variable.display-small.wdth** (Display Small wdth)
+  - wdth=100
+- **md.sys.typescale.variable.display-small.weight** (Display Small weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.display-small.wght** (Display Small wght)
+  - -> md.ref.typeface.variable.wght-regular = wght=400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.headline-large** (Headline Large)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 400; fontSize 32pt; lineHeight 40pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 400; fontSize 32pt; lineHeight 40pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=32 slnt=0 CRSV=0
+- **md.sys.typescale.variable.headline-large.crsv** (Headline Large crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.headline-large.font** (Headline Large font name)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.headline-large.grad** (Headline Large grad)
+  - GRAD=0
+- **md.sys.typescale.variable.headline-large.line-height** (Headline Large line height)
+  - 40pt
+- **md.sys.typescale.variable.headline-large.opsz** (Headline Large opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=32
+- **md.sys.typescale.variable.headline-large.rond** (Headline Large rond)
+  - ROND=0
+- **md.sys.typescale.variable.headline-large.size** (Headline Large font size)
+  - 32pt
+- **md.sys.typescale.variable.headline-large.slnt** (Headline Large slnt)
+  - slnt=0
+- **md.sys.typescale.variable.headline-large.tracking** (Headline Large font tracking)
+  - 0pt
+- **md.sys.typescale.variable.headline-large.wdth** (Headline Large wdth)
+  - wdth=100
+- **md.sys.typescale.variable.headline-large.weight** (Headline Large weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.headline-large.wght** (Headline Large wght)
+  - -> md.ref.typeface.variable.wght-regular = wght=400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.headline-medium** (Headline Medium)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 400; fontSize 28pt; lineHeight 36pt; fontTracking 0pt; axes wdth=100 GRAD=0 wght=400 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 400; fontSize 28pt; lineHeight 36pt; fontTracking 0pt; axes wdth=100 GRAD=0 wght=400 ROND=0 opsz=28 slnt=0 CRSV=0
+- **md.sys.typescale.variable.headline-medium.crsv** (Headline Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.headline-medium.font** (Headline Medium font name)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.headline-medium.grad** (Headline Medium grad)
+  - GRAD=0
+- **md.sys.typescale.variable.headline-medium.line-height** (Headline Medium line height)
+  - 36pt
+- **md.sys.typescale.variable.headline-medium.opsz** (Headline Medium opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=28
+- **md.sys.typescale.variable.headline-medium.rond** (Headline Medium rond)
+  - ROND=0
+- **md.sys.typescale.variable.headline-medium.size** (Headline Medium font size)
+  - 28pt
+- **md.sys.typescale.variable.headline-medium.slnt** (Headline Medium slnt)
+  - slnt=0
+- **md.sys.typescale.variable.headline-medium.tracking** (Headline Medium font tracking)
+  - 0pt
+- **md.sys.typescale.variable.headline-medium.wdth** (Headline Medium wdth)
+  - wdth=100
+- **md.sys.typescale.variable.headline-medium.weight** (Headline Medium weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.headline-medium.wght** (Headline Medium wght)
+  - -> md.ref.typeface.variable.wght-regular = wght=400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.headline-small** (Headline Small)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 400; fontSize 24pt; lineHeight 32pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 400; fontSize 24pt; lineHeight 32pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=24 slnt=0 CRSV=0
+- **md.sys.typescale.variable.headline-small.crsv** (Headline Small crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.headline-small.font** (Headline Small font name)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.headline-small.grad** (Headline Small grad)
+  - GRAD=0
+- **md.sys.typescale.variable.headline-small.line-height** (Headline Small line height)
+  - 32pt
+- **md.sys.typescale.variable.headline-small.opsz** (Headline Small opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=24
+- **md.sys.typescale.variable.headline-small.rond** (Headline Small rond)
+  - ROND=0
+- **md.sys.typescale.variable.headline-small.size** (Headline Small font size)
+  - 24pt
+- **md.sys.typescale.variable.headline-small.slnt** (Headline Small slnt)
+  - slnt=0
+- **md.sys.typescale.variable.headline-small.tracking** (Headline Small font tracking)
+  - 0pt
+- **md.sys.typescale.variable.headline-small.wdth** (Headline Small wdth)
+  - wdth=100
+- **md.sys.typescale.variable.headline-small.weight** (Headline Small weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.headline-small.wght** (Headline Small wght)
+  - -> md.ref.typeface.variable.wght-regular = wght=400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.label-large** (Label Large)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=14 slnt=0 CRSV=0
+- **md.sys.typescale.variable.label-large.crsv** (Label Large crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.label-large.font** (Label Large font name)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.label-large.grad** (Label Large grad)
+  - GRAD=0
+- **md.sys.typescale.variable.label-large.line-height** (Label Large line height)
+  - 20pt
+- **md.sys.typescale.variable.label-large.opsz** (Label Large opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=14
+- **md.sys.typescale.variable.label-large.rond** (Label Large rond)
+  - ROND=0
+- **md.sys.typescale.variable.label-large.size** (Label Large font size)
+  - 14pt
+- **md.sys.typescale.variable.label-large.slnt** (Label Large slnt)
+  - slnt=0
+- **md.sys.typescale.variable.label-large.tracking** (Label Large font tracking)
+  - 0pt
+- **md.sys.typescale.variable.label-large.wdth** (Label Large wdth)
+  - wdth=100
+- **md.sys.typescale.variable.label-large.weight** (Label Large weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.label-large.wght** (Label Large wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.label-medium** (Label Medium)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=12 slnt=0 CRSV=0
+- **md.sys.typescale.variable.label-medium.crsv** (Label Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.label-medium.font** (Label Medium font name)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.label-medium.grad** (Label Medium grad)
+  - GRAD=0
+- **md.sys.typescale.variable.label-medium.line-height** (Label Medium line height)
+  - 16pt
+- **md.sys.typescale.variable.label-medium.opsz** (Label Medium opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=12
+- **md.sys.typescale.variable.label-medium.rond** (Label Medium rond)
+  - ROND=0
+- **md.sys.typescale.variable.label-medium.size** (Label Medium font size)
+  - 12pt
+- **md.sys.typescale.variable.label-medium.slnt** (Label Medium  slnt)
+  - slnt=0
+- **md.sys.typescale.variable.label-medium.tracking** (Label Medium font tracking)
+  - 0pt
+- **md.sys.typescale.variable.label-medium.wdth** (Label Medium wdth)
+  - wdth=100
+- **md.sys.typescale.variable.label-medium.weight** (Label Medium weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.label-medium.wght** (Label Medium wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.label-small** (Label Small)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 11pt; lineHeight 16pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 11pt; lineHeight 16pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=11 slnt=0 CRSV=0
+- **md.sys.typescale.variable.label-small.crsv** (Label Small crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.label-small.font** (Label Small font name)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.label-small.grad** (Label Small grad)
+  - GRAD=0
+- **md.sys.typescale.variable.label-small.line-height** (Label Small line height)
+  - 16pt
+- **md.sys.typescale.variable.label-small.opsz** (Label Small opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=11
+- **md.sys.typescale.variable.label-small.rond** (Label Small rond)
+  - ROND=0
+- **md.sys.typescale.variable.label-small.size** (Label Small font size)
+  - 11pt
+- **md.sys.typescale.variable.label-small.slnt** (Label Small slnt)
+  - slnt=0
+- **md.sys.typescale.variable.label-small.tracking** (Label Small font tracking)
+  - 0pt
+- **md.sys.typescale.variable.label-small.wdth** (Label Small wdth)
+  - wdth=100
+- **md.sys.typescale.variable.label-small.weight** (Label Small weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.label-small.wght** (Label Small wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.title-large** (Title Large)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 400; fontSize 22pt; lineHeight 28pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 400; fontSize 22pt; lineHeight 28pt; fontTracking 0pt; axes wght=400 GRAD=0 wdth=100 ROND=0 opsz=22 slnt=0 CRSV=0
+- **md.sys.typescale.variable.title-large.crsv** (Title Large crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.title-large.font** (Title Large font name)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.title-large.grad** (Title Large grad)
+  - GRAD=0
+- **md.sys.typescale.variable.title-large.line-height** (Title Large line height)
+  - 28pt
+- **md.sys.typescale.variable.title-large.opsz** (Title Large opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=22
+- **md.sys.typescale.variable.title-large.rond** (Title Large rond)
+  - ROND=0
+- **md.sys.typescale.variable.title-large.size** (Title Large font size)
+  - 22pt
+- **md.sys.typescale.variable.title-large.slnt** (Title Large slnt)
+  - slnt=0
+- **md.sys.typescale.variable.title-large.tracking** (Title Large font tracking)
+  - 0pt
+- **md.sys.typescale.variable.title-large.wdth** (Title Large wdth)
+  - wdth=100
+- **md.sys.typescale.variable.title-large.weight** (Title Large weight)
+  - -> md.ref.typeface.weight-regular = weight 400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.title-large.wght** (Title Large wght)
+  - -> md.ref.typeface.variable.wght-regular = wght=400 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.title-medium** (Title Medium)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=16 slnt=0 CRSV=0
+- **md.sys.typescale.variable.title-medium.crsv** (Title Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.title-medium.font** (Title Medium font name)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.title-medium.grad** (Title Medium grad)
+  - GRAD=0
+- **md.sys.typescale.variable.title-medium.line-height** (Title Medium line height)
+  - 24pt
+- **md.sys.typescale.variable.title-medium.opsz** (Title Medium opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=16
+- **md.sys.typescale.variable.title-medium.rond** (Title Medium rond)
+  - ROND=0
+- **md.sys.typescale.variable.title-medium.size** (Title Medium font size)
+  - 16pt
+- **md.sys.typescale.variable.title-medium.slnt** (Title Medium slnt)
+  - slnt=0
+- **md.sys.typescale.variable.title-medium.tracking** (Title Medium font tracking)
+  - 0pt
+- **md.sys.typescale.variable.title-medium.wdth** (Title Medium wdth)
+  - wdth=100
+- **md.sys.typescale.variable.title-medium.weight** (Title Medium weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.title-medium.wght** (Title Medium wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.title-small** (Title Small)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 slnt=0 opsz=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 slnt=0 opsz=14 CRSV=0
+- **md.sys.typescale.variable.title-small.crsv** (Title Small crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.title-small.font** (Title Small font name)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.title-small.grad** (Title Small grad)
+  - GRAD=0
+- **md.sys.typescale.variable.title-small.line-height** (Title Small line height)
+  - 20pt
+- **md.sys.typescale.variable.title-small.opsz** (Title Small opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=14
+- **md.sys.typescale.variable.title-small.rond** (Title Small rond)
+  - ROND=0
+- **md.sys.typescale.variable.title-small.size** (Title Small font size)
+  - 14pt
+- **md.sys.typescale.variable.title-small.slnt** (Title Small slnt)
+  - slnt=0
+- **md.sys.typescale.variable.title-small.tracking** (Title Small font tracking)
+  - 0pt
+- **md.sys.typescale.variable.title-small.wdth** (Title Small wdth)
+  - wdth=100
+- **md.sys.typescale.variable.title-small.weight** (Title Small weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.title-small.wght** (Title Small wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+
+## md.sys.typescale.variable.emphasized — Type scale - Variable Emphasized 
+
+Emphasized typography tokens combining font, weight, size, tracking, and line height in the emphasized type scale.
+
+- **md.sys.typescale.variable.emphasized.body-large** (Emphasized Body Large)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=0 GRAD=0 ROND=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=16 GRAD=0 ROND=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.body-large.crsv** (Emphasized Body Large crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.body-large.font** (Emphasized Body Large font)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.body-large.grad** (Emphasized Body Large grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.body-large.line-height** (Emphasized Body Large line height)
+  - 24pt
+- **md.sys.typescale.variable.emphasized.body-large.opsz** (Emphasized Body Large opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=16
+- **md.sys.typescale.variable.emphasized.body-large.rond** (Emphasized Body Large rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.body-large.size** (Emphasized Body Large size)
+  - 16pt
+- **md.sys.typescale.variable.emphasized.body-large.slnt** (Emphasized Body Large slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.body-large.tracking** (Emphasized Body Large tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.body-large.wdth** (Emphasized Body Large wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.body-large.weight** (Emphasized Body Large weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.body-large.wght** (Emphasized Body Large wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.body-medium** (Emphasized Body Medium)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=0 GRAD=0 ROND=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=14 GRAD=0 ROND=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.body-medium.crsv** (Emphasized Body Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.body-medium.font** (Emphasized Body Medium font)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.body-medium.grad** (Emphasized Body Medium grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.body-medium.line-height** (Emphasized Body Medium line height)
+  - 20pt
+- **md.sys.typescale.variable.emphasized.body-medium.opsz** (Emphasized Body Medium opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=14
+- **md.sys.typescale.variable.emphasized.body-medium.rond** (Emphasized Body Medium rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.body-medium.size** (Emphasized Body Medium size)
+  - 14pt
+- **md.sys.typescale.variable.emphasized.body-medium.slnt** (Emphasized Body Medium slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.body-medium.tracking** (Emphasized Body Medium tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.body-medium.wdth** (Emphasized Body Medium wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.body-medium.weight** (Emphasized Body Medium weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.body-medium.wght** (Emphasized Body Medium wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.body-small** (Emphasized Body Small)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=0 GRAD=0 ROND=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=12 GRAD=0 ROND=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.body-small.crsv** (Emphasized Body Small crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.body-small.font** (Emphasized Body Small font)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.body-small.grad** (Emphasized Body Small grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.body-small.line-height** (Emphasized Body Small line height)
+  - 16pt
+- **md.sys.typescale.variable.emphasized.body-small.opsz** (Emphasized Body Small opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=12
+- **md.sys.typescale.variable.emphasized.body-small.rond** (Emphasized Body Small rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.body-small.size** (Emphasized Body Small size)
+  - 12pt
+- **md.sys.typescale.variable.emphasized.body-small.slnt** (Emphasized Body Small slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.body-small.tracking** (Emphasized Body Small tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.body-small.wdth** (Emphasized Body Small wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.body-small.weight** (Emphasized Body Small weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.body-small.wght** (Emphasized Body Small wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.display-large** (Emphasized Display Large)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 57pt; lineHeight 64pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 57pt; lineHeight 64pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=57 slnt=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.display-large.crsv** (Emphasized Display Large crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.display-large.font** (Emphasized Display Large font)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.display-large.grad** (Emphasized Display Large grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.display-large.line-height** (Emphasized Display Large line height)
+  - 64pt
+- **md.sys.typescale.variable.emphasized.display-large.opsz** (Emphasized Display Large opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=57
+- **md.sys.typescale.variable.emphasized.display-large.rond** (Emphasized Display Large rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.display-large.size** (Emphasized Display Large size)
+  - 57pt
+- **md.sys.typescale.variable.emphasized.display-large.slnt** (Emphasized Display Large slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.display-large.tracking** (Emphasized Display Large tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.display-large.wdth** (Emphasized Display Large wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.display-large.weight** (Emphasized Display Large weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.display-large.wght** (Emphasized Display Large wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.display-medium** (Emphasized Display Medium)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 45pt; lineHeight 52pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 45pt; lineHeight 52pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=45 slnt=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.display-medium.crsv** (Emphasized Display Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.display-medium.font** (Emphasized Display Medium font)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.display-medium.grad** (Emphasized Display Medium grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.display-medium.line-height** (Emphasized Display Medium line height)
+  - 52pt
+- **md.sys.typescale.variable.emphasized.display-medium.opsz** (Emphasized Display Medium opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=45
+- **md.sys.typescale.variable.emphasized.display-medium.rond** (Emphasized Display Medium rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.display-medium.size** (Emphasized Display Medium size)
+  - 45pt
+- **md.sys.typescale.variable.emphasized.display-medium.slnt** (Emphasized Display Medium slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.display-medium.tracking** (Emphasized Display Medium tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.display-medium.wdth** (Emphasized Display Medium wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.display-medium.weight** (Emphasized Display Medium weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.display-medium.wght** (Emphasized Display Medium wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.display-small** (Emphasized Display Small)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 36pt; lineHeight 44pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 36pt; lineHeight 44pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=36 slnt=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.display-small.crsv** (Emphasized Display Small crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.display-small.font** (Emphasized Display Small font)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.display-small.grad** (Emphasized Display Small grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.display-small.line-height** (Emphasized Display Small line height)
+  - 44pt
+- **md.sys.typescale.variable.emphasized.display-small.opsz** (Emphasized Display Small opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=36
+- **md.sys.typescale.variable.emphasized.display-small.rond** (Emphasized Display Small rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.display-small.size** (Emphasized Display Small size)
+  - 36pt
+- **md.sys.typescale.variable.emphasized.display-small.slnt** (Emphasized Display Small slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.display-small.tracking** (Emphasized Display Small tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.display-small.wdth** (Emphasized Display Small wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.display-small.weight** (Emphasized Display Small weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.display-small.wght** (Emphasized Display Small wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.headline-large** (Emphasized Headline Large)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 32pt; lineHeight 40pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 32pt; lineHeight 40pt; fontTracking 0pt; axes wght=500 GRAD=0 wdth=100 ROND=0 opsz=32 slnt=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.headline-large.crsv** (Emphasized Headline Large crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.headline-large.font** (Emphasized Headline Large font)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.headline-large.grad** (Emphasized Headline Large grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.headline-large.line-height** (Emphasized Headline Large line height)
+  - 40pt
+- **md.sys.typescale.variable.emphasized.headline-large.opsz** (Emphasized Headline Large opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=32
+- **md.sys.typescale.variable.emphasized.headline-large.rond** (Emphasized Headline Large rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.headline-large.size** (Emphasized Headline Large size)
+  - 32pt
+- **md.sys.typescale.variable.emphasized.headline-large.slnt** (Emphasized Headline Large slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.headline-large.tracking** (Emphasized Headline Large tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.headline-large.wdth** (Emphasized Headline Large wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.headline-large.weight** (Emphasized Headline Large weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.headline-large.wght** (Emphasized Headline Large wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.headline-medium** (Emphasized Headline Medium)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 28pt; lineHeight 36pt; fontTracking 0pt; axes wght=500 ROND=0 opsz=0 slnt=0 GRAD=0 wdth=100 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 28pt; lineHeight 36pt; fontTracking 0pt; axes wght=500 ROND=0 opsz=28 slnt=0 GRAD=0 wdth=100 CRSV=0
+- **md.sys.typescale.variable.emphasized.headline-medium.crsv** (Emphasized Headline Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.headline-medium.font** (Emphasized Headline Medium font)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.headline-medium.grad** (Emphasized Headline Medium grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.headline-medium.line-height** (Emphasized Headline Medium line height)
+  - 36pt
+- **md.sys.typescale.variable.emphasized.headline-medium.opsz** (Emphasized Headline Medium opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=28
+- **md.sys.typescale.variable.emphasized.headline-medium.rond** (Emphasized Headline Medium rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.headline-medium.size** (Emphasized Headline Medium size)
+  - 28pt
+- **md.sys.typescale.variable.emphasized.headline-medium.slnt** (Emphasized Headline Medium slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.headline-medium.tracking** (Emphasized Headline Medium tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.headline-medium.wdth** (Emphasized Headline Medium wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.headline-medium.weight** (Emphasized Headline Medium weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.headline-medium.wght** (Emphasized Headline Medium wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.headline-small** (Emphasized Headline Small)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 24pt; lineHeight 32pt; fontTracking 0pt; axes wght=500 wdth=100 GRAD=0 ROND=0 opsz=0 slnt=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 24pt; lineHeight 32pt; fontTracking 0pt; axes wght=500 wdth=100 GRAD=0 ROND=0 opsz=24 slnt=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.headline-small.crsv** (Emphasized Headline Small crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.headline-small.font** (Emphasized Headline Small font)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.headline-small.grad** (Emphasized Headline Small grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.headline-small.line-height** (Emphasized Headline Small line height)
+  - 32pt
+- **md.sys.typescale.variable.emphasized.headline-small.opsz** (Emphasized Headline Small opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=24
+- **md.sys.typescale.variable.emphasized.headline-small.rond** (Emphasized Headline Small rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.headline-small.size** (Emphasized Headline Small size)
+  - 24pt
+- **md.sys.typescale.variable.emphasized.headline-small.slnt** (Emphasized Headline Small slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.headline-small.tracking** (Emphasized Headline Small tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.headline-small.wdth** (Emphasized Headline Small wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.headline-small.weight** (Emphasized Headline Small weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.headline-small.wght** (Emphasized Headline Small wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.label-large** (Emphasized Label Large)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 600; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=0 GRAD=0 ROND=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 600; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=14 GRAD=0 ROND=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.label-large.crsv** (Emphasized Label Large crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.label-large.font** (Emphasized Label Large font)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.label-large.grad** (Emphasized Label Large grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.label-large.line-height** (Emphasized Label Large line height)
+  - 20pt
+- **md.sys.typescale.variable.emphasized.label-large.opsz** (Emphasized Label Large opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=14
+- **md.sys.typescale.variable.emphasized.label-large.rond** (Emphasized Label Large rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.label-large.size** (Emphasized Label Large size)
+  - 14pt
+- **md.sys.typescale.variable.emphasized.label-large.slnt** (Emphasized Label Large slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.label-large.tracking** (Emphasized Label Large tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.label-large.wdth** (Emphasized Label Large wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.label-large.weight** (Emphasized Label Large weight)
+  - -> md.ref.typeface.weight-semibold = weight 600 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.label-large.wght** (Emphasized Label Large wght)
+  - -> md.ref.typeface.variable.wght-semibold = wght=600 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.label-medium** (Emphasized Label Medium)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 600; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=0 GRAD=0 ROND=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 600; fontSize 12pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=12 GRAD=0 ROND=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.label-medium.crsv** (Emphasized Label Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.label-medium.font** (Emphasized Label Medium font)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.label-medium.grad** (Emphasized Label Medium grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.label-medium.line-height** (Emphasized Label Medium line height)
+  - 16pt
+- **md.sys.typescale.variable.emphasized.label-medium.opsz** (Emphasized Label Medium opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=12
+- **md.sys.typescale.variable.emphasized.label-medium.rond** (Emphasized Label Medium rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.label-medium.size** (Emphasized Label Medium size)
+  - 12pt
+- **md.sys.typescale.variable.emphasized.label-medium.slnt** (Emphasized Label Medium slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.label-medium.tracking** (Emphasized Label Medium tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.label-medium.wdth** (Emphasized Label Medium wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.label-medium.weight** (Emphasized Label Medium weight)
+  - -> md.ref.typeface.weight-semibold = weight 600 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.label-medium.wght** (Emphasized Label Medium wght)
+  - -> md.ref.typeface.variable.wght-semibold = wght=600 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.label-small** (Emphasized Label Small)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 600; fontSize 11pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=0 GRAD=0 ROND=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 600; fontSize 11pt; lineHeight 16pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=11 GRAD=0 ROND=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.label-small.crsv** (Emphasized Label Small crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.label-small.font** (Emphasized Label Small font)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.label-small.grad** (Emphasized Label Small grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.label-small.line-height** (Emphasized Label Small line height)
+  - 16pt
+- **md.sys.typescale.variable.emphasized.label-small.opsz** (Emphasized Label Small opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=11
+- **md.sys.typescale.variable.emphasized.label-small.rond** (Emphasized Label Small rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.label-small.size** (Emphasized Label Small size)
+  - 11pt
+- **md.sys.typescale.variable.emphasized.label-small.slnt** (Emphasized Label Small slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.label-small.tracking** (Emphasized Label Small tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.label-small.wdth** (Emphasized Label Small wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.label-small.weight** (Emphasized Label Small weight)
+  - -> md.ref.typeface.weight-semibold = weight 600 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.label-small.wght** (Emphasized Label Small wght)
+  - -> md.ref.typeface.variable.wght-semibold = wght=600 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.title-large** (Emphasized Title Large)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 500; fontSize 22pt; lineHeight 28pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=0 GRAD=0 ROND=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 500; fontSize 22pt; lineHeight 28pt; fontTracking 0pt; axes wdth=100 wght=500 slnt=0 opsz=22 GRAD=0 ROND=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.title-large.crsv** (Emphasized Title Large crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.title-large.font** (Emphasized Title Large font)
+  - -> md.ref.typeface.variable.brand = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.title-large.grad** (Emphasized Title Large grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.title-large.line-height** (Emphasized Title Large line height)
+  - 28pt
+- **md.sys.typescale.variable.emphasized.title-large.opsz** (Emphasized Title Large opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=22
+- **md.sys.typescale.variable.emphasized.title-large.rond** (Emphasized Title Large rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.title-large.size** (Emphasized Title Large size)
+  - 22pt
+- **md.sys.typescale.variable.emphasized.title-large.slnt** (Emphasized Title Large slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.title-large.tracking** (Emphasized Title Large tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.title-large.wdth** (Emphasized Title Large wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.title-large.weight** (Emphasized Title Large weight)
+  - -> md.ref.typeface.weight-medium = weight 500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.title-large.wght** (Emphasized Title Large wght)
+  - -> md.ref.typeface.variable.wght-medium = wght=500 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.title-medium** (Emphasized Title Medium)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 600; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=0 GRAD=0 ROND=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 600; fontSize 16pt; lineHeight 24pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=16 GRAD=0 ROND=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.title-medium.crsv** (Emphasized Title Medium crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.title-medium.font** (Emphasized Title Medium font)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.title-medium.grad** (Emphasized Title Medium grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.title-medium.line-height** (Emphasized Title Medium line height)
+  - 24pt
+- **md.sys.typescale.variable.emphasized.title-medium.opsz** (Emphasized Title Medium opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=16
+- **md.sys.typescale.variable.emphasized.title-medium.rond** (Emphasized Title Medium rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.title-medium.size** (Emphasized Title Medium size)
+  - 16pt
+- **md.sys.typescale.variable.emphasized.title-medium.slnt** (Emphasized Title Medium slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.title-medium.tracking** (Emphasized Title Medium tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.title-medium.wdth** (Emphasized Title Medium wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.title-medium.weight** (Emphasized Title Medium weight)
+  - -> md.ref.typeface.weight-semibold = weight 600 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.title-medium.wght** (Emphasized Title Medium wght)
+  - -> md.ref.typeface.variable.wght-semibold = wght=600 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.title-small** (Emphasized Title Small)
+  - [Audience=3P + Platform=Web]: Roboto Flex; weight 600; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=0 GRAD=0 ROND=0 CRSV=0
+  - [Audience=3P + Platform=Compose; Audience=3P + Platform=Android]: Roboto Flex; weight 600; fontSize 14pt; lineHeight 20pt; fontTracking 0pt; axes wdth=100 wght=600 slnt=0 opsz=14 GRAD=0 ROND=0 CRSV=0
+- **md.sys.typescale.variable.emphasized.title-small.crsv** (Emphasized Title Small crsv)
+  - CRSV=0
+- **md.sys.typescale.variable.emphasized.title-small.font** (Emphasized Title Small font)
+  - -> md.ref.typeface.variable.plain = Roboto Flex [Audience=3P]
+- **md.sys.typescale.variable.emphasized.title-small.grad** (Emphasized Title Small grad)
+  - GRAD=0
+- **md.sys.typescale.variable.emphasized.title-small.line-height** (Emphasized Title Small line height)
+  - 20pt
+- **md.sys.typescale.variable.emphasized.title-small.opsz** (Emphasized Title Small opsz)
+  - [Platform=Web]: (undefined)
+  - [Platform=Compose; Platform=Android]: opsz=14
+- **md.sys.typescale.variable.emphasized.title-small.rond** (Emphasized Title Small rond)
+  - -> md.ref.typeface.emphasized.rond = ROND=0 [Audience=3P]
+- **md.sys.typescale.variable.emphasized.title-small.size** (Emphasized Title Small size)
+  - 14pt
+- **md.sys.typescale.variable.emphasized.title-small.slnt** (Emphasized Title Small slnt)
+  - slnt=0
+- **md.sys.typescale.variable.emphasized.title-small.tracking** (Emphasized Title Small tracking)
+  - 0pt
+- **md.sys.typescale.variable.emphasized.title-small.wdth** (Emphasized Title Small wdth)
+  - wdth=100
+- **md.sys.typescale.variable.emphasized.title-small.weight** (Emphasized Title Small weight)
+  - -> md.ref.typeface.weight-semibold = weight 600 [Platform=Compose; Platform=Web; Platform=Android]
+- **md.sys.typescale.variable.emphasized.title-small.wght** (Emphasized Title Small wght)
+  - -> md.ref.typeface.variable.wght-semibold = wght=600 [Platform=Compose; Platform=Web; Platform=Android]
+

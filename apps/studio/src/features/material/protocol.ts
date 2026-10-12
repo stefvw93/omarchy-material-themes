@@ -1,22 +1,25 @@
 import { Schema } from "effect";
-import { ContrastLevel, OmarchyColors, SchemeKind } from "@stef/theme-engine";
+import { Contrast, Mode, ThemePalette, Variant } from "@stef/theme-engine";
+
+export const PaletteRequest = Schema.Struct({
+  variant: Variant,
+  mode: Mode,
+  contrast: Contrast,
+});
+export type PaletteRequest = typeof PaletteRequest.Type;
 
 export const MaterialWorkerEventData = Schema.TaggedUnion({
-  CreateOmarchyColors: {
+  CreatePalette: {
     id: Schema.String,
     imageBytes: Schema.Uint8Array,
-    options: Schema.Struct({
-      schemeKind: SchemeKind,
-      isDark: Schema.optional(Schema.Boolean),
-      contrastLevel: Schema.optional(ContrastLevel),
-    }),
+    options: PaletteRequest,
   },
 });
 
 export const MaterialWorkerMessageData = Schema.TaggedUnion({
-  CreateOmarchyColors: {
+  CreatePalette: {
     id: Schema.String,
-    ...OmarchyColors.fields,
+    palette: ThemePalette,
   },
   Failure: {
     id: Schema.String,

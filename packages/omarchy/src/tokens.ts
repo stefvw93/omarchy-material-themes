@@ -1,4 +1,4 @@
-import { defaultTokens, mergeTokens, type Tokens, TokensSchema } from "@stef/tokens";
+import { defaultTokens, mergeTokens, migrateTokens, type Tokens, TokensSchema } from "@stef/tokens";
 import { Effect, FileSystem, Schema } from "effect";
 import { OmarchyPaths } from "./paths.ts";
 
@@ -20,11 +20,11 @@ export const readTokenOverride = Effect.gen(function* () {
   });
 });
 
-/** The tokens in effect: tokens.json over the defaults, validated. */
+/** The tokens in effect: tokens.json (migrated from v1 if need be) over the defaults, validated. */
 export const readTokens = Effect.flatMap(readTokenOverride, (override) =>
-  Schema.decodeUnknownEffect(TokensSchema)(mergeTokens(defaultTokens, override)).pipe(
-    Effect.mapError((e) => new TokensError({ message: `tokens.json: ${e.message}` })),
-  ),
+  Schema.decodeUnknownEffect(TokensSchema)(
+    mergeTokens(defaultTokens, migrateTokens(override)),
+  ).pipe(Effect.mapError((e) => new TokensError({ message: `tokens.json: ${e.message}` }))),
 );
 
 /** The leaves of `tokens` that differ from `base`, nested like the tokens. */
@@ -46,8 +46,9 @@ export const tokenDiff = (base: unknown, tokens: unknown): Json | undefined => {
 };
 
 /**
- * Writes `tokens` to tokens.json as the keys that differ from the defaults,
- * after validating them. Running plugins reload it live (Tokens.qml).
+ * Writes `tokens` to tokens.json as the keys that differ from the defaults
+ * (plus the version, so the file is never mistaken for v1), after validating
+ * them. Running plugins reload it live (Tokens.qml).
  */
 export const writeTokens = Effect.fn("Omarchy.writeTokens")(function* (tokens: Tokens) {
   const fs = yield* FileSystem.FileSystem;
@@ -58,6 +59,6 @@ export const writeTokens = Effect.fn("Omarchy.writeTokens")(function* (tokens: T
   yield* fs.makeDirectory(paths.stefDir, { recursive: true });
   yield* fs.writeFileString(
     paths.tokensJson,
-    `${JSON.stringify(tokenDiff(defaultTokens, tokens) ?? {}, null, 2)}\n`,
+    `${JSON.stringify({ ...tokenDiff(defaultTokens, tokens), version: 2 }, null, 2)}\n`,
   );
 });

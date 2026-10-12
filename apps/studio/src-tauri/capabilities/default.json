@@ -11,9 +11,13 @@
     {
       "identifier": "fs:scope",
       "allow": [
+        "$HOME/.config/omarchy/themes",
         "$HOME/.config/omarchy/themes/**",
+        "$HOME/.config/omarchy/stef",
         "$HOME/.config/omarchy/stef/**",
-        "$HOME/.config/hypr/stef/**"
+        "$HOME/.config/hypr/stef",
+        "$HOME/.config/hypr/stef/**",
+        "$HOME/.local/state/omarchy/current/theme/**"
       ]
     },
     {

@@ -1,11 +1,20 @@
 #!/usr/bin/env node
 // plugin-kit build [--dev]   build dist/<mode>/<id> from ./plugin.config.ts
-// plugin-kit check           build prod, then lint QML, load bundles in qs, run Lua tests
+// plugin-kit check           build prod, then lint QML, load bundles in qs, check the vendored
+//                            Tokens, Scheme and SpringValue, run engine and Lua tests
 // Run from a plugin app's directory. The `stef` CLI (tools/cli) will wrap these.
 import { NodeRuntime, NodeServices } from "@effect/platform-node";
 import { Console, Effect, Path } from "effect";
 import { buildPlugin } from "./build.ts";
-import { checkBundles, checkEngineTests, checkLua, checkQml, checkTokens } from "./check.ts";
+import {
+  checkBundles,
+  checkEngineTests,
+  checkLua,
+  checkQml,
+  checkScheme,
+  checkSpring,
+  checkTokens,
+} from "./check.ts";
 import type { PluginConfig } from "./define.ts";
 
 const [command, ...flags] = process.argv.slice(2);
@@ -32,6 +41,10 @@ const program = Effect.gen(function* () {
       yield* Console.log("bundles ok");
       yield* checkTokens(outDir);
       yield* Console.log("tokens ok");
+      yield* checkScheme(outDir);
+      yield* Console.log("scheme ok");
+      yield* checkSpring(outDir);
+      yield* Console.log("spring ok");
       const engineTests = yield* checkEngineTests(root, outDir);
       if (engineTests > 0) yield* Console.log(`engine tests ok (${engineTests})`);
       yield* checkLua(root, config);

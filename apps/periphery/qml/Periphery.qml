@@ -35,8 +35,25 @@ import "lib/selection.mjs" as Selection
 Item {
   id: root
 
-  // Shape and motion, live from ~/.config/omarchy/stef/tokens.json.
-  Tokens { id: tokens }
+  // Shape, spacing, type and motion, live from ~/.config/omarchy/stef/tokens.json
+  // (tokens.m3 holds the resolved Material 3 values); type follows the
+  // Omarchy text size.
+  Tokens {
+    id: tokens
+    textBase: Style.fontBaseSize // qmllint disable missing-property
+  }
+  // The theme's M3 colour roles (omaterial.json), or an approximation from
+  // Omarchy's colours under other themes.
+  Scheme {
+    id: themeScheme
+    omarchy: ({ background: Color.background, foreground: Color.foreground, accent: Color.accent, muted: Color.muted, urgent: Color.urgent }) // qmllint disable missing-property
+  }
+  readonly property var m3: tokens.m3
+  readonly property var scheme: themeScheme
+  // A component token's colour, through the scheme.
+  function compColor(name) { return root.scheme.color[root.m3.comp[name].role] }
+  // An M3 type style: size, line height, weight, tracking.
+  function typeOf(style) { return root.m3.type[style] }
 
   property var shell: null
   property var manifest: null
@@ -131,12 +148,31 @@ Item {
   })
   onLuaStateChanged: root.sendLuaState()
 
-  property color background: Color.menu.background // qmllint disable missing-property
-  property color foreground: Color.menu.text // qmllint disable missing-property
+  // Which M3 component each part is, and which spring moves it:
+  // interpretation periphery.components.
+  readonly property color onSurfaceVariant: root.scheme.color["on-surface-variant"]
+  // A card without a frame yet: an outlined card.
+  readonly property color placeholderColor: root.compColor("md.comp.outlined-card.container.color")
+  readonly property color placeholderOutline: root.compColor("md.comp.outlined-card.outline.color")
+  readonly property int placeholderOutlineWidth: root.m3.comp["md.comp.outlined-card.outline.width"]
+  // A selected card's title: a plain tooltip.
+  readonly property color tooltipColor: root.compColor("md.comp.plain-tooltip.container.color")
+  readonly property color tooltipText: root.compColor("md.comp.plain-tooltip.supporting-text.color")
+  readonly property int tooltipCorner: root.m3.comp["md.comp.plain-tooltip.container.shape"]
+  readonly property var tooltipType: root.m3.comp["md.comp.plain-tooltip.supporting-text.type"]
+  // The dragged card: the filled card's dragged elevation and state layer;
+  // the card it left behind is unavailable meanwhile (the disabled opacity).
+  readonly property var dragShadow: root.m3.shadowAt(root.m3.comp["md.comp.filled-card.dragged.container.elevation"])
+  readonly property color dragLayer: Qt.alpha(root.scheme.color["on-surface"], root.m3.state.dragged)
+  readonly property real draggedSourceOpacity: root.m3.state.disabled
+  // Drop targets: primary at the hover opacity, a primary outline, the large corner.
+  readonly property color dropFill: Qt.alpha(root.scheme.color.primary, root.m3.state.hover)
+  readonly property color dropOutline: root.scheme.color.primary
+  readonly property int dropOutlineWidth: root.m3.comp["md.comp.outlined-card.outline.width"]
+  readonly property int dropCorner: root.m3.corner["large"]
+  // Card borders stay Hyprland's (SPEC.md, Card borders): these feed them.
   property color border: Color.menu.border // qmllint disable missing-property
-  property color selectedText: Color.menu.selectedText // qmllint disable missing-property
   property color accent: Color.accent
-  readonly property int cornerRadius: Style.cornerRadius
   // Cards are drawn like windows, in the theme's border: the inactive border
   // at rest, the active one (Hyprland's active-border gradient, from the
   // theme's [hyprland] shell tokens) when selected. The theme's popups border
@@ -147,29 +183,30 @@ Item {
   readonly property var inactiveBorder: Border.surfaceSpec("popups", "border", root.border, root.windowBorder)
   property string fontFamily: Style.font.menuFamily // qmllint disable missing-property
 
-  readonly property int bandMargin: Style.space(tokens.value.periphery.bandMargin)
-  readonly property int cardGap: Style.space(tokens.value.periphery.cardGap)
-  readonly property int groupGap: Style.space(tokens.value.periphery.groupGap)
-  readonly property int headerHeight: Style.font.body + Style.spacing.sm * 2 // qmllint disable missing-property
+  readonly property int bandMargin: root.m3.periphery.bandMargin
+  readonly property int cardGap: root.m3.periphery.cardGap
+  readonly property int groupGap: root.m3.periphery.groupGap
+  // The title-small label line, then the card gap to the cards.
+  readonly property int headerHeight: root.typeOf("title-small").lineHeight + root.cardGap
   // How far a group's map may stretch vertically to use a tall band.
   readonly property real maxStretch: 6
   // Global animation speed: 1 is normal, 0.25 plays every animation 4x
-  // slower to inspect it, 2 twice as fast. Scales durations, timeouts and
-  // the springs (strength by speed², damping by speed keeps their shape).
+  // slower to inspect it, 2 twice as fast. Scales the timeouts and the
+  // springs (stiffness by speed² keeps their shape, in time scaled by speed).
   readonly property real animSpeed: 1
   function ms(duration) { return Math.round(duration / root.animSpeed) }
+  function atSpeed(spring) { return { stiffness: spring.stiffness * root.animSpeed * root.animSpeed, ratio: spring.ratio } }
 
-  readonly property int slideDuration: ms(tokens.value.periphery.slideDuration)
-  readonly property int fadeDuration: ms(tokens.value.periphery.fadeDuration)
-  // Qt SpringAnimation, tuned to the theme's spatial_default spring
-  // (stiffness 700, damping ratio 0.9): settles in ~340 ms, no overshoot.
-  readonly property real springStrength: 11.2 * animSpeed * animSpeed
-  // Qt steps springs in fixed 16 ms ticks, and at normal speed those coarse
-  // ticks damp the overshoot away. Slowed down, the same spring overshoots
-  // ~2%; the extra damping below cancels that, so slow motion shows the
-  // normal-speed curve (simulated: 0.2 px per 1000 px at animSpeed 0.1).
-  readonly property real springDamping: 0.65 * animSpeed * (1 + 0.22 * Math.max(0, 1 - animSpeed))
-  readonly property real springEpsilon: 0.25
+  // The tokens' motion scheme: geometry on spatial default, fades on effects
+  // default, the drag grow (a small element) on spatial fast, border colour
+  // on effects fast.
+  readonly property var springSpatial: root.atSpeed(root.m3.springs.spatial_default)
+  readonly property var springEffects: root.atSpeed(root.m3.springs.effects_default)
+  readonly property var springFast: root.atSpeed(root.m3.springs.spatial_fast)
+  // Card borders change colour as Hyprland's do (its `border` leaf).
+  readonly property var springEffectsFast: root.atSpeed(root.m3.springs.effects_fast)
+  // Geometry settles to within a quarter pixel.
+  readonly property real pixelEpsilon: 0.25
   // Ghosts settle at least this long before the hand-off, so the refresh
   // that follows a switch can still retarget them; and at most this long.
   readonly property int switchMinMs: ms(120)
@@ -182,7 +219,7 @@ Item {
   // to look like decoration:blur (size 6, 3 passes; matched by eye against
   // a real foot window, as dual-kawase has no exact radius; contrast 0.89
   // and vibrancy 0.17 map to MultiEffect -0.11 and 0.17).
-  readonly property int ghostBlur: tokens.value.periphery.ghostBlur
+  readonly property int ghostBlur: root.m3.periphery.ghostBlur
   readonly property real ghostBlurContrast: -0.11
   readonly property real ghostBlurSaturation: 0.17
 
@@ -841,11 +878,10 @@ Item {
         verticalAlignment: Text.AlignVCenter
         textFormat: Text.PlainText
         text: modelData.label
-        color: root.foreground
-        opacity: 0.8
+        color: root.onSurfaceVariant
         font.family: root.fontFamily
-        font.pixelSize: Style.font.body // qmllint disable missing-property
-        font.bold: true
+        font.pixelSize: root.typeOf("title-small").size
+        font.weight: root.typeOf("title-small").weight
       }
     }
 
@@ -870,10 +906,15 @@ Item {
         enabled: !leaving
         // Hidden, not faded, while its ghost flies: the ghost lands on it.
         visible: !!shown && !root.ghosted[address]
-        x: shown ? shown.x : 0
-        y: shown ? shown.y : 0
-        width: shown ? shown.w : 0
-        height: shown ? shown.h : 0
+        // Placement moves on the spatial spring once the card has settled in.
+        SpringValue { id: cardX; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.shown ? card.shown.x : 0 }
+        SpringValue { id: cardY; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.shown ? card.shown.y : 0 }
+        SpringValue { id: cardW; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.shown ? card.shown.w : 0 }
+        SpringValue { id: cardH; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.shown ? card.shown.h : 0 }
+        x: cardX.value
+        y: cardY.value
+        width: cardW.value
+        height: cardH.value
         // Cards fade in and out while they travel with the focus area, the
         // way Hyprland slides the workspace: an arriving card (its window
         // just slid out of the focus area) comes from the switch side, a
@@ -882,25 +923,20 @@ Item {
         readonly property real travel: root.flight ? 0 : -root.switchDir * root.cardSlide
         readonly property real arriveFrom: -travel
         property real leaveTo: 0
-        property real slide: leaving ? leaveTo : (settled ? 0 : arriveFrom)
+        // The spatial spring, like Hyprland's workspace slide it travels with.
+        SpringValue { id: slide; spring: root.springSpatial; epsilon: root.pixelEpsilon; target: card.leaving ? card.leaveTo : (card.settled ? 0 : card.arriveFrom) }
         transform: Translate {
-          x: root.cardSlideVertical ? 0 : card.slide
-          y: root.cardSlideVertical ? card.slide : 0
+          x: root.cardSlideVertical ? 0 : slide.value
+          y: root.cardSlideVertical ? slide.value : 0
         }
-        opacity: settled && !leaving ? (dragging ? 0.35 : 1) : 0
+        SpringValue { id: fade; spring: root.springEffects; target: card.settled && !card.leaving ? (card.dragging ? root.draggedSourceOpacity : 1) : 0 }
+        opacity: fade.value
         onOpacityChanged: if (leaving && opacity === 0) root.removeSlot(address)
         onLeavingChanged: {
           if (leaving) leaveTo = travel
           if (leaving && opacity === 0) root.removeSlot(address)
         }
 
-        Behavior on x { enabled: card.settled; SpringAnimation { spring: root.springStrength; damping: root.springDamping; epsilon: root.springEpsilon } }
-        Behavior on y { enabled: card.settled; SpringAnimation { spring: root.springStrength; damping: root.springDamping; epsilon: root.springEpsilon } }
-        Behavior on width { enabled: card.settled; SpringAnimation { spring: root.springStrength; damping: root.springDamping; epsilon: root.springEpsilon } }
-        Behavior on height { enabled: card.settled; SpringAnimation { spring: root.springStrength; damping: root.springDamping; epsilon: root.springEpsilon } }
-        Behavior on opacity { NumberAnimation { duration: root.slideDuration; easing.type: Easing.OutCubic } }
-        // The theme's spring, like Hyprland's workspace slide it travels with.
-        Behavior on slide { SpringAnimation { spring: root.springStrength; damping: root.springDamping; epsilon: root.springEpsilon } }
 
         Component.onCompleted: {
           root.cardItems[address] = card
@@ -937,7 +973,7 @@ Item {
 
       Rectangle {
         anchors.fill: parent
-        color: root.background
+        color: root.scheme.color.background
       }
 
       // Lined up with the full-screen wallpaper underneath.
@@ -1016,7 +1052,7 @@ Item {
         property bool launched: false
         property bool armed: false
         property bool flying: false
-        // Behavior-driven animations don't update `running`, so landing is
+        // A target can move mid-flight (the refresh), so landing is
         // measured: on the target, to within half a pixel.
         readonly property bool landed: !target || (Math.abs(x - target.x) < 0.5 && Math.abs(y - target.y) < 0.5
           && Math.abs(width - target.w) < 0.5 && Math.abs(height - target.h) < 0.5)
@@ -1040,18 +1076,18 @@ Item {
 
         onTargetChanged: if (target) lastTarget = target
         // At rest it sits on its target, at full size, so it keeps capturing.
-        x: launched && !flying ? fx : (lastTarget ? lastTarget.x : 0)
-        y: launched && !flying ? fy : (lastTarget ? lastTarget.y : 0)
-        width: launched && !flying ? fw : (lastTarget ? lastTarget.w : 1)
-        height: launched && !flying ? fh : (lastTarget ? lastTarget.h : 1)
+        // armed: the spatial spring flies the ghost; otherwise it jumps.
+        SpringValue { id: flyX; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: flyer.armed; target: flyer.launched && !flyer.flying ? flyer.fx : (flyer.lastTarget ? flyer.lastTarget.x : 0) }
+        SpringValue { id: flyY; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: flyer.armed; target: flyer.launched && !flyer.flying ? flyer.fy : (flyer.lastTarget ? flyer.lastTarget.y : 0) }
+        SpringValue { id: flyW; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: flyer.armed; target: flyer.launched && !flyer.flying ? flyer.fw : (flyer.lastTarget ? flyer.lastTarget.w : 1) }
+        SpringValue { id: flyH; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: flyer.armed; target: flyer.launched && !flyer.flying ? flyer.fh : (flyer.lastTarget ? flyer.lastTarget.h : 1) }
+        SpringValue { id: flyFade; spring: root.springEffects; target: flyer.target ? 1 : 0 }
+        x: flyX.value
+        y: flyY.value
+        width: flyW.value
+        height: flyH.value
         visible: !!root.ghosted[address]
-        opacity: target ? 1 : 0
-
-        Behavior on x { enabled: flyer.armed; SpringAnimation { spring: root.springStrength; damping: root.springDamping; epsilon: root.springEpsilon } }
-        Behavior on y { enabled: flyer.armed; SpringAnimation { spring: root.springStrength; damping: root.springDamping; epsilon: root.springEpsilon } }
-        Behavior on width { enabled: flyer.armed; SpringAnimation { spring: root.springStrength; damping: root.springDamping; epsilon: root.springEpsilon } }
-        Behavior on height { enabled: flyer.armed; SpringAnimation { spring: root.springStrength; damping: root.springDamping; epsilon: root.springEpsilon } }
-        Behavior on opacity { NumberAnimation { duration: root.fadeDuration } }
+        opacity: flyFade.value
         Component.onCompleted: root.ghostItems[address] = flyer
         Component.onDestruction: if (root.ghostItems[address] === flyer) delete root.ghostItems[address]
 
@@ -1062,53 +1098,60 @@ Item {
           return d < 1 ? 1 : Math.min(1, Math.hypot(x - fx, y - fy) / d)
         }
 
-        // The blurred wallpaper behind the window, as Hyprland draws it in
-        // the focus area. Cards sit on the sharp wallpaper, so the blur
-        // fades in over the first half of the way into the focus area (the
-        // spring's slow tail would leave it short at landing) and out over
-        // the first half of the way back.
-        Item {
+        // Rounded like the window it is a copy of.
+        RoundedClip {
           anchors.fill: parent
-          clip: true
-          opacity: {
-            var t = Math.min(1, flyer.travel * 2)
-            return root.focusRects[flyer.address] ? t : 1 - t
+          radius: root.windowRounding
+
+          // The blurred wallpaper behind the window, as Hyprland draws it in
+          // the focus area. Cards sit on the sharp wallpaper, so the blur
+          // fades in over the first half of the way into the focus area (the
+          // spring's slow tail would leave it short at landing) and out over
+          // the first half of the way back.
+          Item {
+            anchors.fill: parent
+            clip: true
+            opacity: {
+              var t = Math.min(1, flyer.travel * 2)
+              return root.focusRects[flyer.address] ? t : 1 - t
+            }
+
+            ShaderEffect {
+              x: -flyer.x
+              y: -flyer.y
+              width: root.monW
+              height: root.monH
+              property variant source: wallBlurTex
+            }
           }
 
-          ShaderEffect {
-            x: -flyer.x
-            y: -flyer.y
-            width: root.monW
-            height: root.monH
-            property variant source: wallBlurTex
+          // ScreencopyView doesn't blend: it overwrites what is under it with
+          // the window's own pixels and alpha. A translucent window (foot) then
+          // wiped the blur patch and left the surface translucent, so the real
+          // window behind showed through. Rendered alone into its own layer,
+          // it is drawn over the patch with normal blending.
+          ScreencopyView {
+            anchors.fill: parent
+            layer.enabled: flyer.visible
+            captureSource: flyer.lastTarget && flyer.lastTarget.toplevel ? flyer.lastTarget.toplevel.wayland : null
+            live: root.opened
           }
-        }
-
-        // ScreencopyView doesn't blend: it overwrites what is under it with
-        // the window's own pixels and alpha. A translucent window (foot) then
-        // wiped the blur patch and left the surface translucent, so the real
-        // window behind showed through. Rendered alone into its own layer,
-        // it is drawn over the patch with normal blending.
-        ScreencopyView {
-          anchors.fill: parent
-          layer.enabled: flyer.visible
-          captureSource: flyer.lastTarget && flyer.lastTarget.toplevel ? flyer.lastTarget.toplevel.wayland : null
-          live: root.opened
         }
       }
     }
 
+    // The focus area as the drop target.
     Rectangle {
       x: root.sideW + root.bandMargin / 2
       y: root.bandMargin / 2
       width: root.focusW - root.bandMargin
       height: root.monH - root.bandMargin
-      radius: root.cornerRadius * 2
-      color: Util.alpha(root.accent, 0.06)
-      border.color: root.accent
-      border.width: Math.max(2, Style.space(2))
-      opacity: root.dragOverFocus ? 1 : 0
-      Behavior on opacity { NumberAnimation { duration: root.fadeDuration } }
+      radius: root.dropCorner
+      color: root.dropFill
+      border.color: root.dropOutline
+      border.width: root.dropOutlineWidth
+      SpringValue { id: focusDrop; spring: root.springEffects; target: root.dragOverFocus ? 1 : 0 }
+      opacity: focusDrop.value
     }
 
     // The workspace group the card would land in.
@@ -1116,45 +1159,70 @@ Item {
       model: root.headers
 
       delegate: Rectangle {
+        id: groupDrop
         required property var modelData
         x: modelData.x - root.bandMargin / 2
         y: modelData.y - root.bandMargin / 2
         width: modelData.w + root.bandMargin
         height: modelData.h + root.bandMargin
-        radius: root.cornerRadius * 2
-        color: Util.alpha(root.accent, 0.06)
-        border.color: root.accent
-        border.width: Math.max(2, Style.space(2))
-        opacity: root.dragTarget && root.dragTarget.id === modelData.id
-          && root.dragWin && root.dragWin.wsId !== modelData.id ? 1 : 0
-        Behavior on opacity { NumberAnimation { duration: root.fadeDuration } }
+        radius: root.dropCorner
+        color: root.dropFill
+        border.color: root.dropOutline
+        border.width: root.dropOutlineWidth
+        SpringValue {
+          id: groupFade
+          spring: root.springEffects
+          target: root.dragTarget && root.dragTarget.id === groupDrop.modelData.id
+            && root.dragWin && root.dragWin.wsId !== groupDrop.modelData.id ? 1 : 0
+        }
+        opacity: groupFade.value
       }
     }
 
     Item {
       id: ghost
       visible: root.dragAddress !== ""
-      // Grows a little once it's over the focus area.
-      readonly property real grow: root.dragOverFocus ? 1.25 : 1.05
-      width: root.dragW * grow
-      height: root.dragH * grow
-      x: root.dragX - root.grabX * grow
-      y: root.dragY - root.grabY * grow
-      Behavior on width { NumberAnimation { duration: root.fadeDuration; easing.type: Easing.OutCubic } }
-      Behavior on height { NumberAnimation { duration: root.fadeDuration; easing.type: Easing.OutCubic } }
+      // Grows a little once it's over the focus area, on the fast spring.
+      SpringValue { id: grow; spring: root.springFast; epsilon: 0.001; target: root.dragOverFocus ? 1.25 : 1.05 }
+      width: root.dragW * grow.value
+      height: root.dragH * grow.value
+      x: root.dragX - root.grabX * grow.value
+      y: root.dragY - root.grabY * grow.value
+
+      // Lifted: the filled card's dragged elevation, as the Web draws it.
+      RectangularShadow {
+        anchors.fill: parent
+        radius: root.windowRounding
+        blur: root.dragShadow.blur
+        spread: root.dragShadow.spread
+        offset: Qt.vector2d(root.dragShadow.x, root.dragShadow.y)
+        color: Qt.alpha(root.scheme.color.shadow, root.dragShadow.opacity)
+      }
 
       Rectangle {
         anchors.fill: parent
-        radius: root.cornerRadius
-        color: root.background
+        radius: root.windowRounding
+        color: root.placeholderColor
       }
 
       // Own layer so it blends, like the switch ghosts (see there).
-      ScreencopyView {
+      RoundedClip {
         anchors.fill: parent
-        layer.enabled: ghost.visible
-        captureSource: root.dragWin && root.dragWin.toplevel ? root.dragWin.toplevel.wayland : null
-        live: root.dragAddress !== ""
+        radius: root.windowRounding
+
+        ScreencopyView {
+          anchors.fill: parent
+          layer.enabled: ghost.visible
+          captureSource: root.dragWin && root.dragWin.toplevel ? root.dragWin.toplevel.wayland : null
+          live: root.dragAddress !== ""
+        }
+      }
+
+      // The dragged state layer.
+      Rectangle {
+        anchors.fill: parent
+        radius: root.windowRounding
+        color: root.dragLayer
       }
 
       BorderOverlay {

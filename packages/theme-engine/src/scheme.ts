@@ -1,173 +1,77 @@
 import {
-  argbFromRgb,
-  type DynamicScheme,
   Hct,
-  QuantizerCelebi,
+  hexFromArgb,
   SchemeExpressive,
-  SchemeFidelity,
+  SchemeFruitSalad,
   SchemeNeutral,
   SchemeRainbow,
+  SchemeTonalSpot,
   SchemeVibrant,
-  Score,
-  hexFromArgb as unsafeHexFromArgb,
+  type TonalPalette,
 } from "@material/material-color-utilities";
-import { Effect, pipe, Schema } from "effect";
-import { buildAnsiColors } from "./ansi.ts";
-import { HexColor, type OmarchyColors, type SchemeKind } from "./colors.ts";
-import { buildSurfaceColors } from "./surfaces.ts";
+import {
+  type ColorRole,
+  colorRoles,
+  colorTones,
+  interpretation,
+  type TonalPaletteName,
+} from "@stef/m3";
+import type { Contrast, Mode, SystemColors, Variant } from "./colors.ts";
 
-export const schemeConstructors = {
-  expressive: SchemeExpressive,
-  fidelity: SchemeFidelity,
+/** material-color-utilities' scheme variants: each defines how the seed becomes tonal palettes. */
+export const variants = {
+  "tonal-spot": SchemeTonalSpot,
   neutral: SchemeNeutral,
   vibrant: SchemeVibrant,
+  expressive: SchemeExpressive,
   rainbow: SchemeRainbow,
-} as const satisfies Record<typeof SchemeKind.Type, unknown>;
+  "fruit-salad": SchemeFruitSalad,
+} as const satisfies Record<Variant, unknown>;
+
+/** material-color-utilities' contrast levels for the spec's three (used only for comparisons). */
+export const contrastLevels = { standard: 0, medium: 0.5, high: 1 } as const satisfies Record<
+  Contrast,
+  number
+>;
 
 /** Longest edge, in pixels, an image is downscaled to before quantizing. */
 export const quantizeMaxSize = 128;
 
-/** The seed image reduced to what scheme building needs: one source colour, and the hues actually in it. */
-export interface QuantizedSeed {
-  sourceArgb: number;
-  hues: number[];
-}
+export type Palettes = Readonly<Record<TonalPaletteName, TonalPalette>>;
 
 /**
- * The ranked hues present in the image. `sourceColorFromImageBytes` collapses the
- * whole wallpaper to a single colour, which is what made every generated terminal
- * palette look alike — this keeps the rest of the distribution around.
+ * The six reference palettes for a seed (spec: "Dynamic color is powered by
+ * the Material Color Utilities"). The variant shapes the palettes; the 2021
+ * definitions are the ones the spec's md.sys.color tone table belongs to.
  */
-export const imageHues = (bytes: Uint8ClampedArray): number[] => {
-  const pixels: number[] = [];
-
-  for (let i = 0; i < bytes.length; i += 4) {
-    if (bytes[i + 3]! < 255) continue;
-    pixels.push(argbFromRgb(bytes[i]!, bytes[i + 1]!, bytes[i + 2]!));
-  }
-
-  const ranked = Score.score(QuantizerCelebi.quantize(pixels, 128), {
-    desired: 12,
-    filter: true,
-  });
-
-  return ranked.map((argb) => Hct.fromInt(argb).hue);
+export const createPalettes = (sourceArgb: number, variant: Variant): Palettes => {
+  interpretation("color.variants");
+  const scheme = new variants[variant](Hct.fromInt(sourceArgb), false, 0, "2021");
+  return {
+    primary: scheme.primaryPalette,
+    secondary: scheme.secondaryPalette,
+    tertiary: scheme.tertiaryPalette,
+    neutral: scheme.neutralPalette,
+    "neutral-variant": scheme.neutralVariantPalette,
+    error: scheme.errorPalette,
+  };
 };
 
-export const createScheme = (
-  kind: keyof typeof schemeConstructors,
-  sourceArgb: number,
-  isDark = false,
-  contrastLevel = 0,
-): DynamicScheme => new schemeConstructors[kind](Hct.fromInt(sourceArgb), isDark, contrastLevel);
+/** The spec's reference palette and tone for a role (md.sys.color), in a mode and contrast. */
+export const toneOf = (role: ColorRole, mode: Mode, contrast: Contrast) => {
+  const entry = colorTones[`${mode}|${contrast}`]?.[role];
+  if (!entry) throw new Error(`no tone for ${role} (${mode}, ${contrast})`);
+  return { palette: entry[0], tone: entry[1] };
+};
 
-/** Maps a Material scheme onto Omarchy's colour keys, plus every Material role as `omaterial_*`. */
-export const schemeToOmarchyColors = Effect.fn("ThemeEngine.schemeToOmarchyColors")(function* (
-  scheme: DynamicScheme,
-  imageHues: readonly number[],
-) {
-  const decodeHexColor = Schema.decodeEffect(HexColor);
-  const hexFromArgb = (argb: number) => pipe(unsafeHexFromArgb(argb), decodeHexColor);
+/** A role's colour: its spec tone of the matching palette. */
+export const roleArgb = (palettes: Palettes, role: ColorRole, mode: Mode, contrast: Contrast) => {
+  const { palette, tone } = toneOf(role, mode, contrast);
+  return palettes[palette].tone(tone);
+};
 
-  const ansi = buildAnsiColors(scheme, imageHues);
-  const surfaces = buildSurfaceColors(scheme);
-
-  const colors: OmarchyColors = {
-    mode: scheme.isDark ? "dark" : "light",
-
-    accent: yield* hexFromArgb(scheme.primary),
-    selection: yield* hexFromArgb(scheme.primaryContainer),
-    muted: yield* hexFromArgb(surfaces.muted),
-
-    background: yield* hexFromArgb(surfaces.background),
-    dark_background: yield* hexFromArgb(surfaces.dark_background),
-    darker_background: yield* hexFromArgb(surfaces.darker_background),
-    lighter_background: yield* hexFromArgb(surfaces.lighter_background),
-
-    foreground: yield* hexFromArgb(surfaces.foreground),
-    dark_foreground: yield* hexFromArgb(surfaces.dark_foreground),
-    light_foreground: yield* hexFromArgb(surfaces.light_foreground),
-    bright_foreground: yield* hexFromArgb(surfaces.bright_foreground),
-
-    red: yield* hexFromArgb(ansi.red),
-    yellow: yield* hexFromArgb(ansi.yellow),
-    green: yield* hexFromArgb(ansi.green),
-    cyan: yield* hexFromArgb(ansi.cyan),
-    blue: yield* hexFromArgb(ansi.blue),
-    magenta: yield* hexFromArgb(ansi.magenta),
-
-    bright_red: yield* hexFromArgb(ansi.bright_red),
-    bright_yellow: yield* hexFromArgb(ansi.bright_yellow),
-    bright_green: yield* hexFromArgb(ansi.bright_green),
-    bright_cyan: yield* hexFromArgb(ansi.bright_cyan),
-    bright_blue: yield* hexFromArgb(ansi.bright_blue),
-    bright_magenta: yield* hexFromArgb(ansi.bright_magenta),
-
-    orange: yield* hexFromArgb(ansi.orange),
-    brown: yield* hexFromArgb(ansi.brown),
-
-    // material
-
-    omaterial_background: scheme.background,
-    omaterial_error: scheme.error,
-    omaterial_errorContainer: scheme.errorContainer,
-    omaterial_errorDim: scheme.errorDim,
-    omaterial_errorPaletteKeyColor: scheme.errorPaletteKeyColor,
-    omaterial_inverseOnSurface: scheme.inverseOnSurface,
-    omaterial_inversePrimary: scheme.inversePrimary,
-    omaterial_inverseSurface: scheme.inverseSurface,
-    omaterial_neutralPaletteKeyColor: scheme.neutralPaletteKeyColor,
-    omaterial_neutralVariantPaletteKeyColor: scheme.neutralVariantPaletteKeyColor,
-    omaterial_onBackground: scheme.onBackground,
-    omaterial_onError: scheme.onError,
-    omaterial_onErrorContainer: scheme.onErrorContainer,
-    omaterial_onPrimary: scheme.onPrimary,
-    omaterial_onPrimaryContainer: scheme.onPrimaryContainer,
-    omaterial_onPrimaryFixed: scheme.onPrimaryFixed,
-    omaterial_onPrimaryFixedVariant: scheme.onPrimaryFixedVariant,
-    omaterial_onSecondary: scheme.onSecondary,
-    omaterial_onSecondaryContainer: scheme.onSecondaryContainer,
-    omaterial_onSecondaryFixed: scheme.onSecondaryFixed,
-    omaterial_onSecondaryFixedVariant: scheme.onSecondaryFixedVariant,
-    omaterial_onSurface: scheme.onSurface,
-    omaterial_onSurfaceVariant: scheme.onSurfaceVariant,
-    omaterial_onTertiary: scheme.onTertiary,
-    omaterial_onTertiaryContainer: scheme.onTertiaryContainer,
-    omaterial_onTertiaryFixed: scheme.onTertiaryFixed,
-    omaterial_onTertiaryFixedVariant: scheme.onTertiaryFixedVariant,
-    omaterial_outline: scheme.outline,
-    omaterial_outlineVariant: scheme.outlineVariant,
-    omaterial_primary: scheme.primary,
-    omaterial_primaryContainer: scheme.primaryContainer,
-    omaterial_primaryDim: scheme.primaryDim,
-    omaterial_primaryFixed: scheme.primaryFixed,
-    omaterial_primaryFixedDim: scheme.primaryFixedDim,
-    omaterial_primaryPaletteKeyColor: scheme.primaryPaletteKeyColor,
-    omaterial_scrim: scheme.scrim,
-    omaterial_secondary: scheme.secondary,
-    omaterial_secondaryContainer: scheme.secondaryContainer,
-    omaterial_secondaryDim: scheme.secondaryDim,
-    omaterial_secondaryFixed: scheme.secondaryFixed,
-    omaterial_secondaryFixedDim: scheme.secondaryFixedDim,
-    omaterial_secondaryPaletteKeyColor: scheme.secondaryPaletteKeyColor,
-    omaterial_shadow: scheme.shadow,
-    omaterial_surface: scheme.surface,
-    omaterial_surfaceBright: scheme.surfaceBright,
-    omaterial_surfaceContainer: scheme.surfaceContainer,
-    omaterial_surfaceContainerHigh: scheme.surfaceContainerHigh,
-    omaterial_surfaceContainerHighest: scheme.surfaceContainerHighest,
-    omaterial_surfaceContainerLow: scheme.surfaceContainerLow,
-    omaterial_surfaceContainerLowest: scheme.surfaceContainerLowest,
-    omaterial_surfaceDim: scheme.surfaceDim,
-    omaterial_surfaceTint: scheme.surfaceTint,
-    omaterial_surfaceVariant: scheme.surfaceVariant,
-    omaterial_tertiary: scheme.tertiary,
-    omaterial_tertiaryContainer: scheme.tertiaryContainer,
-    omaterial_tertiaryDim: scheme.tertiaryDim,
-    omaterial_tertiaryFixed: scheme.tertiaryFixed,
-    omaterial_tertiaryFixedDim: scheme.tertiaryFixedDim,
-    omaterial_tertiaryPaletteKeyColor: scheme.tertiaryPaletteKeyColor,
-  };
-
-  return colors;
-});
+/** Every spec colour role, as hex. */
+export const systemColors = (palettes: Palettes, mode: Mode, contrast: Contrast): SystemColors =>
+  Object.fromEntries(
+    colorRoles.map((role) => [role, hexFromArgb(roleArgb(palettes, role, mode, contrast))]),
+  ) as SystemColors;

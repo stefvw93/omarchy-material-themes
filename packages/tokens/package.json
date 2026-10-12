@@ -2,17 +2,19 @@
   "name": "@stef/tokens",
   "version": "0.0.0",
   "private": true,
-  "description": "Shared design tokens (gaps, borders, blur, motion, plugin layout) and their emitters.",
+  "description": "Design tokens: the user's Material 3 choices (spacing and corner steps, density, motion scheme) and their emitters.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
     "./runtime": "./src/runtime.ts",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./text-scale": "./src/text-scale.ts"
   },
   "scripts": {
     "test": "vp test"
   },
   "dependencies": {
+    "@stef/m3": "workspace:*",
     "@stef/motion": "workspace:*",
     "effect": "catalog:"
   },

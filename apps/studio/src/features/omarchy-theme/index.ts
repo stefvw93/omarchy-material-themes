@@ -7,9 +7,11 @@ import {
   OmarchyThemeError,
   ThemeOutputDirectory,
   ThemePath,
+  ThemeTokens,
   writeTheme,
-  type OmarchyColors,
+  type ThemePalette,
 } from "@stef/theme-engine";
+import { OmarchyPaths, readTokens, type TokensError } from "@stef/omarchy";
 
 export interface OmarchyThemeImpl {
   /** The theme name passed to `omarchy theme set`. */
@@ -17,8 +19,13 @@ export interface OmarchyThemeImpl {
   clean: () => Effect.Effect<void, PlatformError.PlatformError, never>;
   setTheme: () => Effect.Effect<void, OmarchyThemeError, never>;
   writeBackgroundImage: (url: URL) => Effect.Effect<void, OmarchyThemeError, never>;
-  /** Writes every theme file (colors.toml, hyprland.lua, shell.*.toml). */
-  writeTheme: (colors: OmarchyColors) => Effect.Effect<void, PlatformError.PlatformError, never>;
+  /**
+   * Writes every theme file (colors.toml, hyprland.lua, shell.*.toml,
+   * omaterial.json), rendered with the tokens in tokens.json at that moment.
+   */
+  writeTheme: (
+    palette: ThemePalette,
+  ) => Effect.Effect<void, PlatformError.PlatformError | TokensError, never>;
 }
 
 const imageContentTypeToExtension: Record<string, string> = {
@@ -47,6 +54,7 @@ export class OmarchyTheme extends Context.Service<OmarchyTheme, OmarchyThemeImpl
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
+      const paths = yield* OmarchyPaths;
 
       const client = (yield* HttpClient.HttpClient).pipe(
         HttpClient.tapRequest((req) => Effect.log(req.toJSON())),
@@ -99,7 +107,14 @@ export class OmarchyTheme extends Context.Service<OmarchyTheme, OmarchyThemeImpl
         clean,
         setTheme,
         writeBackgroundImage,
-        writeTheme: (colors) => writeTheme(writers, colors),
+        writeTheme: (palette) =>
+          Effect.gen(function* () {
+            const tokens = yield* readTokens.pipe(
+              Effect.provideService(OmarchyPaths, paths),
+              Effect.provideService(FileSystem.FileSystem, fs),
+            );
+            yield* writeTheme(writers, palette).pipe(Effect.provideService(ThemeTokens, tokens));
+          }),
       } satisfies OmarchyThemeImpl;
     }),
   );

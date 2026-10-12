@@ -10,7 +10,7 @@ import {
 } from "../wallhaven/service";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PexelsPhoto, PexelsService } from "@/features/pexels/service";
-import { ContrastLevel, Mode, OmarchyColors, SchemeKind } from "@stef/theme-engine";
+import { Contrast, Mode, ThemePalette, Variant } from "@stef/theme-engine";
 import { MaterialService } from "@/features/material/service";
 import { WallhavenInputs } from "./components/wallhaven-inputs";
 import { WallhavenResults } from "./components/wallhaven-results";
@@ -18,7 +18,6 @@ import { PexelsResults } from "./components/pexels-results";
 import { OutputPanel } from "./components/output-panel";
 import { ThemePreview } from "./components/theme-preview";
 import { ApplyOmarchyTheme } from "./tasks";
-import { useTheme } from "@/components/theme-provider";
 
 const InputKind = Schema.Union([
   Schema.Literal("file"),
@@ -46,11 +45,11 @@ const PexelsCurated = Task("PexelsCurated", {
   run: () => Effect.flatMap(PexelsService, (pexels) => pexels.curated),
 });
 
-type ColorsInput = Pick<SeedState, "selectedImageUrl" | "schemeKind" | "mode" | "contrastLevel">;
+type PaletteInput = Pick<SeedState, "selectedImageUrl" | "variant" | "mode" | "contrast">;
 
-const CreateOmarchyColors = Task("CreateOmarchyColors", {
-  success: OmarchyColors,
-  run: (input: ColorsInput) =>
+const CreatePalette = Task("CreatePalette", {
+  success: ThemePalette,
+  run: (input: PaletteInput) =>
     Effect.gen(function* () {
       if (!input.selectedImageUrl) {
         return yield* Effect.fail(new Error("No image selected"));
@@ -58,23 +57,21 @@ const CreateOmarchyColors = Task("CreateOmarchyColors", {
 
       const material = yield* MaterialService;
 
-      const colors = yield* material.createOmarchyColorsFromImage(input.selectedImageUrl, {
-        schemeKind: input.schemeKind,
-        isDark: input.mode === "dark",
-        contrastLevel: input.contrastLevel,
+      return yield* material.createPaletteFromImage(input.selectedImageUrl, {
+        variant: input.variant,
+        mode: input.mode,
+        contrast: input.contrast,
       });
-
-      return colors;
     }),
 });
 
 const SeedState = Schema.Struct({
   inputType: InputKind,
   selectedImageUrl: Schema.UndefinedOr(Schema.URLFromString).pipe(Schema.optional),
-  schemeKind: SchemeKind,
+  variant: Variant,
   wallhavenSearchParams: WallhavenSearchParams,
   mode: Mode,
-  contrastLevel: ContrastLevel,
+  contrast: Contrast,
 });
 type SeedState = typeof SeedState.Type;
 
@@ -86,25 +83,23 @@ export const ClickedImageThumb = Action("ClickedImageThumb", { url: Schema.URLFr
 export const ClickedWallhavenPaginator = Action("ClickedWallhavenPaginator", {
   page: Schema.Number,
 });
-export const CommitContrastLevel = Action("CommitContrastLevel", { contrastLevel: ContrastLevel });
 const SearchWallhaven = Action("SearchWallhaven", WallhavenSearchParams.fields);
-export const SetContrastLevel = Action("SetContrastLevel", { contrastLevel: ContrastLevel });
+export const SetContrast = Action("SetContrast", { contrast: Contrast });
 const SetInputKind = Action("SetInputKind", { inputType: InputKind });
 export const SetMode = Action("SetMode", { mode: Mode });
-export const SetSchemeKind = Action("SetSchemeKind", { schemeKind: SchemeKind });
+export const SetVariant = Action("SetVariant", { variant: Variant });
 const SetWallhavenSearchParams = Action("SetWallhavenSearchParams", WallhavenSearchParams.fields);
 export const ApplyColors = Action("ApplyColors", {});
 
 const SeedAction = [
   ApplyColors,
-  CommitContrastLevel,
   ClickedImageThumb,
   ClickedWallhavenPaginator,
   SearchWallhaven,
-  SetContrastLevel,
+  SetContrast,
   SetInputKind,
   SetMode,
-  SetSchemeKind,
+  SetVariant,
   SetWallhavenSearchParams,
 ];
 
@@ -118,21 +113,17 @@ const SeedDefinition = define({
   tasks: {
     search: WallhavenSearch,
     curated: PexelsCurated,
-    omarchyColors: CreateOmarchyColors,
+    palette: CreatePalette,
     omarchyTheme: ApplyOmarchyTheme,
   },
   actions: SeedAction,
-  useUnsafeHooks() {
-    const theme = useTheme();
-    return { theme };
-  },
 });
 
 const initialState = SeedDefinition.initialState(() => ({
   inputType: "file" as const,
-  schemeKind: "neutral",
+  variant: "tonal-spot",
   mode: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
-  contrastLevel: 0,
+  contrast: "standard",
   wallhavenSearchParams: {
     page: 1,
     categories: ["general"],
@@ -149,14 +140,9 @@ const reducer = SeedDefinition.reducer({
   Mounted: (_, { state, draft, tasks }) =>
     state.inputType === "wallhaven" ? tasks.search.start(state.wallhavenSearchParams) : draft,
 
-  SetContrastLevel: ({ contrastLevel }, { draft }) => {
-    draft.contrastLevel = contrastLevel;
-    return draft;
-  },
-
-  CommitContrastLevel: ({ contrastLevel }, { state, draft, tasks }) => {
-    draft.contrastLevel = contrastLevel;
-    return tasks.omarchyColors.start({ ...state, contrastLevel });
+  SetContrast: ({ contrast }, { state, draft, tasks }) => {
+    draft.contrast = contrast;
+    return tasks.palette.start({ ...state, contrast });
   },
 
   SetInputKind: ({ inputType }, { state, draft, tasks }) => {
@@ -173,10 +159,10 @@ const reducer = SeedDefinition.reducer({
     return draft;
   },
 
-  SetMode: ({ mode }, { state, draft, tasks, hooks }) => {
-    hooks.theme.setTheme(mode);
+  // The preview shows the generated theme in its mode (src/m3/scheme.ts).
+  SetMode: ({ mode }, { state, draft, tasks }) => {
     draft.mode = mode;
-    return tasks.omarchyColors.start({ ...state, mode });
+    return tasks.palette.start({ ...state, mode });
   },
 
   ClickedWallhavenPaginator: (payload, { state, draft, tasks }) => {
@@ -193,12 +179,12 @@ const reducer = SeedDefinition.reducer({
     if (url === state.selectedImageUrl) return draft;
 
     draft.selectedImageUrl = url;
-    return tasks.omarchyColors.start({ ...state, selectedImageUrl: url });
+    return tasks.palette.start({ ...state, selectedImageUrl: url });
   },
 
-  SetSchemeKind: ({ schemeKind }, { state, draft, tasks }) => {
-    draft.schemeKind = schemeKind;
-    return tasks.omarchyColors.start({ ...state, schemeKind });
+  SetVariant: ({ variant }, { state, draft, tasks }) => {
+    draft.variant = variant;
+    return tasks.palette.start({ ...state, variant });
   },
 
   SetWallhavenSearchParams: (wallhavenSearchParams, { draft }) => {
@@ -208,10 +194,10 @@ const reducer = SeedDefinition.reducer({
   },
 
   ApplyColors: (_, { state, draft, tasks }) =>
-    Task.isResolved(state.omarchyColors) && state.selectedImageUrl
+    Task.isResolved(state.palette) && state.selectedImageUrl
       ? tasks.omarchyTheme.start({
           imageUrl: state.selectedImageUrl,
-          colors: state.omarchyColors.value,
+          palette: state.palette.value,
         })
       : draft,
 

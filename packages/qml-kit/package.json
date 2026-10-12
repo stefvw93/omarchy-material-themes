@@ -10,9 +10,11 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "vp test"
+    "test": "vp test",
+    "kit-generate": "node scripts/generate.ts"
   },
   "dependencies": {
+    "@stef/m3": "workspace:*",
     "@stef/motion": "workspace:*",
     "@stef/tokens": "workspace:*"
   },

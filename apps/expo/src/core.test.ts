@@ -92,6 +92,29 @@ describe("snapshot", () => {
     }
   });
 
+  it("reads QML's list wrappers (array-likes) as arrays", () => {
+    const arrayLike = (a: number, b: number) => ({ 0: a, 1: b, length: 2 });
+    const groups = snapshot(
+      [
+        {
+          ipc: {
+            address: "0x1",
+            workspace: { id: 1, name: "1" },
+            at: arrayLike(10, 40),
+            size: arrayLike(800, 600),
+          },
+          address: "0x1",
+          title: "",
+          ref: null,
+        },
+      ],
+      0,
+      0,
+    );
+    expect(groups).toHaveLength(1);
+    expect(groups[0]?.windows[0]).toMatchObject({ rx: 10, ry: 40, rw: 800, rh: 600 });
+  });
+
   it("puts special workspaces last and labels them", () => {
     const groups = snapshot(
       [

@@ -24,7 +24,7 @@ import { deploy, undeployDev } from "./deploy.ts";
 import { devLive, harness } from "./dev.ts";
 import { migrateOverview } from "./migrate.ts";
 import { record } from "./record.ts";
-import { applyTokens, setToken, showTokens } from "./tokens.ts";
+import { applyTokens, migrateTokensFile, setToken, showTokens } from "./tokens.ts";
 import { CliError, pluginApp, pluginApps } from "./workspace.ts";
 
 const app = Argument.String("app").pipe(
@@ -135,6 +135,7 @@ const tokens = Command.make("tokens").pipe(
       ({ key, value }) => setToken(key, value),
     ),
     Command.make("apply", {}, () => applyTokens),
+    Command.make("migrate", {}, () => migrateTokensFile),
   ]),
 );
 

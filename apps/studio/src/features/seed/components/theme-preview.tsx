@@ -9,7 +9,7 @@ import { applyPreviewColors } from "../preview";
  */
 export const ThemePreview = () => {
   const { state } = Seed.useFeature();
-  const colors = Task.isResolved(state.omarchyColors) ? state.omarchyColors.value : undefined;
+  const colors = Task.isResolved(state.palette) ? state.palette.value : undefined;
 
   useEffect(() => {
     if (!colors) return;

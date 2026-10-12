@@ -1,0 +1,729 @@
+# Tokens: Color (COLOR.20543ce18892f7d9)
+
+Source: <https://m3.material.io/_dsm/data/dsdb-m3/2026-09-23_06-10-05/COLOR.20543ce18892f7d9.json>, design system 'Google Material 3' revision 7989 (2026-05-27T22:44:15.009106Z).
+Used on: <https://m3.material.io/styles/color/static>
+
+Each token lists its value per context. `->` shows the reference chain (component token -> system token -> reference token); the resolved value is what the baseline scheme produces in that context. Contexts with identical chain and value are merged.
+
+## md.ref.palette — Palettes
+
+All tonal color tokens available in the default color scheme
+
+- **md.ref.palette.black** (Black)
+  - #000000
+- **md.ref.palette.blue-variant0** (Blue Variant 0)
+  - #000000
+- **md.ref.palette.blue-variant10** (Blue Variant 10)
+  - #001f2d
+- **md.ref.palette.blue-variant100** (Blue Variant 100)
+  - #ffffff
+- **md.ref.palette.blue-variant20** (Blue Variant 20)
+  - #003549
+- **md.ref.palette.blue-variant30** (Blue Variant 30)
+  - #004d68
+- **md.ref.palette.blue-variant40** (Blue Variant 40)
+  - #006788
+- **md.ref.palette.blue-variant50** (Blue Variant 50)
+  - #0081a8
+- **md.ref.palette.blue-variant60** (Blue Variant 60)
+  - #009dc9
+- **md.ref.palette.blue-variant70** (Blue Variant 70)
+  - #00bbea
+- **md.ref.palette.blue-variant80** (Blue Variant 80)
+  - #67d4ff
+- **md.ref.palette.blue-variant90** (Blue Variant 90)
+  - #bde9ff
+- **md.ref.palette.blue-variant95** (Blue Variant 95)
+  - #e0f4ff
+- **md.ref.palette.blue-variant98** (Blue Variant 98)
+  - #f4faff
+- **md.ref.palette.blue0** (Blue 0)
+  - #000000
+- **md.ref.palette.blue10** (Blue 10)
+  - #001944
+- **md.ref.palette.blue100** (Blue 100)
+  - #ffffff
+- **md.ref.palette.blue20** (Blue 20)
+  - #012c6f
+- **md.ref.palette.blue30** (Blue 30)
+  - #04409f
+- **md.ref.palette.blue40** (Blue 40)
+  - #1157ce
+- **md.ref.palette.blue50** (Blue 50)
+  - #3271ea
+- **md.ref.palette.blue60** (Blue 60)
+  - #4e8ff8
+- **md.ref.palette.blue70** (Blue 70)
+  - #76acff
+- **md.ref.palette.blue80** (Blue 80)
+  - #a1c9ff
+- **md.ref.palette.blue90** (Blue 90)
+  - #d0e4ff
+- **md.ref.palette.blue95** (Blue 95)
+  - #e7f2ff
+- **md.ref.palette.blue98** (Blue 98)
+  - #f5faff
+- **md.ref.palette.cyan0** (Cyan 0)
+  - #000000
+- **md.ref.palette.cyan10** (Cyan 10)
+  - #001f26
+- **md.ref.palette.cyan100** (Cyan 100)
+  - #ffffff
+- **md.ref.palette.cyan20** (Cyan 20)
+  - #003641
+- **md.ref.palette.cyan30** (Cyan 30)
+  - #004e5d
+- **md.ref.palette.cyan40** (Cyan 40)
+  - #00687c
+- **md.ref.palette.cyan50** (Cyan 50)
+  - #00839b
+- **md.ref.palette.cyan60** (Cyan 60)
+  - #009ebb
+- **md.ref.palette.cyan70** (Cyan 70)
+  - #00bbdf
+- **md.ref.palette.cyan80** (Cyan 80)
+  - #60d5f3
+- **md.ref.palette.cyan90** (Cyan 90)
+  - #acedff
+- **md.ref.palette.cyan95** (Cyan 95)
+  - #d8f6ff
+- **md.ref.palette.cyan98** (Cyan 98)
+  - #f0fbff
+- **md.ref.palette.error0** (Error 0)
+  - #000000 [Audience=3P]
+- **md.ref.palette.error10** (Error 10)
+  - #410e0b [Audience=3P]
+- **md.ref.palette.error100** (Error 100)
+  - #ffffff [Audience=3P]
+- **md.ref.palette.error20** (Error 20)
+  - #601410 [Audience=3P]
+- **md.ref.palette.error30** (Error 30)
+  - #8c1d18 [Audience=3P]
+- **md.ref.palette.error40** (Error 40)
+  - #b3261e [Audience=3P]
+- **md.ref.palette.error50** (Error 50)
+  - #dc362e [Audience=3P]
+- **md.ref.palette.error60** (Error 60)
+  - #e46962 [Audience=3P]
+- **md.ref.palette.error70** (Error 70)
+  - #ec928e [Audience=3P]
+- **md.ref.palette.error80** (Error 80)
+  - #f2b8b5 [Audience=3P]
+- **md.ref.palette.error90** (Error 90)
+  - #f9dedc [Audience=3P]
+- **md.ref.palette.error95** (Error 95)
+  - #fceeee [Audience=3P]
+- **md.ref.palette.error98** (Error 98)
+  - #fff8f7 [Audience=3P]
+- **md.ref.palette.error99** (Error 99)
+  - #fffbf9 [Audience=3P]
+- **md.ref.palette.green0** (Green 0)
+  - #000000
+- **md.ref.palette.green10** (Green 10)
+  - #002110
+- **md.ref.palette.green100** (Green 100)
+  - #ffffff
+- **md.ref.palette.green20** (Green 20)
+  - #00381f
+- **md.ref.palette.green30** (Green 30)
+  - #00522c
+- **md.ref.palette.green40** (Green 40)
+  - #006c35
+- **md.ref.palette.green50** (Green 50)
+  - #128937
+- **md.ref.palette.green60** (Green 60)
+  - #1aa64a
+- **md.ref.palette.green70** (Green 70)
+  - #44c265
+- **md.ref.palette.green80** (Green 80)
+  - #80da88
+- **md.ref.palette.green90** (Green 90)
+  - #beefbb
+- **md.ref.palette.green95** (Green 95)
+  - #ddf8d8
+- **md.ref.palette.green98** (Green 98)
+  - #f2fcef
+- **md.ref.palette.grey-variant0** (Grey Variant 0)
+  - #000000
+- **md.ref.palette.grey-variant10** (Grey Variant 10)
+  - #191d1c
+- **md.ref.palette.grey-variant100** (Grey Variant 100)
+  - #ffffff
+- **md.ref.palette.grey-variant20** (Grey Variant 20)
+  - #2d312f
+- **md.ref.palette.grey-variant30** (Grey Variant 30)
+  - #444746
+- **md.ref.palette.grey-variant40** (Grey Variant 40)
+  - #5c5f5e
+- **md.ref.palette.grey-variant50** (Grey Variant 50)
+  - #747775
+- **md.ref.palette.grey-variant60** (Grey Variant 60)
+  - #8e918f
+- **md.ref.palette.grey-variant70** (Grey Variant 70)
+  - #a9acaa
+- **md.ref.palette.grey-variant80** (Grey Variant 80)
+  - #c4c7c5
+- **md.ref.palette.grey-variant90** (Grey Variant 90)
+  - #e1e3e1
+- **md.ref.palette.grey-variant95** (Grey Variant 95)
+  - #eff2ef
+- **md.ref.palette.grey-variant98** (Grey Variant 98)
+  - #f7faf7
+- **md.ref.palette.grey0** (Grey 0)
+  - #000000
+- **md.ref.palette.grey10** (Grey 10)
+  - #1b1b1c
+- **md.ref.palette.grey100** (Grey 100)
+  - #ffffff
+- **md.ref.palette.grey20** (Grey 20)
+  - #303030
+- **md.ref.palette.grey30** (Grey 30)
+  - #474747
+- **md.ref.palette.grey40** (Grey 40)
+  - #5e5e5e
+- **md.ref.palette.grey50** (Grey 50)
+  - #777777
+- **md.ref.palette.grey60** (Grey 60)
+  - #919191
+- **md.ref.palette.grey70** (Grey 70)
+  - #ababab
+- **md.ref.palette.grey80** (Grey 80)
+  - #c7c7c7
+- **md.ref.palette.grey90** (Grey 90)
+  - #e3e3e3
+- **md.ref.palette.grey95** (Grey 95)
+  - #f2f2f2
+- **md.ref.palette.grey98** (Grey 98)
+  - #f9f9f9
+- **md.ref.palette.neutral-variant0** (Neutral Variant 0)
+  - #000000 [Audience=3P]
+- **md.ref.palette.neutral-variant10** (Neutral Variant 10)
+  - #1d1a22 [Audience=3P]
+- **md.ref.palette.neutral-variant100** (Neutral Variant 100)
+  - #ffffff [Audience=3P]
+- **md.ref.palette.neutral-variant20** (Neutral Variant 20)
+  - #322f37 [Audience=3P]
+- **md.ref.palette.neutral-variant30** (Neutral Variant 30)
+  - #49454f [Audience=3P]
+- **md.ref.palette.neutral-variant40** (Neutral Variant 40)
+  - #605d66 [Audience=3P]
+- **md.ref.palette.neutral-variant50** (Neutral Variant 50)
+  - #79747e [Audience=3P]
+- **md.ref.palette.neutral-variant60** (Neutral Variant 60)
+  - #938f99 [Audience=3P]
+- **md.ref.palette.neutral-variant70** (Neutral Variant 70)
+  - #aea9b4 [Audience=3P]
+- **md.ref.palette.neutral-variant80** (Neutral Variant 80)
+  - #cac4d0 [Audience=3P]
+- **md.ref.palette.neutral-variant90** (Neutral Variant 90)
+  - #e7e0ec [Audience=3P]
+- **md.ref.palette.neutral-variant95** (Neutral Variant 95)
+  - #f5eefa [Audience=3P]
+- **md.ref.palette.neutral-variant98** (Neutral Variant 98)
+  - #fdf7ff [Audience=3P]
+- **md.ref.palette.neutral-variant99** (Neutral Variant 99)
+  - #fffbfe [Audience=3P]
+- **md.ref.palette.neutral0** (Neutral 0)
+  - #000000 [Audience=3P]
+- **md.ref.palette.neutral10** (Neutral 10)
+  - #1d1b20 [Audience=3P]
+- **md.ref.palette.neutral100** (Neutral 100)
+  - #ffffff [Audience=3P]
+- **md.ref.palette.neutral12** (Neutral 12)
+  - #211f26 [Audience=3P]
+- **md.ref.palette.neutral17** (Neutral 17)
+  - #2b2930 [Audience=3P]
+- **md.ref.palette.neutral20** (Neutral 20)
+  - #322f35 [Audience=3P]
+- **md.ref.palette.neutral22** (Neutral 22)
+  - #36343b [Audience=3P]
+- **md.ref.palette.neutral24** (Neutral 24)
+  - #3b383e [Audience=3P]
+- **md.ref.palette.neutral30** (Neutral 30)
+  - #48464c [Audience=3P]
+- **md.ref.palette.neutral4** (Neutral 4)
+  - #0f0d13 [Audience=3P]
+- **md.ref.palette.neutral40** (Neutral 40)
+  - #605d64 [Audience=3P]
+- **md.ref.palette.neutral50** (Neutral 50)
+  - #79767d [Audience=3P]
+- **md.ref.palette.neutral6** (Neutral 6)
+  - #141218 [Audience=3P]
+- **md.ref.palette.neutral60** (Neutral 60)
+  - #938f96 [Audience=3P]
+- **md.ref.palette.neutral70** (Neutral 70)
+  - #aea9b1 [Audience=3P]
+- **md.ref.palette.neutral80** (Neutral 80)
+  - #cac5cd [Audience=3P]
+- **md.ref.palette.neutral87** (Neutral 87)
+  - #ded8e1 [Audience=3P]
+- **md.ref.palette.neutral90** (Neutral 90)
+  - #e6e0e9 [Audience=3P]
+- **md.ref.palette.neutral92** (Neutral 92)
+  - #ece6f0 [Audience=3P]
+- **md.ref.palette.neutral94** (Neutral 94)
+  - #f3edf7 [Audience=3P]
+- **md.ref.palette.neutral95** (Neutral 95)
+  - #f5eff7 [Audience=3P]
+- **md.ref.palette.neutral96** (Neutral 96)
+  - #f7f2fa [Audience=3P]
+- **md.ref.palette.neutral98** (Neutral 98)
+  - #fef7ff [Audience=3P]
+- **md.ref.palette.neutral99** (Neutral 99)
+  - #fffbff [Audience=3P]
+- **md.ref.palette.orange0** (Orange 0)
+  - #000000
+- **md.ref.palette.orange10** (Orange 10)
+  - #321200
+- **md.ref.palette.orange100** (Orange 100)
+  - #ffffff
+- **md.ref.palette.orange20** (Orange 20)
+  - #522302
+- **md.ref.palette.orange30** (Orange 30)
+  - #753403
+- **md.ref.palette.orange40** (Orange 40)
+  - #9a4600
+- **md.ref.palette.orange50** (Orange 50)
+  - #c05a01
+- **md.ref.palette.orange60** (Orange 60)
+  - #e86e00
+- **md.ref.palette.orange70** (Orange 70)
+  - #ff8d41
+- **md.ref.palette.orange80** (Orange 80)
+  - #ffb683
+- **md.ref.palette.orange90** (Orange 90)
+  - #ffdcc3
+- **md.ref.palette.orange95** (Orange 95)
+  - #ffede1
+- **md.ref.palette.orange98** (Orange 98)
+  - #fff8f4
+- **md.ref.palette.pink0** (Pink 0)
+  - #000000
+- **md.ref.palette.pink10** (Pink 10)
+  - #3d0023
+- **md.ref.palette.pink100** (Pink 100)
+  - #ffffff
+- **md.ref.palette.pink20** (Pink 20)
+  - #620438
+- **md.ref.palette.pink30** (Pink 30)
+  - #8d0053
+- **md.ref.palette.pink40** (Pink 40)
+  - #b60d6e
+- **md.ref.palette.pink50** (Pink 50)
+  - #dc258d
+- **md.ref.palette.pink60** (Pink 60)
+  - #f94aab
+- **md.ref.palette.pink70** (Pink 70)
+  - #ff7dd2
+- **md.ref.palette.pink80** (Pink 80)
+  - #ffaee4
+- **md.ref.palette.pink90** (Pink 90)
+  - #ffd8ef
+- **md.ref.palette.pink95** (Pink 95)
+  - #ffecf6
+- **md.ref.palette.pink98** (Pink 98)
+  - #fff7fc
+- **md.ref.palette.primary0** (Primary 0)
+  - #000000 [Audience=3P]
+- **md.ref.palette.primary10** (Primary 10)
+  - #21005d [Audience=3P]
+- **md.ref.palette.primary100** (Primary 100)
+  - #ffffff [Audience=3P]
+- **md.ref.palette.primary20** (Primary 20)
+  - #381e72 [Audience=3P]
+- **md.ref.palette.primary30** (Primary 30)
+  - #4f378b [Audience=3P]
+- **md.ref.palette.primary40** (Primary 40)
+  - #6750a4 [Audience=3P]
+- **md.ref.palette.primary50** (Primary 50)
+  - #7f67be [Audience=3P]
+- **md.ref.palette.primary60** (Primary 60)
+  - #9a82db [Audience=3P]
+- **md.ref.palette.primary70** (Primary 70)
+  - #b69df8 [Audience=3P]
+- **md.ref.palette.primary80** (Primary 80)
+  - #d0bcff [Audience=3P]
+- **md.ref.palette.primary90** (Primary 90)
+  - #eaddff [Audience=3P]
+- **md.ref.palette.primary95** (Primary 95)
+  - #f6edff [Audience=3P]
+- **md.ref.palette.primary98** (Primary 98)
+  - #fef7ff [Audience=3P]
+- **md.ref.palette.primary99** (Primary 99)
+  - #fffbfe [Audience=3P]
+- **md.ref.palette.purple0** (Purple 0)
+  - #000000
+- **md.ref.palette.purple10** (Purple 10)
+  - #280255
+- **md.ref.palette.purple100** (Purple 100)
+  - #ffffff
+- **md.ref.palette.purple20** (Purple 20)
+  - #400b84
+- **md.ref.palette.purple30** (Purple 30)
+  - #5629a4
+- **md.ref.palette.purple40** (Purple 40)
+  - #7438d2
+- **md.ref.palette.purple50** (Purple 50)
+  - #9254ea
+- **md.ref.palette.purple60** (Purple 60)
+  - #ad72ff
+- **md.ref.palette.purple70** (Purple 70)
+  - #c597ff
+- **md.ref.palette.purple80** (Purple 80)
+  - #d9bafd
+- **md.ref.palette.purple90** (Purple 90)
+  - #eedcfe
+- **md.ref.palette.purple95** (Purple 95)
+  - #f7ecfe
+- **md.ref.palette.purple98** (Purple 98)
+  - #fdf8ff
+- **md.ref.palette.red0** (Red 0)
+  - #000000
+- **md.ref.palette.red10** (Red 10)
+  - #3a0907
+- **md.ref.palette.red100** (Red 100)
+  - #ffffff
+- **md.ref.palette.red20** (Red 20)
+  - #60150f
+- **md.ref.palette.red30** (Red 30)
+  - #8a1a16
+- **md.ref.palette.red40** (Red 40)
+  - #b3251e
+- **md.ref.palette.red50** (Red 50)
+  - #db372d
+- **md.ref.palette.red60** (Red 60)
+  - #f55e57
+- **md.ref.palette.red70** (Red 70)
+  - #ff8983
+- **md.ref.palette.red80** (Red 80)
+  - #ffb3ae
+- **md.ref.palette.red90** (Red 90)
+  - #ffdadc
+- **md.ref.palette.red95** (Red 95)
+  - #ffecee
+- **md.ref.palette.red98** (Red 98)
+  - #fff8f8
+- **md.ref.palette.secondary0** (Secondary 0)
+  - #000000 [Audience=3P]
+- **md.ref.palette.secondary10** (Secondary 10)
+  - #1d192b [Audience=3P]
+- **md.ref.palette.secondary100** (Secondary 100)
+  - #ffffff [Audience=3P]
+- **md.ref.palette.secondary20** (Secondary 20)
+  - #332d41 [Audience=3P]
+- **md.ref.palette.secondary30** (Secondary 30)
+  - #4a4458 [Audience=3P]
+- **md.ref.palette.secondary40** (Secondary 40)
+  - #625b71 [Audience=3P]
+- **md.ref.palette.secondary50** (Secondary 50)
+  - #7a7289 [Audience=3P]
+- **md.ref.palette.secondary60** (Secondary 60)
+  - #958da5 [Audience=3P]
+- **md.ref.palette.secondary70** (Secondary 70)
+  - #b0a7c0 [Audience=3P]
+- **md.ref.palette.secondary80** (Secondary 80)
+  - #ccc2dc [Audience=3P]
+- **md.ref.palette.secondary90** (Secondary 90)
+  - #e8def8 [Audience=3P]
+- **md.ref.palette.secondary95** (Secondary 95)
+  - #f6edff [Audience=3P]
+- **md.ref.palette.secondary98** (Secondary 98)
+  - #fef7ff [Audience=3P]
+- **md.ref.palette.secondary99** (Secondary 99)
+  - #fffbfe [Audience=3P]
+- **md.ref.palette.tertiary0** (Tertiary 0)
+  - #000000 [Audience=3P]
+- **md.ref.palette.tertiary10** (Tertiary 10)
+  - #31111d [Audience=3P]
+- **md.ref.palette.tertiary100** (Tertiary 100)
+  - #ffffff [Audience=3P]
+- **md.ref.palette.tertiary20** (Tertiary 20)
+  - #492532 [Audience=3P]
+- **md.ref.palette.tertiary30** (Tertiary 30)
+  - #633b48 [Audience=3P]
+- **md.ref.palette.tertiary40** (Tertiary 40)
+  - #7d5260 [Audience=3P]
+- **md.ref.palette.tertiary50** (Tertiary 50)
+  - #986977 [Audience=3P]
+- **md.ref.palette.tertiary60** (Tertiary 60)
+  - #b58392 [Audience=3P]
+- **md.ref.palette.tertiary70** (Tertiary 70)
+  - #d29dac [Audience=3P]
+- **md.ref.palette.tertiary80** (Tertiary 80)
+  - #efb8c8 [Audience=3P]
+- **md.ref.palette.tertiary90** (Tertiary 90)
+  - #ffd8e4 [Audience=3P]
+- **md.ref.palette.tertiary95** (Tertiary 95)
+  - #ffecf1 [Audience=3P]
+- **md.ref.palette.tertiary98** (Tertiary 98)
+  - #fff8f8 [Audience=3P]
+- **md.ref.palette.tertiary99** (Tertiary 99)
+  - #fffbfa [Audience=3P]
+- **md.ref.palette.white** (White)
+  - #ffffff
+- **md.ref.palette.yellow0** (Yellow 0)
+  - #000000
+- **md.ref.palette.yellow10** (Yellow 10)
+  - #2f1400
+- **md.ref.palette.yellow100** (Yellow 100)
+  - #ffffff
+- **md.ref.palette.yellow20** (Yellow 20)
+  - #4d2600
+- **md.ref.palette.yellow30** (Yellow 30)
+  - #6d3a01
+- **md.ref.palette.yellow40** (Yellow 40)
+  - #8f4e06
+- **md.ref.palette.yellow50** (Yellow 50)
+  - #b16300
+- **md.ref.palette.yellow60** (Yellow 60)
+  - #d37b00
+- **md.ref.palette.yellow70** (Yellow 70)
+  - #ef9800
+- **md.ref.palette.yellow80** (Yellow 80)
+  - #fcbd00
+- **md.ref.palette.yellow90** (Yellow 90)
+  - #ffe07c
+- **md.ref.palette.yellow95** (Yellow 95)
+  - #fff2b4
+- **md.ref.palette.yellow98** (Yellow 98)
+  - #fffade
+
+## md.sys.color — Color schemes
+
+Color tokens for light and dark themes, medium and high contrast modes, 1P Baseline and 3P (Dynamic) schemes, and iOS overrides.
+
+- **md.sys.color.background** (Background) — Note: Background is a legacy color role. It is recommended to use Surface instead of Background.
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral6 = #141218
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.neutral98 = #fef7ff
+- **md.sys.color.error** (Error) — Indicates errors, such as invalid input in a date picker
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.error95 = #fceeee
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.error90 = #f9dedc
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.error20 = #601410
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.error30 = #8c1d18
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.error80 = #f2b8b5
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.error40 = #b3261e
+- **md.sys.color.error-container** (Error container) — Container color for error messages and badges
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.error80 = #f2b8b5
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.error60 = #e46962
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.error30 = #8c1d18
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.error40 = #b3261e
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.error90 = #f9dedc
+- **md.sys.color.inverse-on-surface** (Inverse on surface) — Used for text and icons shown against the inverse surface color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral10 = #1d1b20
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral20 = #322f35
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.neutral95 = #f5eff7
+- **md.sys.color.inverse-primary** (Inverse primary) — Displays opposite of the primary color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.primary40 = #6750a4
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.primary80 = #d0bcff
+- **md.sys.color.inverse-surface** (Inverse surface) — Displays opposite color of the surrounding UI
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.neutral20 = #322f35
+- **md.sys.color.on-background** (On background) — Used for text and icons shown against the background color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.neutral10 = #1d1b20
+- **md.sys.color.on-error** (On error) — Used for text and icons on the error color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.error0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.error10 = #410e0b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.error100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.error20 = #601410
+- **md.sys.color.on-error-container** (On error container) — Used for text and icons on the error-container color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.error0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.error100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.error90 = #f9dedc
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.error30 = #8c1d18
+- **md.sys.color.on-primary** (On primary) — Text and icons shown against the primary color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary10 = #21005d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.primary20 = #381e72
+- **md.sys.color.on-primary-container** (On primary container) — Contrast-passing color shown against the primary container
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.primary30 = #4f378b
+- **md.sys.color.on-primary-fixed** (On primary fixed) — Used for text and icons shown against the primary fixed color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.primary10 = #21005d
+- **md.sys.color.on-primary-fixed-variant** (On primary fixed variant) — Stronger hue variant used for text and icons shown against the primary fixed color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.primary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.primary30 = #4f378b
+- **md.sys.color.on-secondary** (On secondary) — Text and icons shown against the secondary color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary10 = #1d192b
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary20 = #332d41
+- **md.sys.color.on-secondary-container** (On secondary container) — Contrast-passing color shown against the secondary container
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.secondary30 = #4a4458
+- **md.sys.color.on-secondary-fixed** (On secondary fixed) — Used for text and icons shown against the secondary fixed color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary10 = #1d192b
+- **md.sys.color.on-secondary-fixed-variant** (On secondary fixed variant) — Stronger hue variant used for text and icons shown against the secondary fixed color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary20 = #332d41
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.secondary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary30 = #4a4458
+- **md.sys.color.on-surface** (On surface) — Text and icons shown against the surface color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral100 = #ffffff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.neutral0 = #000000
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral90 = #e6e0e9
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.neutral10 = #1d1b20
+- **md.sys.color.on-surface-variant** (On surface variant) — For text and icons to indicate active or inactive component state
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral-variant100 = #ffffff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral-variant90 = #e7e0ec
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.neutral-variant0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.neutral-variant30 = #49454f
+- **md.sys.color.on-tertiary** (On tertiary) — Text and icons shown against the tertiary color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary10 = #31111d
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary20 = #492532
+- **md.sys.color.on-tertiary-container** (On tertiary container) — Contrast-passing color shown against the tertiary container
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary30 = #633b48
+- **md.sys.color.on-tertiary-fixed** (On tertiary fixed) — Used for text and icons shown against the tertiary fixed color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary10 = #31111d
+- **md.sys.color.on-tertiary-fixed-variant** (On tertiary fixed variant) — Stronger hue variant used for text and icons shown against the tertiary fixed color
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary0 = #000000
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary20 = #492532
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary100 = #ffffff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary30 = #633b48
+- **md.sys.color.outline** (Outline) — Subtle color used for boundaries
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral-variant95 = #f5eefa
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral-variant70 = #aea9b4
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.neutral-variant20 = #322f37
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.neutral-variant30 = #49454f
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral-variant60 = #938f99
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.neutral-variant50 = #79747e
+- **md.sys.color.outline-variant** (Outline Variant) — Outline-variant is used to define the border of a component where 3:1 contrast ratio isn’t required, a container, or a divider.
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.neutral-variant80 = #cac4d0
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral-variant60 = #938f99
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral-variant30 = #49454f
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.neutral-variant50 = #79747e
+- **md.sys.color.primary** (Primary) — Main color used across screens and components
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.primary40 = #6750a4
+- **md.sys.color.primary-container** (Primary container) — Standout container color for key components
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.primary60 = #9a82db
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.primary40 = #6750a4
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.primary90 = #eaddff
+- **md.sys.color.primary-fixed** (Primary fixed) — Primary color that doesn't change for light or dark theme.
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.primary40 = #6750a4
+- **md.sys.color.primary-fixed-dim** (Primary fixed dim) — Dimmer version of primary fixed color that doesn't change for light or dark theme.
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.primary30 = #4f378b
+- **md.sys.color.scrim** (Scrim) — Used for scrims which help separate floating components from the background.
+  - -> md.ref.palette.neutral0 = #000000 [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark; Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]
+- **md.sys.color.secondary** (Secondary) — Accent color used across screens and components
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.secondary20 = #332d41
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.secondary40 = #625b71
+- **md.sys.color.secondary-container** (Secondary container) — Less prominent container color, for components like tonal buttons
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary60 = #958da5
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.secondary40 = #625b71
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.secondary90 = #e8def8
+- **md.sys.color.secondary-fixed** (Secondary fixed) — Secondary color that doesn't change for light or dark theme.
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary90 = #e8def8
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.secondary30 = #4a4458
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.secondary40 = #625b71
+- **md.sys.color.secondary-fixed-dim** (Secondary fixed dim) — Dimmer version of secondary fixed color that doesn't change for light or dark theme.
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.secondary80 = #ccc2dc
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.secondary20 = #332d41
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.secondary30 = #4a4458
+- **md.sys.color.shadow** (Shadow) — For shadows applied to elevated components
+  - -> md.ref.palette.neutral0 = #000000 [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark; Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]
+- **md.sys.color.surface** (Surface) — Surface color for components like cards, sheets, and menus
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral6 = #141218
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.neutral98 = #fef7ff
+- **md.sys.color.surface-bright** (Surface Bright) — Surface that is brighter in both light and dark theme.
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral24 = #3b383e
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.neutral98 = #fef7ff
+- **md.sys.color.surface-container** (Surface Container)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral12 = #211f26
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.neutral94 = #f3edf7
+- **md.sys.color.surface-container-high** (Surface Container High)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral17 = #2b2930
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.neutral92 = #ece6f0
+- **md.sys.color.surface-container-highest** (Surface Container Highest)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral22 = #36343b
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.neutral90 = #e6e0e9
+- **md.sys.color.surface-container-low** (Surface Container Low)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral10 = #1d1b20
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.neutral96 = #f7f2fa
+- **md.sys.color.surface-container-lowest** (Surface Container Lowest)
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral4 = #0f0d13
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.neutral100 = #ffffff
+- **md.sys.color.surface-dim** (Surface Dim) — Surface that is dimmer in both light and dark theme.
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral6 = #141218
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.neutral87 = #ded8e1
+- **md.sys.color.surface-tint** (Surface tint)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.sys.color.surface-tint-color** (Surface tint color)
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary95 = #f6edff
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary90 = #eaddff
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.sys.color.primary -> md.ref.palette.primary80 = #d0bcff
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary20 = #381e72
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary30 = #4f378b
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.sys.color.primary -> md.ref.palette.primary40 = #6750a4
+- **md.sys.color.surface-variant** (Surface Variant) — Alternate surface color, can be used for active states
+  - [Audience=3P + Platform=Compose + Theme=Dark; Audience=3P + Platform=Web + Theme=Dark; Audience=3P + Platform=Android + Theme=Dark]: -> md.ref.palette.neutral-variant30 = #49454f
+  - [Audience=3P + Platform=Compose + Theme=Light; Audience=3P + Platform=Web + Theme=Light; Audience=3P + Platform=Android + Theme=Light]: -> md.ref.palette.neutral-variant90 = #e7e0ec
+- **md.sys.color.tertiary** (Tertiary) — Contrasting accent color used across screens and components
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary95 = #ffecf1
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary20 = #492532
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary30 = #633b48
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary80 = #efb8c8
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary40 = #7d5260
+- **md.sys.color.tertiary-container** (Tertiary container) — Contrasting container color, for components like input fields
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary80 = #efb8c8
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary60 = #b58392
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary30 = #633b48
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary40 = #7d5260
+  - [Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary90 = #ffd8e4
+- **md.sys.color.tertiary-fixed** (Tertiary fixed) — Tertiary color that doesn't change for light or dark theme.
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary90 = #ffd8e4
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary30 = #633b48
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary40 = #7d5260
+- **md.sys.color.tertiary-fixed-dim** (Tertiary fixed dim) — Dimmer version of tertiary fixed color that doesn't change for light or dark theme.
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Dark; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Dark; Audience=3P + Contrast=Default + Platform=Compose + Theme=Light; Audience=3P + Contrast=Default + Platform=Compose + Theme=Dark; Audience=3P + Contrast=Default + Platform=Web + Theme=Light; Audience=3P + Contrast=Default + Platform=Web + Theme=Dark; Audience=3P + Contrast=Default + Platform=Android + Theme=Light; Audience=3P + Contrast=Default + Platform=Android + Theme=Dark]: -> md.ref.palette.tertiary80 = #efb8c8
+  - [Audience=3P + Contrast=High contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=High contrast + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary20 = #492532
+  - [Audience=3P + Contrast=Medium contrast + Platform=Compose + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Web + Theme=Light; Audience=3P + Contrast=Medium contrast + Platform=Android + Theme=Light]: -> md.ref.palette.tertiary30 = #633b48
+

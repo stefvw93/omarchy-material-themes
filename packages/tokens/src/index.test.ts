@@ -1,10 +1,16 @@
 import { Schema } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import {
+  cornerRadius,
   cssVariables,
   defaultTokens,
+  gapsOf,
+  groupbarOf,
   hyprlandTokensLua,
+  layoutOf,
+  migrateTokens,
   resolveTokens,
+  spacing,
   springsOf,
   TokensSchema,
 } from "./index.ts";
@@ -12,6 +18,12 @@ import {
 describe("defaultTokens", () => {
   it("satisfy the Schema", () => {
     expect(Schema.decodeUnknownSync(TokensSchema)(defaultTokens)).toEqual(defaultTokens);
+  });
+
+  it("name spec steps: measurement and corner", () => {
+    expect(spacing("space100")).toBe(8);
+    expect(spacing(defaultTokens.layout.margin)).toBe(24);
+    expect(cornerRadius(defaultTokens.shape.windowCorner)).toBe(12);
   });
 });
 
@@ -22,48 +34,185 @@ describe("resolveTokens", () => {
   });
 
   it("overlays known keys and keeps the rest", () => {
-    const tokens = resolveTokens(JSON.stringify({ gaps: { inner: 6 }, periphery: { cardGap: 4 } }));
-    expect(tokens.gaps).toEqual({ ...defaultTokens.gaps, inner: 6 });
-    expect(tokens.periphery.cardGap).toBe(4);
+    const tokens = resolveTokens(
+      JSON.stringify({
+        version: 2,
+        shape: { windowCorner: "large" },
+        periphery: { cardGap: "space50" },
+      }),
+    );
+    expect(tokens.shape.windowCorner).toBe("large");
+    expect(tokens.periphery.cardGap).toBe("space50");
     expect(tokens.expo).toEqual(defaultTokens.expo);
   });
 
-  it("ignores unknown keys and values of the wrong type", () => {
+  it("ignores unknown keys, wrong types and choices outside their list", () => {
     const tokens = resolveTokens(
-      JSON.stringify({ gaps: { inner: "6", outer: null, extra: 1 }, nonsense: true }),
+      JSON.stringify({
+        version: 2,
+        shape: { windowCorner: "full" },
+        layout: { margin: 24, spacer: "space7" },
+        density: -4,
+        nonsense: true,
+      }),
     );
-    expect(tokens.gaps).toEqual(defaultTokens.gaps);
+    expect(tokens.shape).toEqual(defaultTokens.shape);
+    expect(tokens.layout).toEqual(defaultTokens.layout);
+    expect(tokens.density).toBe(0);
     expect(tokens).not.toHaveProperty("nonsense");
   });
 
-  it("rejects an unknown motion scheme", () => {
-    expect(resolveTokens(JSON.stringify({ motion: { scheme: "bouncy" } })).motion.scheme).toBe(
-      "standard",
+  it("rejects an unknown motion scheme and switches springs with a known one", () => {
+    expect(
+      resolveTokens(JSON.stringify({ version: 2, motion: { scheme: "bouncy" } })).motion.scheme,
+    ).toBe("standard");
+    const expressive = resolveTokens(
+      JSON.stringify({ version: 2, motion: { scheme: "expressive" } }),
     );
-  });
-
-  it("switches the springs with the scheme", () => {
-    const expressive = resolveTokens(JSON.stringify({ motion: { scheme: "expressive" } }));
     expect(springsOf(expressive).spatial_default).toEqual({ stiffness: 380, ratio: 0.8 });
   });
 });
 
+describe("migrateTokens", () => {
+  const v1 = {
+    gaps: { inner: 2, outer: 4, workspaces: 32 },
+    border: { width: 1, gradientAngle: 55 },
+    blur: { size: 6, passes: 3 },
+    shadow: { range: 60, renderPower: 4, lightAngle: 90, distance: 8 },
+    motion: { scheme: "expressive" },
+    expo: {
+      outerMargin: 48,
+      tileGap: 24,
+      tilePadding: 8,
+      rise: 24,
+      tileStagger: 80,
+      windowStagger: 35,
+      windowLead: 70,
+      tileScaleFrom: 0.92,
+      windowScaleFrom: 0.94,
+    },
+    periphery: {
+      bandMargin: 16,
+      cardGap: 10,
+      groupGap: 20,
+      slideDuration: 320,
+      fadeDuration: 150,
+      ghostBlur: 96,
+    },
+  };
+
+  it("moves v1's default pixel values to their exact steps", () => {
+    const tokens = resolveTokens(JSON.stringify(v1));
+    expect(tokens.expo).toEqual(defaultTokens.expo);
+    expect(tokens.periphery).toEqual(defaultTokens.periphery);
+    expect(tokens.motion.scheme).toBe("expressive");
+    expect(tokens.flyouts.blur).toEqual({ size: 6, passes: 3 });
+  });
+
+  it("snaps off-grid pixels to the nearest step and drops what M3 decides", () => {
+    const migrated = migrateTokens({ ...v1, expo: { ...v1.expo, tileGap: 21 } }) as Record<
+      string,
+      unknown
+    >;
+    expect((migrated["expo"] as Record<string, unknown>)["tileGap"]).toBe("space250");
+    expect(migrated).not.toHaveProperty("gaps");
+    expect(migrated).not.toHaveProperty("shadow");
+  });
+
+  it("leaves v2 alone", () => {
+    const v2 = { version: 2, density: -1 };
+    expect(migrateTokens(v2)).toBe(v2);
+  });
+});
+
+describe("layoutOf", () => {
+  it("resolves the plugins' steps to dp", () => {
+    expect(layoutOf(defaultTokens)).toEqual({
+      expo: { outerMargin: 48, tileGap: 24, tilePadding: 8, rise: 24 },
+      periphery: { bandMargin: 16, cardGap: 10, groupGap: 20 },
+      windowCorner: 12,
+    });
+  });
+});
+
 describe("hyprlandTokensLua", () => {
-  it("sets gaps and border and defines one curve per spring", () => {
-    const lua = hyprlandTokensLua(defaultTokens);
-    expect(lua).toContain("gaps_in = 2,");
+  const lua = hyprlandTokensLua(defaultTokens);
+
+  it("sets spec gaps, border and corner", () => {
+    expect(gapsOf(defaultTokens)).toEqual({ outer: 24, inner: 12, workspaces: 32 });
+    expect(lua).toContain("gaps_in = 12,");
+    expect(lua).toContain("gaps_out = 24,");
     expect(lua).toContain("border_size = 1,");
-    expect(lua.match(/hl\.curve\("stef_/g)).toHaveLength(6);
+    expect(lua).toContain("rounding = 12,");
+  });
+
+  it("sizes the group tabs as an M3 connected button group", () => {
+    expect(groupbarOf(defaultTokens)).toMatchObject({
+      height: 32,
+      textPadding: 12,
+      padding: 2,
+      corner: 4,
+      round: false,
+    });
+    expect(lua).toContain("gaps_in = 2,");
+    expect(lua).toContain("gradient_rounding = 4,");
+    const small = {
+      ...defaultTokens,
+      groupbar: { ...defaultTokens.groupbar, size: "small" as const },
+    };
+    expect(groupbarOf(small)).toMatchObject({ height: 40, textPadding: 16, corner: 8 });
+  });
+
+  it("rounds the group's outer corners fully for the round shape, following density", () => {
+    const round = {
+      ...defaultTokens,
+      density: -2 as const,
+      groupbar: { ...defaultTokens.groupbar, shape: "round" as const },
+    };
+    expect(groupbarOf(round)).toMatchObject({ height: 24, corner: 12, round: true });
+    const out = hyprlandTokensLua(round);
+    expect(out).toContain("gradient_rounding = 12,");
+    expect(out).toContain("round_only_edges = true,");
+  });
+
+  it("removes 4dp per density level from the margin and spacer", () => {
+    expect(gapsOf({ ...defaultTokens, density: -3 })).toEqual({
+      outer: 12,
+      inner: 6,
+      workspaces: 32,
+    });
+  });
+
+  it("defines one curve per spring and puts every leaf on one", () => {
+    expect(lua.match(/hl\.curve\("m3_/g)).toHaveLength(6);
     expect(lua).toContain(
-      'hl.curve("stef_spatial_default", { type = "spring", mass = 1, stiffness = 700, dampening = 47.624 })',
+      'hl.curve("m3_spatial_default", { type = "spring", mass = 1, stiffness = 700, dampening = 47.624 })',
     );
+    expect(lua).toContain(
+      'leaf = "workspaces", enabled = true, speed = 1, spring = "m3_spatial_slow"',
+    );
+  });
+
+  it("blurs only the flyouts, and nothing when the exception is off", () => {
+    expect(lua).toContain('namespace = "^omarchy-(bar|osd|keyboard-panel)$"');
+    const opaque = hyprlandTokensLua({
+      ...defaultTokens,
+      flyouts: { ...defaultTokens.flyouts, translucent: false },
+    });
+    expect(opaque).not.toContain("layer_rule");
+    expect(opaque).toContain("enabled = false,");
+  });
+
+  it("gives tiled windows no shadow", () => {
+    expect(lua).toContain("match = { float = false }, no_shadow = true");
   });
 });
 
 describe("cssVariables", () => {
-  it("exposes the springs as easings", () => {
+  it("uses the spec's Web curves for the springs", () => {
     const vars = cssVariables(defaultTokens);
-    expect(vars["--stef-spatial-default-easing"]).toMatch(/^linear\(0, /);
-    expect(vars["--stef-gap-inner"]).toBe("2px");
+    expect(vars["--stef-spatial-default-easing"]).toBe("cubic-bezier(0.27, 1.06, 0.18, 1)");
+    expect(vars["--stef-spatial-default-duration"]).toBe("500ms");
+    expect(vars["--stef-window-corner"]).toBe("12px");
   });
 });

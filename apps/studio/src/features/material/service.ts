@@ -1,17 +1,12 @@
-import { type DynamicScheme, sourceColorFromImageBytes } from "@material/material-color-utilities";
+import { sourceColorFromImageBytes } from "@material/material-color-utilities";
 import { Context, Effect, flow, Layer, Match, Option, Schema } from "effect";
 import { HttpClient } from "effect/http";
+import { quantizeMaxSize, type ThemePalette } from "@stef/theme-engine";
 import {
-  createScheme as engineCreateScheme,
-  imageHues,
-  type OmarchyColors,
-  quantizeMaxSize,
-  type QuantizedSeed,
-  type schemeConstructors,
-  schemeToOmarchyColors as engineSchemeToOmarchyColors,
-  type SchemeKind,
-} from "@stef/theme-engine";
-import { MaterialWorkerEventData, MaterialWorkerMessageData } from "./protocol";
+  MaterialWorkerEventData,
+  MaterialWorkerMessageData,
+  type PaletteRequest,
+} from "./protocol";
 
 export interface MaterialServiceImpl {
   /**
@@ -19,22 +14,13 @@ export interface MaterialServiceImpl {
    * `window.__TAURI_INTERNALS__`, which a worker cannot reach.
    */
   fetchImageBytes: (url: URL) => Effect.Effect<Uint8Array, MaterialServiceError>;
-  /** Decode, downscale and quantize the image file. Worker-safe: no DOM, no IPC. */
-  quantizeSource: (imageBytes: Uint8Array) => Effect.Effect<QuantizedSeed, MaterialServiceError>;
-  createScheme: (
-    kind: keyof typeof schemeConstructors,
-    sourceArgb: number,
-    isDark?: boolean,
-    contrastLevel?: number,
-  ) => Effect.Effect<DynamicScheme>;
-  schemeToOmarchyColors: (
-    scheme: DynamicScheme,
-    imageHues: readonly number[],
-  ) => Effect.Effect<OmarchyColors, Schema.SchemaError>;
-  createOmarchyColorsFromImage: (
+  /** The image's source colour (material-color-utilities). Worker-safe: no DOM, no IPC. */
+  quantizeSource: (imageBytes: Uint8Array) => Effect.Effect<number, MaterialServiceError>;
+  /** Fetches the image and has the worker generate the theme's palette from it. */
+  createPaletteFromImage: (
     url: URL,
-    options: { schemeKind: typeof SchemeKind.Type; isDark?: boolean; contrastLevel?: number },
-  ) => Effect.Effect<OmarchyColors, Schema.SchemaError | MaterialServiceError>;
+    options: PaletteRequest,
+  ) => Effect.Effect<ThemePalette, Schema.SchemaError | MaterialServiceError>;
 }
 
 export class MaterialService extends Context.Service<MaterialService, MaterialServiceImpl>()(
@@ -91,104 +77,85 @@ export class MaterialService extends Context.Service<MaterialService, MaterialSe
 
             const { data } = ctx.getImageData(0, 0, width, height);
 
-            return {
-              sourceArgb: sourceColorFromImageBytes(data),
-              hues: imageHues(data),
-            } satisfies QuantizedSeed;
+            return sourceColorFromImageBytes(data);
           }),
         ),
         Effect.tapError(Effect.logError),
         Effect.catch((error) => new MaterialServiceError({ cause: error })),
       );
 
-      const createScheme: MaterialServiceImpl["createScheme"] = Effect.fn(
-        "MaterialService.createScheme",
-      )((kind, sourceArgb, isDark, contrastLevel) =>
-        Effect.sync(() => engineCreateScheme(kind, sourceArgb, isDark, contrastLevel)),
-      );
+      const createPaletteFromImage: MaterialServiceImpl["createPaletteFromImage"] = flow(
+        Effect.fn("MaterialService.createPaletteFromImage")((url, options) =>
+          Effect.gen(function* () {
+            if (Option.isNone(worker)) {
+              return yield* new MaterialServiceError({ cause: "worker is not available" });
+            }
 
-      const schemeToOmarchyColors: MaterialServiceImpl["schemeToOmarchyColors"] = flow(
-        engineSchemeToOmarchyColors,
+            const activeWorker = worker.value;
+
+            // Fetched here, not in the worker: Tauri's IPC is only reachable from the window.
+            const imageBytes = yield* fetchImageBytes(url);
+
+            const id = crypto.randomUUID();
+
+            const message = yield* Schema.encodeEffect(MaterialWorkerEventData)({
+              _tag: "CreatePalette",
+              id,
+              imageBytes,
+              options,
+            });
+
+            const result = yield* Effect.callback<unknown, MaterialServiceError>((resume) => {
+              const cleanup = () => {
+                activeWorker.removeEventListener("message", messageHandler);
+                activeWorker.removeEventListener("error", errorHandler);
+              };
+
+              const messageHandler = (event: MessageEvent) => {
+                // Every in-flight call listens on the same worker, so ignore other replies.
+                if ((event.data as { id?: unknown } | null)?.id !== id) return;
+
+                cleanup();
+                resume(Effect.succeed(event.data));
+              };
+
+              const errorHandler = (event: ErrorEvent) => {
+                cleanup();
+                resume(
+                  Effect.fail(
+                    new MaterialServiceError({ cause: event.message ?? "unknown error" }),
+                  ),
+                );
+              };
+
+              activeWorker.addEventListener("message", messageHandler);
+              activeWorker.addEventListener("error", errorHandler);
+              activeWorker.postMessage(message, [message.imageBytes.buffer]);
+
+              return Effect.sync(cleanup);
+            }).pipe(
+              Effect.flatMap(Schema.decodeUnknownEffect(MaterialWorkerMessageData)),
+              Effect.flatMap(
+                Match.type<typeof MaterialWorkerMessageData.Type>().pipe(
+                  Match.tag("CreatePalette", ({ palette }) => Effect.succeed(palette)),
+                  Match.tag("Failure", ({ message }) =>
+                    Effect.fail(new MaterialServiceError({ cause: message })),
+                  ),
+                  Match.exhaustive,
+                ),
+              ),
+            );
+
+            return result;
+          }),
+        ),
         Effect.tapError(Effect.logError),
       );
-
-      const createOmarchyColorsFromImage: MaterialServiceImpl["createOmarchyColorsFromImage"] =
-        flow(
-          Effect.fn("MaterialService.createOmarchyColorsFromImage")((url, options) =>
-            Effect.gen(function* () {
-              if (Option.isNone(worker)) {
-                return yield* new MaterialServiceError({ cause: "worker is not available" });
-              }
-
-              const activeWorker = worker.value;
-
-              // Fetched here, not in the worker: Tauri's IPC is only reachable from the window.
-              const imageBytes = yield* fetchImageBytes(url);
-
-              const id = crypto.randomUUID();
-
-              const message = yield* Schema.encodeEffect(MaterialWorkerEventData)({
-                _tag: "CreateOmarchyColors",
-                id,
-                imageBytes,
-                options,
-              });
-
-              const result = yield* Effect.callback<unknown, MaterialServiceError>((resume) => {
-                const cleanup = () => {
-                  activeWorker.removeEventListener("message", messageHandler);
-                  activeWorker.removeEventListener("error", errorHandler);
-                };
-
-                const messageHandler = (event: MessageEvent) => {
-                  // Every in-flight call listens on the same worker, so ignore other replies.
-                  if ((event.data as { id?: unknown } | null)?.id !== id) return;
-
-                  cleanup();
-                  resume(Effect.succeed(event.data));
-                };
-
-                const errorHandler = (event: ErrorEvent) => {
-                  cleanup();
-                  resume(
-                    Effect.fail(
-                      new MaterialServiceError({ cause: event.message ?? "unknown error" }),
-                    ),
-                  );
-                };
-
-                activeWorker.addEventListener("message", messageHandler);
-                activeWorker.addEventListener("error", errorHandler);
-                activeWorker.postMessage(message, [message.imageBytes.buffer]);
-
-                return Effect.sync(cleanup);
-              }).pipe(
-                Effect.flatMap(Schema.decodeUnknownEffect(MaterialWorkerMessageData)),
-                Effect.flatMap(
-                  Match.type<typeof MaterialWorkerMessageData.Type>().pipe(
-                    Match.tag("CreateOmarchyColors", ({ id: _id, ...colors }) =>
-                      Effect.succeed(colors),
-                    ),
-                    Match.tag("Failure", ({ message }) =>
-                      Effect.fail(new MaterialServiceError({ cause: message })),
-                    ),
-                    Match.exhaustive,
-                  ),
-                ),
-              );
-
-              return result;
-            }),
-          ),
-          Effect.tapError(Effect.logError),
-        );
 
       return {
         fetchImageBytes,
         quantizeSource,
-        createScheme,
-        schemeToOmarchyColors,
-        createOmarchyColorsFromImage,
+        createPaletteFromImage,
       };
     }),
   );

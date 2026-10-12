@@ -1,0 +1,24 @@
+{
+  "name": "@stef/m3",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Material 3 tokens generated from the spec (m3.material.io), and their resolution.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./token": "./src/token.ts",
+    "./sys/*": "./src/generated/sys/*.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "m3-spec": "node scripts/fetch-spec.ts",
+    "m3-generate": "node scripts/generate.ts",
+    "test": "vp test"
+  },
+  "devDependencies": {
+    "@stef/config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

@@ -12,7 +12,7 @@ export const MainLayer = Layer.mergeAll(
   WallhavenService.layer,
   PexelsService.layer,
   MaterialService.layer,
-  OmarchyTheme.layer,
+  OmarchyTheme.layer.pipe(Layer.provide(OmarchyPathsTauri)),
   HyprlandTauri,
   OmarchyShellTauri,
   OmarchyPathsTauri,
