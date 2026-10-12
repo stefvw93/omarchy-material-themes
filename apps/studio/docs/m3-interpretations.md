@@ -93,6 +93,12 @@ Token values come from the spec's token data ([material-3/](material-3/README.md
 - **Choice:** selection = primary-container.
 - **Why:** A container role that pairs with bright_foreground (on-primary-container) for selected text.
 
+### `window.corner`: Shape: window corners
+
+- **Spec:** Silent: windows are not an M3 component; md.sys.shape.corner names the steps (none … extra-extra-large, full).
+- **Choice:** tokens.shape.windowCorner picks the step for Hyprland's rounding, default medium (12dp). Full (circular) is not offered. The shell's surfaces take the same radius (Omarchy has one), and the plugins draw window copies with it.
+- **Why:** Medium is the corner of the cards windows sit among (filled, elevated and outlined cards); full makes no sense for a rectangle the size of a window.
+
 ### `hyprland.gaps`: Layout: Hyprland gaps
 
 - **Spec:** Expanded layouts have a 24dp margin and a 24dp "spacer between panes" (citations.layoutMargin, layoutSpacer). Hyprland has gaps_out (screen edge) and gaps_in (around each window).

@@ -81,6 +81,13 @@ export const interpretations = {
     choice: "selection = primary-container.",
     why: "A container role that pairs with bright_foreground (on-primary-container) for selected text.",
   },
+  "window.corner": {
+    area: "Shape: window corners",
+    spec: "Silent: windows are not an M3 component; md.sys.shape.corner names the steps (none … extra-extra-large, full).",
+    choice:
+      "tokens.shape.windowCorner picks the step for Hyprland's rounding, default medium (12dp). Full (circular) is not offered. The shell's surfaces take the same radius (Omarchy has one), and the plugins draw window copies with it.",
+    why: "Medium is the corner of the cards windows sit among (filled, elevated and outlined cards); full makes no sense for a rectangle the size of a window.",
+  },
   "hyprland.gaps": {
     area: "Layout: Hyprland gaps",
     spec: 'Expanded layouts have a 24dp margin and a 24dp "spacer between panes" (citations.layoutMargin, layoutSpacer). Hyprland has gaps_out (screen edge) and gaps_in (around each window).',

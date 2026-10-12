@@ -225,6 +225,7 @@ export const flyoutLayers = "^omarchy-(bar|osd|keyboard-panel)$";
  */
 export const hyprlandTokensLua = (tokens: Tokens): string => {
   interpretation("hyprland.animations");
+  interpretation("window.corner");
   const gaps = gapsOf(tokens);
   const shadow = windowShadow();
   const flyouts = tokens.flyouts.translucent;

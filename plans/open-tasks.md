@@ -7,7 +7,7 @@ What's left after the monorepo migration (phases 0–6 on the `monorepo` branch)
 Nothing has been deployed from the monorepo yet. The live plugins and Hyprland config are still the pre-monorepo ones.
 
 - [ ] **`pnpm stef hooks install`.** Points `~/.config/hypr/hyprland.lua` at the generated `~/.config/hypr/stef/plugins.lua`, replacing periphery's own hook block (a backup is kept). This is required before any dev variant's hook can load. Run `hyprctl reload` afterwards.
-- [ ] **`pnpm stef deploy periphery`.** Replaces the deployed periphery with the monorepo build (tokens, kit, generated id). Then run `pnpm stef smoke periphery`.
+- [x] **`pnpm stef deploy periphery`.** Done 2026-10-12; smoke passes. The pre-monorepo build is kept in `~/.config/omarchy/stef/retired/stef.periphery-pre-monorepo`. Its hook still loads through the old block in `hyprland.lua` until `stef hooks install`.
 - [ ] **`pnpm stef migrate overview`.** This command:
   - deploys `stef.expo`;
   - disables `stef.overview`;
@@ -16,7 +16,7 @@ Nothing has been deployed from the monorepo yet. The live plugins and Hyprland c
 
   Then run `hyprctl reload`.
 
-- [ ] **Launch Studio** (`cd apps/studio && vp run tauri dev`). The new pages type-check and build, but have never run against the desktop.
+- [x] **Launch Studio** (`cd apps/studio && vp run tauri dev`). Runs; Studio follows the applied theme's colours.
 
 ### Hand-checks after going live
 
@@ -29,7 +29,8 @@ Headless tests can't cover these.
 - [ ] **Studio, Tokens:** edits reach open plugins live; "Preview in Hyprland" changes gaps and borders immediately; a missing `tokens.json` loads the defaults.
 - [ ] **Studio, Plugins:** the list shows `stef.*` with the live variant; the enable switch and the toggle work.
 - [ ] **Studio, Inspector:** events stream in; pause stops the Rust reader; the snapshot lists monitors and clients.
-- [ ] **Studio, Theme:** generating and applying a theme still works. It now goes through the real `OmarchyTheme.layer`, which previously only existed in dev builds.
+- [ ] **Studio, Theme:** generating and applying a theme still works. It now goes through the real `OmarchyTheme.layer`, which previously only existed in dev builds. Also check that picking a wallpaper recolours Studio itself (the preview) and that Apply leaves it on the applied theme.
+- [ ] **Studio, Tokens: Window groups.** Size, shape and padding preview in Hyprland and reach the theme on Apply.
 
 ## 2. Code
 
@@ -45,14 +46,22 @@ Headless tests can't cover these.
 - [ ] **Hot reload with a running Effect core can crash the shell.** On 2026-10-12, redeploying `stef.expo.dev` and opening it about a second later segfaulted quickshell inside the QML JS engine (`QV4::Value::sameValueZero`, called from JIT code). The likely cause is the old instance's core running after its JS state was torn down. Until it's understood, redeploy plugins with a core and then `omarchy-restart-shell` instead of hot-reloading. Services never hot-reload at all: the engine caches their component by URL.
 - [ ] **Bundle check: unknown engine warnings.** `plugin-kit check` passes when every bundle loads. It should also fail on QML engine warnings beyond the known `usedbeforedeclared` lints.
 
-## 3. Tooling and later
+## 3. Material 3 theming
+
+The plan's phases 1–11 and 12 (docs) are done; phase 8 (restyling each Studio component) was dropped for M3 in Studio's Tailwind config. [apps/studio/docs/theming-inventory.md](../apps/studio/docs/theming-inventory.md) is the current state.
+
+- [ ] **Lone and fullscreen windows.** The rules that made them flush (no gaps, border or rounding) are commented out in `packages/theme-engine/src/theme/files/hyprland.lua.ts`, but the comment above them still describes them. Either delete them and the comment, or bring them back with a registered interpretation.
+- [ ] **`stef.omaterial` hot reload.** Services never reload in place (the engine caches their component by URL); after deploying it, restart the shell.
+- [ ] **Studio: follow the theme without polling.** `src/m3/scheme.ts` re-reads the applied theme every 2 s; the Tauri fs `watch` (see `effect-platform-tauri` below) would replace it.
+
+## 4. Tooling and later
 
 - [ ] **`stef publish`.** Push `dist/prod/<id>` to a release branch, so others can `omarchy plugin add <git-url>`.
 - [ ] **Visual regression.** Run a nested Hyprland in a window, toggle the plugins, `grim` screenshots, and compare.
 - [ ] **Bring back the Claude Code hooks** from the old periphery repo (format after edits, `verify` before stopping), now as monorepo-wide ones in `.claude/settings.json`.
 - [ ] **Tidy the catalog.** `pnpm-workspace.yaml` still lists unused entries (`@vitest/browser-playwright`, `electron-vite`, `tstyche`, `playwright`) and the `@parcel/watcher` build placeholder.
 
-## 4. Decisions for you
+## 5. Decisions for you
 
 - [ ] **Repo name.** The folder and GitHub remote are still `omarchy-material-themes`; the root package is `omarchy-stef`.
 - [ ] **Tauri identifier.** Still `com.tauri.dev`. Changing it moves the app's data directory.
