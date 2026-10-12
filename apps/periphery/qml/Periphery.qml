@@ -1036,10 +1036,11 @@ Item {
         SpringValue { id: cardY; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.shown ? card.shown.y : 0 }
         SpringValue { id: cardW; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.shown ? card.shown.w : 0 }
         SpringValue { id: cardH; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.shown ? card.shown.h : 0 }
-        x: cardX.value
-        y: cardY.value
-        width: cardW.value
-        height: cardH.value
+        // On whole pixels, like the ghosts that land on it.
+        x: Math.round(cardX.value)
+        y: Math.round(cardY.value)
+        width: Math.round(cardW.value)
+        height: Math.round(cardH.value)
         // Cards fade in and out while they travel with the focus area, the
         // way Hyprland slides the workspace: an arriving card (its window
         // just slid out of the focus area) comes from the switch side, a
@@ -1051,8 +1052,8 @@ Item {
         // The spatial spring, like Hyprland's workspace slide it travels with.
         SpringValue { id: slide; spring: root.springSpatial; epsilon: root.pixelEpsilon; target: card.leaving ? card.leaveTo : (card.settled ? 0 : card.arriveFrom) }
         transform: Translate {
-          x: root.cardSlideVertical ? 0 : slide.value
-          y: root.cardSlideVertical ? slide.value : 0
+          x: root.cardSlideVertical ? 0 : Math.round(slide.value)
+          y: root.cardSlideVertical ? Math.round(slide.value) : 0
         }
         SpringValue { id: fade; spring: root.springEffects; target: card.settled && !card.leaving ? (card.dragging ? root.draggedSourceOpacity : 1) : 0 }
         opacity: fade.value
@@ -1193,9 +1194,9 @@ Item {
           borderSize: props.borderSize, rounding: props.rounding,
         })
         // A target can move mid-flight (the refresh), so landing is
-        // measured: on the target, to within half a pixel.
-        readonly property bool landed: !target || (Math.abs(x - target.x) < 0.5 && Math.abs(y - target.y) < 0.5
-          && Math.abs(width - target.w) < 0.5 && Math.abs(height - target.h) < 0.5)
+        // measured: on the target's pixels, where its card or tile is drawn.
+        readonly property bool landed: !target || (x === Math.round(target.x) && y === Math.round(target.y)
+          && width === Math.round(target.w) && height === Math.round(target.h))
 
         function launch(r, onTile) {
           armed = false
@@ -1223,10 +1224,12 @@ Item {
         SpringValue { id: flyW; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: flyer.armed; target: flyer.launched && !flyer.flying ? flyer.fw : (flyer.lastTarget ? flyer.lastTarget.w : 1) }
         SpringValue { id: flyH; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: flyer.armed; target: flyer.launched && !flyer.flying ? flyer.fh : (flyer.lastTarget ? flyer.lastTarget.h : 1) }
         SpringValue { id: flyFade; spring: root.springEffects; target: flyer.target ? 1 : 0 }
-        x: flyX.value
-        y: flyY.value
-        width: flyW.value
-        height: flyH.value
+        // On whole pixels: a window drawn at a fraction of a pixel is
+        // resampled, soft, and would snap sharp at the hand-off.
+        x: Math.round(flyX.value)
+        y: Math.round(flyY.value)
+        width: Math.round(flyW.value)
+        height: Math.round(flyH.value)
         visible: !!root.ghosted[address]
         opacity: flyFade.value
         Component.onCompleted: root.ghostItems[address] = flyer
