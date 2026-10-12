@@ -74,7 +74,6 @@ export const TokensSchema = Schema.Struct({
     bandMargin: Step,
     cardGap: Step,
     groupGap: Step,
-    ghostBlur: Px,
   }),
 });
 

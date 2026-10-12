@@ -6,7 +6,9 @@
 -- actions themselves: every bind made after this file runs with
 -- hl.dsp.window.close(), hl.dsp.window.fullscreen() or
 -- hl.dsp.focus({ direction = ... }), on whatever key, first checks for a
--- selected card in the periphery.
+-- selected card in the periphery. A workspace switch (hl.dsp.focus({
+-- workspace = ... }), hl.dsp.window.move({ workspace = ... }) that follows)
+-- goes through the plugin first, so it can fly it (routed switches).
 --
 -- The plugin drives the state below through hyprctl eval: periphery_open(),
 -- periphery_select(address), periphery_close(). A config reload starts a
@@ -19,7 +21,7 @@
 periphery = nil
 
 local window = hl.dsp.window
-local close, fullscreen, focus, set_prop = window.close, window.fullscreen, hl.dsp.focus, window.set_prop
+local close, fullscreen, focus, move, set_prop = window.close, window.fullscreen, hl.dsp.focus, window.move, window.set_prop
 
 -- The plugin's IPC target. plugin-kit rewrites this line to the built id, so
 -- a dev build (stef.periphery.dev) talks to its own copy of the plugin.
@@ -80,10 +82,38 @@ local function sync_keys()
   end
 end
 
+-- Hyprland's IPC reports every tab of a tab group as visible; only the
+-- group knows which one its tile shows. The plugin gets the shown tabs while
+-- the mode is on, whenever they may have changed (a tab switch makes the new
+-- tab active), and only when they did.
+local tabs_sent = nil
+
+local function report_tabs()
+  if not periphery then return end
+  local shown, seen = {}, {}
+  for _, w in ipairs(hl.get_windows() or {}) do
+    local current = w.group and w.group.size and w.group.size >= 2 and w.group.current
+    if current and current.address and not seen[current.address] then
+      seen[current.address] = true
+      table.insert(shown, current.address)
+    end
+  end
+  table.sort(shown)
+  local list = table.concat(shown, " ")
+  if list == tabs_sent then return end
+  tabs_sent = list
+  shell("tabs " .. (list == "" and "none" or list))
+end
+
+for _, event in ipairs({ "window.active", "window.open", "window.close", "window.move_to_workspace" }) do
+  hl.on(event, report_tabs)
+end
+
 function periphery_open(left, right, x0, x1, y0, y1)
   periphery = periphery or {}
   periphery.bands = { l = left, r = right }
   periphery.focus = { x0 = x0, x1 = x1, y0 = y0, y1 = y1 }
+  report_tabs()
 end
 
 function periphery_select(address)
@@ -99,6 +129,34 @@ end
 function periphery_close()
   if periphery then periphery_select(nil) end
   periphery = nil
+  tabs_sent = nil
+end
+
+-- A routed switch waits here under a token until the plugin has its
+-- backdrop up and runs it (periphery_run), or for ROUTE_TIMEOUT_MS when the
+-- plugin doesn't answer: the key always switches.
+local ROUTE_TIMEOUT_MS = 150
+local routes, last_token = {}, 0
+
+function periphery_run(token)
+  local native = routes[token]
+  routes[token] = nil
+  if native then hl.dispatch(native) end
+end
+
+local function routed(native)
+  return function()
+    if not periphery then return hl.dispatch(native) end
+    last_token = last_token + 1
+    local token = last_token
+    routes[token] = native
+    shell("route " .. token)
+    hl.timer(function() periphery_run(token) end, { timeout = ROUTE_TIMEOUT_MS, type = "oneshot" })
+  end
+end
+
+local function special(workspace)
+  return string.sub(tostring(workspace), 1, 7) == "special"
 end
 
 local function selected()
@@ -141,6 +199,16 @@ window.fullscreen = function(args)
   end
 end
 
+-- A move that follows its window switches workspace: routed.
+window.move = function(args)
+  local native = move(args)
+  if type(args) ~= "table" or args.workspace == nil or targeted(args) or args.follow == false
+    or special(args.workspace) then
+    return native
+  end
+  return routed(native)
+end
+
 -- Whether the active window has no tiled window beyond it towards `dir`
 -- ("l" or "r") on its workspace. Hyprland's focus wraps round at the edge,
 -- so whether focus moved can't tell.
@@ -163,6 +231,9 @@ end
 -- knows the layout).
 hl.dsp.focus = function(args)
   local native = focus(args)
+  if type(args) == "table" and args.workspace ~= nil and not targeted(args) and not special(args.workspace) then
+    return routed(native)
+  end
   local dir = type(args) == "table" and args.direction
   if not dir then return native end
   dir = string.sub(tostring(dir), 1, 1)

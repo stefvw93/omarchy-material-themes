@@ -37,7 +37,6 @@ const ranges: Record<string, { min: number; max: number; step: number; unit?: st
   "flyouts.blur.passes": { min: 0, max: 8, step: 1 },
   "expo.tileScaleFrom": { min: 0.5, max: 1, step: 0.01 },
   "expo.windowScaleFrom": { min: 0.5, max: 1, step: 0.01 },
-  "periphery.ghostBlur": { min: 0, max: 200, step: 1, unit: "px" },
 };
 const rangeOf = (path: string) =>
   ranges[path] ??
@@ -91,13 +90,8 @@ const groups: ReadonlyArray<{
   },
   {
     title: "Periphery",
-    description: "stef.periphery spacing (steps) and wallpaper ghost blur (not M3)",
-    paths: [
-      "periphery.bandMargin",
-      "periphery.cardGap",
-      "periphery.groupGap",
-      "periphery.ghostBlur",
-    ],
+    description: "stef.periphery spacing (steps)",
+    paths: ["periphery.bandMargin", "periphery.cardGap", "periphery.groupGap"],
   },
 ];
 

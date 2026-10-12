@@ -16,6 +16,7 @@ import "lib/kit.mjs" as Kit
 import "lib/meta.mjs" as Meta
 import "lib/layout.mjs" as Layout
 import "lib/selection.mjs" as Selection
+import "lib/flight.mjs" as Flight
 
 // Periphery exposé, after Scott Jenson's widescreen prototype: tiling and the
 // bar are squeezed into a centred focus area (5:4 of the monitor height by
@@ -94,10 +95,27 @@ Item {
   property bool transitioning: false
   property double switchStarted: 0
   property int landedTicks: 0
-  // A card-click flight is running (flight), or set up and waiting for
-  // Hyprland to switch (flightPending).
+  // A flight is running (flight), or set up and waiting for Hyprland to
+  // switch (flightPending); dispatchedAt is when its switch went out (0
+  // before), so a switch that never comes ends it (switchWaitMs).
   property bool flight: false
   property bool flightPending: false
+  property double dispatchedAt: 0
+  // The window a flight goes to ("" for a routed switch), and the active
+  // window at each end: ghosts wear its border and opacity at the tile.
+  property string flightTarget: ""
+  property string activeBefore: ""
+  property string activeAfter: ""
+  // Tab groups: address -> the addresses of every tab in its group (Hyprland's
+  // `grouped`), and the shown tabs, which only the hook knows (`tabs`).
+  property var tabGroups: ({})
+  property var shownTabs: Hypr.parseTabs("") // qmllint disable missing-property
+  // Address -> { opacity, opacityInactive, borderSize, rounding }: what a
+  // ghost copies from its window (hyprctl getprop, read once per window).
+  property var windowProps: ({})
+  // The ghosts' blurred wallpaper, from Hyprland's decoration:blur
+  // (interpretation periphery.ghost-blur).
+  property var blurFx: Hypr.ghostBlur({}) // qmllint disable missing-property
   // Address -> true while a ghost flies for that window; its card waits.
   property var ghosted: ({})
   // Resolved wallpaper file for the backdrop.
@@ -105,7 +123,8 @@ Item {
   // Hyprland's own workspace slide is off while the mode is on; this holds
   // the Lua that turns it back on.
   property bool hyprSlideOff: false
-  // While the mode is on, Hyprland animates workspace switches itself, with
+  // While the mode is on, Hyprland animates the switches that don't fly (a
+  // bar click, a script: nothing went through the hook first) itself, with
   // the theme's curve and speed but this style: a short slide stays mostly
   // inside the focus area (a full slide would cross the bands, as windows
   // are drawn above them).
@@ -125,9 +144,9 @@ Item {
   readonly property string hyprOffLua: Hypr.workspacesOffLua
   property string hyprSlideRestore: ""
   // Address -> true for windows we turned the shadow off for, during a
-  // card-click flight: the windows of the target workspace, whose shadows
-  // would show past the backdrop ahead of their ghosts (they are hidden
-  // until the switch, so they lose nothing).
+  // flight: the floating windows of the other workspaces (tiled windows rest
+  // at level 0), whose shadows would show past the backdrop ahead of their
+  // ghosts (they are hidden until the switch, so they lose nothing).
   property var shadowless: ({})
   // The periphery selection: the card that has the focus instead of a focus
   // area window, set by hovering a card or by the focus keys moving past the
@@ -181,6 +200,15 @@ Item {
   property int windowRounding: 0
   readonly property var activeBorder: Border.hyprlandActiveSpec(root.accent, root.windowBorder)
   readonly property var inactiveBorder: Border.surfaceSpec("popups", "border", root.border, root.windowBorder)
+  // A window's own ghost properties, or the global ones until they are read.
+  function propsOf(address) {
+    return root.windowProps[address]
+      || { opacity: 1, opacityInactive: 1, borderSize: root.windowBorder, rounding: root.windowRounding }
+  }
+  // A border spec at a window's own border width.
+  function borderAt(spec, width) {
+    return { color: spec.color, gradient: spec.gradient, widths: { top: width, right: width, bottom: width, left: width } }
+  }
   property string fontFamily: Style.font.menuFamily // qmllint disable missing-property
 
   readonly property int bandMargin: root.m3.periphery.bandMargin
@@ -211,17 +239,12 @@ Item {
   // that follows a switch can still retarget them; and at most this long.
   readonly property int switchMinMs: ms(120)
   readonly property int switchMaxMs: ms(1500)
+  // A flight whose switch hasn't come this long after its dispatch (a key
+  // to the workspace already shown) ends: its ghosts are still on the tiles.
+  readonly property int switchWaitMs: ms(150)
   // How far the switch backdrop reaches into the bands, to cover the border
   // (general:border_size) of a window tiled flush against the band.
   readonly property int coverBleed: 2
-  // Hyprland blurs what is behind a translucent window as it draws it; a
-  // window capture has no blur of its own. Ghosts get the wallpaper blurred
-  // to look like decoration:blur (size 6, 3 passes; matched by eye against
-  // a real foot window, as dual-kawase has no exact radius; contrast 0.89
-  // and vibrancy 0.17 map to MultiEffect -0.11 and 0.17).
-  readonly property int ghostBlur: root.m3.periphery.ghostBlur
-  readonly property real ghostBlurContrast: -0.11
-  readonly property real ghostBlurSaturation: 0.17
 
   property var targetScreen: null
   // The Hyprland monitor the mode runs on; it keeps it when focus moves away.
@@ -259,6 +282,7 @@ Item {
     root.disableHyprSlide()
     if (!wallpaperProc.running) wallpaperProc.running = true
     if (!decorProc.running) decorProc.running = true
+    if (!blurProc.running) blurProc.running = true
     Hyprland.refreshToplevels()
     Hyprland.refreshWorkspaces()
     Hyprland.refreshMonitors()
@@ -276,6 +300,7 @@ Item {
     root.cancelDrag()
     root.winData = ({})
     root.focusRects = ({})
+    root.windowProps = ({})
     root.headers = []
     slots.clear()
     ghosts.clear()
@@ -338,11 +363,9 @@ Item {
   // Also runs on plugin unload, when the dispatch socket may already be
   // gone, so it goes through hyprctl.
   function restoreShadows() {
-    var batch = Object.keys(root.shadowless).map(function(a) {
-      return 'dispatch hl.dsp.window.set_prop({ window = "address:' + a + '", prop = "no_shadow", value = "unset" })'
-    })
+    var batch = Hypr.restoreShadowsBatch(Object.keys(root.shadowless)) // qmllint disable missing-property
     root.shadowless = ({})
-    if (batch.length > 0) Quickshell.execDetached(["hyprctl", "--batch", batch.join(" ; ")])
+    if (batch) Quickshell.execDetached(["hyprctl", "--batch", batch])
   }
 
   // Reads the theme's workspaces animation, so it can be put back, and
@@ -391,6 +414,42 @@ Item {
     }
   }
 
+  // Hyprland's blur options, for the ghosts' blurred wallpaper.
+  Process {
+    id: blurProc
+    command: ["sh", "-c", ["enabled", "size", "passes", "contrast", "brightness", "vibrancy"].map(function(o) {
+        return "hyprctl -j getoption decoration:blur:" + o
+      }).join("; ")]
+    stdout: StdioCollector {
+      onStreamFinished: root.blurFx = Hypr.ghostBlur(Hypr.parseBlur(text)) // qmllint disable missing-property
+    }
+  }
+
+  // Reads the ghost properties of the windows that don't have them yet, one
+  // batch at a time; windows that came in meanwhile go in the next.
+  function readWindowProps() {
+    if (propsProc.running || !root.opened) return
+    var missing = Object.keys(root.winData).concat(Object.keys(root.focusRects)).filter(function(a) { return !root.windowProps[a] })
+    var batch = Hypr.windowPropsBatch(missing) // qmllint disable missing-property
+    if (!batch) return
+    propsProc.addresses = missing
+    propsProc.command = ["hyprctl", "--batch", batch]
+    propsProc.running = true
+  }
+
+  Process {
+    id: propsProc
+    property var addresses: []
+    stdout: StdioCollector {
+      onStreamFinished: {
+        var read = Hypr.parseWindowProps(propsProc.addresses, text) // qmllint disable missing-property
+        var all = Object.assign({}, root.windowProps)
+        for (var a in read) all[a] = read[a]
+        root.windowProps = all
+      }
+    }
+  }
+
   Process {
     id: wallpaperProc
     command: ["readlink", "-f", Quickshell.env("HOME") + "/.local/state/omarchy/current/background"]
@@ -416,52 +475,79 @@ Item {
     Hyprland.dispatch('hl.dsp.focus({ window = "address:' + address + '" })')
   }
 
-  // Card click: the Exposé flight. Unlike a keyboard switch, the plugin
-  // starts this one, so it can get ahead of Hyprland: it puts the backdrop
-  // up with ghosts of the current focus windows on their tiles (the screen
-  // looks the same), waits until that is on screen, then turns Hyprland's
-  // workspace animation off for this switch and switches. beginSwitch flies
-  // the ghosts; finishSwitch turns the animation back on.
-  function flyTo(address) {
+  function activeAddress() {
+    var t = Hyprland.activeToplevel
+    return t ? root.normalizeAddress(t.address) : ""
+  }
+
+  // Whether a switch can fly now: not during a drag, another flight, or
+  // over a fullscreen window.
+  function canFly() {
     var ws = root.targetMonitor ? root.targetMonitor.activeWorkspace : null
-    // Only a window with a card switches workspace: one in the focus area,
-    // on another monitor or on a special workspace would leave the flight
-    // waiting for a switch that never comes.
-    if (!root.opened || root.dragAddress !== "" || root.transitioning || (ws && ws.hasFullscreen)
-        || !root.winData[address]) {
+    return root.opened && root.dragAddress === "" && !root.transitioning && !(ws && ws.hasFullscreen)
+  }
+
+  // Card click: the Exposé flight. Only a window with a card switches
+  // workspace: one in the focus area, on another monitor or on a special
+  // workspace would leave the flight waiting for a switch that never comes.
+  function flyTo(address) {
+    if (!root.canFly() || !root.winData[address]) {
       root.activateWindow(address)
       return
     }
+    root.startFlight({ window: address }, address)
+  }
+
+  // A routed switch from hypr.lua: flown, or run at once. During a flight it
+  // runs at once and continues that flight (Hyprland's animation is off).
+  function route(token) {
+    if (root.canFly()) root.startFlight({ token: parseInt(token, 10) }, "")
+    else {
+      var lua = Hypr.runSwitchLua(token) // qmllint disable missing-property
+      if (lua) Quickshell.execDetached(["hyprctl", "eval", lua])
+    }
+  }
+
+  // The plugin starts this switch, so it can get ahead of Hyprland: it puts
+  // the backdrop up with ghosts of the current focus windows on their tiles
+  // (the screen looks the same), waits until that is on screen, then turns
+  // Hyprland's workspace animation off for this switch and switches.
+  // beginSwitch flies the ghosts; finishSwitch turns the animation back on.
+  function startFlight(to, target) {
     root.clearSelection()
     wallBlurTex.scheduleUpdate()
     var ghosted = {}
-    for (var a in root.focusRects) {
+    var onTiles = Flight.ghostsOnTiles(Object.keys(root.focusRects), root.tabGroups, root.shownTabs) // qmllint disable missing-property
+    for (var i = 0; i < onTiles.length; i++) {
+      var a = onTiles[i]
       if (!root.ghostItems[a]) continue
-      root.ghostItems[a].launch(root.focusRects[a])
+      root.ghostItems[a].launch(root.focusRects[a], true)
       ghosted[a] = true
     }
     root.ghosted = ghosted
     root.flight = true
     root.flightPending = true
     root.transitioning = true
+    root.dispatchedAt = 0
     root.switchStarted = Date.now()
-    // The target workspace's windows lose their shadow until the landing.
-    var target = root.winData[address].wsId
+    root.flightTarget = target
+    root.activeBefore = root.activeAddress()
     var shadowless = {}
-    for (var w in root.winData) if (root.winData[w].wsId === target) shadowless[w] = true
+    for (var w in root.winData) if (root.winData[w].floating) shadowless[w] = true
     root.shadowless = shadowless
-    flightTimer.address = address
+    flightTimer.to = to
     flightTimer.restart()
   }
 
   Timer {
     id: flightTimer
-    property string address: ""
+    property var to: ({})
     // Two frames at 60 Hz: the backdrop is on screen before Hyprland switches.
     interval: 34
-    onTriggered: Quickshell.execDetached(["hyprctl", "--batch", Object.keys(root.shadowless).map(function(a) {
-        return 'dispatch hl.dsp.window.set_prop({ window = "address:' + a + '", prop = "no_shadow", value = "1" })'
-      }).concat(["eval " + root.hyprOffLua, 'dispatch hl.dsp.focus({ window = "address:' + address + '" })']).join(" ; ")])
+    onTriggered: {
+      Quickshell.execDetached(["hyprctl", "--batch", Hypr.flightBatch(Object.keys(root.shadowless), flightTimer.to)]) // qmllint disable missing-property
+      root.dispatchedAt = Date.now()
+    }
   }
 
   // The workspace shown in the focus area: the target monitor's, not the
@@ -516,6 +602,17 @@ Item {
     // Goes to a window the way a card click does (the Exposé flight).
     function flyTo(address: string): void {
       root.flyTo(root.normalizeAddress(address))
+    }
+
+    // From hypr.lua: a workspace key (a routed switch), run with
+    // periphery_run(token).
+    function route(token: string): void {
+      root.route(token)
+    }
+
+    // From hypr.lua: the shown tab of every tab group ("none" without any).
+    function tabs(list: string): void {
+      root.shownTabs = Hypr.parseTabs(list) // qmllint disable missing-property
     }
 
     // From hypr.lua: a focus key ("l", "r", "u", "d") past the focus area's
@@ -589,6 +686,7 @@ Item {
     var current = root.currentWorkspaceId()
     var others = []
     var focus = {}
+    var groups = {}
     var toplevels = Hyprland.toplevels.values
     for (var i = 0; i < toplevels.length; i++) {
       var t = toplevels[i]
@@ -598,6 +696,7 @@ Item {
       if (root.monId >= 0 && ipc.monitor !== undefined && ipc.monitor !== root.monId) continue
       var wsId = ipc.workspace.id
       var address = normalizeAddress(ipc.address || t.address)
+      groups[address] = (ipc.grouped || []).map(root.normalizeAddress)
       if (wsId === current) {
         focus[address] = { address: address, toplevel: t, fullscreen: !!ipc.fullscreen,
                            x: ipc.at[0] - root.monX, y: ipc.at[1] - root.monY,
@@ -620,6 +719,7 @@ Item {
       })
     }
 
+    root.tabGroups = groups
     others.sort(function(a, b) { return a.address < b.address ? -1 : a.address > b.address ? 1 : 0 })
     var signature = JSON.stringify([root.sideW, current, others.map(function(w) {
       return [w.address, w.wsId, w.wsName, w.title, w.floating, w.rx, w.ry, w.rw, w.rh]
@@ -642,6 +742,7 @@ Item {
     syncSlots(Object.keys(layout.cards))
     // Ghosts for every window on the monitor, band or focus area.
     syncModel(ghosts, Object.keys(layout.cards).concat(Object.keys(focus)))
+    root.readWindowProps()
   }
 
   // Keeps one delegate per window alive across rebuilds: a card whose
@@ -684,18 +785,20 @@ Item {
 
   // FLIP over a workspace switch. Reads where every window is drawn now,
   // relays out for the new workspace at once from the cached geometry, then
-  // flies a ghost for each window that crosses between the focus area and a
-  // band. The refresh that follows the switch retargets ghosts whose real
-  // tiles differ from the cache (hidden workspaces keep their old tiling).
+  // flies a ghost for each window the plan flies (src/flight/specs.md). The
+  // refresh that follows the switch retargets ghosts whose real tiles differ
+  // from the cache (hidden workspaces keep their old tiling).
   function beginSwitch() {
     if (!root.opened) return
     var current = root.currentWorkspaceId()
     root.clearSelection()
     root.switchDir = current > root.shownWorkspace ? 1 : current < root.shownWorkspace ? -1 : 0
     root.shownWorkspace = current
-    // A switch the plugin didn't start (keyboard, bar): Hyprland animates the
-    // focus area; the cards move to their new places right away.
-    if (!root.flightPending) {
+    // No flight running and none set up: a switch the plugin didn't start
+    // (bar, script). Hyprland animates the focus area; the cards move to
+    // their new places right away. During a flight Hyprland's animation is
+    // off, so any switch continues the flight.
+    if (!root.transitioning) {
       root.rebuild()
       return
     }
@@ -704,6 +807,10 @@ Item {
     var from = {}
     for (var a in oldFocus) from[a] = oldFocus[a]
     for (var c in root.cardItems) if (root.cardItems[c].visible) from[c] = root.liveRect(root.cardItems[c])
+    for (var g in root.ghosted) if (root.ghostItems[g]) from[g] = root.liveRect(root.ghostItems[g])
+    var target = root.flightTarget
+    root.flightTarget = ""
+    var shown = root.shownTabs
 
     root.rebuild()
 
@@ -712,25 +819,37 @@ Item {
     for (var o in oldFocus) if (oldFocus[o].fullscreen) fullscreen = true
     if (fullscreen) { root.finishSwitch(); return }
 
-    var ghosted = Object.assign({}, root.ghosted)
-    var crossing = Object.keys(oldFocus).filter(function(addr) { return !root.focusRects[addr] && root.winData[addr] })
-      .concat(Object.keys(root.focusRects).filter(function(addr) { return !oldFocus[addr] }))
-    for (var i = 0; i < crossing.length; i++) {
-      var addr = crossing[i]
-      // The outgoing ghosts are up already, on their tiles.
-      if (ghosted[addr] || !from[addr] || !root.ghostItems[addr]) continue
-      root.ghostItems[addr].launch(from[addr])
+    var plan = Flight.planFlight({ // qmllint disable missing-property
+      before: Object.keys(oldFocus), after: Object.keys(root.focusRects), cards: Object.keys(root.winData),
+      groups: root.tabGroups, shown: shown, target: target,
+    })
+    root.shownTabs = Flight.shownAfter(root.tabGroups, shown, target) // qmllint disable missing-property
+    root.activeAfter = root.activeAddress()
+    // Every flying ghost starts again from where it is drawn now; a hidden
+    // tab's ghost is put away, its card fades instead.
+    for (var h in root.ghosted) if (plan.fly.indexOf(h) < 0 && root.ghostItems[h]) root.ghostItems[h].land()
+    var ghosted = {}
+    for (var i = 0; i < plan.fly.length; i++) {
+      var addr = plan.fly[i]
+      if (!from[addr] || !root.ghostItems[addr]) continue
+      root.ghostItems[addr].launch(from[addr], !!oldFocus[addr])
       ghosted[addr] = true
     }
     root.ghosted = ghosted
-    for (var g in ghosted) if (root.ghostItems[g]) root.ghostItems[g].fly()
+    for (var f in ghosted) root.ghostItems[f].fly()
     root.switchStarted = Date.now()
   }
 
   function checkLanded() {
-    var elapsed = Date.now() - root.switchStarted
+    var now = Date.now()
+    var elapsed = now - root.switchStarted
     // Waiting for Hyprland to switch: the ghosts sit on their tiles, landed.
-    if (root.flightPending && elapsed < root.switchMaxMs) return
+    // A switch that doesn't come (the workspace already shown) ends it.
+    if (root.flightPending) {
+      if (root.dispatchedAt > 0 && now - root.dispatchedAt > root.switchWaitMs) root.finishSwitch()
+      else if (elapsed >= root.switchMaxMs) root.finishSwitch()
+      return
+    }
     if (elapsed < root.switchMinMs) return
     if (elapsed < root.switchMaxMs) {
       for (var a in root.ghosted)
@@ -749,6 +868,8 @@ Item {
     for (var a in root.ghosted) if (root.ghostItems[a]) root.ghostItems[a].land()
     root.ghosted = ({})
     root.flightPending = false
+    root.dispatchedAt = 0
+    root.flightTarget = ""
     if (root.flight && root.opened) Quickshell.execDetached(["hyprctl", "eval", root.hyprModeLua])
     if (root.flight) root.restoreShadows()
     root.flight = false
@@ -795,10 +916,14 @@ Item {
     function onRawEvent(event) {
       // A reload starts hypr.lua afresh: it gets the state again.
       // A theme switch reloads too: the border width and rounding may change.
+      // A reload or theme switch can change the blur and window rules too.
       if (event.name === "configreloaded") {
         root.luaSent = ""
         root.sendLuaState()
         if (!decorProc.running) decorProc.running = true
+        if (!blurProc.running) blurProc.running = true
+        root.windowProps = ({})
+        root.readWindowProps()
       }
       if (root.refreshEvents.indexOf(event.name) < 0) return
       if (!refreshTimer.running) {
@@ -1009,13 +1134,14 @@ Item {
       width: root.monW
       height: root.monH
       visible: false
-      blurEnabled: true
-      // MultiEffect blurs up to blurMax; blurMultiplier stretches past it.
-      blurMax: 64
-      blur: Math.min(1, root.ghostBlur / 64)
-      blurMultiplier: Math.max(0, root.ghostBlur / 64 - 1)
-      contrast: root.ghostBlurContrast
-      saturation: root.ghostBlurSaturation
+      // Hyprland's decoration:blur, redone (interpretation periphery.ghost-blur).
+      blurEnabled: root.blurFx.radius > 0
+      blurMax: root.blurFx.blurMax
+      blur: root.blurFx.blur
+      blurMultiplier: root.blurFx.blurMultiplier
+      contrast: root.blurFx.contrast
+      brightness: root.blurFx.brightness
+      saturation: root.blurFx.saturation
     }
 
     ShaderEffectSource {
@@ -1052,14 +1178,29 @@ Item {
         property bool launched: false
         property bool armed: false
         property bool flying: false
+        // Where it flies from and to, for how it looks along the way.
+        property bool fromTile: false
+        readonly property bool toTile: !!root.focusRects[address]
+        // Its window's own opacity, border and rounding.
+        readonly property var props: root.propsOf(address)
+        // Whether it is the active window at the tile end (its border and
+        // opacity there), and at each end of the flight (its border colour).
+        readonly property bool activeAtStart: fromTile && address === root.activeBefore
+        readonly property bool activeAtEnd: toTile && address === root.activeAfter
+        readonly property var look: Flight.ghostLook({ // qmllint disable missing-property
+          travel: travel, fromTile: fromTile, toTile: toTile, activeAtTile: toTile ? activeAtEnd : activeAtStart,
+          opacity: props.opacity, opacityInactive: props.opacityInactive,
+          borderSize: props.borderSize, rounding: props.rounding,
+        })
         // A target can move mid-flight (the refresh), so landing is
         // measured: on the target, to within half a pixel.
         readonly property bool landed: !target || (Math.abs(x - target.x) < 0.5 && Math.abs(y - target.y) < 0.5
           && Math.abs(width - target.w) < 0.5 && Math.abs(height - target.h) < 0.5)
 
-        function launch(r) {
+        function launch(r, onTile) {
           armed = false
           flying = false
+          fromTile = onTile
           fx = r.x; fy = r.y; fw = r.w; fh = r.h
           launched = true
         }
@@ -1101,20 +1242,14 @@ Item {
         // Rounded like the window it is a copy of.
         RoundedClip {
           anchors.fill: parent
-          radius: root.windowRounding
+          radius: flyer.props.rounding
 
           // The blurred wallpaper behind the window, as Hyprland draws it in
-          // the focus area. Cards sit on the sharp wallpaper, so the blur
-          // fades in over the first half of the way into the focus area (the
-          // spring's slow tail would leave it short at landing) and out over
-          // the first half of the way back.
+          // the focus area; cards sit on the sharp wallpaper (look.blurOpacity).
           Item {
             anchors.fill: parent
             clip: true
-            opacity: {
-              var t = Math.min(1, flyer.travel * 2)
-              return root.focusRects[flyer.address] ? t : 1 - t
-            }
+            opacity: flyer.look.blurOpacity
 
             ShaderEffect {
               x: -flyer.x
@@ -1129,12 +1264,36 @@ Item {
           // the window's own pixels and alpha. A translucent window (foot) then
           // wiped the blur patch and left the surface translucent, so the real
           // window behind showed through. Rendered alone into its own layer,
-          // it is drawn over the patch with normal blending.
+          // it is drawn over the patch with normal blending, at the window's
+          // opacity on its tile.
           ScreencopyView {
             anchors.fill: parent
             layer.enabled: flyer.visible
+            opacity: flyer.look.contentOpacity
             captureSource: flyer.lastTarget && flyer.lastTarget.toplevel ? flyer.lastTarget.toplevel.wayland : null
             live: root.opened
+          }
+        }
+
+        // The window's border: Hyprland's outside the window on its tile, the
+        // card's inside the edge on a card. Colour moves on effects fast from
+        // the start of the flight, as Hyprland's border leaf does.
+        Item {
+          x: -flyer.look.borderOffset
+          y: -flyer.look.borderOffset
+          width: flyer.width + flyer.look.borderOffset * 2
+          height: flyer.height + flyer.look.borderOffset * 2
+
+          BorderOverlay {
+            borderSpec: root.borderAt(root.inactiveBorder, flyer.props.borderSize)
+            radius: flyer.look.outerRadius
+          }
+          SpringValue { id: ghostActive; spring: root.springEffectsFast; animated: flyer.armed; target: (flyer.flying ? flyer.activeAtEnd : flyer.activeAtStart) ? 1 : 0 }
+          BorderOverlay {
+            borderSpec: root.borderAt(root.activeBorder, flyer.props.borderSize)
+            radius: flyer.look.outerRadius
+            opacity: ghostActive.value
+            visible: opacity > 0
           }
         }
       }

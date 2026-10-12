@@ -1,6 +1,6 @@
 -- Tests for hypr/hypr.lua against a fake `hl`. Plain Lua, no framework:
 -- `lua tests/hypr.test.lua` from the repo root. The behaviour is specified in
--- SPEC.md, "Periphery selection".
+-- SPEC.md, "Periphery selection", "Routed switches" and "Tab groups in a flight".
 
 local failures, count = 0, 0
 
@@ -24,10 +24,11 @@ end
 -- A fake `hl`: dispatcher constructors return plain tables, and everything
 -- the hook does is recorded in `log`.
 local function fake()
-  local log = { dispatched = {}, exec = {}, binds = {}, timers = {} }
+  local log = { dispatched = {}, exec = {}, binds = {}, timers = {}, events = {} }
   local state = {
     active = { address = "0xA", at = { x = 380, y = 26 }, size = { x = 900, y = 1400 }, mapped = true },
     windows = {},
+    all = {},
     cursor = { x = 1000, y = 500 },
   }
   local function ctor(kind)
@@ -39,6 +40,7 @@ local function fake()
         close = ctor("close"),
         fullscreen = ctor("fullscreen"),
         set_prop = ctor("set_prop"),
+        move = ctor("move"),
       },
       focus = ctor("focus"),
     },
@@ -55,6 +57,8 @@ local function fake()
     return bind
   end
   function hl.timer(fn, opts) table.insert(log.timers, { fn = fn, opts = opts }) end
+  function hl.on(event, fn) log.events[event] = fn end
+  function hl.get_windows() return state.all end
   function hl.get_active_window()
     if not state.active then return nil end
     local w = state.active
@@ -76,6 +80,15 @@ local function fake()
 end
 
 local function last(list) return list[#list] end
+
+-- Plugin calls other than the shown tabs, which the mode turning on reports.
+local function calls(log)
+  local list = {}
+  for _, cmd in ipairs(log.exec) do
+    if not cmd:find(" tabs ", 1, true) then table.insert(list, cmd) end
+  end
+  return list
+end
 
 local function live_binds(log)
   local keys = {}
@@ -150,9 +163,8 @@ end)
 
 -- Focus keys ----------------------------------------------------------------
 
-test("focus by workspace or window stays native", function()
+test("focus by window stays native", function()
   fake()
-  eq(type(hl.dsp.focus({ workspace = "3" })), "table", "workspace")
   eq(type(hl.dsp.focus({ window = "address:0x1" })), "table", "window")
 end)
 
@@ -160,7 +172,7 @@ test("a focus key without the mode is the native focus", function()
   local log = fake()
   hl.dispatch(hl.dsp.focus({ direction = "l" }))
   eq(last(log.dispatched).kind, "focus")
-  eq(#log.exec, 0, "no plugin call")
+  eq(#calls(log), 0, "no plugin call")
 end)
 
 test("a focus key on a selected card steps the selection", function()
@@ -184,7 +196,7 @@ test("a focus key with a window beyond it moves focus natively", function()
   periphery_open(true, true, 380, 2180, 0, 1440)
   hl.dispatch(hl.dsp.focus({ direction = "r" }))
   eq(last(log.dispatched).kind, "focus")
-  eq(#log.exec, 0, "no plugin call")
+  eq(#calls(log), 0, "no plugin call")
 end)
 
 test("floating windows don't block the edge", function()
@@ -200,7 +212,7 @@ test("a band without cards keeps the native focus at the edge", function()
   periphery_open(false, true, 380, 2180, 0, 1440)
   hl.dispatch(hl.dsp.focus({ direction = "l" }))
   eq(last(log.dispatched).kind, "focus")
-  eq(#log.exec, 0, "no plugin call")
+  eq(#calls(log), 0, "no plugin call")
 end)
 
 test("up and down never enter a band", function()
@@ -208,7 +220,7 @@ test("up and down never enter a band", function()
   periphery_open(true, true, 380, 2180, 0, 1440)
   hl.dispatch(hl.dsp.focus({ direction = "u" }))
   eq(last(log.dispatched).kind, "focus")
-  eq(#log.exec, 0, "no plugin call")
+  eq(#calls(log), 0, "no plugin call")
 end)
 
 -- Border --------------------------------------------------------------------
@@ -297,6 +309,136 @@ test("closing clears the selection, the binds and the state", function()
   eq(periphery, nil, "state")
   eq(live_binds(log), "", "binds")
   eq(last(log.dispatched).args.prop, "active_border_color", "border restored")
+end)
+
+
+-- Routed switches -------------------------------------------------------------
+
+local function oneshots(log)
+  local list = {}
+  for _, t in ipairs(log.timers) do
+    if t.opts and t.opts.type == "oneshot" then table.insert(list, t) end
+  end
+  return list
+end
+
+test("a workspace key without the mode switches natively", function()
+  local log = fake()
+  hl.dispatch(hl.dsp.focus({ workspace = "3" }))
+  eq(last(log.dispatched).kind, "focus")
+  eq(last(log.dispatched).args.workspace, "3", "workspace")
+  eq(#calls(log), 0, "no plugin call")
+end)
+
+test("a workspace key with the mode on goes to the plugin first", function()
+  local log = fake()
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  local n = #log.dispatched
+  hl.dispatch(hl.dsp.focus({ workspace = "e+1" }))
+  eq(last(log.exec), "omarchy-shell -q stef.periphery route 1")
+  eq(#log.dispatched, n, "not switched yet")
+  periphery_run(1)
+  eq(last(log.dispatched).kind, "focus")
+  eq(last(log.dispatched).args.workspace, "e+1", "the native switch")
+end)
+
+test("a token runs once: the timeout after the plugin does nothing", function()
+  local log = fake()
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  hl.dispatch(hl.dsp.focus({ workspace = "2" }))
+  periphery_run(1)
+  local n = #log.dispatched
+  local timer = oneshots(log)[1]
+  eq(timer.opts.timeout, 150, "timeout")
+  timer.fn()
+  periphery_run(1)
+  eq(#log.dispatched, n, "ran once")
+end)
+
+test("the hook switches itself when the plugin doesn't answer", function()
+  local log = fake()
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  hl.dispatch(hl.dsp.focus({ workspace = "2" }))
+  oneshots(log)[1].fn()
+  eq(last(log.dispatched).args.workspace, "2", "switched")
+end)
+
+test("each routed switch gets its own token", function()
+  local log = fake()
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  hl.dispatch(hl.dsp.focus({ workspace = "2" }))
+  hl.dispatch(hl.dsp.focus({ workspace = "3" }))
+  eq(last(log.exec), "omarchy-shell -q stef.periphery route 2")
+  periphery_run(2)
+  eq(last(log.dispatched).args.workspace, "3", "token 2 is workspace 3")
+end)
+
+test("a special workspace stays native", function()
+  fake()
+  eq(type(hl.dsp.focus({ workspace = "special:scratchpad" })), "table", "focus")
+  eq(type(hl.dsp.window.move({ workspace = "special:scratchpad" })), "table", "move")
+end)
+
+test("a move that follows is routed; one that doesn't, or names its window, is native", function()
+  local log = fake()
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  eq(type(hl.dsp.window.move({ workspace = "2", follow = false })), "table", "follow = false")
+  eq(type(hl.dsp.window.move({ workspace = "2", window = "address:0x1" })), "table", "targeted")
+  hl.dispatch(hl.dsp.window.move({ workspace = "4" }))
+  eq(last(log.exec), "omarchy-shell -q stef.periphery route 1")
+  periphery_run(1)
+  eq(last(log.dispatched).kind, "move")
+  eq(last(log.dispatched).args.workspace, "4", "workspace")
+end)
+
+-- Shown tabs ----------------------------------------------------------------
+
+local function group(...)
+  local windows = {}
+  for _, a in ipairs({ ... }) do table.insert(windows, { address = a }) end
+  local g = { size = #windows, current = windows[1] }
+  for _, w in ipairs(windows) do w.group = g end
+  return windows, g
+end
+
+test("the mode turning on reports the shown tabs, sorted, once", function()
+  local log, state = fake()
+  local a = group("0xB2", "0xB3")
+  local b = group("0xA1", "0xA2", "0xA9")
+  state.all = { a[1], a[2], b[1], b[2], b[3], { address = "0xC" } }
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  eq(last(log.exec), "omarchy-shell -q stef.periphery tabs 0xA1 0xB2")
+  local n = #log.exec
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  eq(#log.exec, n, "not reported again unchanged")
+end)
+
+test("no tab groups reports none", function()
+  local log = fake()
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  eq(last(log.exec), "omarchy-shell -q stef.periphery tabs none")
+end)
+
+test("a tab switch reports the new shown tab; nothing while the mode is off", function()
+  local log, state = fake()
+  local windows, g = group("0xA1", "0xA2")
+  state.all = windows
+  log.events["window.active"]()
+  eq(#log.exec, 0, "mode off")
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  g.current = windows[2]
+  log.events["window.active"]()
+  eq(last(log.exec), "omarchy-shell -q stef.periphery tabs 0xA2")
+end)
+
+test("the mode turning off forgets what was reported", function()
+  local log, state = fake()
+  state.all = group("0xA1", "0xA2")
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  periphery_close()
+  local n = #log.exec
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  eq(#log.exec, n + 1, "reported again")
 end)
 
 print(string.format("\n%d tests, %d failed", count, failures))

@@ -118,7 +118,7 @@ Plugins take M3 roles from `Scheme.qml`: the applied theme's `omaterial.json`, o
 | Shell surfaces            | opaque                                                                                                        | ✓                                                                        |
 | Bar flyouts               | translucent (0.9) over blur (size 6, 3 passes) on the bar, OSD and keyboard panel layers                      | — the user-approved exception (`tokens.flyouts`)                         |
 | Periphery dragged card    | `md.comp.filled-card.dragged.container.elevation` (level 3) as the Web's ambient shadow (`RectangularShadow`) | ✓; I `periphery.components`                                              |
-| Periphery ghost wallpaper | MultiEffect blur `tokens.periphery.ghostBlur` (96), matched by eye to Hyprland's blur                         | — a plugin token, not M3                                                 |
+| Periphery ghost wallpaper | MultiEffect blur derived from Hyprland's `decoration:blur` (size × 2^passes; contrast, brightness, vibrancy)  | I `periphery.ghost-blur`                                                 |
 | Studio                    | `shadow-level0…5` from the Web's key and ambient shadows; shadcn's `shadow-2xs…2xl` mapped onto levels 1–5    | I `studio.tailwind-scale`                                                |
 
 ## 5. Typography

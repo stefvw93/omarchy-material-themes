@@ -17,11 +17,14 @@ Item {
   // The periphery selection: hovered, or reached with the focus keys.
   readonly property bool selected: host.selected === win.address && !dragging
   readonly property bool dragging: host.dragAddress === win.address
+  // Its window's own rounding and border width, as Hyprland draws them, so a
+  // ghost lands on a card that looks like it.
+  readonly property var props: host.propsOf(win.address)
 
   // No frame yet: an outlined card with the window class.
   Rectangle {
     anchors.fill: parent
-    radius: card.host.windowRounding
+    radius: card.props.rounding
     color: card.host.placeholderColor
     border.color: card.host.placeholderOutline
     border.width: card.host.placeholderOutlineWidth
@@ -44,7 +47,7 @@ Item {
   // Rounded like its window and its border below.
   RoundedClip {
     anchors.fill: parent
-    radius: card.host.windowRounding
+    radius: card.props.rounding
 
     ScreencopyView {
       id: thumb
@@ -58,13 +61,13 @@ Item {
   // Hyprland moves border colour on the effects fast spring (its `border`
   // leaf); the active border fading in over the inactive one blends the same.
   BorderOverlay {
-    borderSpec: card.host.inactiveBorder
-    radius: card.host.windowRounding
+    borderSpec: card.host.borderAt(card.host.inactiveBorder, card.props.borderSize)
+    radius: card.props.rounding
   }
   SpringValue { id: activeFade; spring: card.host.springEffectsFast; target: card.selected ? 1 : 0 }
   BorderOverlay {
-    borderSpec: card.host.activeBorder
-    radius: card.host.windowRounding
+    borderSpec: card.host.borderAt(card.host.activeBorder, card.props.borderSize)
+    radius: card.props.rounding
     opacity: activeFade.value
     visible: opacity > 0
   }

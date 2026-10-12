@@ -165,6 +165,12 @@ Token values come from the spec's token data ([material-3/](material-3/README.md
 - **Choice:** Every animation is a spring of the tokens' motion scheme (SpringValue): card and ghost geometry and the cards' travel with the focus area on spatial default, every fade on effects default, the dragged card's grow on spatial fast. Cards keep Hyprland's window borders (SPEC.md, Card borders), and change their colour on effects fast as Hyprland's border leaf does (hyprland.animations). A group header is title-small in on-surface-variant. A card without a frame yet is an outlined card with its class in body-small on-surface-variant; a selected card's title is a plain tooltip, as in the exposé, fading in and out on effects fast (a small element). The dragged card is lifted to the filled card's dragged elevation (the Web's ambient shadow for it) under the dragged state layer, and the card it left behind shows at the disabled opacity (md.sys.state.disabled, 0.38) while it is away. A drop target (the focus area, or a group) is primary at the hover state-layer opacity, edged in primary at the outlined card's outline width, with the large corner.
 - **Why:** Cards and ghosts are windows moving, as Hyprland's own windows do on spatial default; a drag lifts a card the way M3 lifts a dragged card; the drop target reads as the place a hover would act on, outlined so it shows over windows and wallpaper.
 
+### `periphery.ghost-blur`: Periphery (stef.periphery): the blurred wallpaper behind a flying ghost
+
+- **Spec:** Silent: M3 has no blur. The ghost hands off to a real window, which Hyprland draws over its own decoration:blur (dual-kawase: size, passes, contrast, brightness, vibrancy, noise); that is what the ghost must match.
+- **Choice:** The ghost redoes Hyprland's blur from Hyprland's live options: MultiEffect over the wallpaper with radius size × 2^passes (how far dual-kawase reaches: each pass halves the image and samples size away; 48 px for size 6, 3 passes), blurMax 64 stretched by blurMultiplier past it; contrast − 1, brightness − 1 and vibrancy as MultiEffect's contrast, brightness and saturation. Blur off, or size or passes missing, is no blur. Hyprland's noise is not redone.
+- **Why:** A value derived from the compositor's own settings follows any theme or blur change and replaces a radius matched by eye; the ghost then looks like the window it hands off to.
+
 ### `studio.colors`: Omaterial Studio: its own colours
 
 - **Spec:** Silent: Studio is a tool for the desktop, not a product with its own brand colour.

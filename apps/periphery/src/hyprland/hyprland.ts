@@ -89,3 +89,155 @@ export function parseDecoration(text: string): Decoration {
   if (rounding !== undefined) result.rounding = rounding;
   return result;
 }
+
+const ADDRESS = /^0x[0-9a-fA-F]+$/;
+const isAddress = (a: string) => ADDRESS.test(a);
+
+export interface Blur {
+  enabled?: boolean;
+  size?: number;
+  passes?: number;
+  contrast?: number;
+  brightness?: number;
+  vibrancy?: number;
+}
+
+/** The decoration:blur options from `hyprctl -j getoption` outputs. */
+export function parseBlur(text: string): Blur {
+  const read = (name: string) =>
+    new RegExp(`"decoration:blur:${name}",\\s*"(?:int|float|bool)":\\s*([^,\\s}]+)`).exec(
+      text,
+    )?.[1];
+  const result: Blur = {};
+  const enabled = read("enabled");
+  if (enabled !== undefined) result.enabled = enabled === "true" || enabled === "1";
+  for (const name of ["size", "passes", "contrast", "brightness", "vibrancy"] as const) {
+    const value = read(name);
+    if (value !== undefined && Number.isFinite(parseFloat(value))) result[name] = parseFloat(value);
+  }
+  return result;
+}
+
+export interface GhostBlur {
+  radius: number;
+  blurMax: number;
+  blur: number;
+  blurMultiplier: number;
+  contrast: number;
+  brightness: number;
+  saturation: number;
+}
+
+/** MultiEffect blurs up to blurMax; blurMultiplier stretches past it. */
+const BLUR_MAX = 64;
+
+/** The ghost's MultiEffect settings for Hyprland's blur (interpretation periphery.ghost-blur). */
+export function ghostBlur(blur: Blur): GhostBlur {
+  const radius =
+    blur.enabled !== false && blur.size !== undefined && blur.passes !== undefined
+      ? blur.size * 2 ** blur.passes
+      : 0;
+  return {
+    radius,
+    blurMax: BLUR_MAX,
+    blur: Math.min(1, radius / BLUR_MAX),
+    blurMultiplier: Math.max(0, radius / BLUR_MAX - 1),
+    contrast: blur.contrast === undefined ? 0 : blur.contrast - 1,
+    brightness: blur.brightness === undefined ? 0 : blur.brightness - 1,
+    saturation: blur.vibrancy ?? 0,
+  };
+}
+
+export interface WindowProps {
+  opacity: number;
+  opacityInactive: number;
+  borderSize: number;
+  rounding: number;
+}
+
+const WINDOW_PROPS = ["opacity", "opacity_inactive", "border_size", "rounding"] as const;
+
+/** The `hyprctl --batch` argument that reads each window's ghost properties. */
+export function windowPropsBatch(addresses: readonly string[]): string {
+  return addresses
+    .filter(isAddress)
+    .map((a) => WINDOW_PROPS.map((prop) => `j/getprop address:${a} ${prop}`).join(" ; "))
+    .join(" ; ");
+}
+
+/** The output of windowPropsBatch's batch, per window; incomplete windows left out. */
+export function parseWindowProps(
+  addresses: readonly string[],
+  text: string,
+): Record<string, WindowProps> {
+  const blocks = text
+    .split(/\n\s*\n/)
+    .map((b) => b.trim())
+    .filter((b) => b !== "");
+  const value = (block: string | undefined, prop: string) => {
+    try {
+      const v = (JSON.parse(block ?? "") as Record<string, unknown>)[prop];
+      return typeof v === "number" ? v : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+  const result: Record<string, WindowProps> = {};
+  addresses.filter(isAddress).forEach((a, i) => {
+    const [opacity, opacityInactive, borderSize, rounding] = WINDOW_PROPS.map((prop, j) =>
+      value(blocks[i * WINDOW_PROPS.length + j], prop),
+    );
+    if (
+      opacity !== undefined &&
+      opacityInactive !== undefined &&
+      borderSize !== undefined &&
+      rounding !== undefined
+    )
+      result[a] = { opacity, opacityInactive, borderSize, rounding };
+  });
+  return result;
+}
+
+/** What a flight's batch switches with: a window to focus, or a routed switch's token. */
+export type FlightSwitch = { window: string } | { token: number };
+
+const shadowDispatch = (a: string, value: string) =>
+  `dispatch hl.dsp.window.set_prop({ window = "address:${a}", prop = "no_shadow", value = "${value}" })`;
+const isToken = (n: number) => Number.isSafeInteger(n) && n >= 1;
+const runLua = (token: number) => `if periphery_run then periphery_run(${token}) end`;
+
+/** The `hyprctl --batch` argument of a flight's switch. */
+export function flightBatch(shadowless: readonly string[], to: FlightSwitch): string {
+  const commands = shadowless.filter(isAddress).map((a) => shadowDispatch(a, "1"));
+  commands.push("eval " + workspacesOffLua);
+  if ("window" in to) {
+    if (isAddress(to.window))
+      commands.push(`dispatch hl.dsp.focus({ window = "address:${to.window}" })`);
+  } else if (isToken(to.token)) commands.push("eval " + runLua(to.token));
+  return commands.join(" ; ");
+}
+
+/** The `hyprctl --batch` argument that gives the windows their shadow back. */
+export function restoreShadowsBatch(addresses: readonly string[]): string {
+  return addresses
+    .filter(isAddress)
+    .map((a) => shadowDispatch(a, "unset"))
+    .join(" ; ");
+}
+
+/** The `hyprctl eval` string that runs a routed switch; empty for anything but a token. */
+export function runSwitchLua(token: string): string {
+  if (!/^\d+$/.test(token)) return "";
+  const n = parseInt(token, 10);
+  return isToken(n) ? runLua(n) : "";
+}
+
+/** The shown tabs from the `tabs` IPC call's argument string. */
+export function parseTabs(text: string): Set<string> {
+  return new Set(
+    text
+      .split(/\s+/)
+      .filter(isAddress)
+      .map((a) => a.toLowerCase()),
+  );
+}

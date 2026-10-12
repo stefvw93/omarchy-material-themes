@@ -126,8 +126,6 @@ export const defaultTokens = {
     bandMargin: "space200" as MeasurementStep,
     cardGap: "space125" as MeasurementStep,
     groupGap: "space250" as MeasurementStep,
-    /** Not M3: blur radius of the wallpaper ghosts, matched by eye to the compositor's blur. */
-    ghostBlur: 96,
   },
 };
 
@@ -223,10 +221,7 @@ export const migrateTokens = (json: unknown): unknown => {
       tileScaleFrom: expo["tileScaleFrom"],
       windowScaleFrom: expo["windowScaleFrom"],
     },
-    periphery: {
-      ...steps(periphery, ["bandMargin", "cardGap", "groupGap"]),
-      ghostBlur: periphery["ghostBlur"],
-    },
+    periphery: steps(periphery, ["bandMargin", "cardGap", "groupGap"]),
   };
 };
 

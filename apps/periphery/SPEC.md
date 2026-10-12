@@ -28,6 +28,12 @@ Scott Jenson showed a prototype at a KDE event (["Are we really going to use the
 | Side width (`sideW`) | The width of one band: `(monW - round(monH × ratio)) / 2`.                                                   |
 | Drop                 | The release of a drag. The drop position selects the target workspace.                                       |
 | Selection            | The one card that has the focus instead of a focus area window. Set by hovering a card or by the focus keys. |
+| Tab group            | Hyprland's window group: several windows on one tile, one shown at a time, with a tab bar above it.          |
+| Shown tab            | The window of a tab group that its tile shows. The group's other windows are hidden tabs.                    |
+| Ghost                | A live copy of a window (`ScreencopyView`) that flies over the screen during a flight.                       |
+| Flight               | A workspace switch in which ghosts fly between tiles and cards over a wallpaper backdrop.                    |
+| Hand-off             | The frame in which the ghosts and the backdrop go, and the real windows and cards show.                      |
+| Routed switch        | A workspace switch from a key that goes through the hook first, so the plugin can fly it.                    |
 
 ## Behaviour
 
@@ -74,27 +80,88 @@ The workspace label is above the top card of its group.
 
 Two kinds of switch, with different owners of the animation:
 
-| Switch                                           | Focus area                                                                                                           | Bands                                                                                                                                                                                                                                                                                                     |
-| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Keyboard, bar, anything the plugin did not start | Hyprland animates the real windows: the theme's workspace curve and speed, style `workspaceStyle` (`slidefade 10%`). | Cards slide to their new places on the spring. Cards travel with the focus area, the way Hyprland slides the workspace (`cardSlide`, on the spring): cards of the old workspace fade in coming from the focus-area side, cards of the new workspace fade out going towards it. No travel during a flight. |
-| Card click (or `flyTo` over IPC)                 | The Exposé flight: windows fly between their cards and their tiles.                                                  | Same as above.                                                                                                                                                                                                                                                                                            |
+| Switch                                                                    | Focus area                                                                                                           | Bands                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Card click, Return on a card, `flyTo` over IPC                            | A flight (the Exposé flight): windows fly between their cards and their tiles.                                       | Cards move to their new places on the spring. No travel: the ghosts land on the cards, which must be in place.                                                                                                                                               |
+| Workspace keys (routed switches, see [Routed switches](#routed-switches)) | A flight, the same as a card click.                                                                                  | Same as above.                                                                                                                                                                                                                                               |
+| Anything else: a bar click, a script, a notification, an app taking focus | Hyprland animates the real windows: the theme's workspace curve and speed, style `workspaceStyle` (`slidefade 10%`). | Cards slide to their new places on the spring, and travel with the focus area the way Hyprland slides the workspace (`cardSlide`): cards of the old workspace fade in coming from the focus-area side, cards of the new workspace fade out going towards it. |
 
-Hyprland owns the real windows, so a keyboard switch has no copies and no hand-off: every frame of the focus area is real, with its border, shadow and blur. A full `slide` would move windows across the whole monitor, over the bands (windows are drawn above them); `slidefade 10%` stays mostly in the focus area.
+Only the hook sees a switch before Hyprland makes it. Every other switch reaches the plugin about 8 ms after Hyprland has switched, too late to put a backdrop up, so Hyprland animates it: every frame of the focus area is real, with no copies and no hand-off. A full `slide` would move windows across the whole monitor, over the bands (windows are drawn above them); `slidefade 10%` stays mostly in the focus area.
 
 #### The Exposé flight
 
 The plugin cannot move real windows. It flies a ghost (a live `ScreencopyView`) per window on the Overlay layer. Each window on the monitor has a ghost for as long as the mode is on, hidden and capturing: a new `ScreencopyView` takes a few hundred ms to get its first frame, so a ghost made at switch time flew empty.
 
-The plugin starts this switch, so it gets ahead of Hyprland:
+The plugin starts this switch (`flyTo`, or a routed switch), so it gets ahead of Hyprland:
 
-1. `flyTo` puts the wallpaper backdrop up over the tiling area, with the ghosts of the current focus windows on their tiles: the screen looks the same.
-2. Two frames later (34 ms), one `hyprctl --batch`: `no_shadow` on the windows of the target workspace, Hyprland's workspace animation off, the focus dispatch. Hyprland switches at once, under the backdrop.
-3. On `activeWorkspaceChanged`, `beginSwitch` reads the cards' live rects, relays out from the cached geometry and flies every ghost: outgoing from their tiles to their new cards, incoming from their cards to their tiles. A hidden workspace can have old tiling; the refresh 80 ms later retargets the ghosts in flight.
+1. The plugin puts the wallpaper backdrop up over the tiling area, with the ghosts of the current focus windows on their tiles: the screen looks the same.
+2. Two frames later (34 ms), one `hyprctl --batch`: `no_shadow` on the floating windows of the other workspaces, Hyprland's workspace animation off, then the switch: the focus dispatch for `flyTo`, `periphery_run(<token>)` for a routed switch. Hyprland switches at once, under the backdrop.
+3. On `activeWorkspaceChanged`, `beginSwitch` reads where every window is drawn now (its ghost, card or tile), relays out from the cached geometry and starts every ghost: a window leaving the focus area flies from its tile to its new card, a window entering it flies from its card to its tile, and a window that stays in the focus area (one moved along with `SUPER + SHIFT + <n>`) flies from its old tile to its new one. Tab groups have their own rule ([Tab groups in a flight](#tab-groups-in-a-flight)). A hidden workspace can have old tiling; the refresh 80 ms later retargets the ghosts in flight.
 4. When every ghost is on its target to within half a pixel, two checks in a row (at least 120 ms, at most 1.5 s), the ghosts and backdrop go in one frame. Landing is measured on the ghost's rect, so a target that moves mid-flight (the 80 ms refresh) still counts only once it is reached. The shadows and Hyprland's workspace animation (`workspaceStyle`) come back.
 
-The real windows' decorations reach past the backdrop: the shadow (60 px range) into the bands and under the translucent bar, and the 1 px border of a window tiled flush against the band (smart gaps: one window, gaps 0). Hence the `no_shadow` during the flight (`value = "unset"` afterwards, so a window rule's `no_shadow` stays), and the backdrop reaching `coverBleed` (2 px) into each band.
+No switch: when Hyprland hasn't switched `switchWaitMs` (150 ms) after the dispatch (a key to the workspace already shown), the flight ends. The ghosts are still on their tiles, so nothing visible changes.
 
-No flight when the current workspace has a fullscreen window, during a card drag, during another flight, or for a window without a card (in the focus area, on another monitor, on a special workspace; possible over IPC): the click then just focuses the window.
+A switch during a flight continues it. Hyprland's workspace animation is off then, so the new workspace is under the backdrop too, whoever started the switch. Each window flies on from where it is drawn now, and windows that now cross start from there.
+
+Tiled windows rest at elevation level 0, with no shadow (the theme's `m3-tiled-level0` rule); floating windows have one (level 3) that would show past the backdrop, into the bands. Hence the `no_shadow` on floating windows during the flight (`value = "unset"` afterwards, so a window rule's `no_shadow` stays). The border of a window tiled flush against the band also reaches past the tiling area: the backdrop reaches `coverBleed` (2 px) into each band.
+
+No flight when the mode is off, when the current workspace has a fullscreen window, during a card drag, or for a window without a card (in the focus area, on another monitor, on a special workspace; possible over IPC): the click then just focuses the window, and a routed switch just switches.
+
+#### Routed switches
+
+The hook ([How the keys reach the plugin](#how-the-keys-reach-the-plugin)) wraps the two actions that switch workspace:
+
+| Action                                              | Omarchy's keys                                                                              |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `hl.dsp.focus({ workspace = … })`                   | `SUPER + 1…0`, `SUPER + TAB`, `SUPER + SHIFT + TAB`, `SUPER + CTRL + TAB`, `SUPER + scroll` |
+| `hl.dsp.window.move({ workspace = … })` with follow | `SUPER + SHIFT + 1…0`                                                                       |
+
+A bind made with them, while the mode is on:
+
+1. keeps the native dispatch under a new number (the token) and calls `route <token>` on the plugin;
+2. the plugin flies the switch and runs the dispatch with `periphery_run(<token>)` in its batch (step 2 above). It runs it at once during a flight (the switch continues the flight) and when it can't fly;
+3. when `periphery_run` hasn't come `routeTimeoutMs` (150 ms) later (the plugin is busy, unloaded or crashed), the hook runs the dispatch itself. A token runs once: the later of the two does nothing.
+
+Unchanged: a call while the mode is off, `follow = false`, a special workspace (`special:` names), and a call that names its window (`window = …`, the plugin's own dispatches).
+
+A routed switch starts about 50 to 70 ms after the key: one `omarchy-shell` call (about 28 ms), two frames, one `hyprctl`.
+
+#### What a ghost copies from its window
+
+A ghost is the window's own pixels. Hyprland draws more around and under them; the ghost draws that too, so the hand-off doesn't jump. Each part changes with the ghost's travel, from 0 at the start of its flight to 1 landed (clamped, so the spring's overshoot doesn't overshoot it):
+
+| Part            | At the tile                                                                                                                                   | At the card                                                                   |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Content opacity | The window's `opacity` when it is the active window at that end, else its `opacity_inactive` (Omarchy's `default-opacity` rule: 0.985, 0.96). | 1, as cards draw thumbnails.                                                  |
+| Border          | Its `border_size`, outside the content, with an outer corner of `rounding` + `border_size`, as Hyprland draws it.                             | The same width inside the edge, with the corner `rounding`, as cards draw it. |
+| Border colour   | The theme's active border for the active window, the inactive border for the others.                                                          | The inactive border (a selection clears on a switch).                         |
+| Blur behind it  | The wallpaper, blurred as `decoration:blur` blurs it (below).                                                                                 | The sharp wallpaper.                                                          |
+| Shadow          | None: tiled windows have none, floating windows lose theirs for the flight.                                                                   | None.                                                                         |
+
+A ghost's border changes colour on the effects fast spring from the start of its flight, as Hyprland's border leaf does. `opacity`, `opacity_inactive`, `border_size` and `rounding` are each window's own (`hyprctl getprop`), read when its ghost is made; they follow window rules.
+
+The blur is Hyprland's dual-kawase blur redone with `MultiEffect` over the wallpaper, from Hyprland's own options (interpretation `periphery.ghost-blur`):
+
+- Radius: size × 2^passes, how far dual-kawase reaches from a pixel (each pass halves the image and samples `size` away): 48 px for size 6, 3 passes.
+- `contrast` − 1, `brightness` − 1 and `vibrancy` become `MultiEffect`'s contrast, brightness and saturation.
+- Not redone: Hyprland's noise (0.0117).
+
+What still differs at the hand-off:
+
+- A floating window's shadow comes back after the landing.
+- A tab group's tab bar isn't in any ghost: it goes when the backdrop goes up and comes back at the hand-off.
+- The noise of Hyprland's blur.
+
+#### Tab groups in a flight
+
+Every tab of a tab group has its own card, like any window. Only the shown tab is on the tile, so only the shown tab flies:
+
+| Window     | Leaving the focus area                           | Entering the focus area                           |
+| ---------- | ------------------------------------------------ | ------------------------------------------------- |
+| Shown tab  | Flies from its tile to its card.                 | Flies from its card to its tile.                  |
+| Hidden tab | Its card fades in on the effects default spring. | Its card fades out on the effects default spring. |
+
+Hyprland reports `hidden: false` for every tab, so the hook tells the plugin which tabs are shown (`group.current`): `tabs <address> …` with the shown tab of every tab group (`tabs none` without any), when the mode turns on and whenever the active window changes (a tab switch makes the new tab active), a window opens, closes or moves to another workspace; only when the list changed since the last report. A tab group's shown tab doesn't change while its workspace is hidden. A flight to a hidden tab shows it: it flies in, and its group's shown tab until then counts as hidden.
 
 #### Hyprland's workspace animation
 
@@ -148,18 +215,20 @@ Moving the pointer onto empty band space keeps the selection, the way focus stay
 
 #### How the keys reach the plugin
 
-Hyprland binds are opaque Lua refs (`hyprctl binds` shows `dispatcher: "__lua"`), so the plugin can't find out which key does what. [`hypr.lua`](hypr.lua), loaded from `~/.config/hypr/hyprland.lua` before Omarchy's bindings (see [README.md](README.md)), wraps the three action constructors instead. A bind made with them gets a Lua function that checks the global `periphery`:
+Hyprland binds are opaque Lua refs (`hyprctl binds` shows `dispatcher: "__lua"`), so the plugin can't find out which key does what. [`hypr.lua`](hypr.lua), loaded from `~/.config/hypr/hyprland.lua` before Omarchy's bindings (see [README.md](README.md)), wraps the action constructors instead: close, fullscreen, focus and window move. A bind made with them gets a Lua function that checks the global `periphery`:
 
 - `nil` while the mode is off: the native action, unchanged.
 - `{ bands, focus, selected, cursor }` while the mode is on. The plugin writes it with `hyprctl eval` (`periphery_open(…)`, `periphery_select(address)`, `periphery_close()`), one call at a time so states arrive in order.
 
-Close and fullscreen run in the hook directly, against `address:<selected>`. The focus keys call the plugin over IPC (`enter`, `step`), because the plugin knows the card layout. A call that names its own window (`{ window = … }`) keeps the native action, so the plugin's own dispatches are not affected.
+Close and fullscreen run in the hook directly, against `address:<selected>`. The focus keys call the plugin over IPC (`enter`, `step`), because the plugin knows the card layout. Focus on a workspace, and a window move that follows, become routed switches ([Routed switches](#routed-switches)). A call that names its own window (`{ window = … }`) keeps the native action, so the plugin's own dispatches are not affected.
 
 While a card is selected, the hook binds Return, KP_Enter and Escape (`hl.bind`, removed with `:remove()` when the selection clears). Return calls `activate`, Escape calls `clear`.
 
 The hook also greys the border: it sets the active window's `active_border_color` to the inactive colour, and back to `general:col.active_border` when the selection clears. `set_prop` drops the first colour of a gradient, so the value gets a dummy first colour. (`value = "unset"` leaves the window with an empty gradient, so the theme value is written back instead.)
 
 Pointer motion over the focus area reaches neither the plugin (its surface takes input in the bands only) nor a Hyprland event. While a card is selected, a 50 ms `hl.timer` in the hook watches the cursor and calls `clear` once it moves over the focus area.
+
+The hook also reports the shown tabs of tab groups to the plugin (`tabs`, see [Tab groups in a flight](#tab-groups-in-a-flight)).
 
 A `hyprctl reload` starts a fresh Lua state. The plugin sends its state again on `configreloaded`.
 
@@ -233,7 +302,8 @@ One full-screen surface draws both bands. A card can then animate from one band 
 4. A layout signature skips the rebuild if nothing changed.
 5. A `ListModel` keyed by window address keeps one card delegate per window. A card that changes position moves on the spatial default spring. A new card fades in at its position on the effects default spring.
 6. `rebuild()` also caches the tiles of the current workspace (`focusRects`), the start rects of a workspace switch.
-7. A 3 s timer resyncs titles and sizes that change without a structural event. It stops during a drag.
+7. A window new to the plugin gets its `opacity`, `opacity_inactive`, `border_size` and `rounding` read in one `hyprctl --batch` (`j/getprop`), for its ghost. A reload reads them again for every window.
+8. A 3 s timer resyncs titles and sizes that change without a structural event. It stops during a drag.
 
 ### IPC
 
@@ -254,6 +324,10 @@ omarchy-shell stef.periphery step d
 omarchy-shell stef.periphery activate
 # From hypr.lua: Escape, or the pointer moved over the focus area; the selection clears.
 omarchy-shell stef.periphery clear
+# From hypr.lua: a routed switch; the plugin flies it and runs it with periphery_run(7).
+omarchy-shell stef.periphery route 7
+# From hypr.lua: the shown tab of every tab group (`tabs none` without any).
+omarchy-shell stef.periphery tabs 0x56c7bf955960 0x56c7bf9a1230
 ```
 
 The shell toggle passes an optional payload to `open()`:
@@ -282,19 +356,20 @@ hl.dsp.window.move({ workspace = "2", follow = false, window = "address:0x56c7bf
 
 Motion is Material 3 springs from the tokens' motion scheme (`tokens.m3.springs`, `SpringValue`): spatial default for card and ghost geometry and the cards' travel, effects default for every fade, spatial fast for the drag grow (interpretation `periphery.components`). They follow `motion.scheme` live.
 
-| Property                      | Default                  | Effect                                                                                                                                                                                                                                                                                                                           |
-| ----------------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ratio`                       | `1.25`                   | Focus area width / monitor height.                                                                                                                                                                                                                                                                                               |
-| `bandMargin`                  | `space200` (16dp)        | Space between band edge and cards. Token `periphery.bandMargin`.                                                                                                                                                                                                                                                                 |
-| `cardGap`                     | `space125` (10dp)        | Minimum space between cards, and between a group header and its cards. Token `periphery.cardGap`.                                                                                                                                                                                                                                |
-| `groupGap`                    | `space250` (20dp)        | Space between groups. Token `periphery.groupGap`.                                                                                                                                                                                                                                                                                |
-| `maxStretch`                  | `6`                      | Maximum vertical stretch of a group's position map.                                                                                                                                                                                                                                                                              |
-| `animSpeed`                   | `1`                      | Global animation speed. `0.25` plays all animations 4× slower (to inspect them), `2` twice as fast. Scales the springs (stiffness by speed², which keeps their shape) and the switch timeouts.                                                                                                                                   |
-| `workspaceStyle`              | `slidefade 10%`          | Hyprland's workspace animation style while the mode is on (keyboard switches), with the theme's curve and speed.                                                                                                                                                                                                                 |
-| `cardSlide`                   | 10% of the monitor width | How far arriving and leaving cards travel. Follows `workspaceStyle`: its percentage, on its axis (`vert` styles move vertically), 0 for a style that does not slide.                                                                                                                                                             |
-| `ghostBlur`                   | `96`                     | Token `periphery.ghostBlur` (not M3). Blur radius in px of the wallpaper behind ghosts. Matched by eye to `decoration:blur` size 6, 3 passes (dual-kawase has no exact radius); past 64 px it uses `blurMultiplier`. `ghostBlurContrast` (`-0.11`) and `ghostBlurSaturation` (`0.17`) match its contrast 0.89 and vibrancy 0.17. |
-| `coverBleed`                  | `2`                      | How far the switch backdrop reaches into the bands, to cover a flush window's border. At least `general:border_size`.                                                                                                                                                                                                            |
-| `switchMinMs` / `switchMaxMs` | `120` / `1500`           | Shortest and longest switch flight before the hand-off.                                                                                                                                                                                                                                                                          |
+| Property                      | Default                  | Effect                                                                                                                                                                                         |
+| ----------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ratio`                       | `1.25`                   | Focus area width / monitor height.                                                                                                                                                             |
+| `bandMargin`                  | `space200` (16dp)        | Space between band edge and cards. Token `periphery.bandMargin`.                                                                                                                               |
+| `cardGap`                     | `space125` (10dp)        | Minimum space between cards, and between a group header and its cards. Token `periphery.cardGap`.                                                                                              |
+| `groupGap`                    | `space250` (20dp)        | Space between groups. Token `periphery.groupGap`.                                                                                                                                              |
+| `maxStretch`                  | `6`                      | Maximum vertical stretch of a group's position map.                                                                                                                                            |
+| `animSpeed`                   | `1`                      | Global animation speed. `0.25` plays all animations 4× slower (to inspect them), `2` twice as fast. Scales the springs (stiffness by speed², which keeps their shape) and the switch timeouts. |
+| `workspaceStyle`              | `slidefade 10%`          | Hyprland's workspace animation style while the mode is on (switches that aren't routed), with the theme's curve and speed.                                                                     |
+| `cardSlide`                   | 10% of the monitor width | How far arriving and leaving cards travel. Follows `workspaceStyle`: its percentage, on its axis (`vert` styles move vertically), 0 for a style that does not slide.                           |
+| `coverBleed`                  | `2`                      | How far the switch backdrop reaches into the bands, to cover a flush window's border. At least `general:border_size`.                                                                          |
+| `switchMinMs` / `switchMaxMs` | `120` / `1500`           | Shortest and longest switch flight before the hand-off.                                                                                                                                        |
+| `switchWaitMs`                | `150`                    | How long a flight waits for Hyprland to switch after the dispatch before it ends without a switch.                                                                                             |
+| `routeTimeoutMs` (`hypr.lua`) | `150`                    | How long the hook waits for the plugin to run a routed switch before it runs it itself. About twice the plugin's usual 50 to 70 ms.                                                            |
 
 Colours are the theme's M3 roles (`Scheme.qml`: `omaterial.json`, or approximated from Omarchy's colours under other themes), type is the M3 type scale at the Omarchy text size (`tokens.m3.type`), and the font family is the shell's menu font. All follow theme, token and text-size changes.
 
@@ -312,9 +387,11 @@ Colours are the theme's M3 roles (`Scheme.qml`: `omaterial.json`, or approximate
 - **Focus keys go through `omarchy-shell`.** `enter` and `step` start a process per key press (a few tens of ms). Close and fullscreen run in the hook and have no delay.
 - **The greyed border is written back from the config.** A window rule that gives a window its own active border colour loses it after that window was greyed once.
 - **Hyprland reload while on.** `hyprctl reload` while the mode is on puts the theme's workspace slide back (a full slide crosses the bands). Toggle the mode off and on.
-- **Only clicks fly.** A switch the plugin did not start reaches it ~8 ms after Hyprland has switched, too late to put a backdrop up, so keyboard switches are Hyprland's animation. `flyTo` over IPC can bind the flight to keys.
+- **Only routed switches and clicks fly.** A switch that doesn't go through the hook (a bar click, a script, a notification, an app taking focus) reaches the plugin about 8 ms after Hyprland has switched, too late to put a backdrop up, so Hyprland animates it. A key bound to a raw `hyprctl dispatch` or `exec` bypasses the hook too.
+- **Routed switches wait for the plugin.** A workspace key starts its flight 50 to 70 ms after the press. When the plugin doesn't answer, Hyprland switches after `routeTimeoutMs` (150 ms) without a flight.
 - **ScreencopyView does not blend.** A `ScreencopyView` overwrites what is under it with the window's own pixels and alpha. Over the backdrop, a translucent window (foot) made the Overlay surface translucent, and the real window behind showed through as a faint second copy; inside a ghost it wiped the blur patch. The `ScreencopyView` itself has `layer.enabled: true`: it renders alone into a texture that is drawn with normal blending. A layer on a parent item does not help, as the overwrite then happens inside that layer.
-- **Hand-off border and shadow.** Ghosts have no Hyprland border or shadow. Both show when the ghosts hand off.
+- **Hand-off leftovers.** A floating window's shadow, a tab group's tab bar and the blur's noise still change at the hand-off ([What a ghost copies from its window](#what-a-ghost-copies-from-its-window)).
+- **Hidden tabs: `hidden` is false.** Hyprland's IPC reports `hidden: false` for every tab of a tab group. Only the hook (`group.current`) knows the shown tab.
 - **No drop outline for real-window drags.** See [Drag of a real window into a band](#drag-of-a-real-window-into-a-band).
 
 ## Verification
@@ -337,14 +414,19 @@ Manual checks:
 3. Drag a card into the focus area, onto another group and onto empty band space.
 4. `SUPER`-drag a real window onto a group in a band.
 5. Play a video on another workspace. Its card plays smoothly.
-6. Switch workspace. Incoming windows fly from their cards to their tiles, outgoing ones to their new cards. No double image at the hand-off.
-7. Switch fast between two workspaces. Ghosts retarget, nothing stays on screen.
-8. `hyprctl getprop address:<band window> no_shadow` is `true`, and `false` for focus windows. After the mode turns off, `false` for all (or the window rule's value).
-9. `hyprctl animations -j | jq '.[0][] | select(.name=="workspaces")'`: `style: slidefade 10%` with the theme's curve while on, the theme's slide after the mode turns off.
-10. Hover a card: the theme's active border, the active window's border turns inactive. Hover another card in the same band: the selection follows. `SUPER + W` closes the card's window, Return flies to it, Escape lets go. Move the pointer over the focus area: the selection clears and the border comes back.
-11. On the leftmost window, `SUPER + ←` selects a card in the left band. `SUPER + ↑/↓` move through the cards and groups, `SUPER + →` goes back to the focus area window on that edge. The same on the right.
-12. `SUPER + F` on a selected card: Hyprland goes to its workspace and the window is fullscreen.
-13. `hyprctl eval 'error(tostring(periphery))'`: a table while on, `nil` after the mode turns off.
+6. Switch workspace with `SUPER + <n>`, `SUPER + TAB` and `SUPER + scroll`. Incoming windows fly from their cards to their tiles, outgoing ones to their new cards. No border, corner or opacity jump at the hand-off (record it and compare the frames either side).
+7. Switch fast between two workspaces with the keys. Each window flies on from where it is, nothing stays on screen.
+8. During a flight, `hyprctl getprop address:<floating window on another workspace> no_shadow` is `true`; after the landing, the window rule's value.
+9. `SUPER + SHIFT + <n>`: the active window flies from its tile to its new tile on the other workspace, the others fly in from their cards.
+10. `SUPER + <n>` for the workspace already shown: nothing moves, the backdrop doesn't flash.
+11. Click a workspace in the bar: Hyprland's `slidefade 10%`, cards travel along (no flight).
+12. A tab group: switch away from it and back. Only the shown tab flies; the other tabs' cards fade. Click a hidden tab's card: that tab flies in, the shown one fades out at its card.
+13. Hook fallback: `hyprctl eval 'periphery = periphery or {}'` with the mode off (the hook thinks it is on, no plugin answers), then `SUPER + <n>`: Hyprland switches about 150 ms later. `hyprctl reload` afterwards.
+14. `hyprctl animations -j | jq '.[0][] | select(.name=="workspaces")'`: `style: slidefade 10%` with the theme's curve while on, the theme's slide after the mode turns off.
+15. Hover a card: the theme's active border, the active window's border turns inactive. Hover another card in the same band: the selection follows. `SUPER + W` closes the card's window, Return flies to it, Escape lets go. Move the pointer over the focus area: the selection clears and the border comes back.
+16. On the leftmost window, `SUPER + ←` selects a card in the left band. `SUPER + ↑/↓` move through the cards and groups, `SUPER + →` goes back to the focus area window on that edge. The same on the right.
+17. `SUPER + F` on a selected card: Hyprland goes to its workspace and the window is fullscreen.
+18. `hyprctl eval 'error(tostring(periphery))'`: a table while on, `nil` after the mode turns off.
 
 ## Out of scope
 

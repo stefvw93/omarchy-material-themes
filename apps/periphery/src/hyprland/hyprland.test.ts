@@ -1,8 +1,16 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
   cardTravel,
+  flightBatch,
+  ghostBlur,
   hookStateLua,
+  parseBlur,
   parseDecoration,
+  parseTabs,
+  parseWindowProps,
+  restoreShadowsBatch,
+  runSwitchLua,
+  windowPropsBatch,
   workspaceAnimationLua,
   workspacesOffLua,
 } from "./hyprland.ts";
@@ -141,5 +149,195 @@ describe("parseDecoration", () => {
       borderSize: 2,
     });
     expect(parseDecoration("")).toEqual({});
+  });
+});
+
+// As `hyprctl -j getoption` prints them, one after the other.
+const option = (name: string, type: string, value: string | number | boolean) =>
+  `{"option": "decoration:blur:${name}", "${type}": ${value}, "set": true }`;
+const blurOptions = [
+  option("enabled", "bool", true),
+  option("size", "int", 6),
+  option("passes", "int", 3),
+  option("contrast", "float", "0.891600"),
+  option("brightness", "float", "1.000000"),
+  option("vibrancy", "float", "0.169600"),
+].join("\n");
+
+describe("parseBlur", () => {
+  it("reads every blur option", () => {
+    expect(parseBlur(blurOptions)).toEqual({
+      enabled: true,
+      size: 6,
+      passes: 3,
+      contrast: 0.8916,
+      brightness: 1,
+      vibrancy: 0.1696,
+    });
+  });
+
+  it("reads blur off", () => {
+    expect(parseBlur(option("enabled", "bool", false)).enabled).toBe(false);
+  });
+
+  it("leaves missing options out", () => {
+    expect(parseBlur(option("size", "int", 8))).toEqual({ size: 8 });
+    expect(parseBlur("")).toEqual({});
+  });
+});
+
+describe("ghostBlur", () => {
+  it("reaches size × 2^passes", () => {
+    const blur = ghostBlur({ enabled: true, size: 6, passes: 3 });
+    expect(blur.radius).toBe(48);
+    expect(blur.blurMax).toBe(64);
+    expect(blur.blur).toBeCloseTo(0.75);
+    expect(blur.blurMultiplier).toBe(0);
+  });
+
+  it("stretches past blurMax with the multiplier", () => {
+    const blur = ghostBlur({ enabled: true, size: 8, passes: 4 });
+    expect(blur.radius).toBe(128);
+    expect(blur.blur).toBe(1);
+    expect(blur.blurMultiplier).toBe(1);
+    expect(blur.blurMax * blur.blur * (1 + blur.blurMultiplier)).toBe(128);
+  });
+
+  it("maps contrast, brightness and vibrancy", () => {
+    const blur = ghostBlur({
+      enabled: true,
+      size: 6,
+      passes: 3,
+      contrast: 0.8916,
+      brightness: 1.2,
+      vibrancy: 0.1696,
+    });
+    expect(blur.contrast).toBeCloseTo(-0.1084);
+    expect(blur.brightness).toBeCloseTo(0.2);
+    expect(blur.saturation).toBeCloseTo(0.1696);
+  });
+
+  it("has no radius when blur is off or size or passes is missing", () => {
+    expect(ghostBlur({ enabled: false, size: 6, passes: 3 }).radius).toBe(0);
+    expect(ghostBlur({ enabled: true, passes: 3 }).radius).toBe(0);
+    expect(ghostBlur({ enabled: true, size: 6 }).radius).toBe(0);
+    expect(ghostBlur({ enabled: true, size: 6 }).blur).toBe(0);
+  });
+
+  it("changes nothing for missing colour options", () => {
+    const blur = ghostBlur({ enabled: true, size: 6, passes: 3 });
+    expect([blur.contrast, blur.brightness, blur.saturation]).toEqual([0, 0, 0]);
+  });
+});
+
+describe("windowPropsBatch", () => {
+  it("asks for the four properties of each window, in order", () => {
+    expect(windowPropsBatch(["0xa1"])).toBe(
+      "j/getprop address:0xa1 opacity ; j/getprop address:0xa1 opacity_inactive ; " +
+        "j/getprop address:0xa1 border_size ; j/getprop address:0xa1 rounding",
+    );
+  });
+
+  it("skips anything but an address", () => {
+    expect(windowPropsBatch(["0xa1; dispatch exit", "0xb2"])).toBe(windowPropsBatch(["0xb2"]));
+    expect(windowPropsBatch([])).toBe("");
+  });
+});
+
+describe("parseWindowProps", () => {
+  // As `hyprctl --batch` prints it: one block per query, blank lines between.
+  const out = (...blocks: string[]) => blocks.join("\n\n\n") + "\n";
+  const props = (o: number, oi: number, b: number, r: number) => [
+    `{"opacity": ${o}}`,
+    `{"opacity_inactive": ${oi}}`,
+    `{"border_size": ${b}}`,
+    `{"rounding": ${r}}`,
+  ];
+
+  it("maps each window to its properties", () => {
+    expect(
+      parseWindowProps(["0xa1", "0xb2"], out(...props(0.985, 0.96, 3, 12), ...props(1, 1, 0, 0))),
+    ).toEqual({
+      "0xa1": { opacity: 0.985, opacityInactive: 0.96, borderSize: 3, rounding: 12 },
+      "0xb2": { opacity: 1, opacityInactive: 1, borderSize: 0, rounding: 0 },
+    });
+  });
+
+  it("leaves out a window that closed meanwhile, and keeps the rest in step", () => {
+    const gone = ["window not found", "window not found", "window not found", "window not found"];
+    expect(parseWindowProps(["0xa1", "0xb2"], out(...gone, ...props(1, 0.9, 2, 8)))).toEqual({
+      "0xb2": { opacity: 1, opacityInactive: 0.9, borderSize: 2, rounding: 8 },
+    });
+  });
+
+  it("leaves out a window with a property missing", () => {
+    const [o, oi, b] = props(1, 1, 1, 1);
+    expect(parseWindowProps(["0xa1"], out(o!, oi!, b!, "window not found"))).toEqual({});
+  });
+
+  it("skips the same non-addresses as the batch", () => {
+    expect(parseWindowProps(["bad", "0xb2"], out(...props(1, 1, 1, 1)))).toEqual({
+      "0xb2": { opacity: 1, opacityInactive: 1, borderSize: 1, rounding: 1 },
+    });
+  });
+});
+
+describe("flightBatch", () => {
+  const shadow = (a: string, v: string) =>
+    `dispatch hl.dsp.window.set_prop({ window = "address:${a}", prop = "no_shadow", value = "${v}" })`;
+
+  it("drops shadows, turns the workspace animation off, then focuses the window", () => {
+    expect(flightBatch(["0xa1", "0xb2"], { window: "0xc3" })).toBe(
+      [
+        shadow("0xa1", "1"),
+        shadow("0xb2", "1"),
+        "eval " + workspacesOffLua,
+        'dispatch hl.dsp.focus({ window = "address:0xc3" })',
+      ].join(" ; "),
+    );
+  });
+
+  it("runs a routed switch", () => {
+    expect(flightBatch([], { token: 7 })).toBe(
+      "eval " + workspacesOffLua + " ; eval if periphery_run then periphery_run(7) end",
+    );
+  });
+
+  it("lets nothing but addresses through", () => {
+    expect(flightBatch(['0xa1" }) ; dispatch exit', "0xb2"], { window: "nope" })).toBe(
+      [shadow("0xb2", "1"), "eval " + workspacesOffLua].join(" ; "),
+    );
+  });
+
+  it("has no switch for a token that isn't a whole number from 1", () => {
+    expect(flightBatch([], { token: 0 })).toBe("eval " + workspacesOffLua);
+    expect(flightBatch([], { token: 1.5 })).toBe("eval " + workspacesOffLua);
+  });
+
+  it("gives shadows back as unset", () => {
+    expect(restoreShadowsBatch(["0xa1", "x"])).toBe(shadow("0xa1", "unset"));
+    expect(restoreShadowsBatch([])).toBe("");
+  });
+});
+
+describe("runSwitchLua", () => {
+  it("runs a token", () => {
+    expect(runSwitchLua("7")).toBe("if periphery_run then periphery_run(7) end");
+  });
+
+  it("is empty for anything but a whole number from 1", () => {
+    for (const bad of ["0", "-1", "1.5", "7 end; os.exit()", "", "x", "1e3"])
+      expect(runSwitchLua(bad)).toBe("");
+  });
+});
+
+describe("parseTabs", () => {
+  it("is the set of addresses, lower-case", () => {
+    expect([...parseTabs("0xA1 0xb2")]).toEqual(["0xa1", "0xb2"]);
+  });
+
+  it("drops anything but addresses", () => {
+    expect([...parseTabs(" 0xa1  nope 0x 0xb2\n")]).toEqual(["0xa1", "0xb2"]);
+    expect(parseTabs("").size).toBe(0);
   });
 });

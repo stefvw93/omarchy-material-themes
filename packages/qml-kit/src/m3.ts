@@ -120,7 +120,6 @@ export const resolveM3 = (tokens: Tokens, baseSize = 12) => {
       bandMargin: spacing(tokens.periphery.bandMargin),
       cardGap: spacing(tokens.periphery.cardGap),
       groupGap: spacing(tokens.periphery.groupGap),
-      ghostBlur: tokens.periphery.ghostBlur,
     },
   };
 };
