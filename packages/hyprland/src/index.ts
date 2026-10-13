@@ -7,4 +7,3 @@ export {
   type HyprlandTransport,
   makeHyprland,
 } from "./service.ts";
-export { fixtureTransport, type HyprlandFixture } from "./testing.ts";

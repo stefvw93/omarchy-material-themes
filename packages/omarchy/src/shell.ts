@@ -36,34 +36,34 @@ export interface OmarchyShellImpl {
 
 export class OmarchyShell extends Context.Service<OmarchyShell, OmarchyShellImpl>()(
   "@stef/omarchy/OmarchyShell",
-) {
-  /** Runs `omarchy-shell` as a child process. */
-  static readonly layer = Layer.effect(
-    OmarchyShell,
-    Effect.gen(function* () {
-      const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-      return makeOmarchyShell((args) =>
-        Effect.scoped(
-          Effect.gen(function* () {
-            const handle = yield* spawner.spawn(ChildProcess.make("omarchy-shell", [...args]));
-            const output = yield* handle.all.pipe(Stream.decodeText(), Stream.mkString);
-            const exitCode = yield* handle.exitCode;
-            if (exitCode !== 0) {
-              return yield* new OmarchyError({
-                message: `omarchy-shell ${args.join(" ")} exited ${exitCode}: ${output.trim()}`,
-              });
-            }
-            return output;
-          }),
-        ).pipe(
-          Effect.catchTag("PlatformError", (cause) =>
-            Effect.fail(new OmarchyError({ message: `omarchy-shell ${args.join(" ")}`, cause })),
-          ),
+) {}
+
+/** Runs `omarchy-shell` as a child process. */
+export const OmarchyShellNode = Layer.effect(
+  OmarchyShell,
+  Effect.gen(function* () {
+    const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
+    return makeOmarchyShell((args) =>
+      Effect.scoped(
+        Effect.gen(function* () {
+          const handle = yield* spawner.spawn(ChildProcess.make("omarchy-shell", [...args]));
+          const output = yield* handle.all.pipe(Stream.decodeText(), Stream.mkString);
+          const exitCode = yield* handle.exitCode;
+          if (exitCode !== 0) {
+            return yield* new OmarchyError({
+              message: `omarchy-shell ${args.join(" ")} exited ${exitCode}: ${output.trim()}`,
+            });
+          }
+          return output;
+        }),
+      ).pipe(
+        Effect.catchTag("PlatformError", (cause) =>
+          Effect.fail(new OmarchyError({ message: `omarchy-shell ${args.join(" ")}`, cause })),
         ),
-      );
-    }),
-  );
-}
+      ),
+    );
+  }),
+);
 
 /**
  * The service over a way to run `omarchy-shell <args>` and get its output:

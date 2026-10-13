@@ -133,6 +133,6 @@ const tauriFS = FileSystem.make({
  * Provides the `FileSystem` service backed by @tauri-apps/plugin-fs, including
  * file operations, directory operations, links, metadata, and file watching.
  */
-export const layer: Layer.Layer<FileSystem.FileSystem> = Layer.effect(FileSystem.FileSystem)(
-  Effect.succeed(tauriFS),
-);
+export const FileSystemTauri: Layer.Layer<FileSystem.FileSystem> = Layer.effect(
+  FileSystem.FileSystem,
+)(Effect.succeed(tauriFS));

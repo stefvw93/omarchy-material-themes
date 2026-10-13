@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import { NodeRuntime, NodeServices } from "@effect/platform-node";
 import { Hyprland } from "@stef/hyprland";
-import { layer as hyprlandNode } from "@stef/hyprland/node";
+import { HyprlandNode } from "@stef/hyprland/node";
 import {
   installHooksInclude,
-  OmarchyPaths,
+  OmarchyPathsNode,
   OmarchyShell,
+  OmarchyShellNode,
   readState,
   type SmokeTest,
   variantId,
@@ -187,7 +188,7 @@ const stef = Command.make("stef").pipe(
   ]),
 );
 
-const services = Layer.mergeAll(OmarchyPaths.layer, OmarchyShell.layer, hyprlandNode).pipe(
+const services = Layer.mergeAll(OmarchyPathsNode, OmarchyShellNode, HyprlandNode).pipe(
   Layer.provideMerge(NodeServices.layer),
 );
 

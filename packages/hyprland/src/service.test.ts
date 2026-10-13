@@ -2,7 +2,7 @@ import { Effect, Exit, Option, Stream } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import { eventArgs, parseEvent } from "./events.ts";
 import { Hyprland } from "./service.ts";
-import { fixtureTransport } from "./testing.ts";
+import { HyprlandTest } from "./testing.ts";
 
 const monitor = {
   id: 0,
@@ -23,7 +23,7 @@ const run = <A, E>(
   program: Effect.Effect<A, E, Hyprland>,
   fixture = { responses: {}, events: [] as string[] },
 ) => {
-  const { layer, requests } = fixtureTransport(fixture);
+  const { layer, requests } = HyprlandTest(fixture);
   return { result: Effect.runSync(Effect.exit(Effect.provide(program, layer))), requests };
 };
 

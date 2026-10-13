@@ -35,19 +35,19 @@ export class OmarchyPaths extends Context.Service<OmarchyPaths, OmarchyPathsImpl
         stefHyprDir: path.join(config, "hypr/stef"),
       };
     });
-
-  /** Paths under `home`; tests pass a throwaway directory. */
-  static readonly layerAt = (home: string) => Layer.effect(OmarchyPaths, OmarchyPaths.make(home));
-
-  /** Paths under the real $HOME. */
-  static readonly layer = Layer.effect(
-    OmarchyPaths,
-    Effect.suspend(() =>
-      OmarchyPaths.make(
-        (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env[
-          "HOME"
-        ] ?? "/",
-      ),
-    ),
-  );
 }
+
+/** Paths under `home`; tests pass a throwaway directory. */
+export const OmarchyPathsAt = (home: string) => Layer.effect(OmarchyPaths, OmarchyPaths.make(home));
+
+/** Paths under the real $HOME. */
+export const OmarchyPathsNode = Layer.effect(
+  OmarchyPaths,
+  Effect.suspend(() =>
+    OmarchyPaths.make(
+      (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env[
+        "HOME"
+      ] ?? "/",
+    ),
+  ),
+);

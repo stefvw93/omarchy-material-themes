@@ -1,4 +1,4 @@
-import type { HyprlandFixture } from "@stef/hyprland";
+import type { HyprlandFixture } from "@stef/hyprland/testing";
 import { nodeTransport } from "@stef/hyprland/node";
 import { Console, Duration, Effect, FileSystem, Stream } from "effect";
 
@@ -6,7 +6,7 @@ const snapshotCommands = ["j/clients", "j/monitors", "j/workspaces", "j/activewi
 
 /**
  * Records a fixture for tests: a snapshot of the queries plugins make, then
- * socket2's event lines for `seconds`. Replay with `fixtureTransport`.
+ * socket2's event lines for `seconds`. Replay with `HyprlandTest` (@stef/hyprland/testing).
  */
 export const record = Effect.fn("Stef.record")(function* (file: string, seconds: number) {
   const fs = yield* FileSystem.FileSystem;

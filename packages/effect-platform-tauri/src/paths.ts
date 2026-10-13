@@ -30,12 +30,12 @@ const wrap = (method: () => PromiseLike<string>) =>
       }),
   });
 
-export class Paths extends Context.Service<Paths, TauriPathsDict>()(
+export class TauriPaths extends Context.Service<TauriPaths, TauriPathsDict>()(
   "@effect-platform-tauri/Paths",
 ) {}
 
-export const layer = Layer.effect(
-  Paths,
+export const PathsTauri = Layer.effect(
+  TauriPaths,
   Effect.sync(() => {
     const paths: Partial<TauriPathsDict> = {
       Home: wrap(homeDir),

@@ -14,7 +14,7 @@ export interface HyprlandFixture {
  * Replays a fixture. Unknown requests fail; `requests` records every command
  * sent, so tests can assert what a program asked Hyprland to do.
  */
-export const fixtureTransport = (fixture: HyprlandFixture) => {
+export const HyprlandTest = (fixture: HyprlandFixture) => {
   const requests: string[] = [];
   const transport: HyprlandTransport = {
     request: (command) =>

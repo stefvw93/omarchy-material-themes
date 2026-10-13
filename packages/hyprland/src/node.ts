@@ -64,4 +64,4 @@ const eventLines = Stream.unwrap(
 export const nodeTransport: HyprlandTransport = { request, eventLines };
 
 /** Hyprland over its UNIX sockets, for the CLI and other Node tools. */
-export const layer = Layer.succeed(Hyprland, makeHyprland(nodeTransport));
+export const HyprlandNode = Layer.succeed(Hyprland, makeHyprland(nodeTransport));

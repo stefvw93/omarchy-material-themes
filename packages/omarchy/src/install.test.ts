@@ -20,7 +20,7 @@ import {
   writeHooksFile,
   writeState,
 } from "./install.ts";
-import { OmarchyPaths } from "./paths.ts";
+import { OmarchyPaths, OmarchyPathsAt } from "./paths.ts";
 
 /** A throwaway $HOME with a built plugin folder next to it. */
 const setup = () => {
@@ -33,7 +33,7 @@ const setup = () => {
   writeFileSync(join(built, "lib/kit.mjs"), "export {}");
   const run = <A, E>(effect: Effect.Effect<A, E, OmarchyPaths | NodeServices.NodeServices>) =>
     Effect.runPromise(
-      Effect.provide(effect, Layer.provideMerge(OmarchyPaths.layerAt(home), NodeServices.layer)),
+      Effect.provide(effect, Layer.provideMerge(OmarchyPathsAt(home), NodeServices.layer)),
     );
   return { home, built, run };
 };

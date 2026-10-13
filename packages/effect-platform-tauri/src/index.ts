@@ -1,3 +1,3 @@
-export * as TauriFileSystem from "./fs";
-export * as TauriPaths from "./paths";
-export * as TauriHttpClient from "./http-client";
+export { FileSystemTauri } from "./fs";
+export { PathsTauri, TauriPaths } from "./paths";
+export { FetchTauri, HttpClientTauri } from "./http-client";

@@ -1,34 +1,23 @@
 import { defaultTokens, type Tokens } from "@stef/tokens";
 import { Effect, Exit, FileSystem, Layer, Path } from "effect";
 import { describe, expect, it } from "vite-plus/test";
-import { OmarchyPaths } from "./paths.ts";
+import { OmarchyPaths, OmarchyPathsAt } from "./paths.ts";
+import { MemoryFileSystem } from "./testing.ts";
 import { readTokenOverride, readTokens, tokenDiff, TokensError, writeTokens } from "./tokens.ts";
 
 const tokensJson = "/home/.config/omarchy/stef/tokens.json";
 
-/**
- * An in-memory FileSystem holding `files`: exists, read, write and mkdir are
- * the only calls tokens.ts makes; anything else fails (layerNoop).
- */
-const memoryFs = (files: Map<string, string>) =>
-  FileSystem.layerNoop({
-    exists: (path) => Effect.succeed(files.has(path)),
-    readFileString: (path) => Effect.sync(() => files.get(path) ?? ""),
-    writeFileString: (path, content) => Effect.sync(() => void files.set(path, content)),
-    makeDirectory: () => Effect.void,
-  });
-
 /** Runs `effect` against `files`, with Omarchy's paths under /home. */
 const run = <A, E>(
   effect: Effect.Effect<A, E, OmarchyPaths | FileSystem.FileSystem>,
-  files = new Map<string, string>(),
+  files = new Map<string, string | Uint8Array>(),
 ) =>
   Effect.runSyncExit(
     Effect.provide(
       effect,
       Layer.provideMerge(
-        OmarchyPaths.layerAt("/home"),
-        Layer.mergeAll(memoryFs(files), Path.layer),
+        OmarchyPathsAt("/home"),
+        Layer.mergeAll(MemoryFileSystem(files).layer, Path.layer),
       ),
     ),
   );
