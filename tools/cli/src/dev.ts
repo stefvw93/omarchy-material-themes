@@ -1,7 +1,7 @@
 import { Hyprland } from "@stef/hyprland";
 import { installPlugin, omarchyPath, variantId } from "@stef/omarchy";
 import { buildPlugin } from "@stef/plugin-kit";
-import { Console, Effect, FileSystem, Path, Stream } from "effect";
+import { Clock, Console, Effect, FileSystem, Path, Stream } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { deploy, undeployDev } from "./deploy.ts";
 import { type PluginApp, repoRoot } from "./workspace.ts";
@@ -31,14 +31,14 @@ const changes = (app: PluginApp) =>
 const rebuildDev = (app: PluginApp) =>
   Effect.gen(function* () {
     const id = variantId(app.config.id, "dev");
-    const started = Date.now();
+    const started = yield* Clock.currentTimeMillis;
     const built = yield* buildPlugin(app.root, app.config, "dev");
     yield* installPlugin(built, id);
     // A new hook only takes effect when Hyprland re-runs its config.
     if (app.config.hyprHook !== undefined) {
       yield* Effect.flatMap(Hyprland, (h) => h.reload({ configOnly: true }));
     }
-    yield* Console.log(`rebuilt ${id} in ${Date.now() - started} ms`);
+    yield* Console.log(`rebuilt ${id} in ${(yield* Clock.currentTimeMillis) - started} ms`);
   }).pipe(Effect.catch((error) => Console.error(`rebuild failed: ${String(error)}`)));
 
 /**

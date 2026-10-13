@@ -1,5 +1,5 @@
 import { OmarchyPaths, OmarchyShell } from "@stef/omarchy";
-import { Console, Effect, FileSystem, Path } from "effect";
+import { Clock, Console, Effect, FileSystem, Path } from "effect";
 import { deploy } from "./deploy.ts";
 import type { PluginApp } from "./workspace.ts";
 
@@ -13,7 +13,7 @@ const replaceIn = (file: string, from: string, to: string) =>
     if (!text.includes(from)) {
       return yield* Console.log(`manual ${file}: expected to find ${JSON.stringify(from)}`);
     }
-    const backup = `${file}.bak-${Date.now()}`;
+    const backup = `${file}.bak-${yield* Clock.currentTimeMillis}`;
     yield* fs.copyFile(file, backup);
     yield* fs.writeFileString(file, text.split(from).join(to));
     yield* Console.log(`edited ${file} (backup ${backup})`);
@@ -46,7 +46,11 @@ export const migrateOverview = Effect.fn("Stef.migrateOverview")(function* (expo
 
   const old = paths.pluginDir("stef.overview");
   if (yield* fs.exists(old)) {
-    const retired = path.join(paths.stefDir, "retired", `stef.overview-${Date.now()}`);
+    const retired = path.join(
+      paths.stefDir,
+      "retired",
+      `stef.overview-${yield* Clock.currentTimeMillis}`,
+    );
     yield* fs.makeDirectory(path.dirname(retired), { recursive: true });
     yield* fs.rename(old, retired);
     yield* Console.log(`moved ${old} to ${retired}`);

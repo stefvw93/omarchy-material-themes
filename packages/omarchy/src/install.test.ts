@@ -11,6 +11,7 @@ import { join } from "node:path";
 import { NodeServices } from "@effect/platform-node";
 import { describe, expect, it } from "@effect/vitest";
 import { Effect, Layer } from "effect";
+import { TestClock } from "effect/testing";
 import {
   hooksIncludeBlock,
   installHooksInclude,
@@ -84,8 +85,12 @@ describe("hooks", () => {
     const original = `dofile("bootstrap")\n${legacyPeripheryHookBlock}\nrequire("default")\n`;
     writeFileSync(join(hypr, "hyprland.lua"), original);
     return Effect.gen(function* () {
+      yield* TestClock.setTime(1_700_000_000_000);
       const first = yield* installHooksInclude;
       expect(first._tag).toBe("Installed");
+      if (first._tag === "Installed") {
+        expect(first.backup).toBe(join(hypr, "hyprland.lua.bak-1700000000000"));
+      }
       const text = readFileSync(join(hypr, "hyprland.lua"), "utf8");
       expect(text).toBe(`dofile("bootstrap")\n${hooksIncludeBlock}\nrequire("default")\n`);
       if (first._tag === "Installed") expect(readFileSync(first.backup, "utf8")).toBe(original);

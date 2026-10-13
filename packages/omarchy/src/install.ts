@@ -1,4 +1,4 @@
-import { Effect, FileSystem, Path, Schema } from "effect";
+import { Clock, Effect, FileSystem, Path, Schema } from "effect";
 import { OmarchyPaths } from "./paths.ts";
 
 /** Which build of each plugin is live: `prod` (`stef.x`) or `dev` (`stef.x.dev`). */
@@ -46,7 +46,7 @@ export const installPlugin = Effect.fn("Omarchy.installPlugin")(function* (
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const paths = yield* OmarchyPaths;
-  const stamp = Date.now().toString(36);
+  const stamp = (yield* Clock.currentTimeMillis).toString(36);
   const staging = path.join(paths.stefDir, "staging", `${id}-${stamp}`);
   const retired = path.join(paths.stefDir, "staging", `${id}-${stamp}.old`);
   const target = paths.pluginDir(id);
@@ -136,7 +136,7 @@ export const installHooksInclude = Effect.gen(function* () {
       reason: `periphery's hook block isn't in ${file}; add this before Omarchy's bindings:\n${hooksIncludeBlock}`,
     } as HooksInstallResult;
   }
-  const backup = `${file}.bak-${Date.now()}`;
+  const backup = `${file}.bak-${yield* Clock.currentTimeMillis}`;
   yield* fs.copyFile(file, backup);
   yield* fs.writeFileString(file, text.replace(legacyPeripheryHookBlock, hooksIncludeBlock));
   return { _tag: "Installed", backup } as HooksInstallResult;
