@@ -180,8 +180,8 @@ Token values come from the spec's token data ([material-3/](material-3/README.md
 ### `studio.tailwind-scale`: Omaterial Studio: Tailwind's scales
 
 - **Spec:** The spec's units are dp (unit.dp) on a 4dp grid (md.sys.measurement: space50 = 4dp); type, corners and elevation are named steps.
-- **Choice:** The root font size is 100%, so 1rem = 16px = 16dp and Tailwind's spacing unit (0.25rem) is the 4dp step. Tailwind's own size names map to the M3 step nearest their default value (ties go to the smaller): text-xs … text-9xl to the type roles (roles of equal size prefer body, then label, title, headline, display), rounded-xs … rounded-4xl to the corner steps; shadow-2xs, -xs and -sm are elevation level 1, -md level 2 and so on to -2xl at level 5. The M3 names are utilities too (text-body-medium, rounded-medium, shadow-level2, bg-surface-container-high, …).
-- **Why:** Existing shadcn classes keep working and land on spec values; new code can name the M3 step directly.
+- **Choice:** The root font size is 16px, so 1rem = 16px = 16dp and Tailwind's spacing unit (0.25rem) is the 4dp step. Tailwind's own size names map to the M3 step nearest their default value (ties go to the smaller): text-xs … text-9xl to the type roles (roles of equal size prefer body, then label, title, headline, display), rounded-xs … rounded-4xl to the corner steps; shadow-2xs, -xs and -sm are elevation level 1, -md level 2 and so on to -2xl at level 5. The M3 names are utilities too (text-body-medium, rounded-medium, shadow-level2, bg-surface-container-high, …).
+- **Why:** Existing shadcn classes keep working and land on spec values; new code can name the M3 step directly. The root is set in px, not 100%: Studio's font is the generic monospace family, for which browser engines resolve 100% to their 13px fixed-width default.
 
 ### `qml.scheme-fallback`: QML plugins: colour under other themes
 

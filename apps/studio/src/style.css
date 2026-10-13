@@ -29,9 +29,11 @@
     @apply bg-background text-foreground;
   }
   /* 1rem = 16px = 16dp (interpretation studio.tailwind-scale); the user's
-     Omarchy font (font-sans is the fontconfig alias). */
+     Omarchy font (font-sans is the fontconfig alias). In px, not 100%: with
+     the generic monospace family, 100% is the engine's 13px fixed-width
+     default, which shrinks every rem (and the switch thumb inside its px track). */
   html {
-    font-size: 100%;
+    font-size: 16px;
     @apply font-sans;
   }
 
