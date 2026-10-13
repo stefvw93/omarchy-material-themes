@@ -66,8 +66,8 @@ Token values come from the spec's token data ([material-3/](material-3/README.md
 ### `static.bright`: Colour: terminal (ANSI) colours
 
 - **Spec:** Terminals' bright_* colours have no M3 equivalent. The spec allows custom color roles: a palette, a starting tone and a contrast requirement.
-- **Choice:** bright_<hue> is a custom role on the static colour's palette, 10 tones further from the background than the main role (lighter in dark mode, darker in light mode). bright_red does the same on the error palette.
-- **Why:** Further from the background keeps contrast at least the main role's; one palette keeps the hue.
+- **Choice:** bright_<hue> is a custom role on the static colour's hue: the most chroma sRGB allows, at the tone up to 10 steps from the main role toward the middle tones (darker in dark mode, lighter in light mode) that gives the most chroma while keeping at least 4.5:1 against surface (7:1 at medium and high contrast). bright_red does the same on the error hue.
+- **Why:** Terminals' bright colours are more intense, not paler. In HCT intensity is chroma, and sRGB holds the most chroma at middle tones, so stepping toward the background's opposite (tone 90 in dark mode) washes colours out. The contrast floor keeps them readable as text.
 
 ### `static.brown`: Colour: terminal (ANSI) colours
 

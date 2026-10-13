@@ -5,6 +5,7 @@ import { Contrast as ContrastLevel, Mode, Variant } from "./colors.ts";
 import { createPalette, createPaletteFromHex } from "./palette.ts";
 
 const tone = (hex: string) => Hct.fromInt(argbFromHex(hex)).tone;
+const chroma = (hex: string) => Hct.fromInt(argbFromHex(hex)).chroma;
 const ratio = (a: string, b: string) => Contrast.ratioOfTones(tone(a), tone(b));
 
 const combos = Variant.literals.flatMap((variant) =>
@@ -40,8 +41,9 @@ describe("createPalette", () => {
           `${hue} on-container`,
         ).toBeGreaterThanOrEqual(4.5);
         expect(ratio(s.bright, system.surface), `${hue} bright vs surface`).toBeGreaterThanOrEqual(
-          ratio(s.color, system.surface) - 0.01,
+          c.contrast === "standard" ? 4.5 : 7,
         );
+        expect(chroma(s.bright), `${hue} bright chroma`).toBeGreaterThan(chroma(s.color));
       }
     },
   );

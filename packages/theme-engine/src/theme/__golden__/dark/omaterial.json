@@ -62,42 +62,42 @@
       "onColor": "#571f00",
       "colorContainer": "#7a3003",
       "onColorContainer": "#ffdbcc",
-      "bright": "#ffdbcc"
+      "bright": "#ff8c54"
     },
     "yellow": {
       "color": "#cdcc56",
       "onColor": "#333200",
       "colorContainer": "#4a4900",
       "onColorContainer": "#eae86f",
-      "bright": "#eae86f"
+      "bright": "#cecd00"
     },
     "green": {
       "color": "#7bda9c",
       "onColor": "#00391d",
       "colorContainer": "#00522c",
       "onColorContainer": "#97f7b6",
-      "bright": "#97f7b6"
+      "bright": "#00e384"
     },
     "cyan": {
       "color": "#58d6f7",
       "onColor": "#003641",
       "colorContainer": "#004e5e",
       "onColorContainer": "#b1ecff",
-      "bright": "#b1ecff"
+      "bright": "#00d5fd"
     },
     "blue": {
       "color": "#a8c8ff",
       "onColor": "#003062",
       "colorContainer": "#00468a",
       "onColorContainer": "#d6e3ff",
-      "bright": "#d6e3ff"
+      "bright": "#78acff"
     },
     "magenta": {
       "color": "#e1b6ff",
       "onColor": "#461869",
       "colorContainer": "#5e3281",
       "onColorContainer": "#f2daff",
-      "bright": "#f2daff"
+      "bright": "#cf91ff"
     }
   },
   "omarchy": {
@@ -113,19 +113,19 @@
     "dark_foreground": "#8e9099",
     "bright_foreground": "#d8e2ff",
     "red": "#ffb4ab",
-    "bright_red": "#ffdad6",
+    "bright_red": "#ff897d",
     "yellow": "#cdcc56",
-    "bright_yellow": "#eae86f",
+    "bright_yellow": "#cecd00",
     "orange": "#ffb695",
     "brown": "#7a3003",
     "green": "#7bda9c",
-    "bright_green": "#97f7b6",
+    "bright_green": "#00e384",
     "cyan": "#58d6f7",
-    "bright_cyan": "#b1ecff",
+    "bright_cyan": "#00d5fd",
     "blue": "#a8c8ff",
-    "bright_blue": "#d6e3ff",
+    "bright_blue": "#78acff",
     "magenta": "#e1b6ff",
-    "bright_magenta": "#f2daff"
+    "bright_magenta": "#cf91ff"
   },
   "text": {
     "typeScale": 1,

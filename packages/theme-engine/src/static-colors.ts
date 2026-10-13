@@ -1,6 +1,6 @@
 import {
   Blend,
-  clampDouble,
+  Contrast as ContrastRatio,
   Hct,
   hexFromArgb,
   TonalPalette,
@@ -34,9 +34,35 @@ const accentPalette = (argb: number) => {
   return TonalPalette.fromHueAndChroma(hct.hue, Math.max(48, hct.chroma));
 };
 
-/** A palette tone `steps` further from the background than `tone`: lighter in dark mode. */
-const brighter = (palette: TonalPalette, tone: number, mode: Mode, steps = 10) =>
-  palette.tone(clampDouble(0, 100, tone + (mode === "dark" ? steps : -steps)));
+/** The least contrast a bright colour keeps against the surface: WCAG AA, or AAA at raised contrast. */
+const brightContrastFloor: Readonly<Record<Contrast, number>> = {
+  standard: 4.5,
+  medium: 7,
+  high: 7,
+};
+
+/** How far, in tones, a bright colour may move from its normal role. */
+const brightReach = 10;
+
+/**
+ * A bright colour: the hue at the most chroma sRGB allows, at the tone within
+ * `brightReach` of the normal role, toward the middle tones where the hue is
+ * most vivid, that gives the most chroma and still clears the contrast floor
+ * against the surface. Falls back to the normal tone (at full chroma).
+ */
+export const brightOf = (hue: number, normalTone: number, mode: Mode, contrast: Contrast) => {
+  const surface = toneOf("surface", mode, contrast).tone;
+  const floor = brightContrastFloor[contrast];
+  const toward = mode === "dark" ? -1 : 1;
+  let best = Hct.from(hue, 200, normalTone);
+  for (let step = 1; step <= brightReach; step++) {
+    const tone = normalTone + toward * step;
+    if (tone < 0 || tone > 100 || ContrastRatio.ratioOfTones(tone, surface) < floor) break;
+    const candidate = Hct.from(hue, 200, tone);
+    if (candidate.chroma > best.chroma + 0.5) best = candidate;
+  }
+  return best.toInt();
+};
 
 export interface StaticOptions {
   readonly sourceArgb: number;
@@ -69,7 +95,12 @@ export const staticColor = (reference: number, options: StaticOptions) => {
     colorContainer: hexFromArgb(at("primary-container")),
     onColorContainer: hexFromArgb(at("on-primary-container")),
     bright: hexFromArgb(
-      brighter(palette, toneOf("primary", options.mode, options.contrast).tone, options.mode),
+      brightOf(
+        palette.hue,
+        toneOf("primary", options.mode, options.contrast).tone,
+        options.mode,
+        options.contrast,
+      ),
     ),
   };
   return { roles, fixedVariant: hexFromArgb(at("on-primary-fixed-variant")) };
@@ -86,6 +117,6 @@ export const staticColors = (options: StaticOptions) => {
   return { statics, brown };
 };
 
-/** bright_red: the error palette, one step brighter than the error role. */
+/** bright_red: the error hue, made bright from the error role as the static colours are. */
 export const brightError = (palettes: Palettes, mode: Mode, contrast: Contrast) =>
-  hexFromArgb(brighter(palettes.error, toneOf("error", mode, contrast).tone, mode));
+  hexFromArgb(brightOf(palettes.error.hue, toneOf("error", mode, contrast).tone, mode, contrast));
