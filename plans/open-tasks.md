@@ -39,7 +39,7 @@ Headless tests can't cover these.
 - [ ] **`tokens.lua` for non-Omaterial themes.** `stef tokens apply` writes `~/.config/hypr/stef/tokens.lua`, but nothing sources it. It has to load _after_ the theme's `hyprland.lua` to win. Decide where, e.g. a `stef hooks install` step or an Omarchy theme hook. Omaterial themes already render the tokens.
 - [ ] **Studio: make token preview permanent.** Today "Preview in Hyprland" lasts until the next config reload. Offer a "write tokens.lua" action, or re-apply the theme from the Tokens page.
 - [ ] **Studio: deploy and dev buttons.** The Plugins page only enables and toggles. Building needs the repo checkout, so it would shell out to `pnpm stef …` with a configured repo path.
-- [ ] **`effect-platform-tauri` FileSystem.** Only `access`, `makeDirectory`, `readDirectory`, `readFile`, `remove` and `writeFile` are implemented. Add `stat`, `rename`, `copy` and `watch` when Studio needs them (`watch` would let the Tokens page follow edits made by the CLI).
+- [ ] **`effect-platform-tauri` FileSystem.** Only `access`, `makeDirectory`, `readDirectory`, `readFile`, `remove` and `writeFile` are implemented. Add `stat`, `rename`, `copy` and `watch` when Studio needs them (`watch` would let the Tokens page follow edits made by the CLI, and replace the followers' polling).
 - [ ] **Studio bundle size.** Vite warns about chunks over 500 kB. Split per page (lazy routes) or with `codeSplitting`.
 - [ ] **Harness and hooks.** `stef harness` runs the plugin in its own `qs`, but `omarchy-shell` can only reach the main shell, so periphery's Hyprland hook still talks to the main shell. Hook-driven behaviour needs `stef dev`. If Omarchy ever lets callers address another instance, route the dev hook to the harness.
 - [ ] **QML: shared view components.** `qml-kit` only shares logic (address, reading order, monitor geometry, springs, tokens). The two plugins' window cards (ScreencopyView plus title pill) are still separate. Unify them once both have Effect cores and their delegates' data has converged.
@@ -52,7 +52,7 @@ The plan's phases 1–11 and 12 (docs) are done; phase 8 (restyling each Studio 
 
 - [ ] **Lone and fullscreen windows.** The rules that made them flush (no gaps, border or rounding) are commented out in `packages/theme-engine/src/theme/files/hyprland.lua.ts`, but the comment above them still describes them. Either delete them and the comment, or bring them back with a registered interpretation.
 - [ ] **`stef.omaterial` hot reload.** Services never reload in place (the engine caches their component by URL); after deploying it, restart the shell.
-- [ ] **Studio: follow the theme without polling.** `src/m3/scheme.ts` re-reads the applied theme every 2 s; the Tauri fs `watch` (see `effect-platform-tauri` below) would replace it.
+- [ ] **Studio: follow the theme without polling.** Studio's followers (`src/m3/scheme.ts`, `text-scale.ts`) re-read their files every 2 s through `polled` (`src/m3/polled.ts`). Once `effect-platform-tauri` implements `watch` (above), `polled` can watch instead and nothing else changes.
 
 ## 4. Tooling and later
 

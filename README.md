@@ -15,8 +15,8 @@ Omarchy customisations in one Vite+ monorepo: Material 3 theming built from the 
 | `packages/motion`                | Material 3 springs: step response, Hyprland damping, CSS easing                                                          |
 | `packages/qml-kit`               | Logic and QML shared by the plugins (`resolveM3`, `Scheme.qml`, `SpringValue.qml`, `RoundedClip.qml`), bundled into each |
 | `packages/plugin-kit`            | Builds a plugin folder from `plugin.config.ts` and checks it in the real QML engine                                      |
-| `packages/hyprland`              | Hyprland as an Effect service: typed queries, Lua eval, events; Node and fixture transports                              |
-| `packages/omarchy`               | Omarchy as Effect services: paths, shell IPC, plugin install, the Hyprland hooks file                                    |
+| `packages/hyprland`              | Hyprland as an Effect service: typed queries, Lua eval, events; `HyprlandNode`, and `HyprlandTest` in `./testing`        |
+| `packages/omarchy`               | Omarchy as Effect services: paths, shell IPC, the `omarchy` command, plugin install, hooks; test layers in `./testing`   |
 | `packages/effect-platform-qml`   | Running Effect inside Quickshell's QML engine (see its SPIKE.md)                                                         |
 | `packages/effect-platform-tauri` | Effect platform services backed by Tauri                                                                                 |
 | `packages/config`                | Shared tsconfig bases and lint preset                                                                                    |
@@ -45,6 +45,10 @@ Every themed value traces to the spec: a token, a quoted sentence (`packages/m3/
 - **Tokens:** `~/.config/omarchy/stef/tokens.json` holds the user's choices among spec steps (Studio's Tokens page, or `stef tokens`). Plugins follow it live.
 - **Plugins:** draw from `tokens.m3` and the theme's colour roles (`Scheme.qml`), and move on the spec's springs (`SpringValue.qml`).
 - **Studio:** M3 is in its Tailwind config; the shadcn components keep their classes and draw M3 colours, corners, type and shadows.
+
+## Effect services
+
+Every outside-world dependency is an Effect service with one layer per environment (`HyprlandNode`, `HyprlandTauri`, `HyprlandTest`, …); tests swap layers. The conventions and the log of test-layer patterns are in [plans/effect-services.md](plans/effect-services.md).
 
 ## How plugins are built
 
