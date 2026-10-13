@@ -42,7 +42,7 @@ export const StaticColor = Schema.Struct({
   onColor: HexColor,
   colorContainer: HexColor,
   onColorContainer: HexColor,
-  /** A custom role on the same palette: the terminal's bright_* slot. */
+  /** A custom role on the same hue at full chroma: the terminal's bright_* slot. */
   bright: HexColor,
 });
 export type StaticColor = typeof StaticColor.Type;
