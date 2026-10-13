@@ -253,10 +253,14 @@ export const renderM3Css = (): string => {
   for (const s of cornerSteps) out(`  --radius-${s}: var(--md-sys-shape-corner-${s});`);
   for (const [name, value] of Object.entries(tailwindRadius))
     out(`  --radius-${name}: var(--md-sys-shape-corner-${nearest(value, corners)});`);
-  out("  /* Type roles: text-<role>, and Tailwind's names at the nearest role */");
+  out(
+    "  /* Type roles: text-<role>, and Tailwind's names at the nearest role; scaled by the user's text size (--stef-text-scale, interpretation text.scale) */",
+  );
   const text = (name: string, r: (typeof typeRoles)[number]) => {
-    out(`  --text-${name}: var(--md-sys-typescale-${r}-size);`);
-    out(`  --text-${name}--line-height: var(--md-sys-typescale-${r}-line-height);`);
+    out(`  --text-${name}: calc(var(--md-sys-typescale-${r}-size) * var(--stef-text-scale, 1));`);
+    out(
+      `  --text-${name}--line-height: calc(var(--md-sys-typescale-${r}-line-height) * var(--stef-text-scale, 1));`,
+    );
     out(`  --text-${name}--letter-spacing: var(--md-sys-typescale-${r}-tracking);`);
     out(`  --text-${name}--font-weight: var(--md-sys-typescale-${r}-weight);`);
   };
@@ -275,6 +279,15 @@ export const renderM3Css = (): string => {
   out("  --font-sans: monospace;");
   out("  --font-mono: monospace;");
   out("  --font-heading: monospace;");
+  out("}");
+  out();
+  out("/* A container holding a line of text: h-text-<n> is h-<n> grown by that line's");
+  out("   height x (scale - 1), never below h-<n> (interpretation text.scale). The line");
+  out("   height (1lh) is already scaled, so its 1x height is 1lh / scale. */");
+  out("@utility h-text-* {");
+  out(
+    "  height: calc(var(--spacing) * --value(number) + max(0px, 1lh * (1 - 1 / var(--stef-text-scale, 1))));",
+  );
   out("}");
   out();
   return lines.join("\n");

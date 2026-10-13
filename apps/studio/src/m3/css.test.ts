@@ -15,8 +15,12 @@ describe("m3.generated.css", () => {
 
   it("maps Tailwind's names to the nearest M3 step", () => {
     const css = renderM3Css();
-    expect(css).toContain("--text-sm: var(--md-sys-typescale-body-medium-size);");
-    expect(css).toContain("--text-xs: var(--md-sys-typescale-body-small-size);");
+    expect(css).toContain(
+      "--text-sm: calc(var(--md-sys-typescale-body-medium-size) * var(--stef-text-scale, 1));",
+    );
+    expect(css).toContain(
+      "--text-xs: calc(var(--md-sys-typescale-body-small-size) * var(--stef-text-scale, 1));",
+    );
     expect(css).toContain("--radius-xl: var(--md-sys-shape-corner-medium);");
     expect(css).toContain("--spacing: 0.25rem;");
   });

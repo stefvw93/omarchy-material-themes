@@ -47,3 +47,25 @@ export const scaleText = (spec: TextSpec, baseSize: number): Record<string, numb
   for (const key of Object.keys(halves)) out[key] = Math.round((out[halves[key]!] ?? 0) / 2);
   return out;
 };
+
+/**
+ * The text size in a shell.toml (`[font] base-size`, which `omarchy display
+ * text size` writes to ~/.config/omarchy/shell.toml), or undefined when unset.
+ * Reads the one key the way that command does, without a TOML parser.
+ */
+export const fontBaseSizeOf = (toml: string): number | undefined => {
+  let inFont = false;
+  for (const line of toml.split("\n")) {
+    const section = /^\s*\[([^\]]*)\]/.exec(line);
+    if (section) {
+      inFont = section[1]!.trim() === "font";
+      continue;
+    }
+    const m = inFont ? /^\s*base-size\s*=\s*([0-9.]+)/.exec(line) : null;
+    if (m) {
+      const size = Number(m[1]);
+      return size > 0 ? size : undefined;
+    }
+  }
+  return undefined;
+};

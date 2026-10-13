@@ -11,6 +11,7 @@ import {
   type Tokens,
   TokensSchema,
 } from "@stef/tokens";
+import { setTypeScale } from "@/m3/text-scale";
 import { component } from "../shared";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -118,6 +119,7 @@ const applyCss = (tokens: Tokens) =>
     for (const [name, value] of Object.entries(cssVariables(tokens))) {
       document.documentElement.style.setProperty(name, value);
     }
+    setTypeScale(tokens.type.scale);
   });
 
 const LoadTokens = Task("LoadTokens", {

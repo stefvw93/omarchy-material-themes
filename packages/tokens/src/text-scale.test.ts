@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { scaleText, type TextSpec } from "./text-scale.ts";
+import { fontBaseSizeOf, scaleText, type TextSpec } from "./text-scale.ts";
 
 const spec: TextSpec = {
   typeScale: 1,
@@ -44,5 +44,18 @@ describe("scaleText", () => {
 
   it("treats a missing base-size as the default", () => {
     expect(scaleText(spec, 0)["font.body"]).toBe(14);
+  });
+});
+
+describe("fontBaseSizeOf", () => {
+  it("reads base-size from the [font] section only", () => {
+    const toml = '[bar]\nbase-size = 99\n\n[font]\nfamily = "x"\nbase-size = 16 # px\n';
+    expect(fontBaseSizeOf(toml)).toBe(16);
+  });
+
+  it("is undefined when unset", () => {
+    expect(fontBaseSizeOf("")).toBeUndefined();
+    expect(fontBaseSizeOf("[bar]\nbase-size = 14\n")).toBeUndefined();
+    expect(fontBaseSizeOf("[font]\nfamily = 'x'\n[bar]\nbase-size = 14\n")).toBeUndefined();
   });
 });
