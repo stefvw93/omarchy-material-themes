@@ -21,6 +21,11 @@ describe("isDropped", () => {
     expect(isDropped({ "ios.weight.setting": "bold" })).toBe(true);
     expect(isDropped({ "ios.dark.theme.elevation": "elevated" })).toBe(true);
   });
+
+  it("drops iOS tags in a shared group", () => {
+    expect(isDropped({ font: "ios.bold" })).toBe(true);
+    expect(isDropped({ font: "static" })).toBe(false);
+  });
 });
 
 describe("spec/extract.json", () => {

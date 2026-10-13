@@ -16,11 +16,15 @@ import type {
 import { tables } from "./html.ts";
 import { chunksOf, type RefNode, SITE, type Spec, type Value } from "./source.ts";
 
-/** Entries tagged with these are for Google's own products or for iOS. */
+/**
+ * Entries tagged with these are for Google's own products or for iOS: an iOS
+ * context group (ios.weight.setting), or an iOS tag in a shared one
+ * (font: ios.bold).
+ */
 export const isDropped = (tags: Readonly<Record<string, string>>) =>
   tags["audience"] === "1p.baseline" ||
   (tags["platform"] !== undefined && tags["platform"] !== "web") ||
-  Object.keys(tags).some((g) => g.startsWith("ios."));
+  Object.entries(tags).some(([g, t]) => g.startsWith("ios.") || t.startsWith("ios."));
 
 const round = (n: number) => Math.round(n * 1e6) / 1e6;
 
