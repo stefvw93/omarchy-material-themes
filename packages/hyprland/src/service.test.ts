@@ -1,5 +1,5 @@
-import { Effect, Exit, Option, Stream } from "effect";
-import { describe, expect, it } from "vite-plus/test";
+import { describe, expect, it } from "@effect/vitest";
+import { Effect, Option, Stream } from "effect";
 import { eventArgs, parseEvent } from "./events.ts";
 import { Hyprland } from "./service.ts";
 import { HyprlandTest } from "./testing.ts";
@@ -19,59 +19,53 @@ const monitor = {
   extraKey: "ignored",
 };
 
-const run = <A, E>(
-  program: Effect.Effect<A, E, Hyprland>,
-  fixture = { responses: {}, events: [] as string[] },
-) => {
-  const { layer, requests } = HyprlandTest(fixture);
-  return { result: Effect.runSync(Effect.exit(Effect.provide(program, layer))), requests };
-};
+const noFixture = { responses: {}, events: [] as string[] };
 
 describe("Hyprland", () => {
-  it("decodes hyprctl JSON and finds the focused monitor", () => {
-    const { result } = run(
-      Effect.flatMap(Hyprland, (h) => h.focusedMonitor),
-      {
-        responses: { "j/monitors": [monitor] },
-        events: [],
-      },
-    );
-    expect(Exit.isSuccess(result) && Option.getOrThrow(result.value).reserved).toEqual([
-      380, 26, 380, 0,
-    ]);
+  it.effect("decodes hyprctl JSON and finds the focused monitor", () =>
+    Effect.gen(function* () {
+      const focused = yield* (yield* Hyprland).focusedMonitor;
+      expect(Option.getOrThrow(focused).reserved).toEqual([380, 26, 380, 0]);
+    }).pipe(
+      Effect.provide(HyprlandTest({ responses: { "j/monitors": [monitor] }, events: [] }).layer),
+    ),
+  );
+
+  it.effect("fails with a HyprlandError on JSON that doesn't match", () =>
+    Effect.gen(function* () {
+      const error = yield* Effect.flip((yield* Hyprland).monitors);
+      expect(error._tag).toBe("@stef/hyprland/HyprlandError");
+    }).pipe(
+      Effect.provide(
+        HyprlandTest({ responses: { "j/monitors": [{ ...monitor, width: "wide" }] }, events: [] })
+          .layer,
+      ),
+    ),
+  );
+
+  it.effect("reads Lua values back through error()", () => {
+    const { layer, requests } = HyprlandTest(noFixture);
+    return Effect.gen(function* () {
+      // The fixture answers eval with "ok"; the live socket answers
+      // 'error: [string "…"]:1: function', which evalValue trims to "function".
+      yield* (yield* Hyprland).evalValue("type(periphery_select)");
+      expect(requests).toEqual(["eval error(type(periphery_select))"]);
+    }).pipe(Effect.provide(layer));
   });
 
-  it("fails with a HyprlandError on JSON that doesn't match", () => {
-    const { result } = run(
-      Effect.flatMap(Hyprland, (h) => h.monitors),
-      {
-        responses: { "j/monitors": [{ ...monitor, width: "wide" }] },
-        events: [],
-      },
-    );
-    expect(Exit.isFailure(result)).toBe(true);
-  });
-
-  it("reads Lua values back through error()", () => {
-    const { result, requests } = run(
-      Effect.flatMap(Hyprland, (h) => h.evalValue("type(periphery_select)")),
-    );
-    expect(requests).toEqual(["eval error(type(periphery_select))"]);
-    // The fixture answers eval with "ok"; the live socket answers
-    // 'error: [string "…"]:1: function', which evalValue trims to "function".
-    expect(Exit.isSuccess(result)).toBe(true);
-  });
-
-  it("parses the event stream and drops malformed lines", () => {
-    const { result } = run(
-      Effect.flatMap(Hyprland, (h) => Stream.runCollect(h.events)),
-      { responses: {}, events: ["openwindow>>abc,2,foot,a, b, c", "garbage", "workspace>>3"] },
-    );
-    expect(Exit.isSuccess(result) && result.value.map((e) => e.name)).toEqual([
-      "openwindow",
-      "workspace",
-    ]);
-  });
+  it.effect("parses the event stream and drops malformed lines", () =>
+    Effect.gen(function* () {
+      const events = yield* Stream.runCollect((yield* Hyprland).events);
+      expect(events.map((e) => e.name)).toEqual(["openwindow", "workspace"]);
+    }).pipe(
+      Effect.provide(
+        HyprlandTest({
+          responses: {},
+          events: ["openwindow>>abc,2,foot,a, b, c", "garbage", "workspace>>3"],
+        }).layer,
+      ),
+    ),
+  );
 });
 
 describe("events", () => {

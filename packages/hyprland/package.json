@@ -17,6 +17,7 @@
     "effect": "catalog:"
   },
   "devDependencies": {
+    "@effect/vitest": "catalog:",
     "@stef/config": "workspace:*",
     "@types/node": "catalog:",
     "typescript": "catalog:",

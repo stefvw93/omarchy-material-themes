@@ -1,34 +1,23 @@
+import { describe, expect, it } from "@effect/vitest";
 import { defaultTokens, type Tokens } from "@stef/tokens";
-import { Effect, Exit, FileSystem, Layer, Path } from "effect";
-import { describe, expect, it } from "vite-plus/test";
-import { OmarchyPaths, OmarchyPathsAt } from "./paths.ts";
+import { Effect, Layer, Path } from "effect";
+import { OmarchyPathsAt } from "./paths.ts";
 import { MemoryFileSystem } from "./testing.ts";
-import { readTokenOverride, readTokens, tokenDiff, TokensError, writeTokens } from "./tokens.ts";
+import { readTokenOverride, readTokens, tokenDiff, writeTokens } from "./tokens.ts";
 
 const tokensJson = "/home/.config/omarchy/stef/tokens.json";
 
-/** Runs `effect` against `files`, with Omarchy's paths under /home. */
-const run = <A, E>(
-  effect: Effect.Effect<A, E, OmarchyPaths | FileSystem.FileSystem>,
-  files = new Map<string, string | Uint8Array>(),
-) =>
-  Effect.runSyncExit(
-    Effect.provide(
-      effect,
-      Layer.provideMerge(
-        OmarchyPathsAt("/home"),
-        Layer.mergeAll(MemoryFileSystem(files).layer, Path.layer),
-      ),
-    ),
+/** Omarchy's paths under /home, on an in-memory FileSystem holding `files`. */
+const at = (files = new Map<string, string | Uint8Array>()) =>
+  Layer.provideMerge(
+    OmarchyPathsAt("/home"),
+    Layer.mergeAll(MemoryFileSystem(files).layer, Path.layer),
   );
 
 const withFile = (json: unknown) =>
-  new Map([[tokensJson, typeof json === "string" ? json : JSON.stringify(json)]]);
-
-const value = <A, E>(exit: Exit.Exit<A, E>): A => {
-  if (Exit.isFailure(exit)) throw new Error(`expected success, got ${String(exit.cause)}`);
-  return exit.value;
-};
+  new Map<string, string | Uint8Array>([
+    [tokensJson, typeof json === "string" ? json : JSON.stringify(json)],
+  ]);
 
 describe("tokenDiff", () => {
   it("is empty when nothing differs", () => {
@@ -55,81 +44,99 @@ describe("tokenDiff", () => {
 });
 
 describe("readTokenOverride", () => {
-  it("is empty without a tokens.json", () => {
-    expect(value(run(readTokenOverride))).toEqual({});
-  });
+  it.effect("is empty without a tokens.json", () =>
+    Effect.gen(function* () {
+      expect(yield* readTokenOverride).toEqual({});
+    }).pipe(Effect.provide(at())),
+  );
 
-  it("is the file as written", () => {
-    expect(value(run(readTokenOverride, withFile({ version: 2, density: -1 })))).toEqual({
-      version: 2,
-      density: -1,
-    });
-  });
+  it.effect("is the file as written", () =>
+    Effect.gen(function* () {
+      expect(yield* readTokenOverride).toEqual({ version: 2, density: -1 });
+    }).pipe(Effect.provide(at(withFile({ version: 2, density: -1 })))),
+  );
 
-  it("fails with a TokensError on broken JSON", () => {
-    const exit = run(readTokenOverride, withFile("{ not json"));
-    expect(exit).toMatchObject({ _tag: "Failure" });
-    expect(String(Exit.isFailure(exit) && exit.cause)).toContain("is not valid JSON");
-  });
+  it.effect("fails with a TokensError on broken JSON", () =>
+    Effect.gen(function* () {
+      const error = yield* Effect.flip(readTokenOverride);
+      expect(error._tag).toBe("@stef/omarchy/TokensError");
+      expect(error.message).toContain("is not valid JSON");
+    }).pipe(Effect.provide(at(withFile("{ not json")))),
+  );
 });
 
 describe("readTokens", () => {
-  it("is the defaults without a tokens.json", () => {
-    expect(value(run(readTokens))).toEqual(defaultTokens);
-  });
+  it.effect("is the defaults without a tokens.json", () =>
+    Effect.gen(function* () {
+      expect(yield* readTokens).toEqual(defaultTokens);
+    }).pipe(Effect.provide(at())),
+  );
 
-  it("lays the file over the defaults", () => {
-    const tokens = value(
-      run(readTokens, withFile({ version: 2, motion: { scheme: "expressive" } })),
-    );
-    expect(tokens.motion.scheme).toBe("expressive");
-    expect(tokens.shape).toEqual(defaultTokens.shape);
-  });
+  it.effect("lays the file over the defaults", () =>
+    Effect.gen(function* () {
+      const tokens = yield* readTokens;
+      expect(tokens.motion.scheme).toBe("expressive");
+      expect(tokens.shape).toEqual(defaultTokens.shape);
+    }).pipe(Effect.provide(at(withFile({ version: 2, motion: { scheme: "expressive" } })))),
+  );
 
-  it("ignores unknown keys and values outside their choices", () => {
-    const tokens = value(
-      run(readTokens, withFile({ version: 2, bogus: 1, shape: { windowCorner: "huge" } })),
-    );
-    expect(tokens).toEqual(defaultTokens);
-  });
+  it.effect("ignores unknown keys and values outside their choices", () =>
+    Effect.gen(function* () {
+      expect(yield* readTokens).toEqual(defaultTokens);
+    }).pipe(
+      Effect.provide(at(withFile({ version: 2, bogus: 1, shape: { windowCorner: "huge" } }))),
+    ),
+  );
 
-  it("migrates a v1 file (pixels to the nearest step)", () => {
-    const tokens = value(
-      run(readTokens, withFile({ expo: { tileGap: 24 }, border: { width: 3 } })),
-    );
-    expect(tokens.expo.tileGap).toBe("space300");
-    expect(tokens.border.width).toBe("focus-indicator");
-  });
+  it.effect("migrates a v1 file (pixels to the nearest step)", () =>
+    Effect.gen(function* () {
+      const tokens = yield* readTokens;
+      expect(tokens.expo.tileGap).toBe("space300");
+      expect(tokens.border.width).toBe("focus-indicator");
+    }).pipe(Effect.provide(at(withFile({ expo: { tileGap: 24 }, border: { width: 3 } })))),
+  );
 });
 
 describe("writeTokens", () => {
-  it("writes only the keys that differ, with the version", () => {
-    const files = new Map<string, string>();
-    value(run(writeTokens({ ...defaultTokens, density: -1 } as Tokens), files));
-    expect(JSON.parse(files.get(tokensJson)!)).toEqual({ density: -1, version: 2 });
+  const written = (files: Map<string, string | Uint8Array>) =>
+    JSON.parse(String(files.get(tokensJson)));
+
+  it.effect("writes only the keys that differ, with the version", () => {
+    const files = new Map<string, string | Uint8Array>();
+    return Effect.gen(function* () {
+      yield* writeTokens({ ...defaultTokens, density: -1 } as Tokens);
+      expect(written(files)).toEqual({ density: -1, version: 2 });
+    }).pipe(Effect.provide(at(files)));
   });
 
-  it("writes the defaults as the version alone", () => {
-    const files = new Map<string, string>();
-    value(run(writeTokens(defaultTokens), files));
-    expect(JSON.parse(files.get(tokensJson)!)).toEqual({ version: 2 });
+  it.effect("writes the defaults as the version alone", () => {
+    const files = new Map<string, string | Uint8Array>();
+    return Effect.gen(function* () {
+      yield* writeTokens(defaultTokens);
+      expect(written(files)).toEqual({ version: 2 });
+    }).pipe(Effect.provide(at(files)));
   });
 
-  it("reads back what it wrote", () => {
-    const files = new Map<string, string>();
-    const tokens = {
-      ...defaultTokens,
-      motion: { scheme: "expressive" },
-      groupbar: { ...defaultTokens.groupbar, shape: "round" },
-    } as Tokens;
-    expect(value(run(Effect.andThen(writeTokens(tokens), readTokens), files))).toEqual(tokens);
-  });
+  it.effect("reads back what it wrote", () =>
+    Effect.gen(function* () {
+      const tokens = {
+        ...defaultTokens,
+        motion: { scheme: "expressive" },
+        groupbar: { ...defaultTokens.groupbar, shape: "round" },
+      } as Tokens;
+      yield* writeTokens(tokens);
+      expect(yield* readTokens).toEqual(tokens);
+    }).pipe(Effect.provide(at())),
+  );
 
-  it("refuses tokens the Schema rejects, and writes nothing", () => {
-    const files = new Map<string, string>();
-    const exit = run(writeTokens({ ...defaultTokens, density: 5 } as unknown as Tokens), files);
-    expect(Exit.isFailure(exit)).toBe(true);
-    expect(String(Exit.isFailure(exit) && exit.cause)).toContain(TokensError.name);
-    expect(files.size).toBe(0);
+  it.effect("refuses tokens the Schema rejects, and writes nothing", () => {
+    const files = new Map<string, string | Uint8Array>();
+    return Effect.gen(function* () {
+      const error = yield* Effect.flip(
+        writeTokens({ ...defaultTokens, density: 5 } as unknown as Tokens),
+      );
+      expect(error._tag).toBe("@stef/omarchy/TokensError");
+      expect(files.size).toBe(0);
+    }).pipe(Effect.provide(at(files)));
   });
 });
