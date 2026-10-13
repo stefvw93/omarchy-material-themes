@@ -7,8 +7,9 @@
  */
 import { resolveTokens } from "@stef/tokens/runtime";
 import { fontBaseSizeOf, OMARCHY_TEXT_BASE, textScaleOf } from "@stef/tokens/text-scale";
-import { homeDir, join } from "@tauri-apps/api/path";
-import { readTextFile } from "@tauri-apps/plugin-fs";
+import { OmarchyPaths } from "@stef/omarchy";
+import { Effect, Stream } from "effect";
+import { polled } from "./polled";
 
 let baseSize = OMARCHY_TEXT_BASE;
 let typeScale = 1;
@@ -24,30 +25,41 @@ export const setTypeScale = (scale: number) => {
   render();
 };
 
-const read = (path: string) => readTextFile(path).catch(() => undefined);
+/** Sets --stef-text-scale from the defaults, before the files are read. */
+export const showDefaultTextScale = render;
+
+/** Omarchy's text size ([font] base-size in shell.toml), each time it changes. */
+export const baseSizes = Stream.unwrap(
+  Effect.gen(function* () {
+    const paths = yield* OmarchyPaths;
+    return polled(paths.shellToml).pipe(
+      Stream.map((shell) => fontBaseSizeOf(shell ?? "") ?? OMARCHY_TEXT_BASE),
+    );
+  }),
+);
+
+/** tokens.type.scale from tokens.json, each time the file changes. */
+export const typeScales = Stream.unwrap(
+  Effect.gen(function* () {
+    const paths = yield* OmarchyPaths;
+    return polled(paths.tokensJson).pipe(Stream.map((tokens) => resolveTokens(tokens).type.scale));
+  }),
+);
 
 /**
- * Follows the text size and tokens.json. Polled, like the applied theme
- * (src/m3/scheme.ts): Studio has no file watcher. A file is only applied when
- * its contents change, so a poll never undoes an edit that isn't saved yet.
+ * Follows the text size and tokens.json. Each is applied only when its own
+ * file changes, so a change to shell.toml never undoes a type scale the
+ * Tokens page is still editing.
  */
-export const followTextScale = async (intervalMs = 2000): Promise<void> => {
-  render();
-  if (!("__TAURI_INTERNALS__" in window)) return;
-  const config = await join(await homeDir(), ".config", "omarchy");
-  const shellPath = await join(config, "shell.toml");
-  const tokensPath = await join(config, "stef", "tokens.json");
-  let lastShell: string | undefined;
-  let lastTokens: string | undefined;
-  const check = async () => {
-    const [shell, tokens] = await Promise.all([read(shellPath), read(tokensPath)]);
-    if (shell === lastShell && tokens === lastTokens) return;
-    if (shell !== lastShell) baseSize = fontBaseSizeOf(shell ?? "") ?? OMARCHY_TEXT_BASE;
-    if (tokens !== lastTokens) typeScale = resolveTokens(tokens).type.scale;
-    lastShell = shell;
-    lastTokens = tokens;
-    render();
-  };
-  await check();
-  setInterval(() => void check(), intervalMs);
-};
+export const followTextScale = Effect.all(
+  [
+    Stream.runForEach(baseSizes, (size) =>
+      Effect.sync(() => {
+        baseSize = size;
+        render();
+      }),
+    ),
+    Stream.runForEach(typeScales, (scale) => Effect.sync(() => setTypeScale(scale))),
+  ],
+  { concurrency: "unbounded", discard: true },
+);

@@ -37,3 +37,12 @@ export const MaterialWorkerLayer = MaterialService.layer.pipe(
   Layer.provide(HttpClientTauri),
   Layer.tapError(Effect.logError),
 );
+
+/**
+ * What Studio's followers (the applied theme's colours, the text size) read
+ * with: kept apart from `MainLayer` so starting them doesn't build the
+ * Material worker.
+ */
+export const FollowerLayer = OmarchyPathsTauri.pipe(
+  Layer.provideMerge(Layer.mergeAll(FileSystemTauri, Path.layer)),
+);

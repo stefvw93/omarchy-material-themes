@@ -8,6 +8,10 @@ export interface OmarchyPathsImpl {
   readonly pluginDir: (id: string) => string;
   /** ~/.config/omarchy/themes: one folder per installed theme. */
   readonly themesDir: string;
+  /** ~/.config/omarchy/shell.toml: the shell's settings ([font] base-size is the text size). */
+  readonly shellToml: string;
+  /** ~/.local/state/omarchy/current/theme: the applied theme's files. */
+  readonly currentThemeDir: string;
   /** ~/.config/omarchy/stef: tokens.json and the tooling's state. */
   readonly stefDir: string;
   readonly tokensJson: string;
@@ -31,6 +35,8 @@ export class OmarchyPaths extends Context.Service<OmarchyPaths, OmarchyPathsImpl
         pluginsDir,
         pluginDir: (id) => path.join(pluginsDir, id),
         themesDir: path.join(config, "omarchy/themes"),
+        shellToml: path.join(config, "omarchy/shell.toml"),
+        currentThemeDir: path.join(home, ".local/state/omarchy/current/theme"),
         stefDir,
         tokensJson: path.join(stefDir, "tokens.json"),
         stateJson: path.join(stefDir, "state.json"),

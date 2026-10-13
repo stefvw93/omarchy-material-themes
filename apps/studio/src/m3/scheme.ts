@@ -4,9 +4,10 @@
  * variables on <html>; m3.generated.css builds Tailwind and the shadcn
  * variables on them. Light or dark follows the scheme in effect.
  */
+import { OmarchyPaths } from "@stef/omarchy";
 import { schemeOf, schemeRoles, type OmarchyColors } from "@stef/qml-kit";
-import { homeDir, join } from "@tauri-apps/api/path";
-import { readTextFile } from "@tauri-apps/plugin-fs";
+import { Effect, Path, Stream } from "effect";
+import { polled } from "./polled";
 
 interface Shown {
   readonly mode: "light" | "dark";
@@ -60,35 +61,41 @@ export const omarchyColorsOf = (toml: string): OmarchyColors => {
   };
 };
 
-const read = (path: string) => readTextFile(path).catch(() => undefined);
+/** The scheme of a theme's omaterial.json, or else the fallback from its colors.toml. */
+const shownOf = (json: string | undefined, toml: string | undefined): Shown => {
+  const scheme = schemeOf(json, omarchyColorsOf(toml ?? ""));
+  return { mode: scheme.mode, color: scheme.color };
+};
 
 /**
- * Follows the applied theme. Studio's Apply re-applies the same theme name
- * (omaterial-dev) with new colours, so the theme's files themselves are
- * compared; they are small. Polled: Studio has no file watcher.
+ * Something to draw with before the applied theme is read, and outside Tauri
+ * (a plain browser on the dev server): the Omarchy fallback from its defaults.
  */
-export const followAppliedTheme = async (intervalMs = 2000): Promise<void> => {
-  // Something to draw with before the theme is read, and outside Tauri (a
-  // plain browser on the dev server): the Omarchy fallback from its defaults.
-  if (!applied) {
-    const fallback = schemeOf(undefined, omarchyColorsOf(""));
-    applied = { mode: fallback.mode, color: fallback.color };
-    render();
-  }
-  if (!("__TAURI_INTERNALS__" in window)) return;
-  const theme = await join(await homeDir(), ".local", "state", "omarchy", "current", "theme");
-  const jsonPath = await join(theme, "omaterial.json");
-  const tomlPath = await join(theme, "colors.toml");
-  let last: string | undefined;
-  const check = async () => {
-    const [json, toml] = await Promise.all([read(jsonPath), read(tomlPath)]);
-    const key = `${json ?? ""}\0${toml ?? ""}`;
-    if (key === last) return;
-    last = key;
-    const scheme = schemeOf(json, omarchyColorsOf(toml ?? ""));
-    applied = { mode: scheme.mode, color: scheme.color };
-    render();
-  };
-  await check();
-  setInterval(() => void check(), intervalMs);
+export const showFallbackScheme = () => {
+  applied ??= shownOf(undefined, undefined);
+  render();
 };
+
+/**
+ * The applied theme's scheme, each time it changes. Studio's Apply
+ * re-applies the same theme name (omaterial-dev) with new colours, so the
+ * theme's files themselves are followed.
+ */
+export const appliedSchemes = Stream.unwrap(
+  Effect.gen(function* () {
+    const paths = yield* OmarchyPaths;
+    const path = yield* Path.Path;
+    return Stream.zipLatest(
+      polled(path.join(paths.currentThemeDir, "omaterial.json")),
+      polled(path.join(paths.currentThemeDir, "colors.toml")),
+    ).pipe(Stream.map(([json, toml]) => shownOf(json, toml)));
+  }),
+);
+
+/** Shows the applied theme's scheme, for as long as it runs. */
+export const followAppliedTheme = Stream.runForEach(appliedSchemes, (shown) =>
+  Effect.sync(() => {
+    applied = shown;
+    render();
+  }),
+);

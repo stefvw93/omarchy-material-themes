@@ -14,6 +14,9 @@ describe("OmarchyPathsNode", () => {
       expect(paths.tokensJson).toBe("/home/u/.config/omarchy/stef/tokens.json");
       expect(paths.pluginDir("stef.x")).toBe("/home/u/.config/omarchy/plugins/stef.x");
       expect(paths.stefHyprDir).toBe("/home/u/.config/hypr/stef");
+      expect(paths.themesDir).toBe("/home/u/.config/omarchy/themes");
+      expect(paths.shellToml).toBe("/home/u/.config/omarchy/shell.toml");
+      expect(paths.currentThemeDir).toBe("/home/u/.local/state/omarchy/current/theme");
     }).pipe(
       Effect.provide(
         OmarchyPathsNode.pipe(Layer.provide(Layer.mergeAll(Path.layer, env({ HOME: "/home/u" })))),

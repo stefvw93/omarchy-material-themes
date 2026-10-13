@@ -21,6 +21,10 @@
       ]
     },
     {
+      "identifier": "fs:allow-read-file",
+      "allow": [{ "path": "$HOME/.config/omarchy/shell.toml" }]
+    },
+    {
       "identifier": "http:default",
       "allow": [
         {
