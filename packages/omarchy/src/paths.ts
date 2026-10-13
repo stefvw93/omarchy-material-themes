@@ -6,6 +6,8 @@ export interface OmarchyPathsImpl {
   /** ~/.config/omarchy/plugins: the shell reloads on any write here. */
   readonly pluginsDir: string;
   readonly pluginDir: (id: string) => string;
+  /** ~/.config/omarchy/themes: one folder per installed theme. */
+  readonly themesDir: string;
   /** ~/.config/omarchy/stef: tokens.json and the tooling's state. */
   readonly stefDir: string;
   readonly tokensJson: string;
@@ -28,6 +30,7 @@ export class OmarchyPaths extends Context.Service<OmarchyPaths, OmarchyPathsImpl
         home,
         pluginsDir,
         pluginDir: (id) => path.join(pluginsDir, id),
+        themesDir: path.join(config, "omarchy/themes"),
         stefDir,
         tokensJson: path.join(stefDir, "tokens.json"),
         stateJson: path.join(stefDir, "state.json"),

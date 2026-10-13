@@ -6,13 +6,13 @@ import { FileSystemTauri, HttpClientTauri } from "@stef/effect-platform-tauri";
 import { MaterialService } from "./material/service";
 import { OmarchyTheme } from "./omarchy-theme";
 import { HyprlandTauri } from "@/platform/hyprland";
-import { OmarchyPathsTauri, OmarchyShellTauri } from "@/platform/omarchy";
+import { OmarchyCliTauri, OmarchyPathsTauri, OmarchyShellTauri } from "@/platform/omarchy";
 
 export const MainLayer = Layer.mergeAll(
   WallhavenService.layer,
   PexelsService.layer,
   MaterialService.layer,
-  OmarchyTheme.layer.pipe(Layer.provide(OmarchyPathsTauri)),
+  OmarchyTheme.layer.pipe(Layer.provide(Layer.mergeAll(OmarchyPathsTauri, OmarchyCliTauri))),
   HyprlandTauri,
   OmarchyShellTauri,
   OmarchyPathsTauri,

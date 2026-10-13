@@ -1,4 +1,5 @@
 import { Effect, FileSystem, Layer, PlatformError } from "effect";
+import { OmarchyCli, type OmarchyCliImpl } from "./cli.ts";
 import { OmarchyError, OmarchyShell, type OmarchyShellImpl } from "./shell.ts";
 
 const notFound = (method: string, path: string) =>
@@ -85,6 +86,16 @@ export const OmarchyShellTest = (overrides: Partial<OmarchyShellImpl> = {}) => {
       }),
     toggle: (id) => Effect.sync(() => void calls.push(`toggle ${id}`)),
     ipc: () => Effect.succeed(""),
+    ...overrides,
+  });
+  return { layer, calls };
+};
+
+/** A fake `omarchy` command: `calls` records each invocation as its argument line. */
+export const OmarchyCliTest = (overrides: Partial<OmarchyCliImpl> = {}) => {
+  const calls: string[] = [];
+  const layer = Layer.succeed(OmarchyCli, {
+    setTheme: (name) => Effect.sync(() => void calls.push(`theme set ${name}`)),
     ...overrides,
   });
   return { layer, calls };

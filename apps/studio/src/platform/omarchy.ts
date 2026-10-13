@@ -1,6 +1,12 @@
 import { homeDir } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api/core";
-import { makeOmarchyShell, OmarchyError, OmarchyPaths, OmarchyShell } from "@stef/omarchy";
+import {
+  makeOmarchyShell,
+  OmarchyCli,
+  OmarchyError,
+  OmarchyPaths,
+  OmarchyShell,
+} from "@stef/omarchy";
 import { Effect, Layer } from "effect";
 
 /** The shell's IPC through the Rust omarchy_shell command. */
@@ -18,4 +24,16 @@ export const OmarchyShellTauri = Layer.succeed(
 export const OmarchyPathsTauri = Layer.effect(
   OmarchyPaths,
   Effect.flatMap(Effect.promise(homeDir), OmarchyPaths.make),
+);
+
+/** `omarchy theme set` through the Rust set_theme command. */
+export const OmarchyCliTauri = Layer.succeed(
+  OmarchyCli,
+  OmarchyCli.of({
+    setTheme: (name) =>
+      Effect.tryPromise({
+        try: () => invoke<void>("set_theme", { name }),
+        catch: (cause) => new OmarchyError({ message: `omarchy theme set ${name}`, cause }),
+      }),
+  }),
 );

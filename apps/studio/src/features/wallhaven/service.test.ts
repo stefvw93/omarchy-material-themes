@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Effect, Exit, Fiber, Layer } from "effect";
-import { HttpClient, HttpClientResponse, type HttpClientRequest } from "effect/http";
 import { TestClock } from "effect/testing";
+import { type Answer, HttpClientTest } from "@/testing/http";
 import { WallhavenService, WallhavenServiceError } from "./service";
 
 const item = {
@@ -34,29 +34,10 @@ const payload = {
   meta: { current_page: 1, last_page: 1, per_page: 24, total: 1, query: null, seed: null },
 };
 
-/**
- * WallhavenService over a fake HttpClient: `respond` answers each request in
- * turn (the last answer repeats), and `requests` records what was sent.
- */
-const fakeWallhaven = (...respond: ReadonlyArray<{ status: number; body?: unknown }>) => {
-  const requests: Array<HttpClientRequest.HttpClientRequest> = [];
-  const client = HttpClient.make((request) =>
-    Effect.sync(() => {
-      const answer = respond[Math.min(requests.length, respond.length - 1)]!;
-      requests.push(request);
-      return HttpClientResponse.fromWeb(
-        request,
-        new Response(JSON.stringify(answer.body ?? {}), {
-          status: answer.status,
-          headers: { "content-type": "application/json" },
-        }),
-      );
-    }),
-  );
-  const layer = WallhavenService.layer.pipe(
-    Layer.provide(Layer.succeed(HttpClient.HttpClient, client)),
-  );
-  return { requests, layer };
+/** WallhavenService over a fake HttpClient answering with `answers` in turn. */
+const fakeWallhaven = (...answers: ReadonlyArray<Answer>) => {
+  const http = HttpClientTest(...answers);
+  return { requests: http.requests, layer: WallhavenService.layer.pipe(Layer.provide(http.layer)) };
 };
 
 describe("WallhavenService.search", () => {

@@ -1,3 +1,4 @@
+export { OmarchyCli, type OmarchyCliImpl, OmarchyCliNode } from "./cli.ts";
 export * from "./install.ts";
 export {
   omarchyPath,

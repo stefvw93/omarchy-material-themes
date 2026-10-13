@@ -1,10 +1,8 @@
-import { Context, Effect, Layer, Schema, Stream } from "effect";
-import { ChildProcess, ChildProcessSpawner } from "effect/process";
+import { Context, Effect, Layer, Schema } from "effect";
+import { OmarchyError } from "./errors.ts";
+import { commandOutput } from "./process.ts";
 
-export class OmarchyError extends Schema.TaggedError<OmarchyError>()("@stef/omarchy/OmarchyError", {
-  message: Schema.String,
-  cause: Schema.optionalKey(Schema.Defect()),
-}) {}
+export { OmarchyError };
 
 /** One entry of `omarchy-shell shell listPlugins`. */
 export const PluginInfo = Schema.Struct({
@@ -38,33 +36,6 @@ export class OmarchyShell extends Context.Service<OmarchyShell, OmarchyShellImpl
   "@stef/omarchy/OmarchyShell",
 ) {}
 
-/** Runs `omarchy-shell` as a child process. */
-export const OmarchyShellNode = Layer.effect(
-  OmarchyShell,
-  Effect.gen(function* () {
-    const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-    return makeOmarchyShell((args) =>
-      Effect.scoped(
-        Effect.gen(function* () {
-          const handle = yield* spawner.spawn(ChildProcess.make("omarchy-shell", [...args]));
-          const output = yield* handle.all.pipe(Stream.decodeText(), Stream.mkString);
-          const exitCode = yield* handle.exitCode;
-          if (exitCode !== 0) {
-            return yield* new OmarchyError({
-              message: `omarchy-shell ${args.join(" ")} exited ${exitCode}: ${output.trim()}`,
-            });
-          }
-          return output;
-        }),
-      ).pipe(
-        Effect.catchTag("PlatformError", (cause) =>
-          Effect.fail(new OmarchyError({ message: `omarchy-shell ${args.join(" ")}`, cause })),
-        ),
-      ),
-    );
-  }),
-);
-
 /**
  * The service over a way to run `omarchy-shell <args>` and get its output:
  * a child process in Node, a Tauri command in Studio.
@@ -94,3 +65,9 @@ export const makeOmarchyShell = (
     ipc: (target, method, ...args) => text(["-q", target, method, ...args]),
   };
 };
+
+/** Runs `omarchy-shell` as a child process. */
+export const OmarchyShellNode = Layer.effect(
+  OmarchyShell,
+  Effect.map(commandOutput("omarchy-shell"), makeOmarchyShell),
+);

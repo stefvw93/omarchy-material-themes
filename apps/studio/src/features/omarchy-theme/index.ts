@@ -1,6 +1,4 @@
-import { Context, Effect, FileSystem, Layer, Path, PlatformError } from "effect";
-import { configDir } from "@tauri-apps/api/path";
-import { invoke } from "@tauri-apps/api/core";
+import { Clock, Context, Effect, FileSystem, Layer, Path, PlatformError } from "effect";
 import { HttpClient } from "effect/http";
 import {
   makeThemeWriters,
@@ -11,7 +9,7 @@ import {
   writeTheme,
   type ThemePalette,
 } from "@stef/theme-engine";
-import { OmarchyPaths, readTokens, type TokensError } from "@stef/omarchy";
+import { OmarchyCli, OmarchyPaths, readTokens, type TokensError } from "@stef/omarchy";
 
 export interface OmarchyThemeImpl {
   /** The theme name passed to `omarchy theme set`. */
@@ -55,6 +53,7 @@ export class OmarchyTheme extends Context.Service<OmarchyTheme, OmarchyThemeImpl
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const paths = yield* OmarchyPaths;
+      const omarchy = yield* OmarchyCli;
 
       const client = (yield* HttpClient.HttpClient).pipe(
         HttpClient.tapRequest((req) => Effect.log(req.toJSON())),
@@ -62,11 +61,7 @@ export class OmarchyTheme extends Context.Service<OmarchyTheme, OmarchyThemeImpl
         HttpClient.filterStatusOk,
       );
 
-      const themePath = path.join(
-        yield* Effect.promise(configDir),
-        "omarchy/themes",
-        OmarchyTheme.themeName,
-      );
+      const themePath = path.join(paths.themesDir, OmarchyTheme.themeName);
       const backgroundImagesPath = path.join(themePath, "backgrounds");
 
       yield* fs.makeDirectory(backgroundImagesPath, { recursive: true });
@@ -83,10 +78,9 @@ export class OmarchyTheme extends Context.Service<OmarchyTheme, OmarchyThemeImpl
         });
 
       const setTheme: OmarchyThemeImpl["setTheme"] = () =>
-        Effect.tryPromise({
-          try: () => invoke("set_theme", { name: OmarchyTheme.themeName }),
-          catch: (cause) => new OmarchyThemeError({ cause }),
-        });
+        omarchy
+          .setTheme(OmarchyTheme.themeName)
+          .pipe(Effect.mapError((cause) => new OmarchyThemeError({ cause })));
 
       const writeBackgroundImage: OmarchyThemeImpl["writeBackgroundImage"] = (url) =>
         Effect.gen(function* () {
@@ -96,7 +90,9 @@ export class OmarchyTheme extends Context.Service<OmarchyTheme, OmarchyThemeImpl
           const extension = imageExtensionFromContentType(res.headers["content-type"]);
           const imagePath = path.join(
             backgroundImagesPath,
-            `background-${crypto.randomUUID()}.${extension}`,
+            // A new name per apply (the folder is wiped first), so the
+            // wallpaper is reloaded even when the theme name stays the same.
+            `background-${yield* Clock.currentTimeMillis}.${extension}`,
           );
 
           yield* fs.writeFile(imagePath, new Uint8Array(data));
