@@ -1,5 +1,5 @@
 import { Hyprland } from "@stef/hyprland";
-import { installPlugin, variantId } from "@stef/omarchy";
+import { installPlugin, omarchyPath, variantId } from "@stef/omarchy";
 import { buildPlugin } from "@stef/plugin-kit";
 import { Console, Effect, FileSystem, Path, Stream } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
@@ -64,7 +64,7 @@ export const devLive = (app: PluginApp) =>
   );
 
 /** The shell.qml of the harness: a stand-in for Omarchy's plugin host. */
-const harnessShell = (app: PluginApp, manifest: unknown) => {
+const harnessShell = (app: PluginApp, manifest: unknown, omarchyDir: string) => {
   const entry = Object.values(app.config.entryPoints)[0];
   return `import Quickshell
 import Quickshell.Io
@@ -103,7 +103,7 @@ ShellRoot {
     active: harness.opened
     source: Qt.resolvedUrl("plugin/${entry}")
     onLoaded: {
-      if ("omarchyPath" in item) item.omarchyPath = "${process.env["OMARCHY_PATH"] ?? "/usr/share/omarchy"}"
+      if ("omarchyPath" in item) item.omarchyPath = "${omarchyDir}"
       if ("shell" in item) item.shell = harness.shellApi
       if ("manifest" in item) item.manifest = harness.manifest
       if (typeof item.open === "function") item.open(harness.payload)
@@ -134,7 +134,8 @@ export const harness = (app: PluginApp) =>
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-      const omarchyShell = `${process.env["OMARCHY_PATH"] ?? "/usr/share/omarchy"}/shell`;
+      const omarchyDir = yield* omarchyPath;
+      const omarchyShell = path.join(omarchyDir, "shell");
 
       const dir = yield* fs.makeTempDirectoryScoped({ prefix: "stef-harness-" });
       for (const entry of yield* fs.readDirectory(omarchyShell)) {
@@ -148,7 +149,10 @@ export const harness = (app: PluginApp) =>
         yield* fs.remove(link, { force: true });
         yield* fs.symlink(built, link);
         const manifest = JSON.parse(yield* fs.readFileString(path.join(built, "manifest.json")));
-        yield* fs.writeFileString(path.join(dir, "shell.qml"), harnessShell(app, manifest));
+        yield* fs.writeFileString(
+          path.join(dir, "shell.qml"),
+          harnessShell(app, manifest, omarchyDir),
+        );
       });
 
       const runQs = Effect.scoped(

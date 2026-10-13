@@ -1,4 +1,4 @@
-import { Context, Effect, Layer, Path } from "effect";
+import { Config, Context, Effect, Layer, Path } from "effect";
 
 /** Where Omarchy and the stef tooling keep things, all under one $HOME. */
 export interface OmarchyPathsImpl {
@@ -43,11 +43,12 @@ export const OmarchyPathsAt = (home: string) => Layer.effect(OmarchyPaths, Omarc
 /** Paths under the real $HOME. */
 export const OmarchyPathsNode = Layer.effect(
   OmarchyPaths,
-  Effect.suspend(() =>
-    OmarchyPaths.make(
-      (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env[
-        "HOME"
-      ] ?? "/",
-    ),
-  ),
+  Effect.gen(function* () {
+    return yield* OmarchyPaths.make(yield* Config.String("HOME"));
+  }),
+);
+
+/** Where Omarchy is installed: $OMARCHY_PATH, or the package's location. */
+export const omarchyPath = Config.String("OMARCHY_PATH").pipe(
+  Config.withDefault("/usr/share/omarchy"),
 );

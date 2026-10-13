@@ -1,3 +1,4 @@
+import { omarchyPath } from "@stef/omarchy";
 import { motionSchemes, schemeRoles, settleTime } from "@stef/qml-kit";
 import { Effect, FileSystem, Path, Schema } from "effect";
 import type { PluginConfig } from "./define.ts";
@@ -8,7 +9,8 @@ export class PluginCheckError extends Schema.TaggedError<PluginCheckError>()(
   { check: Schema.String, message: Schema.String },
 ) {}
 
-const omarchyShell = () => `${process.env["OMARCHY_PATH"] ?? "/usr/share/omarchy"}/shell`;
+/** Omarchy's shell, whose `qs.*` modules plugins import. */
+const omarchyShell = Effect.map(omarchyPath, (dir) => `${dir}/shell`);
 
 /**
  * Qt 6 qmllint over the built QML, any warning fails (/usr/bin/qmllint is Qt
@@ -21,7 +23,7 @@ export const checkQml = Effect.fn("PluginKit.checkQml")(function* (root: string,
   const importDir = path.join(root, ".cache/qml");
   yield* fs.makeDirectory(importDir, { recursive: true });
   yield* fs.remove(path.join(importDir, "qs"), { force: true });
-  yield* fs.symlink(omarchyShell(), path.join(importDir, "qs"));
+  yield* fs.symlink(yield* omarchyShell, path.join(importDir, "qs"));
 
   const qml = (yield* fs.readDirectory(outDir))
     .filter((f) => f.endsWith(".qml"))

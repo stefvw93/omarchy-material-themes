@@ -681,6 +681,9 @@ importers:
       '@stef/effect-platform-qml':
         specifier: workspace:*
         version: link:../effect-platform-qml
+      '@stef/omarchy':
+        specifier: workspace:*
+        version: link:../omarchy
       '@stef/qml-kit':
         specifier: workspace:*
         version: link:../qml-kit

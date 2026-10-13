@@ -1,5 +1,11 @@
 export * from "./install.ts";
-export { OmarchyPaths, OmarchyPathsAt, type OmarchyPathsImpl, OmarchyPathsNode } from "./paths.ts";
+export {
+  omarchyPath,
+  OmarchyPaths,
+  OmarchyPathsAt,
+  type OmarchyPathsImpl,
+  OmarchyPathsNode,
+} from "./paths.ts";
 export {
   makeOmarchyShell,
   OmarchyError,
