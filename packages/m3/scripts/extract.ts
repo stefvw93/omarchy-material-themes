@@ -17,7 +17,7 @@ import { tables } from "./html.ts";
 import { chunksOf, type RefNode, SITE, type Spec, type Value } from "./source.ts";
 
 /** Entries tagged with these are for Google's own products or for iOS. */
-const isDropped = (tags: Readonly<Record<string, string>>) =>
+export const isDropped = (tags: Readonly<Record<string, string>>) =>
   tags["audience"] === "1p.baseline" ||
   (tags["platform"] !== undefined && tags["platform"] !== "web") ||
   Object.keys(tags).some((g) => g.startsWith("ios."));
@@ -43,7 +43,7 @@ const channel = (c: Value, k: string) =>
     .toString(16)
     .padStart(2, "0");
 
-const normalize = (v: Value | undefined): ExtractValue => {
+export const normalize = (v: Value | undefined): ExtractValue => {
   if (!v || "undefined" in v) return { type: "undefined" };
   if ("color" in v) {
     const c = v["color"] as Value;
