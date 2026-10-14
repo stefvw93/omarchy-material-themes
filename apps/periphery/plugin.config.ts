@@ -15,6 +15,7 @@ export default definePlugin({
     selection: "src/selection/index.ts",
     hyprland: "src/hyprland/index.ts",
     flight: "src/flight/index.ts",
+    surface: "src/surface/index.ts",
   },
   files: ["README.md"],
   smoke: "smoke.ts",

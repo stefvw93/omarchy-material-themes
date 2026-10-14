@@ -127,6 +127,7 @@ export const m3Data = {
     "md.comp.elevated-card.container.shape": 12,
     "md.comp.elevated-card.container.elevation": 1,
     "md.comp.elevated-card.dragged.container.elevation": 8,
+    "md.comp.elevated-card.hover.container.elevation": 3,
     "md.comp.outlined-card.dragged.container.elevation": 6,
     "md.comp.outlined-card.container.color": {
       "role": "surface"

@@ -17,26 +17,26 @@ Scott Jenson showed a prototype at a KDE event (["Are we really going to use the
 
 ## Ubiquitous language
 
-| Term                 | Definition                                                                                                            |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Focus area           | The centred part of the monitor. Regular workspaces tile only in this area.                                           |
-| Band                 | The part of the monitor at the left or right of the focus area.                                                       |
-| Periphery            | The two bands together.                                                                                               |
-| Card                 | The live thumbnail of one window in a band.                                                                           |
-| Group                | The cards of one workspace, with the workspace label above them.                                                      |
-| Pile                 | The cards of one tab group, stacked: the shown tab in front, the other tabs peeking out behind it.                    |
-| Fan                  | A pile spread out, so every tab's card can be pointed at. A pile fans out while one of its tabs is selected.          |
-| Tilt                 | The turn of a card about its vertical axis, its outer edge nearer, like a curved display. A selected card turns flat. |
-| Ratio                | Focus area width divided by monitor height. The default is `1.25` (5:4).                                              |
-| Side width (`sideW`) | The width of one band: `(monW - round(monH × ratio)) / 2`.                                                            |
-| Drop                 | The release of a drag. The drop position selects the target workspace.                                                |
-| Selection            | The one card that has the focus instead of a focus area window. Set by hovering a card or by the focus keys.          |
-| Tab group            | Hyprland's window group: several windows on one tile, one shown at a time, with a tab bar above it.                   |
-| Shown tab            | The window of a tab group that its tile shows. The group's other windows are hidden tabs.                             |
-| Ghost                | A live copy of a window (`ScreencopyView`) that flies over the screen during a flight.                                |
-| Flight               | A workspace switch in which ghosts fly between tiles and cards over a wallpaper backdrop.                             |
-| Hand-off             | The frame in which the ghosts and the backdrop go, and the real windows and cards show.                               |
-| Routed switch        | A workspace switch from a key that goes through the hook first, so the plugin can fly it.                             |
+| Term                 | Definition                                                                                                                                                     |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Focus area           | The centred part of the monitor. Regular workspaces tile only in this area.                                                                                    |
+| Band                 | The part of the monitor at the left or right of the focus area.                                                                                                |
+| Periphery            | The two bands together.                                                                                                                                        |
+| Card                 | The live thumbnail of one window in a band.                                                                                                                    |
+| Group                | The cards of one workspace, with the workspace label above them.                                                                                               |
+| Pile                 | The cards of one tab group, stacked: the shown tab in front, the other tabs peeking out behind it.                                                             |
+| Fan                  | A pile spread out, so every tab's card can be pointed at. A pile fans out while one of its tabs is selected.                                                   |
+| Tilt                 | The turn of a band's plane about the monitor's outer edge, its inner side further away, like a curved display. A selected card leaves the plane and lies flat. |
+| Ratio                | Focus area width divided by monitor height. The default is `1.25` (5:4).                                                                                       |
+| Side width (`sideW`) | The width of one band: `(monW - round(monH × ratio)) / 2`.                                                                                                     |
+| Drop                 | The release of a drag. The drop position selects the target workspace.                                                                                         |
+| Selection            | The one card that has the focus instead of a focus area window. Set by hovering a card or by the focus keys.                                                   |
+| Tab group            | Hyprland's window group: several windows on one tile, one shown at a time, with a tab bar above it.                                                            |
+| Shown tab            | The window of a tab group that its tile shows. The group's other windows are hidden tabs.                                                                      |
+| Ghost                | A live copy of a window (`ScreencopyView`) that flies over the screen during a flight.                                                                         |
+| Flight               | A workspace switch in which ghosts fly between tiles and cards over a wallpaper backdrop.                                                                      |
+| Hand-off             | The frame in which the ghosts and the backdrop go, and the real windows and cards show.                                                                        |
+| Routed switch        | A workspace switch from a key that goes through the hook first, so the plugin can fly it.                                                                      |
 
 ## Behaviour
 
@@ -92,7 +92,9 @@ The bands follow macOS Mission Control: every window is visible, a workspace kee
 4. A floating window's card overlaps the tiled cards where the window really sits on its workspace, in front of them.
 5. The groups are stacked down the band, `groupGap` apart, centred vertically. The workspace label is above the top card of its group.
 
-Cards are turned 8° about their vertical axis (tilt), with perspective: the outer edge (towards the monitor's edge) comes nearer and the inner edge goes back, so each band curves in towards the focus area like a curved display. A selected or dragged card turns flat and comes to the front. Both move on the spatial default spring.
+Each band is one surface in world space ([src/surface/specs.md](src/surface/specs.md)): a plane hinged on the monitor's outer edge and turned 8° back (tilt), seen in perspective from in front of the monitor's centre (`viewDistance`). Every card of the band lies on that plane, so the cards share one vanishing point and the band curves in towards the focus area like a curved display. The hinge is on the screen plane and every tilted point is behind it, so a card that leaves the plane and lies flat on the screen plane is in front of every tilted card, everywhere: drawing it on top never contradicts its depth.
+
+The selected card is lifted: it leaves the plane and lies flat on the screen plane, grows by `liftScale` (5%) from the middle of its outer edge (towards the focus area, never off the band), comes to the front, and casts the elevated card's hover shadow (elevation level 2). The others stay as they are. A dragged card turns flat without the lift: the drag has its own. Tilt and lift move on the spatial default spring, the shadow fades with them.
 
 Each thumbnail fills its card. A window on a hidden workspace keeps its last frame, which can have its old size (after the mode turned on, or a shell restart) until the window draws again; the frame then covers the card, cropped, rather than letterboxed in it.
 
@@ -384,7 +386,9 @@ Motion is Material 3 springs from the tokens' motion scheme (`tokens.m3.springs`
 | `bandMargin`                  | `space200` (16dp)        | Space between band edge and cards. Token `periphery.bandMargin`.                                                                                                                               |
 | `cardGap`                     | `space125` (10dp)        | Minimum space between cards, and between a group header and its cards. Token `periphery.cardGap`.                                                                                              |
 | `groupGap`                    | `space250` (20dp)        | Space between groups. Token `periphery.groupGap`.                                                                                                                                              |
-| `cardTilt`                    | `8`                      | How far a card at rest turns, in degrees, its outer edge nearer. A selected or dragged card turns flat.                                                                                        |
+| `cardTilt`                    | `8`                      | How far a band's plane turns back about the monitor's outer edge, in degrees. A selected or dragged card turns flat.                                                                           |
+| `viewDistance`                | 1.5 × the monitor height | How far in front of the monitor's centre the bands are seen from. Shorter: stronger perspective.                                                                                               |
+| `liftScale`                   | `1.05`                   | How much the selected card grows, from the middle of its outer edge.                                                                                                                           |
 | `leaveMs`                     | `120`                    | How long after the pointer leaves the selected card, for a card that isn't under it, the selection clears.                                                                                     |
 | `animSpeed`                   | `1`                      | Global animation speed. `0.25` plays all animations 4× slower (to inspect them), `2` twice as fast. Scales the springs (stiffness by speed², which keeps their shape) and the switch timeouts. |
 | `workspaceStyle`              | `slidefade 10%`          | Hyprland's workspace animation style while the mode is on (switches that aren't routed), with the theme's curve and speed.                                                                     |

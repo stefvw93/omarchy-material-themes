@@ -17,6 +17,7 @@ import "lib/meta.mjs" as Meta
 import "lib/layout.mjs" as Layout
 import "lib/selection.mjs" as Selection
 import "lib/flight.mjs" as Flight
+import "lib/surface.mjs" as Surface
 
 // Periphery exposé, after Scott Jenson's widescreen prototype: tiling and the
 // bar are squeezed into a centred focus area (5:4 of the monitor height by
@@ -160,8 +161,8 @@ Item {
   readonly property string openPile: root.selected && root.winData[root.selected] ? root.winData[root.selected].pile : ""
   // A card's rect as drawn: its fan rect while its pile is open.
   function drawnRect(card) { return card.pile !== "" && card.pile === root.openPile && card.fan ? card.fan : card }
-  // A card's tilt at rest, unselected: its outer edge nearer, so the band
-  // curves in towards the focus area like a curved display.
+  // A card's tilt at rest, unselected: +cardTilt in the left band, −cardTilt
+  // in the right (the sign is the band's side).
   function restTilt(rect) { return rect ? (rect.x + rect.w / 2 < root.monW / 2 ? 1 : -1) * root.cardTilt : 0 }
   function drawnCards() {
     var out = {}
@@ -234,6 +235,21 @@ Item {
   // How far a card at rest turns towards the focus area, in degrees; a
   // selected or dragged card turns flat (interpretation periphery.components).
   readonly property real cardTilt: 8
+  // The band's plane seen from this far in front of the monitor's centre:
+  // about a viewer's distance from a 27" screen (src/surface/specs.md).
+  readonly property real viewDistance: root.monH * 1.5
+  // A card at (x, y) on its band's plane, turned back by |angle| (signed by
+  // the band: + left, − right), hinged on the monitor's outer edge.
+  function surfaceAt(x, y, angle) {
+    var side = angle >= 0 ? 1 : -1
+    var m = Surface.cardSurface({ x: x, y: y, side: side, angle: Math.abs(angle), hingeX: side > 0 ? 0 : root.monW, // qmllint disable missing-property
+      eyeX: root.monW / 2, eyeY: root.monH / 2, distance: root.viewDistance })
+    return Qt.matrix4x4(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15])
+  }
+  // How much the selected card grows, from the middle of its outer edge.
+  readonly property real liftScale: 1.05
+  // The lifted card's shadow: the elevated card's hover elevation.
+  readonly property var liftShadow: root.m3.shadowAt(root.m3.comp["md.comp.elevated-card.hover.container.elevation"])
   // Global animation speed: 1 is normal, 0.25 plays every animation 4x
   // slower to inspect it, 2 twice as fast. Scales the timeouts and the
   // springs (stiffness by speed² keeps their shape, in time scaled by speed).
@@ -1102,20 +1118,26 @@ Item {
         property real leaveTo: 0
         // The spatial spring, like Hyprland's workspace slide it travels with.
         SpringValue { id: slide; spring: root.springSpatial; epsilon: root.pixelEpsilon; target: card.leaving ? card.leaveTo : (card.settled ? 0 : card.arriveFrom) }
-        // Turned towards the focus area, with perspective; flat while selected
-        // or dragged.
+        // On its band's plane, hinged on the monitor's edge (surfaceAt); flat
+        // while selected or dragged, on the screen plane, in front of every
+        // tilted card.
         SpringValue { id: tilt; spring: root.springSpatial; target: card.selected || card.dragging ? 0 : 1 }
         readonly property real tiltAngle: root.restTilt(card.place) * tilt.value
+        readonly property real outerX: root.restTilt(card.place) >= 0 ? 0 : card.width
+        // Lifted while selected: larger from its outer edge, with a shadow.
+        SpringValue { id: lift; spring: root.springSpatial; epsilon: 0.001; target: card.selected ? 1 : 0 }
+        liftAmount: lift.value
         transform: [
           Translate {
             x: root.cardSlideVertical ? 0 : Math.round(slide.value)
             y: root.cardSlideVertical ? Math.round(slide.value) : 0
           },
-          Rotation {
-            origin.x: card.width / 2
+          Matrix4x4 { matrix: root.surfaceAt(card.x, card.y, card.tiltAngle) },
+          Scale {
+            origin.x: card.outerX
             origin.y: card.height / 2
-            axis { x: 0; y: 1; z: 0 }
-            angle: card.tiltAngle
+            xScale: 1 + (root.liftScale - 1) * lift.value
+            yScale: 1 + (root.liftScale - 1) * lift.value
           }
         ]
         SpringValue { id: fade; spring: root.springEffects; target: card.settled && !card.leaving ? (card.dragging ? root.draggedSourceOpacity : 1) : 0 }
@@ -1307,12 +1329,8 @@ Item {
         height: Math.round(flyer.gh)
         visible: !!root.ghosted[address]
         opacity: flyFade.value
-        transform: Rotation {
-          origin.x: flyer.width / 2
-          origin.y: flyer.height / 2
-          axis { x: 0; y: 1; z: 0 }
-          angle: flyer.look.tilt
-        }
+        // On the plane of the band it leaves or lands on, as the cards.
+        transform: Matrix4x4 { matrix: root.surfaceAt(flyer.x, flyer.y, flyer.look.tilt) }
         Component.onCompleted: root.ghostItems[address] = flyer
         Component.onDestruction: if (root.ghostItems[address] === flyer) delete root.ghostItems[address]
 

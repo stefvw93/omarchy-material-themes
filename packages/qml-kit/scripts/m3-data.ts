@@ -47,6 +47,7 @@ export const compAllowlist = [
   "md.comp.elevated-card.container.shape",
   "md.comp.elevated-card.container.elevation",
   "md.comp.elevated-card.dragged.container.elevation",
+  "md.comp.elevated-card.hover.container.elevation",
   "md.comp.outlined-card.dragged.container.elevation",
   "md.comp.outlined-card.container.color",
   "md.comp.outlined-card.container.shape",

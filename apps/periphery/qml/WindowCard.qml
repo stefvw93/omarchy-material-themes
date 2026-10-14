@@ -1,5 +1,6 @@
 import Quickshell.Wayland
 import QtQuick
+import QtQuick.Effects
 import qs.Ui
 
 // One window in the periphery: a live thumbnail at the window's aspect.
@@ -20,6 +21,20 @@ Item {
   // Its window's own rounding and border width, as Hyprland draws them, so a
   // ghost lands on a card that looks like it.
   readonly property var props: host.propsOf(win.address)
+  // 0 at rest, 1 lifted (selected): the shadow fades in with the lift.
+  property real liftAmount: 0
+
+  // Lifted: the elevated card's hover shadow.
+  RectangularShadow {
+    anchors.fill: parent
+    radius: card.props.rounding
+    blur: card.host.liftShadow.blur
+    spread: card.host.liftShadow.spread
+    offset: Qt.vector2d(card.host.liftShadow.x, card.host.liftShadow.y)
+    color: Qt.alpha(card.host.scheme.color.shadow, card.host.liftShadow.opacity)
+    opacity: card.liftAmount
+    visible: opacity > 0
+  }
 
   // No frame yet: an outlined card with the window class.
   Rectangle {
