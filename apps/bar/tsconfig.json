@@ -1,0 +1,5 @@
+{
+  "extends": "@stef/config/tsconfig.qml.json",
+  "compilerOptions": { "noImplicitOverride": true },
+  "include": ["src"]
+}

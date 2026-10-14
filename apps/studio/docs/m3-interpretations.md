@@ -171,6 +171,12 @@ Token values come from the spec's token data ([material-3/](material-3/README.md
 - **Choice:** The ghost redoes Hyprland's blur from Hyprland's live options: MultiEffect over the wallpaper with radius size × 2^passes (how far dual-kawase reaches: each pass halves the image and samples size away; 48 px for size 6, 3 passes), blurMax 64 stretched by blurMultiplier past it; contrast − 1, brightness − 1 and vibrancy as MultiEffect's contrast, brightness and saturation. Blur off, or size or passes missing, is no blur. Hyprland's noise is not redone.
 - **Why:** A value derived from the compositor's own settings follows any theme or blur change and replaces a radius matched by eye; the ghost then looks like the window it hands off to.
 
+### `bar.focus-area`: Bar (stef.bar): the bar while Periphery's focus area is on
+
+- **Spec:** Silent: an app bar spans its window. Motion: "Most motion should use the default speed, while smaller elements may use fast and larger elements may use slow" (citations.springSpeeds); spatial springs move things, effects springs change colour and opacity.
+- **Choice:** The bar is the theme's app bar (shell.components). While Periphery is on, its body narrows to the focus area and floats there: md.sys.shape.corner.full, moving on spatial default; the corner rounds on effects default. Off, it spans the screen with no corner, as before.
+- **Why:** The bar belongs to the work in the focus area, so it moves with it like the windows do (spatial default); a full corner marks it as floating rather than docked to the screen edge.
+
 ### `special.scrim`: Hyprland: behind a special workspace (the scratchpad)
 
 - **Spec:** Modal surfaces (dialogs, modal sheets, time pickers) sit above a scrim that makes the content behind them less prominent: "Scrims use the scrim color role at an opacity of 32%" (citations.scrimOpacity). M3 has no blur.

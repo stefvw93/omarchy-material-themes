@@ -10,6 +10,8 @@ export const PluginInfo = Schema.Struct({
   name: Schema.String,
   kinds: Schema.Array(Schema.String),
   enabled: Schema.Boolean,
+  /** For a `bar`: the one running (a selected bar that failed falls back to the stock one). */
+  active: Schema.optional(Schema.Boolean),
   firstParty: Schema.Boolean,
 });
 export type PluginInfo = typeof PluginInfo.Type;

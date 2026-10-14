@@ -120,6 +120,7 @@ Plugins take M3 roles from `Scheme.qml`: the applied theme's `omaterial.json`, o
 | Special workspace         | scrim (`dim_special` 0.32), blurred behind (`blur:special`, the shared `tokens.blur`) unless `tokens.special.blur` is off | ✓ `citations.scrimOpacity`; I `special.scrim` (the blur is not M3)       |
 | Periphery dragged card    | `md.comp.filled-card.dragged.container.elevation` (level 3) as the Web's ambient shadow (`RectangularShadow`)             | ✓; I `periphery.components`                                              |
 | Periphery ghost wallpaper | MultiEffect blur derived from Hyprland's `decoration:blur` (size × 2^passes; contrast, brightness, vibrancy)              | I `periphery.ghost-blur`                                                 |
+| Bar in the focus area     | `stef.bar`: the app bar narrows to Periphery's focus area, `corner.full`, spatial default spring                          | I `bar.focus-area`                                                       |
 | Studio                    | `shadow-level0…5` from the Web's key and ambient shadows; shadcn's `shadow-2xs…2xl` mapped onto levels 1–5                | I `studio.tailwind-scale`                                                |
 
 ## 5. Typography

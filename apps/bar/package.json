@@ -1,0 +1,27 @@
+{
+  "name": "@stef/bar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An M3 replacement for the Omarchy bar that follows Periphery's focus area and hosts the stock widgets.",
+  "type": "module",
+  "scripts": {
+    "build": "plugin-kit build",
+    "build:dev": "plugin-kit build --dev",
+    "test": "vp test",
+    "verify": "plugin-kit check"
+  },
+  "dependencies": {
+    "@stef/hyprland": "workspace:*",
+    "@stef/omarchy": "workspace:*",
+    "@stef/qml-kit": "workspace:*",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@stef/config": "workspace:*",
+    "@stef/plugin-kit": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}
