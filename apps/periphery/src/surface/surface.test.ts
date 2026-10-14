@@ -4,9 +4,10 @@ import type { SurfaceInput } from "./surface.ts";
 
 const monW = 2560;
 const monH = 1440;
-const eye = { eyeX: monW / 2, eyeY: monH / 2, distance: 2160 };
-const left = { side: 1, hingeX: 0, ...eye };
-const right = { side: -1, hingeX: monW, ...eye };
+const eyeY = monH / 2;
+const distance = monH;
+const left = { side: 1, hingeX: 0, eyeX: 190, eyeY, distance };
+const right = { side: -1, hingeX: monW, eyeX: monW - 190, eyeY, distance };
 
 // A card point (u, v) through the matrix, back in monitor coordinates.
 function draw(input: SurfaceInput, u: number, v: number) {
@@ -19,13 +20,13 @@ function draw(input: SurfaceInput, u: number, v: number) {
 }
 
 // The world model of specs.md, independent of the matrix.
-function world(hingeX: number, side: number, angle: number, x: number, y: number) {
+function world(hingeX: number, side: number, eyeX: number, angle: number, x: number, y: number) {
   const t = (angle * Math.PI) / 180;
   const a = x - hingeX;
   const xr = hingeX + a * Math.cos(t);
   const z = -side * a * Math.sin(t);
-  const f = eye.distance / (eye.distance - z);
-  return { x: eye.eyeX + (xr - eye.eyeX) * f, y: eye.eyeY + (y - eye.eyeY) * f };
+  const f = distance / (distance - z);
+  return { x: eyeX + (xr - eyeX) * f, y: eyeY + (y - eyeY) * f };
 }
 
 describe("cardSurface", () => {
@@ -44,7 +45,7 @@ describe("cardSurface", () => {
       [300, 200],
     ] as const) {
       const p = draw(card, u, v);
-      const q = world(0, 1, 8, 40 + u, 300 + v);
+      const q = world(0, 1, 190, 8, 40 + u, 300 + v);
       expect(p.x).toBeCloseTo(q.x, 6);
       expect(p.y).toBeCloseTo(q.y, 6);
     }
@@ -53,7 +54,7 @@ describe("cardSurface", () => {
   it("draws a right band card where its hinged plane puts it", () => {
     const card = { ...right, x: 2200, y: 900, angle: 8 };
     const p = draw(card, 340, 200);
-    const q = world(monW, -1, 8, 2540, 1100);
+    const q = world(monW, -1, monW - 190, 8, 2540, 1100);
     expect(p.x).toBeCloseTo(q.x, 6);
     expect(p.y).toBeCloseTo(q.y, 6);
   });
@@ -70,6 +71,13 @@ describe("cardSurface", () => {
     const outer = draw(card, 0, 240).y - draw(card, 0, 0).y;
     const inner = draw(card, 340, 240).y - draw(card, 340, 0).y;
     expect(inner).toBeLessThan(outer);
+  });
+
+  it("draws a band-wide card narrower at 25°, about 87% of its width", () => {
+    const card = { ...left, x: 16, y: 600, angle: 25 };
+    const width = draw(card, 348, 0).x - draw(card, 0, 0).x;
+    expect(width / 348).toBeGreaterThan(0.85);
+    expect(width / 348).toBeLessThan(0.89);
   });
 
   it("agrees between two cards of one band: a world point lands on the same pixel", () => {

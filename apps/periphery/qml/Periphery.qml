@@ -234,16 +234,16 @@ Item {
   readonly property int headerHeight: root.typeOf("title-small").lineHeight + root.cardGap
   // How far a card at rest turns towards the focus area, in degrees; a
   // selected or dragged card turns flat (interpretation periphery.components).
-  readonly property real cardTilt: 8
-  // The band's plane seen from this far in front of the monitor's centre:
-  // about a viewer's distance from a 27" screen (src/surface/specs.md).
-  readonly property real viewDistance: root.monH * 1.5
+  readonly property real cardTilt: 25
+  // Each band's plane seen from this far in front of the band's centre
+  // (src/surface/specs.md): shorter is stronger perspective.
+  readonly property real viewDistance: root.monH
   // A card at (x, y) on its band's plane, turned back by |angle| (signed by
   // the band: + left, − right), hinged on the monitor's outer edge.
   function surfaceAt(x, y, angle) {
     var side = angle >= 0 ? 1 : -1
     var m = Surface.cardSurface({ x: x, y: y, side: side, angle: Math.abs(angle), hingeX: side > 0 ? 0 : root.monW, // qmllint disable missing-property
-      eyeX: root.monW / 2, eyeY: root.monH / 2, distance: root.viewDistance })
+      eyeX: side > 0 ? root.sideW / 2 : root.monW - root.sideW / 2, eyeY: root.monH / 2, distance: root.viewDistance })
     return Qt.matrix4x4(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15])
   }
   // How much the selected card grows, from the middle of its outer edge.
