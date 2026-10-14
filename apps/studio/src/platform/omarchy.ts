@@ -35,5 +35,9 @@ export const OmarchyCliTauri = Layer.succeed(
         try: () => invoke<void>("set_theme", { name }),
         catch: (cause) => new OmarchyError({ message: `omarchy theme set ${name}`, cause }),
       }),
+    // Studio doesn't deploy plugins, so it has no Rust command for this.
+    restartShell: Effect.fail(
+      new OmarchyError({ message: "omarchy restart shell: not available in Studio" }),
+    ),
   }),
 );

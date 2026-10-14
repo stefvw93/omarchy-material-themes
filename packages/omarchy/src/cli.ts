@@ -6,6 +6,11 @@ import { commandOutput } from "./process.ts";
 export interface OmarchyCliImpl {
   /** `omarchy theme set <name>`: applies an installed theme. */
   readonly setTheme: (name: string) => Effect.Effect<void, OmarchyError>;
+  /**
+   * `omarchy restart shell`: a fresh shell process. The only way a redeployed
+   * plugin runs its new code: the QML engine caches components by URL.
+   */
+  readonly restartShell: Effect.Effect<void, OmarchyError>;
 }
 
 export class OmarchyCli extends Context.Service<OmarchyCli, OmarchyCliImpl>()(
@@ -16,6 +21,9 @@ export class OmarchyCli extends Context.Service<OmarchyCli, OmarchyCliImpl>()(
 export const OmarchyCliNode = Layer.effect(
   OmarchyCli,
   Effect.map(commandOutput("omarchy"), (run) =>
-    OmarchyCli.of({ setTheme: (name) => Effect.asVoid(run(["theme", "set", name])) }),
+    OmarchyCli.of({
+      setTheme: (name) => Effect.asVoid(run(["theme", "set", name])),
+      restartShell: Effect.asVoid(run(["restart", "shell"])),
+    }),
   ),
 );

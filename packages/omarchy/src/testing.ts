@@ -96,6 +96,7 @@ export const OmarchyCliTest = (overrides: Partial<OmarchyCliImpl> = {}) => {
   const calls: string[] = [];
   const layer = Layer.succeed(OmarchyCli, {
     setTheme: (name) => Effect.sync(() => void calls.push(`theme set ${name}`)),
+    restartShell: Effect.sync(() => void calls.push("restart shell")),
     ...overrides,
   });
   return { layer, calls };

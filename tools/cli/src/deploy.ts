@@ -1,5 +1,6 @@
 import { Hyprland } from "@stef/hyprland";
 import {
+  OmarchyCli,
   OmarchyShell,
   installPlugin,
   readState,
@@ -32,6 +33,17 @@ const enable = (id: string) =>
 const disableIfKnown = (id: string) =>
   Effect.flatMap(OmarchyShell, (shell) => shell.setPluginEnabled(id, false).pipe(Effect.ignore));
 
+/**
+ * Whether the running shell already knows `id`. Its QML engine caches a
+ * plugin's components by URL, so a known id keeps running the code it loaded
+ * until the shell restarts; an unreachable shell knows nothing.
+ */
+const knownToShell = (id: string) =>
+  Effect.flatMap(OmarchyShell, (shell) => shell.listPlugins).pipe(
+    Effect.map((plugins) => plugins.some((plugin) => plugin.id === id)),
+    Effect.orElseSucceed(() => false),
+  );
+
 /** Regenerates plugins.lua; reloads Hyprland's config when the app has a hook. */
 const refreshHooks = (app: PluginApp) =>
   Effect.gen(function* () {
@@ -43,11 +55,13 @@ const refreshHooks = (app: PluginApp) =>
 
 /**
  * Builds `variant` of the app, installs it, makes it the live variant (the
- * other one is disabled, and only its hook is loaded), and enables it.
+ * other one is disabled, and only its hook is loaded), and enables it. When
+ * the shell already knew the id, it restarts the shell so the new code runs.
  */
 export const deploy = Effect.fn("Stef.deploy")(function* (app: PluginApp, variant: Variant) {
   const id = variantId(app.config.id, variant);
   const built = yield* buildPlugin(app.root, app.config, variant);
+  const stale = yield* knownToShell(id);
   const target = yield* installPlugin(built, id);
   yield* Console.log(`installed ${target}`);
 
@@ -58,6 +72,10 @@ export const deploy = Effect.fn("Stef.deploy")(function* (app: PluginApp, varian
   yield* disableIfKnown(variantId(app.config.id, other(variant)));
   yield* enable(id);
   yield* Console.log(`enabled ${id}`);
+  if (stale) {
+    yield* Effect.flatMap(OmarchyCli, (omarchy) => omarchy.restartShell);
+    yield* Console.log(`restarted the shell: it had ${id}'s previous code loaded`);
+  }
 });
 
 /** Removes the dev variant and puts prod back (if it is installed). */

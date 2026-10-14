@@ -6,6 +6,7 @@ import {
   installHooksInclude,
   OmarchyPathsNode,
   OmarchyShell,
+  OmarchyCliNode,
   OmarchyShellNode,
   readState,
   type SmokeTest,
@@ -188,8 +189,11 @@ const stef = Command.make("stef").pipe(
   ]),
 );
 
-const services = Layer.mergeAll(OmarchyPathsNode, OmarchyShellNode, HyprlandNode).pipe(
-  Layer.provideMerge(NodeServices.layer),
-);
+const services = Layer.mergeAll(
+  OmarchyPathsNode,
+  OmarchyShellNode,
+  OmarchyCliNode,
+  HyprlandNode,
+).pipe(Layer.provideMerge(NodeServices.layer));
 
 Command.run(stef, { version: "0.0.0" }).pipe(Effect.provide(services), NodeRuntime.runMain);
