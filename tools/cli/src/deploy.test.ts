@@ -57,6 +57,42 @@ describe("deploy", () => {
     { timeout: 60_000 },
   );
   it.live(
+    "selects a bar's dev variant, then the bar that was selected before",
+    () => {
+      const home = mkdtempSync(join(tmpdir(), "stef-cli-"));
+      const stock = { name: "Bar", kinds: ["bar"], firstParty: true };
+      const shell = OmarchyShellTest({
+        listPlugins: Effect.succeed([
+          { ...stock, id: "omarchy.bar", enabled: true },
+          { name: "", kinds: ["panel"], enabled: true, firstParty: false, id: "stef.periphery" },
+        ]),
+      });
+      const omarchy = OmarchyCliTest();
+      const hypr = HyprlandTest({ responses: {}, events: [] });
+      return Effect.gen(function* () {
+        const app = yield* pluginApp("bar");
+
+        yield* deploy(app, "dev");
+        expect(shell.calls).toContain("enable stef.bar.dev");
+        // A newly selected bar loads without its widgets until the shell restarts.
+        expect(omarchy.calls).toEqual(["restart shell"]);
+        expect((yield* readState).bars).toEqual({ "stef.bar": "omarchy.bar" });
+
+        yield* undeployDev(app);
+        expect(shell.calls.at(-1)).toBe("enable omarchy.bar");
+        expect(shell.calls).not.toContain("enable stef.bar");
+        expect((yield* readState).bars).toEqual({});
+      }).pipe(
+        Effect.provide(
+          Layer.mergeAll(OmarchyPathsAt(home), shell.layer, omarchy.layer, hypr.layer).pipe(
+            Layer.provideMerge(NodeServices.layer),
+          ),
+        ),
+      );
+    },
+    { timeout: 60_000 },
+  );
+  it.live(
     "restarts the shell when it already knew the plugin",
     () => {
       const home = mkdtempSync(join(tmpdir(), "stef-cli-"));

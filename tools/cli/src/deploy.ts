@@ -44,6 +44,14 @@ const knownToShell = (id: string) =>
     Effect.orElseSucceed(() => false),
   );
 
+const isBar = (app: PluginApp) => app.config.kinds.includes("bar");
+
+/** The selected bar: the enabled `bar` plugin, if the shell can tell. */
+const selectedBar = Effect.flatMap(OmarchyShell, (shell) => shell.listPlugins).pipe(
+  Effect.map((plugins) => plugins.find((p) => p.kinds.includes("bar") && p.enabled)?.id),
+  Effect.orElseSucceed(() => undefined),
+);
+
 /** Regenerates plugins.lua; reloads Hyprland's config when the app has a hook. */
 const refreshHooks = (app: PluginApp) =>
   Effect.gen(function* () {
@@ -66,28 +74,56 @@ export const deploy = Effect.fn("Stef.deploy")(function* (app: PluginApp, varian
   yield* Console.log(`installed ${target}`);
 
   const state = yield* readState;
-  yield* writeState({ active: { ...state.active, [app.config.id]: variant } });
+  // A bar's dev variant replaces whichever bar is selected: remember it.
+  const before = isBar(app) && variant === "dev" ? yield* selectedBar : undefined;
+  const bars =
+    before !== undefined && before !== id ? { ...state.bars, [app.config.id]: before } : state.bars;
+  yield* writeState({
+    ...state,
+    active: { ...state.active, [app.config.id]: variant },
+    ...(bars ? { bars } : {}),
+  });
   yield* refreshHooks(app);
 
   yield* disableIfKnown(variantId(app.config.id, other(variant)));
   yield* enable(id);
   yield* Console.log(`enabled ${id}`);
-  if (stale) {
+  // A bar the shell just switched to can come up without its widgets (seen
+  // on a first selection); a restart loads it with them.
+  if (stale || isBar(app)) {
     yield* Effect.flatMap(OmarchyCli, (omarchy) => omarchy.restartShell);
-    yield* Console.log(`restarted the shell: it had ${id}'s previous code loaded`);
+    yield* Console.log(
+      stale
+        ? `restarted the shell: it had ${id}'s previous code loaded`
+        : `restarted the shell: it loads the new bar with its widgets`,
+    );
   }
 });
 
-/** Removes the dev variant and puts prod back (if it is installed). */
+/**
+ * Removes the dev variant and puts prod back (if it is installed). A bar
+ * puts back the bar that was selected before the dev variant instead: prod
+ * only if it was the one.
+ */
 export const undeployDev = Effect.fn("Stef.undeployDev")(function* (app: PluginApp) {
   const devId = variantId(app.config.id, "dev");
   yield* disableIfKnown(devId);
   yield* uninstallPlugin(devId);
   const state = yield* readState;
-  yield* writeState({ active: { ...state.active, [app.config.id]: "prod" } });
+  const { [app.config.id]: before, ...bars } = state.bars ?? {};
+  yield* writeState({
+    ...state,
+    active: { ...state.active, [app.config.id]: "prod" },
+    ...(state.bars ? { bars } : {}),
+  });
   yield* refreshHooks(app);
-  yield* enable(app.config.id).pipe(
-    Effect.catch((error) => Console.log(`prod ${app.config.id} not enabled: ${error.message}`)),
+  const back = isBar(app) ? before : app.config.id;
+  if (back === undefined) {
+    yield* Console.log(`removed ${devId}; the stock bar is back`);
+    return;
+  }
+  yield* enable(back).pipe(
+    Effect.catch((error) => Console.log(`${back} not enabled: ${error.message}`)),
   );
-  yield* Console.log(`removed ${devId}; ${app.config.id} is live again`);
+  yield* Console.log(`removed ${devId}; ${back} is live again`);
 });

@@ -8,6 +8,11 @@ export type Variant = typeof Variant.Type;
 export const StefState = Schema.Struct({
   /** Base plugin id (`stef.periphery`) → the variant that is live. */
   active: Schema.Record(Schema.String, Variant),
+  /**
+   * Base id of a `bar` plugin (`stef.bar`) → the bar that was selected before
+   * its dev variant took over, selected again when the dev variant goes.
+   */
+  bars: Schema.optional(Schema.Record(Schema.String, Schema.String)),
 });
 export type StefState = typeof StefState.Type;
 
