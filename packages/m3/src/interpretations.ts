@@ -179,6 +179,13 @@ export const interpretations = {
       "Docked, the bar is the theme's app bar (shell.components). While Periphery is on, its body becomes a standard floating toolbar (surface-container, md.sys.shape.corner.full, no elevation) and a pane on the windows' grid: as wide as the windows tiled in the focus area, the layout margin from the screen edge, and the layout spacer above the windows, all through Hyprland's gaps (hyprland.gaps). It moves on spatial default; the corner and colour change on effects default.",
     why: "Narrowed, the bar floats like a floating toolbar rather than docking like an app bar, and lining it up with the windows makes it one more pane of the layout, spaced by the same Layout tokens (margin, spacer, density) the user sets in Studio. The spec's 16dp edge minimum holds at the margin's default (24dp); a smaller margin is the user's density choice, as it is for the windows. Over a visually distinct background, and with the bar window ending right below the body for the stock popups, the elevation is removed as the spec allows.",
   },
+  "bar.segments": {
+    area: "Bar (stef.bar): widgets in segments",
+    spec: 'Silent on a bar\'s widgets. Connected button groups "use 2dp padding" (citations.connectedButtonGroupPadding) and have the square variant\'s corner sizes per button size (citations.connectedButtonGroupCorners); the round variant is fully round outside. Floating toolbars use "Surface container"; layouts space panes by the spacer (citations.layoutSpacer).',
+    choice:
+      "Each group of widgets (a section, split by an entry's group key) is a connected button group, each visible widget one segment, with the window group tabs' tokens: tokens.groupbar.shape (round: outer corners full, inner square; square: the size's corner everywhere), tokens.groupbar.size and tokens.groupbar.padding (between segments and to the bar's top and bottom). Groups are the layout spacer apart. Docked the segments are surface-container-high on the app bar's surface; floating the bar has no container and the segments are the floating toolbar's surface-container. Text on-surface. Not on a transparent or vertical bar.",
+    why: "The widgets are sets of related controls, which a connected button group is for (ChromeOS's shelf segments them the same way); sharing the group tabs' tokens keeps the desktop's two button groups alike, and one tonal step up separates segment from bar without new colours.",
+  },
   "bar.transparent": {
     area: "Bar (stef.bar): the transparent bar's legibility shadow",
     spec: 'M3 has no text shadow. For text over imagery: "Add a translucent scrim or bounding shape beneath the text or icon to help ensure proper contrast."',

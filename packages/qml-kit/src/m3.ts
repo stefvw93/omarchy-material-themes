@@ -99,6 +99,8 @@ export const resolveM3 = (tokens: Tokens, baseSize = 12) => {
       },
     },
     scrimOpacity: m3Data.scrimOpacity,
+    /** citations.connectedButtonGroupPadding and connectedButtonGroupCorners (outer corner per button size). */
+    connectedButtonGroup: m3Data.connectedButtonGroup,
     /** citations.plainTooltipHeight and plainTooltipPadding. */
     plainTooltip: m3Data.plainTooltip,
     /** Allowlisted component tokens: colours as role names, lengths in dp, type styles scaled. */

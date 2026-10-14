@@ -834,6 +834,46 @@ Item {
     omarchy: ({ background: Color.background, foreground: Color.foreground, accent: Color.accent, muted: Color.muted, urgent: Color.urgent })
   }
   property var focusArea: null
+  // stef.bar: the widgets sit in segments, connected button groups
+  // (SPEC.md, Segments): the group tabs' shape and padding tokens, the
+  // layout spacer between groups. Not on a vertical bar or a transparent one.
+  readonly property bool segmented: !root.vertical && !root.transparent
+  readonly property real segmentPadding: tokens.m3.space[tokens.value.groupbar.padding] || 0
+  readonly property real segmentHeight: root.barSize - 2 * root.segmentPadding
+  readonly property real segmentCorner: tokens.m3.connectedButtonGroup.corners[tokens.value.groupbar.size] || 0
+  readonly property real groupGap: root.gapsIn[0] + root.gapsIn[2]
+  // Docked the segments are one step up from the bar (surface-container-high),
+  // floating the floating toolbar's surface-container; on the effects spring.
+  SpringValue { id: floatMix; spring: tokens.springs.effects_default; target: root.focusArea && root.focusArea.on && !root.vertical ? 1 : 0 }
+  function mixColor(a, b, t) { return Qt.rgba(a.r + (b.r - a.r) * t, a.g + (b.g - a.g) * t, a.b + (b.b - a.b) * t, a.a + (b.a - a.a) * t) }
+  readonly property color segmentDocked: themeScheme.color["surface-container-high"]
+  readonly property color segmentFloating: themeScheme.color["surface-container"]
+  readonly property color segmentColor: root.mixColor(root.segmentDocked, root.segmentFloating, floatMix.value)
+
+  // A slot's segment: its section's visible entries, in layout order, on its
+  // window. A Repeater hands its slots copies of the entries (keys reordered),
+  // so they match by content, not identity (Model.entryKey).
+  function segmentFor(slot) {
+    var entries = root.layoutEntries(slot.region)
+    var window = root.slotWindow(slot)
+    var own = Model.entryKey(slot.entry)
+    var items = []
+    var index = -1
+    for (var i = 0; i < entries.length; i++) {
+      var key = Model.entryKey(entries[i])
+      var match = null
+      for (var j = 0; j < root.moduleSlots.length; j++) {
+        var other = root.moduleSlots[j]
+        if (other && Model.entryKey(other.entry) === key && root.sameWindow(root.slotWindow(other), window)) { match = other; break }
+      }
+      var item = match ? match.activeItem : null
+      items.push({ group: entries[i].group, visible: !!item && item.visible && item.implicitWidth > 0 })
+      if (index < 0 && key === own) index = i
+    }
+    var plan = Model.segmentPlan(items, slot.region)
+    return index >= 0 ? plan[index] : { visible: false, roundStart: false, roundEnd: false, gapAfter: false }
+  }
+
   // Hyprland's gaps [top, right, bottom, left], which follow the tokens'
   // layout margin and spacer: the floating body is a pane on the windows'
   // grid (SPEC.md, Following the focus area).
@@ -1360,7 +1400,8 @@ Item {
     // Docked it is the app bar's container, floating the standard floating
     // toolbar's (surface-container); the colour moves on the effects spring.
     SpringValue { id: bodyFloat; spring: tokens.springs.effects_default; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.narrowed ? 1 : 0 }
-    readonly property color floatingColor: themeScheme.color["surface-container"]
+    // Floating, the body has no container: its segments carry the colour.
+    readonly property color floatingColor: Qt.rgba(root.background.r, root.background.g, root.background.b, 0)
 
     Rectangle {
       id: body
@@ -1369,11 +1410,7 @@ Item {
       y: root.position === "bottom" ? 0 : Math.round(bodyMargin.value)
       height: root.vertical ? parent.height : root.barSize
       radius: bodyCorner.value
-      color: root.transparent ? "transparent" : Qt.rgba(
-        root.background.r + (barWindow.floatingColor.r - root.background.r) * bodyFloat.value,
-        root.background.g + (barWindow.floatingColor.g - root.background.g) * bodyFloat.value,
-        root.background.b + (barWindow.floatingColor.b - root.background.b) * bodyFloat.value,
-        root.background.a + (barWindow.floatingColor.a - root.background.a) * bodyFloat.value)
+      color: root.transparent ? "transparent" : root.mixColor(root.background, barWindow.floatingColor, bodyFloat.value)
 
     Loader {
       anchors.fill: parent
@@ -1933,7 +1970,11 @@ Item {
       if (hint !== undefined && hint !== null && hint > 0) return Math.round(hint)
       return Math.max(Style.space(10), Math.round((root.vertical ? slot.height : slot.width) * 0.55))
     }
-    implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : activeItem.implicitWidth) : 0
+    // stef.bar: the slot's segment, and the layout spacer after the last
+    // segment of a group; the content keeps its own width.
+    readonly property var segment: root.segmented ? root.segmentFor(slot) : null
+    readonly property real gapAfter: segment && segment.gapAfter ? root.groupGap : 0
+    implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : activeItem.implicitWidth + gapAfter) : 0
     implicitHeight: activeItem && activeItem.visible ? activeItem.implicitHeight : 0
     width: implicitWidth
     height: implicitHeight
@@ -1957,11 +1998,28 @@ Item {
       opacity: root.transparent ? 0.22 : 0.32
     }
 
+    // stef.bar: the segment behind the widget, half the group padding in
+    // from each side so neighbours sit the padding apart.
+    Rectangle {
+      visible: !!slot.segment && slot.segment.visible
+      readonly property var corners: slot.segment ? Model.segmentCorners(slot.segment, tokens.value.groupbar.shape, height, root.segmentCorner) : null
+      x: root.segmentPadding / 2
+      width: Math.max(0, slot.width - slot.gapAfter - root.segmentPadding)
+      height: root.segmentHeight
+      y: Math.round((slot.height - height) / 2)
+      topLeftRadius: corners ? corners.topLeft : 0
+      topRightRadius: corners ? corners.topRight : 0
+      bottomLeftRadius: corners ? corners.bottomLeft : 0
+      bottomRightRadius: corners ? corners.bottomRight : 0
+      color: root.segmentColor
+    }
+
     Loader {
       id: componentLoader
       active: !slot.qmlCustom && !slot.registered
       sourceComponent: slot.commandCustom ? customCommandModuleComponent : emptyModuleComponent
       anchors.fill: parent
+      anchors.rightMargin: slot.gapAfter
       opacity: slot.dragSource ? 0.22 : 1.0
       onLoaded: {
         slot.injectProps()
@@ -1974,6 +2032,7 @@ Item {
       active: slot.registered
       sourceComponent: slot.registered ? slot.registryComponent : null
       anchors.fill: parent
+      anchors.rightMargin: slot.gapAfter
       opacity: slot.dragSource ? 0.22 : 1.0
       onLoaded: {
         slot.injectProps()
@@ -1986,6 +2045,7 @@ Item {
       active: slot.qmlCustom
       source: slot.qmlCustom ? root.customModuleSource(slot.entry) : ""
       anchors.fill: parent
+      anchors.rightMargin: slot.gapAfter
       opacity: slot.dragSource ? 0.22 : 1.0
       onLoaded: {
         slot.injectProps()
@@ -2010,7 +2070,7 @@ Item {
       // panel that opens on that side.
       x: root.vertical
         ? (root.position === "left" ? parent.width - width - inset : inset)
-        : Math.round((parent.width - width) / 2)
+        : Math.round((parent.width - slot.gapAfter - width) / 2)
       y: root.vertical
         ? Math.round((parent.height - height) / 2)
         : (root.position === "top" ? parent.height - height - inset : inset)

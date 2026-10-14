@@ -27,6 +27,10 @@ describe("resolveM3", () => {
     expect(m3.state).toMatchObject({ hover: 0.08, dragged: 0.16 });
     expect(m3.state.focusIndicator).toEqual({ thickness: 3, outerOffset: 2, innerOffset: -3 });
     expect(m3.scrimOpacity).toBe(0.32);
+    expect(m3.connectedButtonGroup).toEqual({
+      padding: 2,
+      corners: { xsmall: 4, small: 8, medium: 8, large: 16, xlarge: 20 },
+    });
     expect(m3.springs.spatial_default.stiffness).toBe(700);
   });
 

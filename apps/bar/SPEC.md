@@ -78,15 +78,24 @@ Periphery announces its focus area on Hyprland's event socket (Periphery's SPEC.
 
 While narrowed, the body has the full corner (a pill). Pointer input reaches only the body.
 
-### Body colour
+### Segments
 
-| Bar         | Docked (full width)                                                                                          | Floating (narrowed to the focus area)                                                                                 |
-| ----------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| Opaque      | the M3 app bar's container: the theme's `[bar] background` (`surface`), text its `[bar] text` (`on-surface`) | the standard floating toolbar's container: `surface-container`, text `on-surface`, both from the theme's colour roles |
-| Transparent | no container, a legibility shadow                                                                            | no container, a legibility shadow                                                                                     |
+The widgets sit in segments, like ChromeOS's shelf: each group of widgets is an M3 connected button group (interpretation `bar.segments`), each visible widget one segment of it.
 
-- The container colour changes between docked and floating on the effects default spring.
-- The floating body has no elevation. The spec allows that over a visually distinct background (the pill floats over the wallpaper), and a shadow wouldn't fit: the bar window ends right below the body, because the stock popups place themselves from its height.
+- **Groups.** A section is one group. An entry's inline `"group": "<name>"` splits it: consecutive visible entries with the same group (an entry without one belongs to its section's) form one group. Hidden widgets (no width) take no part.
+- **Shape.** The groups take the window group tabs' tokens (`tokens.groupbar`, Studio's Window groups). Round: a group's outer corners are fully round, its inner corners square. Square: every corner is the connected button group's corner for `groupbar.size` (4dp extra-small). A group of one is round (or square) all round.
+- **Spacing.** `groupbar.padding` (the spec's 2dp) is the gap between two segments of a group, and between a segment and the bar's top and bottom. Two groups are the layout spacer apart (Hyprland's `gaps_in` top plus bottom, as between two windows).
+
+### Colour
+
+| Bar         | Docked (full width)                                                                               | Floating (narrowed to the focus area)                            |
+| ----------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Opaque      | body: the app bar's `surface` (the theme's `[bar] background`); segments `surface-container-high` | body: none; segments: the floating toolbar's `surface-container` |
+| Transparent | no body, no segments, a legibility shadow                                                         | no body, no segments, a legibility shadow                        |
+
+- Text is `on-surface` throughout: docked the theme's `[bar] text`, floating from the same colour roles as the segments.
+- The colours change between docked and floating on the effects default spring.
+- Nothing floating has elevation. The spec allows that over a visually distinct background (the segments float over the wallpaper), and a shadow wouldn't fit: the bar window ends right below the body, because the stock popups place themselves from its height.
 - The legibility shadow (not M3, interpretation `bar.transparent`) sits behind all of the body's content, glyphs and icons alike: offset 1 px down, blurred 3 px, at 0.5 opacity, in black or white, whichever contrasts more with the bar's text colour (`barForeground`). It is drawn only while the bar is transparent.
 
 ## Architecture

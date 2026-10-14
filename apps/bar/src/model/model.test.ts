@@ -2,10 +2,13 @@ import { describe, expect, it } from "vite-plus/test";
 import {
   bodyGeometry,
   cssGapsOf,
+  entryKey,
   exclusiveZone,
   floatingEdges,
   legibilityShadow,
   parseFocusEvent,
+  segmentCorners,
+  segmentPlan,
 } from "./model.ts";
 
 describe("focus area", () => {
@@ -122,5 +125,101 @@ describe("exclusiveZone", () => {
   it("is the bar docked, and the bar plus the spacer floating", () => {
     expect(exclusiveZone(32, docked, 12)).toBe(32);
     expect(exclusiveZone(32, floating, 12)).toBe(44);
+  });
+});
+
+describe("segmentPlan", () => {
+  const plan = (items: { group?: unknown; visible: boolean }[]) =>
+    segmentPlan(items, "center").map((p) =>
+      p.visible
+        ? `${p.roundStart ? "(" : "["}${p.roundEnd ? ")" : "]"}${p.gapAfter ? " " : ""}`
+        : "-",
+    );
+
+  it("makes a section one group", () => {
+    expect(plan([{ visible: true }, { visible: true }, { visible: true }])).toEqual([
+      "(]",
+      "[]",
+      "[)",
+    ]);
+    expect(plan([{ visible: true }])).toEqual(["()"]);
+  });
+
+  it("splits groups by the group key, with a gap between them", () => {
+    expect(
+      plan([
+        { visible: true, group: "time" },
+        { visible: true, group: "time" },
+        { visible: true },
+        { visible: true, group: "" },
+      ]),
+    ).toEqual(["(]", "[) ", "(]", "[)"]);
+  });
+
+  it("skips hidden items", () => {
+    expect(
+      plan([
+        { visible: false },
+        { visible: true },
+        { visible: false },
+        { visible: true },
+        { visible: false },
+      ]),
+    ).toEqual(["-", "(]", "-", "[)", "-"]);
+    expect(
+      plan([
+        { visible: true, group: "a" },
+        { visible: false, group: "b" },
+        { visible: true, group: "c" },
+      ]),
+    ).toEqual(["() ", "-", "()"]);
+    expect(plan([{ visible: false }])).toEqual(["-"]);
+  });
+});
+
+describe("segmentCorners", () => {
+  const first = { visible: true, roundStart: true, roundEnd: false, gapAfter: false };
+  const only = { visible: true, roundStart: true, roundEnd: true, gapAfter: false };
+  const middle = { visible: true, roundStart: false, roundEnd: false, gapAfter: false };
+
+  it("rounds a round group's ends fully and keeps its inside square", () => {
+    expect(segmentCorners(first, "round", 28, 4)).toEqual({
+      topLeft: 14,
+      topRight: 0,
+      bottomLeft: 14,
+      bottomRight: 0,
+    });
+    expect(segmentCorners(only, "round", 28, 4)).toEqual({
+      topLeft: 14,
+      topRight: 14,
+      bottomLeft: 14,
+      bottomRight: 14,
+    });
+    expect(segmentCorners(middle, "round", 28, 4)).toEqual({
+      topLeft: 0,
+      topRight: 0,
+      bottomLeft: 0,
+      bottomRight: 0,
+    });
+  });
+
+  it("gives a square group the corner everywhere", () => {
+    const four = { topLeft: 4, topRight: 4, bottomLeft: 4, bottomRight: 4 };
+    expect(segmentCorners(first, "square", 28, 4)).toEqual(four);
+    expect(segmentCorners(middle, "square", 28, 4)).toEqual(four);
+  });
+});
+
+describe("entryKey", () => {
+  it("ignores key order, at every depth", () => {
+    expect(entryKey({ id: "sys", type: "command", exec: "x", opts: { b: 1, a: 2 } })).toBe(
+      entryKey({ exec: "x", id: "sys", opts: { a: 2, b: 1 }, type: "command" }),
+    );
+  });
+
+  it("tells different entries apart", () => {
+    expect(entryKey({ id: "a" })).not.toBe(entryKey({ id: "b" }));
+    expect(entryKey({ id: "a", items: [1, 2] })).not.toBe(entryKey({ id: "a", items: [2, 1] }));
+    expect(entryKey("omarchy.clock")).toBe('"omarchy.clock"');
   });
 });

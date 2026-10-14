@@ -87,3 +87,76 @@ export function floatingEdges(
 export function exclusiveZone(barSize: number, body: BodyGeometry, spacer: number): number {
   return body.narrowed ? barSize + spacer : barSize;
 }
+
+export interface SegmentItem {
+  readonly group?: unknown;
+  readonly visible: boolean;
+}
+
+export interface Segment {
+  readonly visible: boolean;
+  readonly roundStart: boolean;
+  readonly roundEnd: boolean;
+  readonly gapAfter: boolean;
+}
+
+export interface Corners {
+  readonly topLeft: number;
+  readonly topRight: number;
+  readonly bottomLeft: number;
+  readonly bottomRight: number;
+}
+
+const hiddenSegment: Segment = {
+  visible: false,
+  roundStart: false,
+  roundEnd: false,
+  gapAfter: false,
+};
+
+export function segmentPlan(items: readonly SegmentItem[], section: string): Segment[] {
+  const groupOf = (item: SegmentItem) =>
+    typeof item.group === "string" && item.group !== "" ? item.group : section;
+  const shown = items.map((item, i) => (item.visible ? i : -1)).filter((i) => i >= 0);
+  const plan: Segment[] = items.map(() => hiddenSegment);
+  shown.forEach((i, k) => {
+    const group = groupOf(items[i]!);
+    const prev = k > 0 ? groupOf(items[shown[k - 1]!]!) : undefined;
+    const next = k < shown.length - 1 ? groupOf(items[shown[k + 1]!]!) : undefined;
+    plan[i] = {
+      visible: true,
+      roundStart: prev !== group,
+      roundEnd: next !== group,
+      gapAfter: next !== undefined && next !== group,
+    };
+  });
+  return plan;
+}
+
+export function segmentCorners(
+  plan: Segment,
+  shape: string,
+  height: number,
+  corner: number,
+): Corners {
+  if (shape !== "round")
+    return { topLeft: corner, topRight: corner, bottomLeft: corner, bottomRight: corner };
+  const start = plan.roundStart ? height / 2 : 0;
+  const end = plan.roundEnd ? height / 2 : 0;
+  return { topLeft: start, topRight: end, bottomLeft: start, bottomRight: end };
+}
+
+const sortedKeys = (value: unknown): unknown => {
+  if (Array.isArray(value)) return value.map(sortedKeys);
+  if (value && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const key of Object.keys(value).sort())
+      out[key] = sortedKeys((value as Record<string, unknown>)[key]);
+    return out;
+  }
+  return value;
+};
+
+export function entryKey(entry: unknown): string {
+  return JSON.stringify(sortedKeys(entry));
+}

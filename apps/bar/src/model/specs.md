@@ -21,6 +21,19 @@ The bar's own decisions, without Qt: Periphery's focus area and where the body g
 
 `exclusiveZone(barSize, body, spacer)`: `barSize` docked; floating (`body.narrowed`), `barSize + spacer`, so windows tiled the outer gap below the zone sit one spacer below the body (which sits the margin from the edge, and the outer gap on that edge is the margin).
 
+## Segments
+
+`segmentPlan(items, section)`, `items` in layout order `{ group?, visible }`: for each item, how its segment is drawn, `{ visible, roundStart, roundEnd, gapAfter }`.
+
+- An item's group is its `group` when it is a non-empty string, else `section`.
+- Hidden items get `{ visible: false, roundStart: false, roundEnd: false, gapAfter: false }` and are skipped for everything else: the visible items before and after a hidden one are neighbours.
+- `roundStart`: no visible item before it in the same group (the group's first); `roundEnd`: no visible item after it in the same group (the group's last).
+- `gapAfter`: the next visible item exists and is in another group.
+
+`entryKey(entry)`: an entry's content as a string that doesn't depend on key order (objects' keys sorted, at every depth), so an entry and a copy of it with reordered keys (as a QML Repeater hands its delegates) give the same key.
+
+`segmentCorners(plan, shape, height, corner)`: the four corner radii `{ topLeft, topRight, bottomLeft, bottomRight }` of a segment `height` high, in a horizontal bar (start is left). Round shape: `height / 2` on the rounded ends, 0 inside the group. Square shape: `corner` everywhere.
+
 ## Legibility shadow
 
 `legibilityShadow(text)`: the shadow colour for text of colour `text` (`#rrggbb`, or `#aarrggbb` with the alpha ignored): `"#000000"` or `"#ffffff"`, whichever has the higher WCAG contrast ratio with the text; black on a tie. A colour that can't be read gives black.
