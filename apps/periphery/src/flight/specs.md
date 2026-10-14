@@ -35,11 +35,12 @@ Output: the addresses that `fly`, and the addresses that move as `card`. Every o
 
 ## Ghost look
 
-Input: the ghost's travel `t` (0 at the start of its flight, 1 landed; values outside 0 to 1 are clamped), whether it starts on a tile (or a card), whether it is flying to a tile (or to a card), whether it is the active window at the tile end, and its window's `opacity`, `opacityInactive`, `borderSize` and `rounding`.
+Input: the ghost's travel `t` (0 at the start of its flight, 1 landed; values outside 0 to 1 are clamped), whether it starts on a tile (or a card), whether it is flying to a tile (or to a card), whether it is the active window at the tile end, its window's `opacity`, `opacityInactive`, `borderSize` and `rounding`, and its tilt at the start and at the end (`fromTilt`, `toTilt`, degrees: a card's tilt where it is a card, 0 on a tile).
 
 The tile weight `w` is how close the ghost is to the tile: `t` when flying to a tile, `1 − t` when flying to a card, and 1 all the way from a tile to a tile (a window moved along with the switch looks like its window throughout).
 
 - **Content opacity:** from 1 at the card to the tile opacity at the tile: `1 + (tileOpacity − 1) × w`. The tile opacity is `opacity` for the active window, else `opacityInactive`.
 - **Border offset:** how far the border's outer edge is outside the content's edge: `borderSize × w`. The border is `borderSize` wide, inwards from there: at the tile entirely outside the content, at the card entirely inside it.
 - **Outer corner:** `rounding + borderSize × w`.
+- **Tilt:** from the start's tilt to the end's along the travel: `fromTilt + (toTilt − fromTilt) × t`. Landed, the ghost has its card's tilt, so the hand-off shows no turn.
 - **Blur opacity:** the blurred wallpaper behind the ghost. Cards sit on the sharp wallpaper, and the spring's slow tail would leave a linear fade short at landing, so it changes over the first half of the travel: flying to a tile `min(1, 2t)`, flying to a card `1 − min(1, 2t)`; from a tile to a tile 1.

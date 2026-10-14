@@ -122,7 +122,19 @@ describe("ghostLook", () => {
     opacityInactive: 0.96,
     borderSize: 3,
     rounding: 12,
+    fromTilt: 0,
+    toTilt: 0,
   };
+
+  it("turns from the start's tilt to the end's along the travel", () => {
+    const toCard = { ...window, fromTile: true, toTile: false, fromTilt: 0, toTilt: -8 };
+    expect(ghostLook({ ...toCard, travel: 0 }).tilt).toBe(0);
+    expect(ghostLook({ ...toCard, travel: 0.5 }).tilt).toBeCloseTo(-4);
+    expect(ghostLook({ ...toCard, travel: 1 }).tilt).toBeCloseTo(-8);
+    const toTile = { ...window, toTile: true, fromTilt: 8, toTilt: 0 };
+    expect(ghostLook({ ...toTile, travel: 0.25 }).tilt).toBeCloseTo(6);
+    expect(ghostLook({ ...toTile, travel: 2 }).tilt).toBeCloseTo(0);
+  });
 
   it("looks like the window at the tile", () => {
     const look = ghostLook({ ...window, travel: 1, toTile: true });

@@ -75,6 +75,9 @@ export interface LookInput {
   opacityInactive: number;
   borderSize: number;
   rounding: number;
+  /** Tilt at the start and at the end, degrees: a card's, or 0 on a tile. */
+  fromTilt: number;
+  toTilt: number;
 }
 
 export interface Look {
@@ -82,6 +85,7 @@ export interface Look {
   borderOffset: number;
   outerRadius: number;
   blurOpacity: number;
+  tilt: number;
 }
 
 /** How a ghost looks at a point of its flight. */
@@ -96,5 +100,6 @@ export function ghostLook(input: LookInput): Look {
     borderOffset: input.borderSize * w,
     outerRadius: input.rounding + input.borderSize * w,
     blurOpacity: input.toTile ? half : 1 - half,
+    tilt: input.fromTilt + (input.toTilt - input.fromTilt) * Math.min(1, Math.max(0, input.travel)),
   };
 }

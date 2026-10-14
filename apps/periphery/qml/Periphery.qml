@@ -160,6 +160,8 @@ Item {
   readonly property string openPile: root.selected && root.winData[root.selected] ? root.winData[root.selected].pile : ""
   // A card's rect as drawn: its fan rect while its pile is open.
   function drawnRect(card) { return card.pile !== "" && card.pile === root.openPile && card.fan ? card.fan : card }
+  // A card's tilt at rest, unselected: turned towards the focus area.
+  function restTilt(rect) { return rect ? (rect.x + rect.w / 2 < root.monW / 2 ? -1 : 1) * root.cardTilt : 0 }
   function drawnCards() {
     var out = {}
     for (var a in root.winData) out[a] = root.drawnRect(root.winData[a])
@@ -1081,7 +1083,7 @@ Item {
         // Turned towards the focus area, with perspective; flat while selected
         // or dragged.
         SpringValue { id: tilt; spring: root.springSpatial; target: card.selected || card.dragging ? 0 : 1 }
-        readonly property real tiltAngle: (card.place && card.place.x + card.place.w / 2 < root.monW / 2 ? -1 : 1) * root.cardTilt * tilt.value
+        readonly property real tiltAngle: root.restTilt(card.place) * tilt.value
         transform: [
           Translate {
             x: root.cardSlideVertical ? 0 : Math.round(slide.value)
@@ -1231,7 +1233,11 @@ Item {
           travel: travel, fromTile: fromTile, toTile: toTile, activeAtTile: toTile ? activeAtEnd : activeAtStart,
           opacity: props.opacity, opacityInactive: props.opacityInactive,
           borderSize: props.borderSize, rounding: props.rounding,
+          fromTilt: fromTilt, toTilt: toTile ? 0 : root.restTilt(lastTarget),
         })
+        // The card's tilt where the flight starts (0 on a tile): the ghost
+        // turns from it to its end's, landing on its card at the card's tilt.
+        property real fromTilt: 0
         // A target can move mid-flight (the refresh), so landing is
         // measured: on the target's pixels, where its card or tile is drawn.
         readonly property bool landed: !target || (x === Math.round(target.x) && y === Math.round(target.y)
@@ -1241,6 +1247,7 @@ Item {
           armed = false
           flying = false
           fromTile = onTile
+          fromTilt = !onTile && root.cardItems[address] ? root.cardItems[address].tiltAngle : 0
           fx = r.x; fy = r.y; fw = r.w; fh = r.h
           launched = true
         }
@@ -1278,6 +1285,12 @@ Item {
         height: Math.round(flyer.gh)
         visible: !!root.ghosted[address]
         opacity: flyFade.value
+        transform: Rotation {
+          origin.x: flyer.width / 2
+          origin.y: flyer.height / 2
+          axis { x: 0; y: 1; z: 0 }
+          angle: flyer.look.tilt
+        }
         Component.onCompleted: root.ghostItems[address] = flyer
         Component.onDestruction: if (root.ghostItems[address] === flyer) delete root.ghostItems[address]
 
@@ -1315,8 +1328,12 @@ Item {
           // window behind showed through. Rendered alone into its own layer,
           // it is drawn over the patch with normal blending, at the window's
           // opacity on its tile.
+          // Covers the ghost at the frame's own aspect, like a card's thumbnail.
           ScreencopyView {
-            anchors.fill: parent
+            readonly property real aspect: sourceSize.width > 0 && sourceSize.height > 0 ? sourceSize.width / sourceSize.height : parent.width / Math.max(1, parent.height)
+            anchors.centerIn: parent
+            width: Math.max(parent.width, parent.height * aspect)
+            height: Math.max(parent.height, parent.width / aspect)
             layer.enabled: flyer.visible
             opacity: flyer.look.contentOpacity
             captureSource: flyer.lastTarget && flyer.lastTarget.toplevel ? flyer.lastTarget.toplevel.wayland : null
