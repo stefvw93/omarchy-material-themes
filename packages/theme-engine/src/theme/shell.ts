@@ -118,6 +118,23 @@ export const textSpecOf = (input: ShellInput): TextSpec => {
   };
 };
 
+/**
+ * The alpha at which `tint` over `base` comes nearest `target`: a least-squares
+ * fit over the three channels, clamped to [0, 1] and rounded to two places.
+ */
+export const tintAlpha = (tint: string, base: string, target: string): number => {
+  const rgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+  const [t, b, g] = [rgb(tint), rgb(base), rgb(target)];
+  let num = 0;
+  let den = 0;
+  for (let i = 0; i < 3; i++) {
+    num += (g[i]! - b[i]!) * (t[i]! - b[i]!);
+    den += (t[i]! - b[i]!) ** 2;
+  }
+  const alpha = den === 0 ? 0 : Math.min(1, Math.max(0, num / den));
+  return Math.round(alpha * 100) / 100;
+};
+
 /** The nearest md.sys.measurement step to a shell default (ties go to the smaller step). */
 const nearestStep = (px: number): { step: MeasurementStep; dp: number } => {
   let best: MeasurementStep = "space0";
@@ -127,7 +144,7 @@ const nearestStep = (px: number): { step: MeasurementStep; dp: number } => {
 };
 
 export const shellSections = (input: ShellInput): Readonly<Record<string, ShellSection>> => {
-  const { color, role, num, fixed, densityPx } = shell(input);
+  const { ctx, color, role, num, fixed, densityPx } = shell(input);
   // Written at Omarchy's default text size; stef.omaterial rescales live.
   const spec = textSpecOf(input);
   const scaled = scaleText(spec, OMARCHY_TEXT_BASE);
@@ -185,14 +202,21 @@ export const shellSections = (input: ShellInput): Readonly<Record<string, ShellS
     "focus-border": focusIndicator,
     "focus-border-width": num("md.sys.state.focus-indicator.thickness"),
     "focus-border-alpha": full,
-    "selected-color": color("md.comp.primary-navigation-tab.active-indicator.color"),
-    "selected-fill-alpha": fixed(0, "a selected tab has no container"),
-    "selected-border": color("md.comp.primary-navigation-tab.active-indicator.color"),
-    "selected-border-width": fixed(
-      `0 0 ${numberOf("md.comp.primary-navigation-tab.active-indicator.height")} 0`,
-      "md.comp.primary-navigation-tab.active-indicator.height, bottom only",
+    // Selected is a selected list item (interpretation shell.controls): the
+    // secondary container, which the shell can only paint as a tint of one
+    // colour; secondary at the alpha that lands on it over a panel.
+    "selected-color": role("secondary", "interpretation shell.controls"),
+    "selected-fill-alpha": fixed(
+      tintAlpha(
+        input.palette.system.secondary,
+        input.palette.system[colorRoleOf("md.comp.menus.standard.container.color", ctx)],
+        input.palette.system[colorRoleOf("md.comp.list.list-item.selected.container.color", ctx)],
+      ),
+      "interpretation shell.controls: secondary over the menu container ≈ md.comp.list.list-item.selected.container.color",
     ),
-    "selected-border-alpha": full,
+    "selected-border": role("secondary", "interpretation shell.controls"),
+    "selected-border-width": fixed(0, "selected list items have no outline"),
+    "selected-border-alpha": fixed(0, "selected list items have no outline"),
     "pressed-color": content,
     "pressed-fill-alpha": num("md.sys.state.pressed.state-layer-opacity"),
     "selection-color": role("primary", "interpretation shell.controls"),

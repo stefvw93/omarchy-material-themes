@@ -1,7 +1,7 @@
 import { defaultTokens } from "@stef/tokens";
 import { describe, expect, it } from "vite-plus/test";
 import { createPaletteFromHex } from "../palette.ts";
-import { shellSections } from "./shell.ts";
+import { shellSections, tintAlpha } from "./shell.ts";
 
 const palette = createPaletteFromHex("#4285f4", {
   variant: "tonal-spot",
@@ -32,6 +32,20 @@ describe("shell sections", () => {
     expect(v("controls", "focus-border-width")).toBe(3);
     expect(v("controls", "focus-border")).toBe(palette.system.secondary);
     expect(v("menu", "scrim-alpha")).toBe(0.32);
+  });
+
+  it("show selected controls as a selected list item, tinted toward secondary-container", () => {
+    expect(v("controls", "selected-color")).toBe(palette.system.secondary);
+    expect(v("controls", "selected-border-width")).toBe(0);
+    const alpha = v("controls", "selected-fill-alpha") as number;
+    expect(alpha).toBeGreaterThan(0);
+    expect(alpha).toBeLessThan(1);
+  });
+
+  it("fit a tint's alpha", () => {
+    expect(tintAlpha("#ffffff", "#000000", "#808080")).toBe(0.5);
+    expect(tintAlpha("#ffffff", "#000000", "#000000")).toBe(0);
+    expect(tintAlpha("#ffffff", "#ffffff", "#000000")).toBe(0);
   });
 
   it("size the shell from the type scale and components", () => {
