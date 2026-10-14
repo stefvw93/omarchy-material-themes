@@ -73,6 +73,29 @@ describe("resolveTokens", () => {
   });
 });
 
+describe("bar tokens", () => {
+  it("default to a round extra-small connected group with the spec's 2dp gap", () => {
+    expect(defaultTokens.bar).toEqual({
+      shape: "round",
+      size: "xsmall",
+      gap: "space25",
+      padding: "space50",
+    });
+  });
+
+  it("take known choices and reject the rest", () => {
+    const tokens = resolveTokens(
+      JSON.stringify({ version: 2, bar: { shape: "square", size: "blob", padding: "space100" } }),
+    );
+    expect(tokens.bar).toEqual({
+      shape: "square",
+      size: "xsmall",
+      gap: "space25",
+      padding: "space100",
+    });
+  });
+});
+
 describe("migrateTokens", () => {
   const v1 = {
     gaps: { inner: 2, outer: 4, workspaces: 32 },

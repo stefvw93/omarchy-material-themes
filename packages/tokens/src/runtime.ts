@@ -103,6 +103,15 @@ export const defaultTokens = {
   },
   /** Not M3: Hyprland's one blur, behind the flyouts and the special workspace. */
   blur: { size: 6, passes: 3 },
+  /** stef.bar's segments: a connected button group (interpretation bar.segments). */
+  bar: {
+    shape: "round" as GroupbarShape,
+    size: "xsmall" as GroupbarSize,
+    /** Between two segments of a group, and to the bar's top and bottom (the spec's 2dp). */
+    gap: "space25" as MeasurementStep,
+    /** At both ends of a segment, on top of the widgets' own margins (≈ 12dp in all, the xsmall button's leading space). */
+    padding: "space50" as MeasurementStep,
+  },
   /**
    * The one exception to M3's opaque surfaces: flyouts opened from the bar
    * (tray popups, OSD, dropdowns) may be translucent with blur behind them.
@@ -148,6 +157,10 @@ export const tokenChoices: Readonly<Record<string, ReadonlyArray<unknown>>> = {
   "groupbar.size": groupbarSizes,
   "groupbar.shape": groupbarShapes,
   "groupbar.padding": measurementSteps,
+  "bar.shape": groupbarShapes,
+  "bar.size": groupbarSizes,
+  "bar.gap": measurementSteps,
+  "bar.padding": measurementSteps,
   "layout.margin": measurementSteps,
   "layout.spacer": measurementSteps,
   "layout.workspaceGap": measurementSteps,

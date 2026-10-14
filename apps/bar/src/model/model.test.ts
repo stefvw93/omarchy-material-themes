@@ -5,6 +5,7 @@ import {
   entryKey,
   exclusiveZone,
   floatingEdges,
+  isIconItem,
   legibilityShadow,
   parseFocusEvent,
   segmentCorners,
@@ -129,20 +130,35 @@ describe("exclusiveZone", () => {
 });
 
 describe("segmentPlan", () => {
-  const plan = (items: { group?: unknown; visible: boolean }[]) =>
-    segmentPlan(items, "center").map((p) =>
-      p.visible
-        ? `${p.roundStart ? "(" : "["}${p.roundEnd ? ")" : "]"}${p.gapAfter ? " " : ""}`
-        : "-",
-    );
+  const edge = { outer: "(", inner: "|", join: "" } as const;
+  const end = { outer: ")", inner: "|", join: "" } as const;
+  const plan = (items: { group?: unknown; visible: boolean; icon?: boolean }[]) =>
+    segmentPlan(
+      items.map((i) => ({ icon: false, ...i })),
+      "right",
+    ).map((p) => (p.visible ? `${edge[p.start]}x${end[p.end]}${p.gapAfter ? " " : ""}` : "-"));
 
-  it("makes a section one group", () => {
+  it("makes a section one group of segments", () => {
     expect(plan([{ visible: true }, { visible: true }, { visible: true }])).toEqual([
-      "(]",
-      "[]",
-      "[)",
+      "(x|",
+      "|x|",
+      "|x)",
     ]);
-    expect(plan([{ visible: true }])).toEqual(["()"]);
+    expect(plan([{ visible: true }])).toEqual(["(x)"]);
+  });
+
+  it("puts consecutive icons in one segment", () => {
+    expect(
+      plan([
+        { visible: true },
+        { visible: true, icon: true },
+        { visible: true, icon: true },
+        { visible: true, icon: true },
+      ]),
+    ).toEqual(["(x|", "|x", "x", "x)"]);
+    expect(
+      plan([{ visible: true, icon: true }, { visible: true }, { visible: true, icon: true }]),
+    ).toEqual(["(x|", "|x|", "|x)"]);
   });
 
   it("splits groups by the group key, with a gap between them", () => {
@@ -153,60 +169,90 @@ describe("segmentPlan", () => {
         { visible: true },
         { visible: true, group: "" },
       ]),
-    ).toEqual(["(]", "[) ", "(]", "[)"]);
+    ).toEqual(["(x|", "|x) ", "(x|", "|x)"]);
+    expect(
+      plan([
+        { visible: true, icon: true, group: "a" },
+        { visible: true, icon: true, group: "b" },
+      ]),
+    ).toEqual(["(x) ", "(x)"]);
   });
 
   it("skips hidden items", () => {
     expect(
       plan([
         { visible: false },
-        { visible: true },
+        { visible: true, icon: true },
         { visible: false },
-        { visible: true },
+        { visible: true, icon: true },
         { visible: false },
       ]),
-    ).toEqual(["-", "(]", "-", "[)", "-"]);
+    ).toEqual(["-", "(x", "-", "x)", "-"]);
     expect(
       plan([
         { visible: true, group: "a" },
         { visible: false, group: "b" },
         { visible: true, group: "c" },
       ]),
-    ).toEqual(["() ", "-", "()"]);
-    expect(plan([{ visible: false }])).toEqual(["-"]);
+    ).toEqual(["(x) ", "-", "(x)"]);
   });
 });
 
 describe("segmentCorners", () => {
-  const first = { visible: true, roundStart: true, roundEnd: false, gapAfter: false };
-  const only = { visible: true, roundStart: true, roundEnd: true, gapAfter: false };
-  const middle = { visible: true, roundStart: false, roundEnd: false, gapAfter: false };
+  const part = (start: "outer" | "inner" | "join", end: "outer" | "inner" | "join") => ({
+    visible: true,
+    start,
+    end,
+    gapAfter: false,
+  });
 
-  it("rounds a round group's ends fully and keeps its inside square", () => {
-    expect(segmentCorners(first, "round", 28, 4)).toEqual({
+  it("rounds a round group's outer corners fully, its inner ones by the corner", () => {
+    expect(segmentCorners(part("outer", "inner"), "round", 28, 4)).toEqual({
       topLeft: 14,
-      topRight: 0,
+      topRight: 4,
       bottomLeft: 14,
-      bottomRight: 0,
+      bottomRight: 4,
     });
-    expect(segmentCorners(only, "round", 28, 4)).toEqual({
-      topLeft: 14,
+    expect(segmentCorners(part("inner", "outer"), "round", 28, 4)).toEqual({
+      topLeft: 4,
       topRight: 14,
-      bottomLeft: 14,
+      bottomLeft: 4,
       bottomRight: 14,
     });
-    expect(segmentCorners(middle, "round", 28, 4)).toEqual({
+  });
+
+  it("gives a square group the corner at outer and inner sides", () => {
+    expect(segmentCorners(part("outer", "inner"), "square", 28, 4)).toEqual({
+      topLeft: 4,
+      topRight: 4,
+      bottomLeft: 4,
+      bottomRight: 4,
+    });
+  });
+
+  it("has no corner where icons share a segment", () => {
+    expect(segmentCorners(part("join", "join"), "round", 28, 4)).toEqual({
       topLeft: 0,
       topRight: 0,
       bottomLeft: 0,
       bottomRight: 0,
     });
+    expect(segmentCorners(part("join", "outer"), "square", 28, 4)).toEqual({
+      topLeft: 0,
+      topRight: 4,
+      bottomLeft: 0,
+      bottomRight: 4,
+    });
   });
+});
 
-  it("gives a square group the corner everywhere", () => {
-    const four = { topLeft: 4, topRight: 4, bottomLeft: 4, bottomRight: 4 };
-    expect(segmentCorners(first, "square", 28, 4)).toEqual(four);
-    expect(segmentCorners(middle, "square", 28, 4)).toEqual(four);
+describe("isIconItem", () => {
+  it("is a widget no wider than the bar, or the tray", () => {
+    expect(isIconItem(27, 32, "omarchy.audio")).toBe(true);
+    expect(isIconItem(32, 32, "omarchy.audio")).toBe(true);
+    expect(isIconItem(143, 32, "omarchy.clock")).toBe(false);
+    expect(isIconItem(81, 32, "omarchy.tray")).toBe(true);
+    expect(isIconItem(0, 32, "omarchy.audio")).toBe(false);
   });
 });
 

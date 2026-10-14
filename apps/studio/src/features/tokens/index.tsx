@@ -68,6 +68,12 @@ const groups: ReadonlyArray<{
     paths: ["groupbar.size", "groupbar.shape", "groupbar.padding"],
   },
   {
+    title: "Bar",
+    description:
+      "stef.bar's segments, an M3 connected button group: round (outer corners full, inner the size's corner) or square, the button size's corner, the gap between segments (the spec's 2dp), and the padding at a segment's ends",
+    paths: ["bar.shape", "bar.size", "bar.gap", "bar.padding"],
+  },
+  {
     title: "Bar flyouts (not M3)",
     description:
       "The one exception to M3's opaque surfaces: popups opened from the bar may be translucent over a blur",

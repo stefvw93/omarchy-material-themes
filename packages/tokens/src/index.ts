@@ -51,6 +51,12 @@ export const TokensSchema = Schema.Struct({
     shape: Schema.Literals(groupbarShapes),
     padding: Step,
   }),
+  bar: Schema.Struct({
+    shape: Schema.Literals(groupbarShapes),
+    size: Schema.Literals(groupbarSizes),
+    gap: Step,
+    padding: Step,
+  }),
   blur: Schema.Struct({
     size: Px,
     passes: Schema.Int.check(Schema.isBetween({ minimum: 0, maximum: 8 })),

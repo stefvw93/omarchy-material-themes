@@ -23,16 +23,21 @@ The bar's own decisions, without Qt: Periphery's focus area and where the body g
 
 ## Segments
 
-`segmentPlan(items, section)`, `items` in layout order `{ group?, visible }`: for each item, how its segment is drawn, `{ visible, roundStart, roundEnd, gapAfter }`.
+`segmentPlan(items, section)`, `items` in layout order `{ group?, visible, icon }`: for each item, how its part of a segment is drawn, `{ visible, start, end, gapAfter }`.
 
 - An item's group is its `group` when it is a non-empty string, else `section`.
-- Hidden items get `{ visible: false, roundStart: false, roundEnd: false, gapAfter: false }` and are skipped for everything else: the visible items before and after a hidden one are neighbours.
-- `roundStart`: no visible item before it in the same group (the group's first); `roundEnd`: no visible item after it in the same group (the group's last).
+- Hidden items get `{ visible: false, start: "join", end: "join", gapAfter: false }` and are skipped for everything else: the visible items before and after a hidden one are neighbours.
+- `start` and `end` say what is at that side of the item, against its visible neighbour on that side:
+  - `"outer"`: no neighbour in the same group (the group's first or last);
+  - `"join"`: a neighbour in the same group, and both are icon items: they share one segment;
+  - `"inner"`: otherwise, a neighbour in the same group in another segment.
 - `gapAfter`: the next visible item exists and is in another group.
 
-`entryKey(entry)`: an entry's content as a string that doesn't depend on key order (objects' keys sorted, at every depth), so an entry and a copy of it with reordered keys (as a QML Repeater hands its delegates) give the same key.
+`segmentCorners(plan, shape, height, corner)`: the four corner radii `{ topLeft, topRight, bottomLeft, bottomRight }` of an item's part, `height` high, in a horizontal bar (start is left). At an `"outer"` side: `height / 2` for the round shape, `corner` for the square one. At an `"inner"` side: `corner`. At a `"join"` side: 0.
 
-`segmentCorners(plan, shape, height, corner)`: the four corner radii `{ topLeft, topRight, bottomLeft, bottomRight }` of a segment `height` high, in a horizontal bar (start is left). Round shape: `height / 2` on the rounded ends, 0 inside the group. Square shape: `corner` everywhere.
+`isIconItem(contentWidth, barSize, id)`: whether a widget counts as an icon item: its content is no wider than `barSize`, or it is the tray (`omarchy.tray`). A widget with no width is not.
+
+`entryKey(entry)`: an entry's content as a string that doesn't depend on key order (objects' keys sorted, at every depth), so an entry and a copy of it with reordered keys (as a QML Repeater hands its delegates) give the same key.
 
 ## Legibility shadow
 

@@ -91,12 +91,17 @@ export function exclusiveZone(barSize: number, body: BodyGeometry, spacer: numbe
 export interface SegmentItem {
   readonly group?: unknown;
   readonly visible: boolean;
+  /** An icon widget: consecutive ones share a segment. */
+  readonly icon: boolean;
 }
+
+/** What is at one side of an item: its group's edge, another segment, or an icon it shares a segment with. */
+export type SegmentEdge = "outer" | "inner" | "join";
 
 export interface Segment {
   readonly visible: boolean;
-  readonly roundStart: boolean;
-  readonly roundEnd: boolean;
+  readonly start: SegmentEdge;
+  readonly end: SegmentEdge;
   readonly gapAfter: boolean;
 }
 
@@ -107,27 +112,26 @@ export interface Corners {
   readonly bottomRight: number;
 }
 
-const hiddenSegment: Segment = {
-  visible: false,
-  roundStart: false,
-  roundEnd: false,
-  gapAfter: false,
-};
+const hiddenSegment: Segment = { visible: false, start: "join", end: "join", gapAfter: false };
 
 export function segmentPlan(items: readonly SegmentItem[], section: string): Segment[] {
   const groupOf = (item: SegmentItem) =>
     typeof item.group === "string" && item.group !== "" ? item.group : section;
   const shown = items.map((item, i) => (item.visible ? i : -1)).filter((i) => i >= 0);
   const plan: Segment[] = items.map(() => hiddenSegment);
+  const edge = (a: SegmentItem, b: SegmentItem | undefined): SegmentEdge => {
+    if (!b || groupOf(b) !== groupOf(a)) return "outer";
+    return a.icon && b.icon ? "join" : "inner";
+  };
   shown.forEach((i, k) => {
-    const group = groupOf(items[i]!);
-    const prev = k > 0 ? groupOf(items[shown[k - 1]!]!) : undefined;
-    const next = k < shown.length - 1 ? groupOf(items[shown[k + 1]!]!) : undefined;
+    const item = items[i]!;
+    const prev = k > 0 ? items[shown[k - 1]!] : undefined;
+    const next = k < shown.length - 1 ? items[shown[k + 1]!] : undefined;
     plan[i] = {
       visible: true,
-      roundStart: prev !== group,
-      roundEnd: next !== group,
-      gapAfter: next !== undefined && next !== group,
+      start: edge(item, prev),
+      end: edge(item, next),
+      gapAfter: next !== undefined && groupOf(next) !== groupOf(item),
     };
   });
   return plan;
@@ -139,11 +143,16 @@ export function segmentCorners(
   height: number,
   corner: number,
 ): Corners {
-  if (shape !== "round")
-    return { topLeft: corner, topRight: corner, bottomLeft: corner, bottomRight: corner };
-  const start = plan.roundStart ? height / 2 : 0;
-  const end = plan.roundEnd ? height / 2 : 0;
+  const radius = (side: SegmentEdge) =>
+    side === "join" ? 0 : side === "outer" && shape === "round" ? height / 2 : corner;
+  const start = radius(plan.start);
+  const end = radius(plan.end);
   return { topLeft: start, topRight: end, bottomLeft: start, bottomRight: end };
+}
+
+export function isIconItem(contentWidth: number, barSize: number, id: string): boolean {
+  if (!(contentWidth > 0)) return false;
+  return contentWidth <= barSize || id === "omarchy.tray";
 }
 
 const sortedKeys = (value: unknown): unknown => {

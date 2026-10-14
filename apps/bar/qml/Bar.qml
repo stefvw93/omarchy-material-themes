@@ -835,12 +835,13 @@ Item {
   }
   property var focusArea: null
   // stef.bar: the widgets sit in segments, connected button groups
-  // (SPEC.md, Segments): the group tabs' shape and padding tokens, the
+  // (SPEC.md, Segments): the bar tokens' shape, size, gap and padding, the
   // layout spacer between groups. Not on a vertical bar or a transparent one.
   readonly property bool segmented: !root.vertical && !root.transparent
-  readonly property real segmentPadding: tokens.m3.space[tokens.value.groupbar.padding] || 0
-  readonly property real segmentHeight: root.barSize - 2 * root.segmentPadding
-  readonly property real segmentCorner: tokens.m3.connectedButtonGroup.corners[tokens.value.groupbar.size] || 0
+  readonly property real segmentGap: tokens.m3.space[tokens.value.bar.gap] || 0
+  readonly property real segmentPadding: tokens.m3.space[tokens.value.bar.padding] || 0
+  readonly property real segmentHeight: root.barSize - 2 * root.segmentGap
+  readonly property real segmentCorner: tokens.m3.connectedButtonGroup.corners[tokens.value.bar.size] || 0
   readonly property real groupGap: root.gapsIn[0] + root.gapsIn[2]
   // Docked the segments are one step up from the bar (surface-container-high),
   // floating the floating toolbar's surface-container; on the effects spring.
@@ -867,11 +868,12 @@ Item {
         if (other && Model.entryKey(other.entry) === key && root.sameWindow(root.slotWindow(other), window)) { match = other; break }
       }
       var item = match ? match.activeItem : null
-      items.push({ group: entries[i].group, visible: !!item && item.visible && item.implicitWidth > 0 })
+      var shown = !!item && item.visible && item.implicitWidth > 0
+      items.push({ group: entries[i].group, visible: shown, icon: shown && Model.isIconItem(item.implicitWidth, root.barSize, root.entryId(entries[i])) })
       if (index < 0 && key === own) index = i
     }
     var plan = Model.segmentPlan(items, slot.region)
-    return index >= 0 ? plan[index] : { visible: false, roundStart: false, roundEnd: false, gapAfter: false }
+    return index >= 0 ? plan[index] : { visible: false, start: "join", end: "join", gapAfter: false }
   }
 
   // Hyprland's gaps [top, right, bottom, left], which follow the tokens'
@@ -1974,7 +1976,10 @@ Item {
     // segment of a group; the content keeps its own width.
     readonly property var segment: root.segmented ? root.segmentFor(slot) : null
     readonly property real gapAfter: segment && segment.gapAfter ? root.groupGap : 0
-    implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : activeItem.implicitWidth + gapAfter) : 0
+    // The bar padding at a segment's ends, not between icons sharing one.
+    readonly property real startPad: segment && segment.visible && segment.start !== "join" ? root.segmentPadding : 0
+    readonly property real endPad: segment && segment.visible && segment.end !== "join" ? root.segmentPadding : 0
+    implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : activeItem.implicitWidth + startPad + endPad + gapAfter) : 0
     implicitHeight: activeItem && activeItem.visible ? activeItem.implicitHeight : 0
     width: implicitWidth
     height: implicitHeight
@@ -1998,13 +2003,19 @@ Item {
       opacity: root.transparent ? 0.22 : 0.32
     }
 
-    // stef.bar: the segment behind the widget, half the group padding in
-    // from each side so neighbours sit the padding apart.
+    // stef.bar: the widget's part of its segment. Half the gap in from a side
+    // that meets another segment, so neighbours sit the gap apart; flush where
+    // icons share a segment. The tray's part starts where its drawer is drawn.
+    readonly property real revealOffset: activeItem && !root.vertical && activeItem.drawerExtent !== undefined && activeItem.revealExtent !== undefined
+      ? Math.max(0, activeItem.drawerExtent - activeItem.revealExtent) : 0
     Rectangle {
+      id: segmentPart
       visible: !!slot.segment && slot.segment.visible
-      readonly property var corners: slot.segment ? Model.segmentCorners(slot.segment, tokens.value.groupbar.shape, height, root.segmentCorner) : null
-      x: root.segmentPadding / 2
-      width: Math.max(0, slot.width - slot.gapAfter - root.segmentPadding)
+      readonly property var corners: slot.segment ? Model.segmentCorners(slot.segment, tokens.value.bar.shape, height, root.segmentCorner) : null
+      readonly property real startInset: slot.segment && slot.segment.start === "inner" ? root.segmentGap / 2 : 0
+      readonly property real endInset: slot.segment && slot.segment.end === "inner" ? root.segmentGap / 2 : 0
+      x: startInset + slot.revealOffset
+      width: Math.max(0, slot.width - slot.gapAfter - x - endInset)
       height: root.segmentHeight
       y: Math.round((slot.height - height) / 2)
       topLeftRadius: corners ? corners.topLeft : 0
@@ -2012,6 +2023,18 @@ Item {
       bottomLeftRadius: corners ? corners.bottomLeft : 0
       bottomRightRadius: corners ? corners.bottomRight : 0
       color: root.segmentColor
+
+      // The widget's M3 state layer: on-surface at the hover opacity, the
+      // pressed one while pressed, in its part's corners.
+      Rectangle {
+        anchors.fill: parent
+        topLeftRadius: parent.topLeftRadius
+        topRightRadius: parent.topRightRadius
+        bottomLeftRadius: parent.bottomLeftRadius
+        bottomRightRadius: parent.bottomRightRadius
+        color: root.foreground
+        opacity: modulePointer.pressed ? tokens.m3.state.pressed : (slot.hovered ? tokens.m3.state.hover : 0)
+      }
     }
 
     Loader {
@@ -2019,7 +2042,8 @@ Item {
       active: !slot.qmlCustom && !slot.registered
       sourceComponent: slot.commandCustom ? customCommandModuleComponent : emptyModuleComponent
       anchors.fill: parent
-      anchors.rightMargin: slot.gapAfter
+      anchors.leftMargin: slot.startPad
+      anchors.rightMargin: slot.endPad + slot.gapAfter
       opacity: slot.dragSource ? 0.22 : 1.0
       onLoaded: {
         slot.injectProps()
@@ -2032,7 +2056,8 @@ Item {
       active: slot.registered
       sourceComponent: slot.registered ? slot.registryComponent : null
       anchors.fill: parent
-      anchors.rightMargin: slot.gapAfter
+      anchors.leftMargin: slot.startPad
+      anchors.rightMargin: slot.endPad + slot.gapAfter
       opacity: slot.dragSource ? 0.22 : 1.0
       onLoaded: {
         slot.injectProps()
@@ -2045,7 +2070,8 @@ Item {
       active: slot.qmlCustom
       source: slot.qmlCustom ? root.customModuleSource(slot.entry) : ""
       anchors.fill: parent
-      anchors.rightMargin: slot.gapAfter
+      anchors.leftMargin: slot.startPad
+      anchors.rightMargin: slot.endPad + slot.gapAfter
       opacity: slot.dragSource ? 0.22 : 1.0
       onLoaded: {
         slot.injectProps()
@@ -2070,7 +2096,7 @@ Item {
       // panel that opens on that side.
       x: root.vertical
         ? (root.position === "left" ? parent.width - width - inset : inset)
-        : Math.round((parent.width - slot.gapAfter - width) / 2)
+        : Math.round(slot.startPad + (parent.width - slot.startPad - slot.endPad - slot.gapAfter - width) / 2)
       y: root.vertical
         ? Math.round((parent.height - height) / 2)
         : (root.position === "top" ? parent.height - height - inset : inset)

@@ -80,11 +80,14 @@ While narrowed, the body has the full corner (a pill). Pointer input reaches onl
 
 ### Segments
 
-The widgets sit in segments, like ChromeOS's shelf: each group of widgets is an M3 connected button group (interpretation `bar.segments`), each visible widget one segment of it.
+The widgets sit in segments, like ChromeOS's shelf: each group of widgets is an M3 connected button group (interpretation `bar.segments`).
 
 - **Groups.** A section is one group. An entry's inline `"group": "<name>"` splits it: consecutive visible entries with the same group (an entry without one belongs to its section's) form one group. Hidden widgets (no width) take no part.
-- **Shape.** The groups take the window group tabs' tokens (`tokens.groupbar`, Studio's Window groups). Round: a group's outer corners are fully round, its inner corners square. Square: every corner is the connected button group's corner for `groupbar.size` (4dp extra-small). A group of one is round (or square) all round.
-- **Spacing.** `groupbar.padding` (the spec's 2dp) is the gap between two segments of a group, and between a segment and the bar's top and bottom. Two groups are the layout spacer apart (Hyprland's `gaps_in` top plus bottom, as between two windows).
+- **Pieces.** In a group, each text widget is a segment of its own. Consecutive icon widgets share one: a widget is an icon widget when its content is no wider than the bar is high (one icon button), and the tray (a row of icon buttons) is one too. So agents, bluetooth, network, audio, monitor and power make one segment; clock and weather two connected ones.
+- **Shape** (`tokens.bar.shape`, `tokens.bar.size`, Studio's Bar). Round: a group's outer corners are fully round, the corners between its segments the connected button group's inner corner for the size (4dp extra-small). Square: that corner everywhere. Icons sharing a segment have no corner or gap between them.
+- **Spacing.** `tokens.bar.gap` (the spec's 2dp) is the gap between two segments of a group, and between a segment and the bar's top and bottom. `tokens.bar.padding` is the space at both ends of a segment, before its first and after its last content (on top of the widgets' own margins). Two groups are the layout spacer apart (Hyprland's `gaps_in` top plus bottom, as between two windows).
+- **The tray** reserves the width of its open drawer. Its segment starts where the drawer is drawn, so it grows and shrinks as the drawer opens and closes.
+- **Hover.** Each widget in a segment has an M3 state layer: `on-surface` at the hover opacity while the pointer is over it, the pressed opacity while pressed, in the segment's corners.
 
 ### Colour
 
