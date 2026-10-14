@@ -5,14 +5,15 @@ export default defineConfig({
     "*": "vp check --fix",
   },
   // Golden test output must stay byte-exact; the M3 spec snapshot, its extract
-  // and the tokens generated from it are machine-written. The bar's upstream
-  // snapshot and its forked BarModel.js stay as Omarchy wrote them, so they
-  // diff cleanly against upstream.
+  // and the tokens generated from it are machine-written. The bar's and the
+  // lock's upstream snapshots and the forked BarModel.js stay as Omarchy wrote
+  // them, so they diff cleanly against upstream.
   fmt: {
     ignorePatterns: [
       "**/__golden__/**",
       "apps/bar/upstream/**",
       "apps/bar/qml/BarModel.js",
+      "apps/lock/upstream/**",
       "apps/studio/docs/material-3/**",
       "apps/studio/docs/m3-interpretations.md",
       "packages/m3/spec/**",
@@ -22,7 +23,7 @@ export default defineConfig({
     ],
   },
   lint: {
-    ignorePatterns: ["apps/bar/upstream/**", "apps/bar/qml/BarModel.js"],
+    ignorePatterns: ["apps/bar/upstream/**", "apps/bar/qml/BarModel.js", "apps/lock/upstream/**"],
     jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
     rules: { "vite-plus/prefer-vite-plus-imports": "error" },
     options: { typeAware: true, typeCheck: true },

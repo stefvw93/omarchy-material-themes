@@ -1,0 +1,4 @@
+{
+  "extends": "@stef/config/tsconfig.node.json",
+  "include": ["plugin.config.ts", "vite.config.ts", "smoke.ts", "tests/*.test.ts"]
+}

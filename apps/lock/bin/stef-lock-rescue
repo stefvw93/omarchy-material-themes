@@ -1,0 +1,53 @@
+#!/bin/bash
+# stef-lock-rescue: put Omarchy's stock lock screen back in place of stef.lock.
+#
+# For a stef.lock that is stuck (it holds the lock but can't unlock). From the
+# lock: Ctrl+Alt+F2, log in, run stef-lock-rescue, then Ctrl+Alt+F1. The stock
+# lock takes over and locks again, so you unlock as usual.
+#
+# omarchy-restart-shell refuses while a lock is held, so this disables the
+# clone through the running shell first: the shell restores omarchy.lock
+# (cloneSourceRestores), and the stock lock's stranded-lock recovery re-locks.
+
+set -uo pipefail
+
+export OMARCHY_PATH="${OMARCHY_PATH:-/usr/share/omarchy}"
+export PATH="$OMARCHY_PATH/bin:$PATH"
+config="$HOME/.config/omarchy/shell.json"
+clones=(stef.lock stef.lock.dev)
+
+stock_lock_answers() {
+  local deadline=$((SECONDS + 15))
+  while (( SECONDS < deadline )); do
+    omarchy-shell lock status 2>/dev/null | jq -e '.passwordPam' >/dev/null 2>&1 && return 0
+    sleep 0.5
+  done
+  return 1
+}
+
+echo "1/2: disabling ${clones[*]} through the shell"
+disabled=0
+for id in "${clones[@]}"; do
+  [[ $(omarchy-shell shell setPluginEnabled "$id" false 2>/dev/null) == ok ]] && disabled=1
+done
+if (( disabled )) && stock_lock_answers; then
+  echo "done: the stock lock is back. Ctrl+Alt+F1 to return and unlock."
+  exit 0
+fi
+
+echo "2/2: the shell didn't answer; editing $config and restarting the shell"
+if [[ -f $config ]]; then
+  cp "$config" "$config.stef-lock-rescue.bak"
+  jq '
+    .plugins = [(.plugins // [])[] | select((if type == "object" then .id else . end) as $id | ($id != "stef.lock" and $id != "stef.lock.dev"))]
+    | .disabledPlugins = [(.disabledPlugins // [])[] | select(. != "omarchy.lock")]
+    | .cloneSourceRestores = [(.cloneSourceRestores // [])[] | select(. != "stef.lock" and . != "stef.lock.dev")]
+  ' "$config.stef-lock-rescue.bak" > "$config" || cp "$config.stef-lock-rescue.bak" "$config"
+fi
+if omarchy-restart-shell && stock_lock_answers; then
+  echo "done: the stock lock is back. Ctrl+Alt+F1 to return and unlock."
+  exit 0
+fi
+
+echo "rescue failed. Reboot: Hyprland never opens the session unlocked." >&2
+exit 1
