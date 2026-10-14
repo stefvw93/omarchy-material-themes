@@ -12,7 +12,7 @@ All coordinates are monitor-local pixels. The screen is the plane z = 0; z < 0 i
 
   Why not one eye at the monitor's centre: seen from there, the receding inner side of a band converges towards the centre, like a corridor wall, which stretches a card towards the focus area and cancels its narrowing. From in front of the band, the turn foreshortens the card.
 
-- **Foreshortening.** At the defaults (25°, `distance` = the monitor height) a band-wide card is drawn at about 87% of its width, its inner edge about 10% shorter than its outer edge.
+- **Foreshortening.** At the defaults (12°, `distance` = the monitor height) a band-wide card is drawn at about 95% of its width, its inner edge about 5% shorter than its outer edge.
 
 ## Card transform
 

@@ -234,7 +234,7 @@ Item {
   readonly property int headerHeight: root.typeOf("title-small").lineHeight + root.cardGap
   // How far a card at rest turns towards the focus area, in degrees; a
   // selected or dragged card turns flat (interpretation periphery.components).
-  readonly property real cardTilt: 25
+  readonly property real cardTilt: 12
   // Each band's plane seen from this far in front of the band's centre
   // (src/surface/specs.md): shorter is stronger perspective.
   readonly property real viewDistance: root.monH
