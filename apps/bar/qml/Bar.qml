@@ -1391,6 +1391,7 @@ Item {
           width: barWindow.width
         }, barWindow.edges)
     readonly property var edges: Model.floatingEdges(root.gapsOut, root.gapsIn, root.position)
+    readonly property real sideMargin: barWindow.bodyGeometry.narrowed ? 0 : Math.round(Style.space(8) / 2)
     property bool bodySettled: false
     onWidthChanged: if (width > 0 && !bodySettled) Qt.callLater(function() { barWindow.bodySettled = true })
     SpringValue { id: bodyX; spring: tokens.springs.spatial_default; epsilon: 0.5; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.x }
@@ -1516,15 +1517,17 @@ Item {
 
         CenterModules { anchors.fill: parent }
 
+        // stef.bar: half the stock margin docked, none floating, where the
+        // outer segments line up with the windows (SPEC.md, Segments).
         LeftModules {
           anchors.left: parent.left
-          anchors.leftMargin: Style.space(8)
+          anchors.leftMargin: barWindow.sideMargin
           anchors.verticalCenter: parent.verticalCenter
         }
 
         RightModules {
           anchors.right: parent.right
-          anchors.rightMargin: Style.space(8)
+          anchors.rightMargin: barWindow.sideMargin
           anchors.verticalCenter: parent.verticalCenter
         }
       }
@@ -1979,7 +1982,9 @@ Item {
     // The bar padding at a segment's ends, not between icons sharing one.
     readonly property real startPad: segment && segment.visible && segment.start !== "join" ? root.segmentPadding : 0
     readonly property real endPad: segment && segment.visible && segment.end !== "join" ? root.segmentPadding : 0
-    implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : activeItem.implicitWidth + startPad + endPad + gapAfter) : 0
+    // Whole pixels, so the segments after a fractional widget (the clock's
+    // text) keep even gaps.
+    implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : Math.ceil(activeItem.implicitWidth) + startPad + endPad + gapAfter) : 0
     implicitHeight: activeItem && activeItem.visible ? activeItem.implicitHeight : 0
     width: implicitWidth
     height: implicitHeight
