@@ -183,6 +183,15 @@ export function buttonStateLayer(
   };
 }
 
+export function nearestButton(buttons: ReadonlyArray<ButtonExtent>, x: number): number {
+  for (let i = 0; i + 1 < buttons.length; i++) {
+    const here = buttons[i]!;
+    const next = buttons[i + 1]!;
+    if (x < (here.x + here.width + next.x) / 2) return i;
+  }
+  return buttons.length - 1;
+}
+
 export function isIconItem(contentWidth: number, barSize: number, id: string): boolean {
   if (!(contentWidth > 0)) return false;
   return contentWidth <= barSize || id === "omarchy.tray";

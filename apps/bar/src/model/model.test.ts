@@ -9,6 +9,7 @@ import {
   legibilityShadow,
   parseFocusEvent,
   buttonStateLayer,
+  nearestButton,
   segmentCorners,
   segmentPlan,
 } from "./model.ts";
@@ -313,5 +314,31 @@ describe("buttonStateLayer", () => {
     expect(buttonStateLayer(part, buttons, 5, 4)).toBeNull();
     expect(buttonStateLayer(part, buttons, -1, 4)).toBeNull();
     expect(buttonStateLayer(part, [], 0, 4)).toBeNull();
+  });
+});
+
+describe("nearestButton", () => {
+  // Buttons at 10–30, 32–52, 54–74: 2-wide gaps at 30–32 and 52–54.
+  const buttons = [10, 32, 54].map((x) => ({ x, width: 20 }));
+
+  it("picks the button under the point", () => {
+    expect(nearestButton(buttons, 20)).toBe(0);
+    expect(nearestButton(buttons, 40)).toBe(1);
+    expect(nearestButton(buttons, 70)).toBe(2);
+  });
+
+  it("splits a gap at its middle", () => {
+    expect(nearestButton(buttons, 30.5)).toBe(0);
+    expect(nearestButton(buttons, 31.5)).toBe(1);
+    expect(nearestButton(buttons, 53)).toBe(2);
+  });
+
+  it("gives the ends to the first and last buttons", () => {
+    expect(nearestButton(buttons, 0)).toBe(0);
+    expect(nearestButton(buttons, 200)).toBe(2);
+  });
+
+  it("is -1 without buttons", () => {
+    expect(nearestButton([], 10)).toBe(-1);
   });
 });

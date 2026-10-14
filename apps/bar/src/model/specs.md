@@ -37,6 +37,8 @@ The bar's own decisions, without Qt: Periphery's focus area and where the body g
 
 `buttonStateLayer(part, buttons, index, innerCorner)`: where a widget with several buttons (the workspaces) draws the state layer of its `index`-th button, so each button lights up on its own. `part` is the widget's part of its segment, `{ width, corners }`; `buttons` are its buttons' extents in the part, `{ x, width }`, ordered from the start. The layer spans the button's own extent, except that the first button's reaches back to the part's start and the last button's on to the part's end (over the segment's padding), taking the part's corners there. Its other sides take `innerCorner`, the connected button group's inner corner. A lone button spans the whole part. An index outside `buttons` gives `null`.
 
+`nearestButton(buttons, x)`: which of a widget's buttons (extents `{ x, width }` ordered from the start, as for `buttonStateLayer`) a point `x` along the widget belongs to, so the gaps between buttons have no dead zone: each gap is split at its midpoint between its two buttons, and everything before the first button or after the last belongs to that button. No buttons gives -1.
+
 `isIconItem(contentWidth, barSize, id)`: whether a widget counts as an icon item: its content is no wider than `barSize`, or it is the tray (`omarchy.tray`). A widget with no width is not.
 
 `entryKey(entry)`: an entry's content as a string that doesn't depend on key order (objects' keys sorted, at every depth), so an entry and a copy of it with reordered keys (as a QML Repeater hands its delegates) give the same key.

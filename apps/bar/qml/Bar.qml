@@ -1110,6 +1110,17 @@ Item {
       }
     }
 
+    // stef.bar: a widget made of several buttons has no dead zone between
+    // them: a gap (or the segment padding) belongs to the nearest button, for
+    // hover, the cursor and clicks alike (SPEC.md, Segments).
+    if (localX >= 0 && localX <= slot.width && localY >= 0 && localY <= slot.height) {
+      var buttons = slotButtons(slot, slot)
+      if (buttons.length > 1) {
+        var nearest = Model.nearestButton(buttons, root.vertical ? localY : localX)
+        if (nearest >= 0) return buttons[nearest].target
+      }
+    }
+
     if (moduleTargetClickable(slot.activeItem)) return slot.activeItem
     return null
   }
@@ -2057,7 +2068,7 @@ Item {
         if (buttons.length < 2) return null
         for (var i = 0; i < buttons.length; i++) {
           if (buttons[i].target === hoverTarget)
-            return Model.buttonStateLayer({ width: segmentPart.width, corners: corners }, buttons, i, root.segmentCorner) // qmllint disable missing-property
+            return Model.buttonStateLayer({ width: segmentPart.width, corners: corners }, buttons, i, root.segmentCorner)
         }
         return null
       }
