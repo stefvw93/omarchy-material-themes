@@ -1,6 +1,6 @@
 import { Task } from "@wych/react";
 import { ApplyColors, Seed, SetContrast, SetMode, SetVariant } from "@/features/seed";
-import { Contrast, Variant } from "@stef/theme-engine";
+import { Contrast, Variant, type ThemePalette } from "@stef/theme-engine";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -11,7 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ColorsGrid } from "./colors-grid";
+import { SchemeGrid } from "./scheme-grid";
 import { Spinner } from "@/components/ui/spinner";
 
 const VARIANTS = Variant.literals.map((value) => ({ value, label: value }));
@@ -108,9 +110,9 @@ export const OutputPanel = () => {
 
       {Task.match(state.palette, {
         Idle: () => null,
-        Pending: () => <ColorsGrid />,
+        Pending: () => <PaletteTabs />,
         Rejected: (rejected) => `Error: ${rejected.error}`,
-        Resolved: (resolved) => <ColorsGrid omarchyColors={resolved.value.omarchy} />,
+        Resolved: (resolved) => <PaletteTabs palette={resolved.value} />,
       })}
 
       <Button
@@ -122,3 +124,21 @@ export const OutputPanel = () => {
     </div>
   );
 };
+
+/** The palette as Omarchy's colors.toml keys, or as its M3 roles. */
+const PaletteTabs = ({ palette }: { readonly palette?: ThemePalette }) => (
+  <Tabs defaultValue="omarchy">
+    <TabsList>
+      <TabsTrigger value="omarchy">Omarchy</TabsTrigger>
+      <TabsTrigger value="material">Material 3</TabsTrigger>
+    </TabsList>
+
+    <TabsContent value="omarchy">
+      <ColorsGrid omarchyColors={palette?.omarchy} />
+    </TabsContent>
+
+    <TabsContent value="material">
+      <SchemeGrid system={palette?.system} statics={palette?.statics} />
+    </TabsContent>
+  </Tabs>
+);

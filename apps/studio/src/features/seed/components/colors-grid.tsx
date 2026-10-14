@@ -96,20 +96,25 @@ export const ColorsGrid: FC<{ readonly omarchyColors?: OmarchyColors }> = ({ oma
   );
 };
 
-const Tile: FC<{
+export const Tile: FC<{
   readonly color?: string;
   readonly textColor?: string;
   readonly label?: string;
+  /** The full name, when the label is shortened. */
+  readonly title?: string;
   readonly className?: string;
-}> = ({ color, textColor, label, className }) => {
+}> = ({ color, textColor, label, title, className }) => {
   if (!color) return <Skeleton className={cn(className)} />;
 
   return (
     <div
       style={{ backgroundColor: color }}
-      className={cn(className, "py-1 px-0.5 leading-0.5 @container-normal")}
+      title={title ?? label}
+      className={cn(className, "py-0.5 px-0.5 @container-normal")}
     >
-      <p style={{ color: textColor, fontSize: ".65cqi" }}>{label}</p>
+      <p className="truncate leading-tight" style={{ color: textColor, fontSize: ".65cqi" }}>
+        {label}
+      </p>
     </div>
   );
 };
