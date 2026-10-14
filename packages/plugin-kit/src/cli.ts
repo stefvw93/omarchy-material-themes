@@ -35,7 +35,7 @@ const program = Effect.gen(function* () {
     }
     case "check": {
       const outDir = yield* buildPlugin(root, config, "prod");
-      yield* checkQml(root, outDir);
+      yield* checkQml(root, outDir, config.qmllintSkip);
       yield* Console.log("qml ok");
       yield* checkBundles(outDir);
       yield* Console.log("bundles ok");

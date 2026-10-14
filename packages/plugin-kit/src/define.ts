@@ -10,6 +10,11 @@ export interface PluginConfig extends Omit<PluginManifest, "schemaVersion"> {
    * the built id (e.g. `stef.periphery.dev`).
    */
   readonly hyprHook?: string;
+  /**
+   * QML files `check` doesn't lint: untouched copies of Omarchy's own files,
+   * whose diff against upstream must stay empty.
+   */
+  readonly qmllintSkip?: ReadonlyArray<string>;
   /** TypeScript entries bundled for the QML engine: `lib/<name>.mjs`. */
   readonly libs?: Readonly<Record<string, string>>;
   /** Extra files copied to the plugin root as-is, e.g. `README.md`. */

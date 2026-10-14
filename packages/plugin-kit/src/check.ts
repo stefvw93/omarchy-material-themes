@@ -16,8 +16,14 @@ const omarchyShell = Effect.map(omarchyPath, (dir) => `${dir}/shell`);
  * Qt 6 qmllint over the built QML, any warning fails (/usr/bin/qmllint is Qt
  * 5's). `qs.*` imports resolve through a link to the Omarchy shell. Lines
  * qmllint can't type carry a same-line `// qmllint disable <category>`.
+ * `skip` names files kept byte-identical to Omarchy's, which upstream doesn't
+ * lint clean and a disable line would change.
  */
-export const checkQml = Effect.fn("PluginKit.checkQml")(function* (root: string, outDir: string) {
+export const checkQml = Effect.fn("PluginKit.checkQml")(function* (
+  root: string,
+  outDir: string,
+  skip: ReadonlyArray<string> = [],
+) {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const importDir = path.join(root, ".cache/qml");
@@ -26,7 +32,7 @@ export const checkQml = Effect.fn("PluginKit.checkQml")(function* (root: string,
   yield* fs.symlink(yield* omarchyShell, path.join(importDir, "qs"));
 
   const qml = (yield* fs.readDirectory(outDir))
-    .filter((f) => f.endsWith(".qml"))
+    .filter((f) => f.endsWith(".qml") && !skip.includes(f))
     .map((f) => path.join(outDir, f));
   const result = yield* run("/usr/lib/qt6/bin/qmllint", [
     "-I",
@@ -309,10 +315,24 @@ export const checkEngineTests = Effect.fn("PluginKit.checkEngineTests")(function
         const tmp = yield* fs.makeTempDirectoryScoped();
         yield* fs.symlink(outDir, path.join(tmp, "plugin"));
         yield* fs.copyFile(path.join(testDir, test), path.join(tmp, "shell.qml"));
+        // `qs.*` resolves against the config folder: link the shell's modules
+        // (qs.Commons, qs.Ui, …) so plugin QML that imports them compiles.
+        const shellDir = yield* omarchyShell;
+        for (const entry of yield* fs.readDirectory(shellDir)) {
+          if (entry === "plugin" || entry === "shell.qml") continue;
+          if ((yield* fs.stat(path.join(shellDir, entry))).type !== "Directory") continue;
+          yield* fs.symlink(path.join(shellDir, entry), path.join(tmp, entry));
+        }
+        // Offscreen by default. A test that compiles layer-shell windows
+        // (PanelWindow needs a Wayland backend) asks for the session's own
+        // platform with an `// engine-platform: wayland` line; it must not
+        // create them.
+        const source = yield* fs.readFileString(path.join(testDir, test));
+        const platform = /^\/\/ engine-platform: wayland$/m.test(source) ? "wayland" : "offscreen";
         const lines = yield* runUntil(
           "qs",
           ["-p", path.join(tmp, "shell.qml")],
-          { env: { QT_QPA_PLATFORM: "offscreen" }, extendEnv: true },
+          { env: { QT_QPA_PLATFORM: platform }, extendEnv: true },
           (line) => /ENGINE-(PASS|FAIL)/.test(line),
           "15 seconds",
         );

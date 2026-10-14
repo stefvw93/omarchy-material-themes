@@ -59,7 +59,7 @@ const check = Command.make("check", { app }, ({ app: name }) =>
   Effect.gen(function* () {
     const a = yield* pluginApp(name);
     const out = yield* buildPlugin(a.root, a.config, "prod");
-    yield* checkQml(a.root, out);
+    yield* checkQml(a.root, out, a.config.qmllintSkip);
     yield* checkBundles(out);
     yield* checkTokens(out);
     yield* checkEngineTests(a.root, out);

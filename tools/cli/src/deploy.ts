@@ -1,6 +1,7 @@
 import { Hyprland } from "@stef/hyprland";
 import {
   OmarchyCli,
+  OmarchyError,
   OmarchyShell,
   installPlugin,
   readState,
@@ -10,8 +11,8 @@ import {
   writeHooksFile,
   writeState,
 } from "@stef/omarchy";
-import { buildPlugin } from "@stef/plugin-kit";
-import { Console, Effect, Schedule } from "effect";
+import { buildPlugin, checkEngineTests, checkQml } from "@stef/plugin-kit";
+import { Console, Effect, FileSystem, Path, Schedule, Schema } from "effect";
 import type { PluginApp } from "./workspace.ts";
 
 const other = (variant: Variant): Variant => (variant === "dev" ? "prod" : "dev");
@@ -52,6 +53,63 @@ const selectedBar = Effect.flatMap(OmarchyShell, (shell) => shell.listPlugins).p
   Effect.orElseSucceed(() => undefined),
 );
 
+/**
+ * A clone of the stock lock replaces it outright: if the clone doesn't load,
+ * nothing answers `omarchy-shell lock lock`, and idle, the keybind and sleep
+ * silently stop locking. So its deploy is only done once the lock answers.
+ */
+const replacesLock = (app: PluginApp) => app.config.omarchy?.clonedFrom === "omarchy.lock";
+
+const LockStatus = Schema.fromJsonString(Schema.Struct({ passwordPam: Schema.Boolean }));
+
+/**
+ * Waits until `id` is the enabled lock (the stock one disabled) and the
+ * `lock` IPC target answers with a configured password PAM.
+ */
+const lockAnswers = (id: string) =>
+  Effect.gen(function* () {
+    const shell = yield* OmarchyShell;
+    const plugins = yield* shell.listPlugins;
+    const enabled = (pid: string) => plugins.find((p) => p.id === pid)?.enabled === true;
+    if (!enabled(id) || enabled("omarchy.lock")) {
+      return yield* Effect.fail(`${id} is not the enabled lock`);
+    }
+    const status = yield* Schema.decodeUnknownEffect(LockStatus)(
+      yield* shell.query("lock", "status"),
+    );
+    if (!status.passwordPam) return yield* Effect.fail("the lock has no password PAM");
+  }).pipe(
+    Effect.retry({ schedule: Schedule.spaced("500 millis"), times: 30 }),
+    Effect.mapError((error) => (typeof error === "string" ? error : error.message)),
+  );
+
+/**
+ * Puts the stock lock back: disabling the clone restores `omarchy.lock`
+ * (the shell's cloneSourceRestores), and a restart drops any loaded code.
+ */
+const restoreStockLock = (id: string) =>
+  Effect.gen(function* () {
+    yield* disableIfKnown(id);
+    yield* Effect.flatMap(OmarchyCli, (omarchy) => omarchy.restartShell).pipe(Effect.ignore);
+  });
+
+/**
+ * Installs the app's `bin/stef-lock-rescue` to ~/.local/bin, so it can be run
+ * from a TTY when the lock is stuck.
+ */
+const installRescue = (app: PluginApp) =>
+  Effect.gen(function* () {
+    const fs = yield* FileSystem.FileSystem;
+    const path = yield* Path.Path;
+    const home = process.env["HOME"] ?? "";
+    const bin = path.join(home, ".local/bin");
+    yield* fs.makeDirectory(bin, { recursive: true });
+    const target = path.join(bin, "stef-lock-rescue");
+    yield* fs.copyFile(path.join(app.root, "bin/stef-lock-rescue"), target);
+    yield* fs.chmod(target, 0o755);
+    return target;
+  });
+
 /** Regenerates plugins.lua; reloads Hyprland's config when the app has a hook. */
 const refreshHooks = (app: PluginApp) =>
   Effect.gen(function* () {
@@ -69,9 +127,17 @@ const refreshHooks = (app: PluginApp) =>
 export const deploy = Effect.fn("Stef.deploy")(function* (app: PluginApp, variant: Variant) {
   const id = variantId(app.config.id, variant);
   const built = yield* buildPlugin(app.root, app.config, variant);
+  // A lock that doesn't compile leaves the session unlockable-by-nothing:
+  // it only goes in once it lints and compiles in Quickshell's engine.
+  if (replacesLock(app)) {
+    yield* checkQml(app.root, built, app.config.qmllintSkip);
+    yield* checkEngineTests(app.root, built);
+    yield* Console.log("lock compiles: qml and engine tests ok");
+  }
   const stale = yield* knownToShell(id);
   const target = yield* installPlugin(built, id);
   yield* Console.log(`installed ${target}`);
+  if (replacesLock(app)) yield* Console.log(`installed ${yield* installRescue(app)}`);
 
   const state = yield* readState;
   // A bar's dev variant replaces whichever bar is selected: remember it.
@@ -89,13 +155,31 @@ export const deploy = Effect.fn("Stef.deploy")(function* (app: PluginApp, varian
   yield* enable(id);
   yield* Console.log(`enabled ${id}`);
   // A bar the shell just switched to can come up without its widgets (seen
-  // on a first selection); a restart loads it with them.
-  if (stale || isBar(app)) {
+  // on a first selection); a restart loads it with them. A lock clone enabled
+  // live doesn't get the `lock` IPC target: the stock lock registered it
+  // first, and Quickshell keeps the first handler. A restart loads only the clone.
+  if (stale || isBar(app) || replacesLock(app)) {
     yield* Effect.flatMap(OmarchyCli, (omarchy) => omarchy.restartShell);
     yield* Console.log(
       stale
         ? `restarted the shell: it had ${id}'s previous code loaded`
-        : `restarted the shell: it loads the new bar with its widgets`,
+        : isBar(app)
+          ? `restarted the shell: it loads the new bar with its widgets`
+          : `restarted the shell: only ${id} answers as the lock`,
+    );
+  }
+  if (replacesLock(app)) {
+    const answered = yield* Effect.result(lockAnswers(id));
+    if (answered._tag === "Failure") {
+      yield* restoreStockLock(id);
+      return yield* Effect.fail(
+        new OmarchyError({
+          message: `${id} did not take over the lock (${answered.failure}); the stock lock is back`,
+        }),
+      );
+    }
+    yield* Console.log(
+      `${id} answers as the lock; if it ever gets stuck, run stef-lock-rescue from a TTY`,
     );
   }
 });

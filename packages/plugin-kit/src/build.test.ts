@@ -38,6 +38,14 @@ describe("manifestFor", () => {
     }),
   );
 
+  it.effect("keeps a clone's source in both variants", () =>
+    Effect.gen(function* () {
+      const clone = { ...config, omarchy: { clonedFrom: "omarchy.lock" } };
+      expect((yield* manifestFor(clone, "prod")).omarchy).toEqual({ clonedFrom: "omarchy.lock" });
+      expect((yield* manifestFor(clone, "dev")).omarchy).toEqual({ clonedFrom: "omarchy.lock" });
+    }),
+  );
+
   it.effect("rejects an entry point that escapes the plugin folder", () =>
     Effect.gen(function* () {
       const exit = yield* Effect.exit(

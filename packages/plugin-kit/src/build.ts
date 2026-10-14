@@ -45,6 +45,7 @@ export const manifestFor = (config: PluginConfig, mode: BuildMode) =>
     kinds: config.kinds,
     entryPoints: config.entryPoints,
     ...(config.keepLoaded === undefined ? {} : { keepLoaded: config.keepLoaded }),
+    ...(config.omarchy === undefined ? {} : { omarchy: config.omarchy }),
   }).pipe(
     Effect.mapError(
       (cause) => new PluginBuildError({ message: `invalid manifest: ${cause.message}`, cause }),

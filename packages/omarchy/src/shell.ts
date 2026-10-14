@@ -13,6 +13,8 @@ export const PluginInfo = Schema.Struct({
   /** For a `bar`: the one running (a selected bar that failed falls back to the stock one). */
   active: Schema.optional(Schema.Boolean),
   firstParty: Schema.Boolean,
+  /** The first-party plugin this one replaces (`omarchy.clonedFrom`); empty when none. */
+  clonedFrom: Schema.optional(Schema.String),
 });
 export type PluginInfo = typeof PluginInfo.Type;
 
@@ -26,8 +28,20 @@ export interface OmarchyShellImpl {
   readonly setPluginEnabled: (id: string, enabled: boolean) => Effect.Effect<void, OmarchyError>;
   readonly rescanPlugins: Effect.Effect<void, OmarchyError>;
   readonly toggle: (id: string, payload?: unknown) => Effect.Effect<void, OmarchyError>;
-  /** Calls a plugin's own IpcHandler: `omarchy-shell -q <target> <method> <args…>`. */
+  /**
+   * Calls a plugin's own IpcHandler: `omarchy-shell -q <target> <method> <args…>`.
+   * Quiet: best-effort, and its output is always empty.
+   */
   readonly ipc: (
+    target: string,
+    method: string,
+    ...args: ReadonlyArray<string>
+  ) => Effect.Effect<string, OmarchyError>;
+  /**
+   * Like `ipc`, but returns the handler's answer, and fails when the shell,
+   * the target or the method doesn't answer.
+   */
+  readonly query: (
     target: string,
     method: string,
     ...args: ReadonlyArray<string>
@@ -65,6 +79,7 @@ export const makeOmarchyShell = (
     toggle: (id, payload = {}) =>
       Effect.asVoid(text(["shell", "toggle", id, JSON.stringify(payload)])),
     ipc: (target, method, ...args) => text(["-q", target, method, ...args]),
+    query: (target, method, ...args) => text([target, method, ...args]),
   };
 };
 

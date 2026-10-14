@@ -86,6 +86,7 @@ export const OmarchyShellTest = (overrides: Partial<OmarchyShellImpl> = {}) => {
       }),
     toggle: (id) => Effect.sync(() => void calls.push(`toggle ${id}`)),
     ipc: () => Effect.succeed(""),
+    query: () => Effect.succeed(""),
     ...overrides,
   });
   return { layer, calls };
