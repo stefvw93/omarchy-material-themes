@@ -103,7 +103,7 @@ describe("stepSelection", () => {
 
   // The plugin passes its current layout: a closed pile's tabs 7 px apart, an
   // open pile's tabs cards of their own.
-  it("steps through a closed pile's tabs, up and left to the ones behind", () => {
+  it("steps through a closed pile's tabs, up to the ones behind", () => {
     const pile = {
       back: { x: 16, y: 100, w: 300, h: 200 },
       middle: { x: 23, y: 107, w: 300, h: 200 },

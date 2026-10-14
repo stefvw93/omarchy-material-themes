@@ -37,7 +37,7 @@ A group's windows form units, each placed as one block:
 - The tabs of one tab group (the same non-empty `tabGroup`) are one unit, a **pile**. Its real rect is the tabs' bounding box. The shown tab is in front; the other tabs are behind it in input order, the first one furthest back. Without a shown tab, the last tab is in front.
 - The tabs of the **open pile** are units on their own, in input order: the band is packed again with every tab as a card of its own, and the other cards move aside to make room for them.
 
-A pile is `pileStep × min(pileMax, tabs − 1)` larger than one card, both ways (`pileStep` 7 px, `pileMax` 3). The front tab sits at the bottom right; each tab further back is `pileStep` further up and left, until `pileMax` steps; tabs beyond that sit at the last step. Every tab of a pile has the same card size: the pile's real rect at the group's scale.
+A pile is `pileStep × min(pileMax, tabs − 1)` larger than one card, both ways (`pileStep` 7 px, `pileMax` 3). The front tab sits at the bottom, on the band's inner side (towards the focus area); each tab further back is `pileStep` further up and towards the band's outer edge (left in the left band, right in the right band), until `pileMax` steps; tabs beyond that sit at the last step. The pile recedes the way its band's plane does: away from the focus area. Every tab of a pile has the same card size: the pile's real rect at the group's scale.
 
 The **tiled units** of a group are its units of tiled windows, its **floating units** its units of floating windows.
 

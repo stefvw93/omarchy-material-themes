@@ -139,10 +139,11 @@ export function layoutBands<W extends LayoutWindow>(
 
   const cards: Record<string, Card<W>> = {};
   const headers: Header[] = [];
-  placeSide(groupsOf(left), geometry.bandMargin, geometry, cards, headers);
+  placeSide(groupsOf(left), geometry.bandMargin, -1, geometry, cards, headers);
   placeSide(
     groupsOf(right),
     geometry.monW - geometry.sideW + geometry.bandMargin,
+    1,
     geometry,
     cards,
     headers,
@@ -332,6 +333,8 @@ function fitScale(c: Candidate<LayoutWindow>, gap: number, maxW: number, maxH: n
 function placeSide<W extends LayoutWindow>(
   input: { id: number; label: string; windows: W[]; open: string }[],
   bandX: number,
+  /** Where the band's outer edge is: −1 left, +1 right. */
+  outer: number,
   geo: Geometry,
   cards: Record<string, Card<W>>,
   headers: Header[],
@@ -418,9 +421,11 @@ function placeSide<W extends LayoutWindow>(
       const ux = x0 + it.x;
       const uy = y0 + it.y;
       it.unit.windows.forEach((w, j) => {
-        const off = it.unit.extra - Math.min(PILE_MAX, n - 1 - j) * PILE_STEP;
+        // Tabs further back step up and towards the band's outer edge.
+        const back = Math.min(PILE_MAX, n - 1 - j) * PILE_STEP;
+        const off = it.unit.extra - back;
         cards[w.address] = cardOf(w, {
-          x: ux + off,
+          x: ux + (outer > 0 ? back : off),
           y: uy + off,
           w: it.cw,
           h: it.ch,

@@ -18,7 +18,7 @@ A focus key (`l`, `r`, `u`, `d`) on a selected card:
 2. **Back to the focus area.** With no card that way, and the direction pointing at the focus area (`r` in the left band, `l` in the right band): the focus area window on that edge nearest the card's height gets the focus, and the selection clears. Score per tile: distance from the tile's edge to the band edge + the vertical distance from the card's centre to the tile (0 when the centre is within the tile's height). No tiles: the selection clears and nothing gets the focus.
 3. **Otherwise** the selection stays.
 
-The card rects are the plugin's current layout: a closed pile's tabs are 7 px apart, so the focus keys step through a closed pile, up and left to the tabs behind; once a tab is selected its pile opens, every tab a card of its own ([layout](../layout/specs.md#units)), and the keys step through them like any cards.
+The card rects are the plugin's current layout: a closed pile's tabs are 7 px apart, so the focus keys step through a closed pile, up to the tabs behind; once a tab is selected its pile opens, every tab a card of its own ([layout](../layout/specs.md#units)), and the keys step through them like any cards.
 
 A selected address that is not a card (any more) clears the selection.
 

@@ -296,7 +296,8 @@ describe("layoutBands", () => {
     expect(ca.z).toBe(cb.z);
   });
 
-  it("piles the tabs of a tab group, the shown tab in front at the bottom right", () => {
+  it("piles the tabs of a tab group, the shown tab in front, the others up and towards the monitor's edge", () => {
+    // Right band: the tabs behind peek out up and to the right.
     const pile = tabs(3, 3, 1);
     const layout = layoutBands(pile, 2, geometry);
     const [back, front, middle] = pile.map((w) => layout.cards[w.address]!);
@@ -306,9 +307,20 @@ describe("layoutBands", () => {
     }
     expect(front!.z).toBeGreaterThan(middle!.z);
     expect(middle!.z).toBeGreaterThan(back!.z);
-    expect(front!.x - middle!.x).toBeCloseTo(7, 6);
+    expect(middle!.x - front!.x).toBeCloseTo(7, 6);
+    expect(back!.x - front!.x).toBeCloseTo(14, 6);
     expect(front!.y - back!.y).toBeCloseTo(14, 6);
-    expect(back!.x).toBeCloseTo(rightX + (bandW - (front!.w + 14)) / 2, 6);
+    expect(front!.x).toBeCloseTo(rightX + (bandW - (front!.w + 14)) / 2, 6);
+  });
+
+  it("mirrors a pile in the left band: the tabs behind peek out up and to the left", () => {
+    const pile = tabs(1, 3, 2);
+    const layout = layoutBands(pile, 2, geometry);
+    const [back, middle, front] = pile.map((w) => layout.cards[w.address]!);
+    expect(front!.x - middle!.x).toBeCloseTo(7, 6);
+    expect(front!.x - back!.x).toBeCloseTo(14, 6);
+    expect(front!.y - back!.y).toBeCloseTo(14, 6);
+    expect(back!.x).toBeCloseTo(leftX + (bandW - (front!.w + 14)) / 2, 6);
   });
 
   it("puts tabs beyond three steps back at the last step", () => {
@@ -316,10 +328,10 @@ describe("layoutBands", () => {
     const layout = layoutBands(pile, 2, geometry);
     const cards = pile.map((w) => layout.cards[w.address]!);
     const front = cards[4]!;
-    expect(front.x - cards[0]!.x).toBeCloseTo(21, 6);
-    expect(front.x - cards[1]!.x).toBeCloseTo(21, 6);
-    expect(front.x - cards[2]!.x).toBeCloseTo(14, 6);
-    expect(front.x - cards[3]!.x).toBeCloseTo(7, 6);
+    expect(cards[0]!.x - front.x).toBeCloseTo(21, 6);
+    expect(cards[1]!.x - front.x).toBeCloseTo(21, 6);
+    expect(cards[2]!.x - front.x).toBeCloseTo(14, 6);
+    expect(cards[3]!.x - front.x).toBeCloseTo(7, 6);
   });
 
   it("puts the last tab in front when no tab is shown", () => {
