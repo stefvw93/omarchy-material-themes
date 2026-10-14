@@ -2126,7 +2126,12 @@ Item {
       acceptedButtons: Qt.LeftButton
       enabled: slot.visible && slot.width > 0 && slot.height > 0
       propagateComposedEvents: true
-      cursorShape: root.moduleClickTargetAt(slot, mouseX, mouseY) ? Qt.PointingHandCursor : Qt.ArrowCursor
+      // stef.bar: where the pointer is, from the hover handler. Without hover
+      // this area's mouseX/mouseY only update while pressed, so the cursor was
+      // picked at (0,0) or the last press: the stock bar's widgets start at
+      // 0, but a segment's padding puts (0,0) beside the widget, and padded
+      // widgets showed an arrow.
+      cursorShape: root.moduleClickTargetAt(slot, moduleHover.point.position.x, moduleHover.point.position.y) ? Qt.PointingHandCursor : Qt.ArrowCursor
       // Do not assign drag.target here: ModuleSlot is owned by Row/Column
       // positioners, and mutating slot.x/slot.y can leave stale offsets that
       // make neighboring modules overlap after a small aborted drag.
