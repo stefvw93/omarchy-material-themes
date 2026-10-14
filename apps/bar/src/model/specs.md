@@ -10,7 +10,12 @@ The bar's own decisions, without Qt: Periphery's focus area and where the body g
 - `periphery>>x0,x1,monitor` with `x0 < x1` whole numbers and a monitor name → `{ on: true, x0, x1, monitor }`.
 - Anything else (other custom events included) → `null`: not about the focus area.
 
-`bodyGeometry(focus, screen)`, `screen` `{ name, x, width }`: the body's `{ x, width, narrowed }` in screen-local pixels. The focus area on this screen (same monitor name) gives `x = x0 − screen.x`, `width = x1 − x0`, clamped to the screen, `narrowed: true`. Otherwise (off, another monitor, `null`) the whole screen: `{ x: 0, width: screen.width, narrowed: false }`.
+`bodyGeometry(focus, screen, edges)`, `screen` `{ name, x, width }`, `edges` `{ left, right, margin }`: the body's `{ x, width, margin, narrowed }` in screen-local pixels.
+
+- The focus area on this screen (same monitor name) narrows the body to where windows tile in it: from `x0 + left` to `x1 − right` (`left`, `right`: Hyprland's outer gaps), made local to the screen and clamped to it, never narrower than 0. `margin` is `edges.margin` (the floating toolbar's distance from the screen edge), `narrowed: true`.
+- Otherwise (off, another monitor, `null`) the whole screen: `{ x: 0, width: screen.width, margin: 0, narrowed: false }`.
+
+`gapsOutOf(output)`: Hyprland's outer gaps from the output of `hyprctl -j getoption general:gaps_out` (a JSON object whose `css` is CSS shorthand): `[top, right, bottom, left]`. Output that isn't such JSON, or a `css` that isn't 1 to 4 numbers, gives `[0, 0, 0, 0]`.
 
 ## Legibility shadow
 

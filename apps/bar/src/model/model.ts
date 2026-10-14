@@ -1,5 +1,6 @@
 // The bar's own decisions without Qt (specs.md). The stock bar's logic stays
 // in the fork, qml/BarModel.js.
+import { parseCssGaps } from "@stef/qml-kit";
 
 export type FocusArea =
   | { readonly on: false }
@@ -8,7 +9,16 @@ export type FocusArea =
 export interface BodyGeometry {
   readonly x: number;
   readonly width: number;
+  /** The floating toolbar's distance from the screen edge; 0 docked. */
+  readonly margin: number;
   readonly narrowed: boolean;
+}
+
+/** Hyprland's outer gaps at the sides, and the floating toolbar's edge margin. */
+export interface BodyEdges {
+  readonly left: number;
+  readonly right: number;
+  readonly margin: number;
 }
 
 export function parseFocusEvent(data: string): FocusArea | null {
@@ -23,12 +33,14 @@ export function parseFocusEvent(data: string): FocusArea | null {
 export function bodyGeometry(
   focus: FocusArea | null,
   screen: { readonly name: string; readonly x: number; readonly width: number },
+  edges: BodyEdges,
 ): BodyGeometry {
   if (!focus || !focus.on || focus.monitor !== screen.name)
-    return { x: 0, width: screen.width, narrowed: false };
-  const x0 = Math.min(screen.width, Math.max(0, focus.x0 - screen.x));
-  const x1 = Math.min(screen.width, Math.max(0, focus.x1 - screen.x));
-  return { x: x0, width: x1 - x0, narrowed: true };
+    return { x: 0, width: screen.width, margin: 0, narrowed: false };
+  const clamp = (v: number) => Math.min(screen.width, Math.max(0, v));
+  const x0 = clamp(focus.x0 + edges.left - screen.x);
+  const x1 = clamp(focus.x1 - edges.right - screen.x);
+  return { x: x0, width: Math.max(0, x1 - x0), margin: edges.margin, narrowed: true };
 }
 
 // WCAG relative luminance of an sRGB channel (0–255).
@@ -44,4 +56,15 @@ export function legibilityShadow(text: string): "#000000" | "#ffffff" {
   const l = 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
   // Contrast ratio (L1 + 0.05) / (L2 + 0.05) against white (L 1) and black (L 0).
   return 1.05 / (l + 0.05) > (l + 0.05) / 0.05 ? "#ffffff" : "#000000";
+}
+
+export function gapsOutOf(output: string): [number, number, number, number] {
+  try {
+    const parsed: unknown = JSON.parse(output);
+    const css =
+      parsed && typeof parsed === "object" ? (parsed as { css?: unknown }).css : undefined;
+    return parseCssGaps(typeof css === "string" ? css : undefined) ?? [0, 0, 0, 0];
+  } catch {
+    return [0, 0, 0, 0];
+  }
 }

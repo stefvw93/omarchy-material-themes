@@ -8,6 +8,7 @@ Token values come from the spec's token data ([material-3/](material-3/README.md
 
 | Id | Value | Quote | Page |
 | --- | --- | --- | --- |
+| `floatingToolbarMargin` | `16` | Horizontal floating toolbars should be at least 16dp from the edge of the window | [components__toolbars.md](material-3/pages/components__toolbars.md) |
 | `scrimOpacity` | `0.32` | Scrims use the scrim color role at an opacity of 32%. | [styles__elevation.md](material-3/pages/styles__elevation.md) |
 | `elevationShadowsPerPlatform` | `"web"` | Tokens have no shadows or color; each platform determines the specific shadows and values to use at each elevation level | [styles__elevation.md](material-3/pages/styles__elevation.md) |
 | `layoutMargin` | `24` | Expanded layouts have a leading and trailing margin of 24dp. | [foundations__layout__breakpoints.md](material-3/pages/foundations__layout__breakpoints.md) |

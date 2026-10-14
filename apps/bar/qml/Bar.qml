@@ -834,10 +834,22 @@ Item {
     omarchy: ({ background: Color.background, foreground: Color.foreground, accent: Color.accent, muted: Color.muted, urgent: Color.urgent })
   }
   property var focusArea: null
+  // Hyprland's outer gaps [top, right, bottom, left]: the floating body lines
+  // up with the windows tiled in the focus area.
+  property var gapsOut: [0, 0, 0, 0]
+
+  Process {
+    id: gapsProc
+    running: true
+    command: ["hyprctl", "-j", "getoption", "general:gaps_out"]
+    stdout: StdioCollector { onStreamFinished: root.gapsOut = Model.gapsOutOf(text) }
+  }
 
   Connections {
     target: Hyprland
     function onRawEvent(event) {
+      // A reload or theme switch can change the gaps.
+      if (event.name === "configreloaded" && !gapsProc.running) gapsProc.running = true
       if (event.name !== "custom") return
       var focus = Model.parseFocusEvent(String(event.data || ""))
       if (focus) root.focusArea = focus
@@ -1285,8 +1297,9 @@ Item {
     }
 
     margins {
-      top: root.barHidden && root.position === "top" ? -root.barSize : 0
-      bottom: root.barHidden && root.position === "bottom" ? -root.barSize : 0
+      // stef.bar: the whole window, the floating body's margin included.
+      top: root.barHidden && root.position === "top" ? -barWindow.implicitHeight : 0
+      bottom: root.barHidden && root.position === "bottom" ? -barWindow.implicitHeight : 0
       left: root.barHidden && root.position === "left" ? -root.barSize : 0
       right: root.barHidden && root.position === "right" ? -root.barSize : 0
     }
@@ -1299,7 +1312,9 @@ Item {
     }
 
     implicitWidth: root.vertical ? root.barSize : 0
-    implicitHeight: root.vertical ? 0 : root.barSize
+    // stef.bar: floating, the window grows by the toolbar's edge margin so
+    // the body clears the screen edge and the exclusive zone covers both.
+    implicitHeight: root.vertical ? 0 : root.barSize + barWindow.bodyGeometry.margin
     // stef.bar: the window stays the full edge (popups anchor to it); the
     // body inside it is the visible bar, and the only part taking input.
     color: "transparent"
@@ -1312,18 +1327,20 @@ Item {
     // else the whole window (SPEC.md, Following the focus area). It moves on
     // the spatial spring, and only once the window has its size.
     readonly property var bodyGeometry: root.vertical
-      ? ({ x: 0, width: barWindow.width, narrowed: false })
+      ? ({ x: 0, width: barWindow.width, margin: 0, narrowed: false })
       : Model.bodyGeometry(root.focusArea, {
           name: barWindow.screen ? barWindow.screen.name : "",
           x: barWindow.screen ? barWindow.screen.x : 0,
           width: barWindow.width
-        })
+        }, { left: root.gapsOut[3], right: root.gapsOut[1], margin: tokens.m3.floatingToolbarMargin })
     property bool bodySettled: false
     onWidthChanged: if (width > 0 && !bodySettled) Qt.callLater(function() { barWindow.bodySettled = true })
     SpringValue { id: bodyX; spring: tokens.springs.spatial_default; epsilon: 0.5; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.x }
     SpringValue { id: bodyW; spring: tokens.springs.spatial_default; epsilon: 0.5; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.width }
     // md.sys.shape.corner.full while it floats in the focus area.
-    SpringValue { id: bodyCorner; spring: tokens.springs.effects_default; epsilon: 0.05; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.narrowed ? barWindow.height / 2 : 0 }
+    SpringValue { id: bodyCorner; spring: tokens.springs.effects_default; epsilon: 0.05; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.narrowed ? root.barSize / 2 : 0 }
+    // The margin from the screen edge, on the spatial spring with the rest.
+    SpringValue { id: bodyMargin; spring: tokens.springs.spatial_default; epsilon: 0.5; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.margin }
     // Docked it is the app bar's container, floating the standard floating
     // toolbar's (surface-container); the colour moves on the effects spring.
     SpringValue { id: bodyFloat; spring: tokens.springs.effects_default; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.narrowed ? 1 : 0 }
@@ -1333,7 +1350,8 @@ Item {
       id: body
       x: Math.round(bodyX.value)
       width: Math.round(bodyW.value)
-      height: parent.height
+      y: root.position === "bottom" ? 0 : Math.round(bodyMargin.value)
+      height: root.vertical ? parent.height : root.barSize
       radius: bodyCorner.value
       color: root.transparent ? "transparent" : Qt.rgba(
         root.background.r + (barWindow.floatingColor.r - root.background.r) * bodyFloat.value,

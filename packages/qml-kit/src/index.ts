@@ -74,3 +74,14 @@ export const monitorGeometry = <S extends { readonly name: string }>(
   }
   return { x: mon.x, y: mon.y, w: mon.width / scale, h: mon.height / scale, screen };
 };
+
+/** CSS shorthand gaps ("8", "8 4", "8 4 2", "8 4 2 1") as [top, right, bottom, left]. */
+export function parseCssGaps(
+  css: string | undefined,
+): [number, number, number, number] | undefined {
+  if (css === undefined || css.trim() === "") return undefined;
+  const v = css.trim().split(/\s+/).map(Number);
+  if (v.length > 4 || v.some((n) => !Number.isFinite(n))) return undefined;
+  const [t, r = t, b = t, l = r] = v as [number, number?, number?, number?];
+  return [t, r, b, l];
+}

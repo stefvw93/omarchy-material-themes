@@ -1,5 +1,6 @@
 // Hyprland strings: the workspace animation, the hook's state, the
 // decoration options. See specs.md.
+import { parseCssGaps } from "@stef/qml-kit";
 
 /** Turns Hyprland's workspace animation off (a flight's switch). */
 export const workspacesOffLua = 'hl.animation({ leaf = "workspaces", enabled = false })';
@@ -118,20 +119,11 @@ export function parseDecoration(text: string): Decoration {
   const result: Decoration = {};
   const borderSize = read("general:border_size");
   const rounding = read("decoration:rounding");
-  const gapsOut = cssGaps(/"general:gaps_out",\s*"css":\s*"([^"]*)"/.exec(text)?.[1]);
+  const gapsOut = parseCssGaps(/"general:gaps_out",\s*"css":\s*"([^"]*)"/.exec(text)?.[1]);
   if (borderSize !== undefined) result.borderSize = borderSize;
   if (rounding !== undefined) result.rounding = rounding;
   if (gapsOut !== undefined) result.gapsOut = gapsOut;
   return result;
-}
-
-/** CSS shorthand ("8", "8 4", "8 4 2", "8 4 2 1") as [top, right, bottom, left]. */
-function cssGaps(css: string | undefined): [number, number, number, number] | undefined {
-  if (css === undefined || css.trim() === "") return undefined;
-  const v = css.trim().split(/\s+/).map(Number);
-  if (v.length > 4 || v.some((n) => !Number.isFinite(n))) return undefined;
-  const [t, r = t, b = t, l = r] = v as [number, number?, number?, number?];
-  return [t, r, b, l];
 }
 
 const ADDRESS = /^0x[0-9a-fA-F]+$/;

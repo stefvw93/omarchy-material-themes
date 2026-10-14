@@ -11,6 +11,11 @@ export interface Citation<V> {
 const cite = <V>(value: V, page: string, quote: string): Citation<V> => ({ value, page, quote });
 
 export const citations = {
+  floatingToolbarMargin: cite(
+    16,
+    "components__toolbars.md",
+    "Horizontal floating toolbars should be at least 16dp from the edge of the window",
+  ),
   scrimOpacity: cite(
     0.32,
     "styles__elevation.md",

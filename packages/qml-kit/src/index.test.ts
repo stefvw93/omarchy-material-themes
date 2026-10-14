@@ -1,5 +1,28 @@
 import { describe, expect, it } from "vite-plus/test";
-import { compareReadingOrder, monitorGeometry, normalizeAddress, readingOrder } from "./index.ts";
+import {
+  compareReadingOrder,
+  monitorGeometry,
+  normalizeAddress,
+  parseCssGaps,
+  readingOrder,
+} from "./index.ts";
+
+describe("parseCssGaps", () => {
+  it("reads CSS shorthand as [top, right, bottom, left]", () => {
+    expect(parseCssGaps("8 6 4 2")).toEqual([8, 6, 4, 2]);
+    expect(parseCssGaps("5")).toEqual([5, 5, 5, 5]);
+    expect(parseCssGaps("4 10")).toEqual([4, 10, 4, 10]);
+    expect(parseCssGaps("1 2 3")).toEqual([1, 2, 3, 2]);
+    expect(parseCssGaps(" 8  8 ")).toEqual([8, 8, 8, 8]);
+  });
+
+  it("gives undefined for what it can't read", () => {
+    expect(parseCssGaps("a b")).toBeUndefined();
+    expect(parseCssGaps("1 2 3 4 5")).toBeUndefined();
+    expect(parseCssGaps("")).toBeUndefined();
+    expect(parseCssGaps(undefined)).toBeUndefined();
+  });
+});
 
 describe("normalizeAddress", () => {
   it("adds the 0x prefix once", () => {

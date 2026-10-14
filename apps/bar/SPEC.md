@@ -74,7 +74,7 @@ A widget with `open()`, `close()` and `opened` is a panel widget. Only one popup
 
 ### Following the focus area
 
-Periphery announces its focus area on Hyprland's event socket (Periphery's SPEC.md, Focus area announcements): `custom>>periphery>>x0,x1,monitor` while on, `custom>>periphery>>off` when off. On that monitor's bar window, when the bar is at the top or bottom, the body moves to `[x0, x1]` (global pixels, made local to the screen) on the spatial default spring. On other monitors, on a vertical bar, and when off, it spans the window. At start the bar asks for the current state (`periphery_announce`).
+Periphery announces its focus area on Hyprland's event socket (Periphery's SPEC.md, Focus area announcements): `custom>>periphery>>x0,x1,monitor` while on, `custom>>periphery>>off` when off. On that monitor's bar window, when the bar is at the top or bottom, the body moves to where windows tile in the focus area: `[x0, x1]` (global pixels, made local to the screen) inset by Hyprland's outer gaps (`general:gaps_out`, left and right), on the spatial default spring. It also leaves the screen edge: a horizontal floating toolbar stays at least 16dp from the edge of the window (`citations.floatingToolbarMargin`), so the bar window grows by that margin, the body sits that far from the edge, and the exclusive zone grows with it. A hidden bar parks its whole window, margin included, past its edge. On other monitors, on a vertical bar, and when off, it spans the window. At start the bar asks for the current state (`periphery_announce`).
 
 While narrowed, the body has the full corner (a pill). Pointer input reaches only the body.
 
