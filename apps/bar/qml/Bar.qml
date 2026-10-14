@@ -834,22 +834,34 @@ Item {
     omarchy: ({ background: Color.background, foreground: Color.foreground, accent: Color.accent, muted: Color.muted, urgent: Color.urgent })
   }
   property var focusArea: null
-  // Hyprland's outer gaps [top, right, bottom, left]: the floating body lines
-  // up with the windows tiled in the focus area.
+  // Hyprland's gaps [top, right, bottom, left], which follow the tokens'
+  // layout margin and spacer: the floating body is a pane on the windows'
+  // grid (SPEC.md, Following the focus area).
   property var gapsOut: [0, 0, 0, 0]
+  property var gapsIn: [0, 0, 0, 0]
 
   Process {
     id: gapsProc
     running: true
     command: ["hyprctl", "-j", "getoption", "general:gaps_out"]
-    stdout: StdioCollector { onStreamFinished: root.gapsOut = Model.gapsOutOf(text) }
+    stdout: StdioCollector { onStreamFinished: root.gapsOut = Model.cssGapsOf(text) }
+  }
+
+  Process {
+    id: gapsInProc
+    running: true
+    command: ["hyprctl", "-j", "getoption", "general:gaps_in"]
+    stdout: StdioCollector { onStreamFinished: root.gapsIn = Model.cssGapsOf(text) }
   }
 
   Connections {
     target: Hyprland
     function onRawEvent(event) {
       // A reload or theme switch can change the gaps.
-      if (event.name === "configreloaded" && !gapsProc.running) gapsProc.running = true
+      if (event.name === "configreloaded") {
+        if (!gapsProc.running) gapsProc.running = true
+        if (!gapsInProc.running) gapsInProc.running = true
+      }
       if (event.name !== "custom") return
       var focus = Model.parseFocusEvent(String(event.data || ""))
       if (focus) root.focusArea = focus
@@ -1289,7 +1301,10 @@ Item {
     // textures — which measures ~150ms against ~20ms to tear down. Parking
     // keeps the surface alive, so showing is only a margin change.
     visible: !remapGuard.remapping
-    exclusionMode: root.barHidden ? ExclusionMode.Ignore : ExclusionMode.Auto
+    // stef.bar: an explicit zone, so windows sit one spacer below a floating
+    // body (Model.exclusiveZone); docked it is the bar, as Auto made it.
+    exclusionMode: root.barHidden ? ExclusionMode.Ignore : ExclusionMode.Normal
+    exclusiveZone: root.vertical ? root.barSize : Model.exclusiveZone(root.barSize, barWindow.bodyGeometry, barWindow.edges.spacer)
 
     ScreenMoveRemap {
       id: remapGuard
@@ -1312,8 +1327,8 @@ Item {
     }
 
     implicitWidth: root.vertical ? root.barSize : 0
-    // stef.bar: floating, the window grows by the toolbar's edge margin so
-    // the body clears the screen edge and the exclusive zone covers both.
+    // stef.bar: floating, the window grows by the margin so the body clears
+    // the screen edge; popups place themselves below the window.
     implicitHeight: root.vertical ? 0 : root.barSize + barWindow.bodyGeometry.margin
     // stef.bar: the window stays the full edge (popups anchor to it); the
     // body inside it is the visible bar, and the only part taking input.
@@ -1332,7 +1347,8 @@ Item {
           name: barWindow.screen ? barWindow.screen.name : "",
           x: barWindow.screen ? barWindow.screen.x : 0,
           width: barWindow.width
-        }, { left: root.gapsOut[3], right: root.gapsOut[1], margin: tokens.m3.floatingToolbarMargin })
+        }, barWindow.edges)
+    readonly property var edges: Model.floatingEdges(root.gapsOut, root.gapsIn, root.position)
     property bool bodySettled: false
     onWidthChanged: if (width > 0 && !bodySettled) Qt.callLater(function() { barWindow.bodySettled = true })
     SpringValue { id: bodyX; spring: tokens.springs.spatial_default; epsilon: 0.5; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.x }

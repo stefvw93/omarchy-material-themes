@@ -58,7 +58,7 @@ export function legibilityShadow(text: string): "#000000" | "#ffffff" {
   return 1.05 / (l + 0.05) > (l + 0.05) / 0.05 ? "#ffffff" : "#000000";
 }
 
-export function gapsOutOf(output: string): [number, number, number, number] {
+export function cssGapsOf(output: string): [number, number, number, number] {
   try {
     const parsed: unknown = JSON.parse(output);
     const css =
@@ -67,4 +67,23 @@ export function gapsOutOf(output: string): [number, number, number, number] {
   } catch {
     return [0, 0, 0, 0];
   }
+}
+
+export interface FloatingEdges extends BodyEdges {
+  /** The distance between two windows stacked vertically. */
+  readonly spacer: number;
+}
+
+export function floatingEdges(
+  gapsOut: readonly number[],
+  gapsIn: readonly number[],
+  position: string,
+): FloatingEdges {
+  const [top = 0, right = 0, bottom = 0, left = 0] = gapsOut;
+  const [inTop = 0, , inBottom = 0] = gapsIn;
+  return { left, right, margin: position === "bottom" ? bottom : top, spacer: inTop + inBottom };
+}
+
+export function exclusiveZone(barSize: number, body: BodyGeometry, spacer: number): number {
+  return body.narrowed ? barSize + spacer : barSize;
 }

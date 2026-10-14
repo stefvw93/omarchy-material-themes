@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vite-plus/test";
-import { bodyGeometry, gapsOutOf, legibilityShadow, parseFocusEvent } from "./model.ts";
+import {
+  bodyGeometry,
+  cssGapsOf,
+  exclusiveZone,
+  floatingEdges,
+  legibilityShadow,
+  parseFocusEvent,
+} from "./model.ts";
 
 describe("focus area", () => {
   it("reads Periphery's announcements and ignores other events", () => {
@@ -78,20 +85,42 @@ describe("legibilityShadow", () => {
   });
 });
 
-describe("gapsOutOf", () => {
-  it("reads Hyprland's outer gaps", () => {
-    expect(gapsOutOf('{"option": "general:gaps_out", "css": "8 8 8 8", "set": true }')).toEqual([
+describe("cssGapsOf", () => {
+  it("reads Hyprland's gaps", () => {
+    expect(cssGapsOf('{"option": "general:gaps_out", "css": "8 8 8 8", "set": true }')).toEqual([
       8, 8, 8, 8,
     ]);
-    expect(gapsOutOf('{"option": "general:gaps_out", "css": "4 10", "set": true }')).toEqual([
+    expect(cssGapsOf('{"option": "general:gaps_out", "css": "4 10", "set": true }')).toEqual([
       4, 10, 4, 10,
     ]);
   });
 
   it("gives no gaps for what it can't read", () => {
-    expect(gapsOutOf("")).toEqual([0, 0, 0, 0]);
-    expect(gapsOutOf("no such option")).toEqual([0, 0, 0, 0]);
-    expect(gapsOutOf('{"option": "general:gaps_out", "css": "a"}')).toEqual([0, 0, 0, 0]);
-    expect(gapsOutOf('{"option": "general:gaps_out"}')).toEqual([0, 0, 0, 0]);
+    expect(cssGapsOf("")).toEqual([0, 0, 0, 0]);
+    expect(cssGapsOf("no such option")).toEqual([0, 0, 0, 0]);
+    expect(cssGapsOf('{"option": "general:gaps_out", "css": "a"}')).toEqual([0, 0, 0, 0]);
+    expect(cssGapsOf('{"option": "general:gaps_out"}')).toEqual([0, 0, 0, 0]);
+  });
+});
+
+describe("floatingEdges", () => {
+  it("takes the sides and the bar's edge from the outer gaps, the spacer from the inner ones", () => {
+    expect(floatingEdges([8, 6, 4, 2], [3, 5, 7, 9], "top")).toEqual({
+      left: 2,
+      right: 6,
+      margin: 8,
+      spacer: 10,
+    });
+    expect(floatingEdges([8, 6, 4, 2], [3, 5, 7, 9], "bottom").margin).toBe(4);
+  });
+});
+
+describe("exclusiveZone", () => {
+  const docked = { x: 0, width: 2560, margin: 0, narrowed: false };
+  const floating = { x: 388, width: 1784, margin: 8, narrowed: true };
+
+  it("is the bar docked, and the bar plus the spacer floating", () => {
+    expect(exclusiveZone(32, docked, 12)).toBe(32);
+    expect(exclusiveZone(32, floating, 12)).toBe(44);
   });
 });
