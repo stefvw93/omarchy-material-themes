@@ -63,7 +63,6 @@ local function fake()
     if not state.active then return nil end
     local w = state.active
     w.workspace = {
-      special = state.special or false,
       get_windows = function() return state.windows end,
     }
     return w
@@ -211,15 +210,6 @@ end)
 test("a band without cards keeps the native focus at the edge", function()
   local log = fake()
   periphery_open(false, true, 380, 2180, 0, 1440)
-  hl.dispatch(hl.dsp.focus({ direction = "l" }))
-  eq(last(log.dispatched).kind, "focus")
-  eq(#calls(log), 0, "no plugin call")
-end)
-
-test("a focus key on a special workspace's window keeps the native focus", function()
-  local log, state = fake()
-  state.special = true
-  periphery_open(true, true, 380, 2180, 0, 1440)
   hl.dispatch(hl.dsp.focus({ direction = "l" }))
   eq(last(log.dispatched).kind, "focus")
   eq(#calls(log), 0, "no plugin call")

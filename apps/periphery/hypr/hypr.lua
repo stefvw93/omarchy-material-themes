@@ -240,12 +240,9 @@ hl.dsp.focus = function(args)
   return function()
     if not periphery then return hl.dispatch(native) end
     if periphery.selected then return shell("step " .. dir) end
-    -- A special workspace (the scratchpad) tiles at full width over the
-    -- bands: its windows keep Hyprland's focus.
-    local active = hl.get_active_window()
-    if active and active.workspace and active.workspace.special then return hl.dispatch(native) end
     if periphery.bands and periphery.bands[dir] and at_edge(dir) then
       -- The active window goes along: the plugin's view of it can lag.
+      local active = hl.get_active_window()
       return shell("enter " .. dir .. " " .. (active and active.address or "none"))
     end
     hl.dispatch(native)

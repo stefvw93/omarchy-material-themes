@@ -15,13 +15,6 @@ const smoke: SmokeTest<Hyprland | OmarchyShell> = ({ id }) =>
     const reserved = Effect.map(hypr.focusedMonitor, (m) =>
       Option.match(m, { onNone: () => [0, 0, 0, 0] as const, onSome: (mon) => mon.reserved }),
     );
-    // A shown special workspace (the scratchpad) tiles at full width: no bands.
-    const specialShown = Effect.map(hypr.focusedMonitor, (m) =>
-      Option.match(m, {
-        onNone: () => false,
-        onSome: (mon) => mon.specialWorkspace.id !== 0 || mon.specialWorkspace.name !== "",
-      }),
-    );
     const toggle = Effect.andThen(shell.toggle(id), Effect.sleep("1500 millis"));
 
     const hookLoaded = (yield* hypr.evalValue("type(periphery_select)")) === "function";
@@ -36,18 +29,11 @@ const smoke: SmokeTest<Hyprland | OmarchyShell> = ({ id }) =>
 
     yield* check("mode on: hook state is a table", yield* modeOn);
     const on = yield* reserved;
-    if (yield* specialShown)
-      yield* check(
-        "mode on, special workspace shown: bands not reserved",
-        on[0] === 0 && on[2] === 0,
-        on.join(","),
-      );
-    else
-      yield* check(
-        "mode on: bands reserved",
-        on[0] > 0 && on[2] > 0 && on[0] === on[2],
-        on.join(","),
-      );
+    yield* check(
+      "mode on: bands reserved",
+      on[0] > 0 && on[2] > 0 && on[0] === on[2],
+      on.join(","),
+    );
 
     yield* toggle;
     yield* check("mode off: hook state is nil", !(yield* modeOn));
