@@ -24,6 +24,7 @@ Headless tests can't cover these.
 
 - [ ] **expo:** the open animation. The window snapshot now arrives from the Effect core one event-loop tick after `open()`; check that tiles still animate in cleanly. Also check selection, keys (←/→/↑/↓, Enter, 1–9, Esc), and hover and click.
 - [ ] **periphery:** hover a card, `SUPER+W` / `SUPER+F` on a selected card, arrow keys into the bands, Enter and Escape, card click (flight), card drag between groups and into the focus area, and SUPER-drag of a real window onto a band.
+- [ ] **periphery, Mission Control placement** (branch `periphery-masonry`): hover across cards and piles (a pile fans out, each tab reachable, the fan closes when the pointer leaves the pile); `SUPER + ↑/↓` through a pile and through a fan; `SUPER + W` on a fanned tab; click a tilted card (the ghost turns flat on its way, no turn at the hand-off); drag a card or a tab between groups; a floating card shows in front of its tiled card; after a theme switch or a shell restart no thumbnail is letterboxed.
 - [ ] **`stef dev expo` and `stef dev periphery`:** the dev variant goes live, rebuilds on save, and Ctrl+C puts prod back (hook included).
 - [ ] **`stef harness expo`:** opens in its own `qs` process and toggles with `qs ipc … call stef.harness toggle '{}'`.
 - [ ] **Studio, Tokens:** edits reach open plugins live; "Preview in Hyprland" changes gaps and borders immediately; a missing `tokens.json` loads the defaults.
