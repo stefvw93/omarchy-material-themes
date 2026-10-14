@@ -24,6 +24,9 @@ Scott Jenson showed a prototype at a KDE event (["Are we really going to use the
 | Periphery            | The two bands together.                                                                                      |
 | Card                 | The live thumbnail of one window in a band.                                                                  |
 | Group                | The cards of one workspace, with the workspace label above them.                                             |
+| Pile                 | The cards of one tab group, stacked: the shown tab in front, the other tabs peeking out behind it.           |
+| Fan                  | A pile spread out, so every tab's card can be pointed at. A pile fans out while one of its tabs is selected. |
+| Tilt                 | The turn of a card towards the focus area, about the card's vertical axis. A selected card turns flat.       |
 | Ratio                | Focus area width divided by monitor height. The default is `1.25` (5:4).                                     |
 | Side width (`sideW`) | The width of one band: `(monW - round(monH × ratio)) / 2`.                                                   |
 | Drop                 | The release of a drag. The drop position selects the target workspace.                                       |
@@ -81,17 +84,17 @@ Example, with workspaces 1, 2, 3 and 4 occupied:
 
 ### Placement of cards
 
-The cards in a group keep the relative positions of their windows on the workspace (macOS exposé style):
+The bands follow macOS Mission Control: every window is visible, a workspace keeps the shape of its tiling, and the cards are as large as the band allows. [src/layout/specs.md](src/layout/specs.md) has the exact rules.
 
-1. Each group gets a vertical slice of the band. The slice height is proportional to the group's bounding box height at band width. The slice can stretch vertically up to `maxStretch` (6) to use a tall band.
-2. The centre of each window maps from the group's bounding box into the slice. The map can be anisotropic.
-3. All cards in a band use one scale. A card keeps the aspect ratio of its window.
-4. A solver pushes overlapping cards apart. It pushes along the axis with the smaller overlap if there is room on that axis. If not, it uses the other axis.
-5. A binary search finds the largest scale at which all groups of the band have no overlap.
+1. Each workspace group has its own scale. A group first fills the band's width; then all groups of a band shrink by one factor until the band's height holds them. A lone window is as wide as the band (at most half its real size).
+2. A group's tiled windows keep the side they tile on: a window tiled on the left is in the left column, one on the right in the right column, top to bottom within a column. A crowded band keeps more columns; a roomy one merges them, down to a single column, left side first. Shorter columns are centred against the tallest, so the columns stagger.
+3. A tab group is a pile: one card per tab, the shown tab in front and up to three tabs peeking out behind it, up and to the left. Selecting a tab of a pile (hover or the focus keys) fans it out: its tabs line up vertically, each one at least half visible, in front of the other cards. The fan closes when the selection leaves the pile.
+4. A floating window's card overlaps the tiled cards where the window really sits on its workspace, in front of them.
+5. The groups are stacked down the band, `groupGap` apart, centred vertically. The workspace label is above the top card of its group.
 
-Two tiled windows next to each other do not fit next to each other in a 348 px band. The solver stacks them vertically with a small horizontal offset. The offset shows which window was on the left.
+Cards are turned 8° towards the focus area (tilt), with perspective. A selected or dragged card turns flat and comes to the front. Both move on the spatial default spring.
 
-The workspace label is above the top card of its group.
+Each thumbnail fills its card. A window on a hidden workspace keeps its last frame, which can have its old size (after the mode turned on, or a shell restart) until the window draws again; the frame is then stretched to the card rather than letterboxed in it.
 
 ### Workspace switch animation
 
@@ -372,7 +375,7 @@ hl.dsp.window.move({ workspace = "2", follow = false, window = "address:0x56c7bf
 
 ### Tunables (top of `Periphery.qml`)
 
-Motion is Material 3 springs from the tokens' motion scheme (`tokens.m3.springs`, `SpringValue`): spatial default for card and ghost geometry and the cards' travel, effects default for every fade, spatial fast for the drag grow (interpretation `periphery.components`). They follow `motion.scheme` live.
+Motion is Material 3 springs from the tokens' motion scheme (`tokens.m3.springs`, `SpringValue`): spatial default for card and ghost geometry, the cards' travel, the tilt and the fan, effects default for every fade, spatial fast for the drag grow (interpretation `periphery.components`). They follow `motion.scheme` live.
 
 | Property                      | Default                  | Effect                                                                                                                                                                                         |
 | ----------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -380,7 +383,7 @@ Motion is Material 3 springs from the tokens' motion scheme (`tokens.m3.springs`
 | `bandMargin`                  | `space200` (16dp)        | Space between band edge and cards. Token `periphery.bandMargin`.                                                                                                                               |
 | `cardGap`                     | `space125` (10dp)        | Minimum space between cards, and between a group header and its cards. Token `periphery.cardGap`.                                                                                              |
 | `groupGap`                    | `space250` (20dp)        | Space between groups. Token `periphery.groupGap`.                                                                                                                                              |
-| `maxStretch`                  | `6`                      | Maximum vertical stretch of a group's position map.                                                                                                                                            |
+| `cardTilt`                    | `8`                      | How far a card at rest turns towards the focus area, in degrees. A selected or dragged card turns flat.                                                                                        |
 | `animSpeed`                   | `1`                      | Global animation speed. `0.25` plays all animations 4× slower (to inspect them), `2` twice as fast. Scales the springs (stiffness by speed², which keeps their shape) and the switch timeouts. |
 | `workspaceStyle`              | `slidefade 10%`          | Hyprland's workspace animation style while the mode is on (switches that aren't routed), with the theme's curve and speed.                                                                     |
 | `cardSlide`                   | 10% of the monitor width | How far arriving and leaving cards travel. Follows `workspaceStyle`: its percentage, on its axis (`vert` styles move vertically), 0 for a style that does not slide.                           |
