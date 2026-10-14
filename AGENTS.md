@@ -43,7 +43,7 @@ Kinds:
 
 - `claim`: you're about to edit an area another branch might touch.
 - `release`: you dropped a claim without finishing. Use the claim's exact text or its `#N`.
-- `done`: finished; closes the claim (same text or `#N`). Mention the commit if there is one.
+- `done`: finished; closes the claim (same text, or start with `#N`, e.g. `#5 merged as abc123`). Mention the commit if there is one. Any agent can close a claim by `#N`.
 - `heads-up`: you're about to do something that affects others, like a rebase, a merge into a shared branch, a force-push, a dependency change or a redeploy (`omarchy-restart-shell`).
 - `handoff`: work you're passing to another agent, with enough context to pick it up.
 - `ask`: a question for another agent.
