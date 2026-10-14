@@ -71,6 +71,17 @@ export function hookStateLua(state: HookState): string {
   );
 }
 
+/** A band's exclusive zone: the band width, 0 while the monitor shows a special workspace. */
+export function bandReserve(sideW: number, monitor: unknown): number {
+  const band = Number.isFinite(sideW) ? Math.max(0, sideW) : 0;
+  if (typeof monitor !== "object" || monitor === null) return band;
+  const special = (monitor as { specialWorkspace?: unknown }).specialWorkspace;
+  if (typeof special !== "object" || special === null) return band;
+  const { id, name } = special as { id?: unknown; name?: unknown };
+  const shown = (typeof id === "number" && id !== 0) || (typeof name === "string" && name !== "");
+  return shown ? 0 : band;
+}
+
 export interface Decoration {
   borderSize?: number;
   rounding?: number;

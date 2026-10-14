@@ -38,6 +38,15 @@ The `hyprctl eval` string that hands the plugin's state to `hypr.lua`:
 - An address that is not `0x` followed by hex digits counts as no selection: nothing but an address ever reaches Lua code.
 - The `if … then` guard keeps the eval harmless when the hook is not loaded.
 
+## Band reserve
+
+The exclusive zone of each band's reserve surface (SPEC.md, [Special workspaces](../../SPEC.md#special-workspaces)), from the band width and the monitor as Hyprland's IPC reports it (`lastIpcObject`):
+
+- the band width while the monitor shows no special workspace;
+- 0 while it does: its `specialWorkspace` has a name or an id other than 0;
+- a missing or malformed monitor, or a missing `specialWorkspace`, shows none;
+- a band width below 0 or not a number is 0.
+
 ## Decoration
 
 From the output of `hyprctl -j getoption general:border_size; hyprctl -j getoption decoration:rounding` (two JSON objects, one after the other): the border width and the rounding, each as an integer, or absent when not found.

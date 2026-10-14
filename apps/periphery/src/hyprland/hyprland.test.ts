@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
+  bandReserve,
   cardTravel,
   flightBatch,
   ghostBlur,
@@ -134,6 +135,34 @@ describe("hookStateLua", () => {
       "periphery_select(nil)",
     );
     expect(hookStateLua({ ...on, selected: "56c7bf423bd0" })).toContain("periphery_select(nil)");
+  });
+});
+
+describe("bandReserve", () => {
+  const monitor = (specialWorkspace: unknown) => ({ name: "DP-3", specialWorkspace });
+
+  it("reserves the band while no special workspace is shown", () => {
+    expect(bandReserve(380, monitor({ id: 0, name: "" }))).toBe(380);
+  });
+
+  it("reserves nothing while a special workspace is shown", () => {
+    expect(bandReserve(380, monitor({ id: -98, name: "special:scratchpad" }))).toBe(0);
+    expect(bandReserve(380, monitor({ id: -99, name: "" }))).toBe(0);
+    expect(bandReserve(380, monitor({ id: 0, name: "special:magic" }))).toBe(0);
+  });
+
+  it("counts a missing or malformed monitor as none shown", () => {
+    expect(bandReserve(380, undefined)).toBe(380);
+    expect(bandReserve(380, null)).toBe(380);
+    expect(bandReserve(380, "DP-3")).toBe(380);
+    expect(bandReserve(380, { name: "DP-3" })).toBe(380);
+    expect(bandReserve(380, monitor(null))).toBe(380);
+    expect(bandReserve(380, monitor({ id: "x", name: 3 }))).toBe(380);
+  });
+
+  it("never reserves less than nothing", () => {
+    expect(bandReserve(-5, monitor({ id: 0, name: "" }))).toBe(0);
+    expect(bandReserve(NaN, monitor({ id: 0, name: "" }))).toBe(0);
   });
 });
 

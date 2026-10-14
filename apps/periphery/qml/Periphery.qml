@@ -262,6 +262,9 @@ Item {
   // Reserved [left, top, right, bottom], for the bar above the tiling area.
   readonly property var reserved: targetMonitor && targetMonitor.lastIpcObject
     && targetMonitor.lastIpcObject.reserved ? targetMonitor.lastIpcObject.reserved : [0, 0, 0, 0]
+  // The bands' exclusive zone. None while the monitor shows a special
+  // workspace, so it tiles at full width (SPEC.md, Special workspaces).
+  readonly property real bandReserve: Hypr.bandReserve(sideW, targetMonitor ? targetMonitor.lastIpcObject : null) // qmllint disable missing-property
 
   function open(payloadJson) {
     try {
@@ -931,6 +934,8 @@ Item {
         root.windowProps = ({})
         root.readWindowProps()
       }
+      // A special workspace shown or hidden: the reserve follows the monitor's state.
+      if (event.name === "activespecial" || event.name === "activespecialv2") Hyprland.refreshMonitors()
       if (root.refreshEvents.indexOf(event.name) < 0) return
       if (!refreshTimer.running) {
         Hyprland.refreshToplevels()
@@ -966,7 +971,7 @@ Item {
     implicitWidth: 1
     color: "transparent"
     exclusionMode: ExclusionMode.Normal
-    exclusiveZone: root.sideW
+    exclusiveZone: root.bandReserve
     mask: Region {}
     WlrLayershell.namespace: "omarchy-periphery-reserve"
     WlrLayershell.layer: WlrLayer.Bottom
