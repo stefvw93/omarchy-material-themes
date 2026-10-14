@@ -239,13 +239,18 @@ Item {
   // (src/surface/specs.md): shorter is stronger perspective.
   readonly property real viewDistance: root.monH
   // A card at (x, y) on its band's plane, turned back by |angle| (signed by
-  // the band: + left, − right), hinged on the monitor's outer edge.
-  function surfaceAt(x, y, angle) {
+  // the band: + left, − right), hinged on the monitor's outer edge, and
+  // pushed back depth pixels behind it.
+  function surfaceAt(x, y, angle, depth) {
     var side = angle >= 0 ? 1 : -1
-    var m = Surface.cardSurface({ x: x, y: y, side: side, angle: Math.abs(angle), hingeX: side > 0 ? 0 : root.monW, // qmllint disable missing-property
+    var m = Surface.cardSurface({ x: x, y: y, side: side, angle: Math.abs(angle), depth: depth, hingeX: side > 0 ? 0 : root.monW, // qmllint disable missing-property
       eyeX: side > 0 ? root.sideW / 2 : root.monW - root.sideW / 2, eyeY: root.monH / 2, distance: root.viewDistance })
     return Qt.matrix4x4(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15])
   }
+  // While a card is selected the others recede: pushed back until they are
+  // drawn this much of their size, towards their band's eye.
+  readonly property real recedeScale: 0.97
+  readonly property real recedeDepth: root.viewDistance * (1 / root.recedeScale - 1)
   // How much the selected card grows, from the middle of its outer edge.
   readonly property real liftScale: 1.05
   // The lifted card's shadow: the elevated card's hover elevation.
@@ -1124,6 +1129,8 @@ Item {
         SpringValue { id: tilt; spring: root.springSpatial; target: card.selected || card.dragging ? 0 : 1 }
         readonly property real tiltAngle: root.restTilt(card.place) * tilt.value
         readonly property real outerX: root.restTilt(card.place) >= 0 ? 0 : card.width
+        // Back a little while another card is selected, so that one stands out.
+        SpringValue { id: recede; spring: root.springSpatial; epsilon: 0.001; target: root.selected !== "" && !card.selected ? 1 : 0 }
         // Lifted while selected: larger from its outer edge, with a shadow.
         SpringValue { id: lift; spring: root.springSpatial; epsilon: 0.001; target: card.selected ? 1 : 0 }
         liftAmount: lift.value
@@ -1132,7 +1139,7 @@ Item {
             x: root.cardSlideVertical ? 0 : Math.round(slide.value)
             y: root.cardSlideVertical ? Math.round(slide.value) : 0
           },
-          Matrix4x4 { matrix: root.surfaceAt(card.x, card.y, card.tiltAngle) },
+          Matrix4x4 { matrix: root.surfaceAt(card.x, card.y, card.tiltAngle, recede.value * root.recedeDepth) },
           Scale {
             origin.x: card.outerX
             origin.y: card.height / 2
@@ -1330,7 +1337,7 @@ Item {
         visible: !!root.ghosted[address]
         opacity: flyFade.value
         // On the plane of the band it leaves or lands on, as the cards.
-        transform: Matrix4x4 { matrix: root.surfaceAt(flyer.x, flyer.y, flyer.look.tilt) }
+        transform: Matrix4x4 { matrix: root.surfaceAt(flyer.x, flyer.y, flyer.look.tilt, 0) }
         Component.onCompleted: root.ghostItems[address] = flyer
         Component.onDestruction: if (root.ghostItems[address] === flyer) delete root.ghostItems[address]
 

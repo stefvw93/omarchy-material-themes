@@ -6,8 +6,8 @@ const monW = 2560;
 const monH = 1440;
 const eyeY = monH / 2;
 const distance = monH;
-const left = { side: 1, hingeX: 0, eyeX: 190, eyeY, distance };
-const right = { side: -1, hingeX: monW, eyeX: monW - 190, eyeY, distance };
+const left = { side: 1, hingeX: 0, eyeX: 190, eyeY, distance, depth: 0 };
+const right = { side: -1, hingeX: monW, eyeX: monW - 190, eyeY, distance, depth: 0 };
 
 // A card point (u, v) through the matrix, back in monitor coordinates.
 function draw(input: SurfaceInput, u: number, v: number) {
@@ -20,11 +20,19 @@ function draw(input: SurfaceInput, u: number, v: number) {
 }
 
 // The world model of specs.md, independent of the matrix.
-function world(hingeX: number, side: number, eyeX: number, angle: number, x: number, y: number) {
+function world(
+  hingeX: number,
+  side: number,
+  eyeX: number,
+  angle: number,
+  x: number,
+  y: number,
+  depth = 0,
+) {
   const t = (angle * Math.PI) / 180;
   const a = x - hingeX;
   const xr = hingeX + a * Math.cos(t);
-  const z = -side * a * Math.sin(t);
+  const z = -side * a * Math.sin(t) - depth;
   const f = distance / (distance - z);
   return { x: eyeX + (xr - eyeX) * f, y: eyeY + (y - eyeY) * f };
 }
@@ -55,6 +63,22 @@ describe("cardSurface", () => {
     const card = { ...right, x: 2200, y: 900, angle: 8 };
     const p = draw(card, 340, 200);
     const q = world(monW, -1, monW - 190, 8, 2540, 1100);
+    expect(p.x).toBeCloseTo(q.x, 6);
+    expect(p.y).toBeCloseTo(q.y, 6);
+  });
+
+  it("scales an untilted card pushed back about the eye", () => {
+    const card = { ...left, x: 40, y: 300, angle: 0, depth: 45 };
+    const f = distance / (distance + 45);
+    const p = draw(card, 300, 200);
+    expect(p.x).toBeCloseTo(190 + (340 - 190) * f, 6);
+    expect(p.y).toBeCloseTo(eyeY + (500 - eyeY) * f, 6);
+  });
+
+  it("pushes a tilted card back along with its plane", () => {
+    const card = { ...right, x: 2200, y: 900, angle: 12, depth: 45 };
+    const p = draw(card, 340, 200);
+    const q = world(monW, -1, monW - 190, 12, 2540, 1100, 45);
     expect(p.x).toBeCloseTo(q.x, 6);
     expect(p.y).toBeCloseTo(q.y, 6);
   });

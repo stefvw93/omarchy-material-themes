@@ -9,6 +9,8 @@ export interface SurfaceInput {
   side: number;
   /** How far the plane is turned back, degrees (≥ 0). */
   angle: number;
+  /** How far the whole card is pushed back behind its plane, pixels (≥ 0). */
+  depth: number;
   /** The hinge line: 0 for the left band, monW for the right. */
   hingeX: number;
   /** The point the viewer looks at, and how far in front of the screen. */
@@ -22,7 +24,7 @@ export interface SurfaceInput {
  *
  * A card point (u, v) is the world point (x + u, y + v). Turned about the
  * hinge it is at hinge + a cos θ, depth −s a sin θ (a = x + u − hinge), and
- * drawn at eye + (p − eye) × w⁻¹ with w = 1 + s a sin θ / distance. Written
+ * drawn at eye + (p − eye) × w⁻¹ with w = 1 + (s a sin θ + depth) / distance. Written
  * homogeneously and moved back into the card's coordinates (minus x, y
  * times w), every entry is affine in (u, v): one matrix.
  */
@@ -31,15 +33,17 @@ export function cardSurface(input: SurfaceInput): number[] {
   const c = Math.cos(t);
   const k = (input.side * Math.sin(t)) / input.distance;
   const a = input.x - input.hingeX;
+  // The push back: a constant part of w.
+  const q = input.depth / input.distance;
   const m = [
     c + k * (input.eyeX - input.x),
     0,
     0,
-    input.hingeX + a * (c + k * input.eyeX) - input.x * (1 + k * a),
+    input.hingeX + a * (c + k * input.eyeX) - input.x * (1 + k * a) + q * (input.eyeX - input.x),
     k * (input.eyeY - input.y),
     1,
     0,
-    k * a * (input.eyeY - input.y),
+    (k * a + q) * (input.eyeY - input.y),
     0,
     0,
     1,
@@ -47,7 +51,7 @@ export function cardSurface(input: SurfaceInput): number[] {
     k,
     0,
     0,
-    1 + k * a,
+    1 + k * a + q,
   ];
   // No -0 entries: an untilted card's matrix is exactly the identity.
   return m.map((v) => v + 0);

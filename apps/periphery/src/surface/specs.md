@@ -8,6 +8,7 @@ All coordinates are monitor-local pixels. The screen is the plane z = 0; z < 0 i
 
 - **Hinge.** The left band's plane turns about the vertical line x = 0, the right band's about x = `monW`. The side `s` is +1 for the left band and −1 for the right band.
 - **Tilt.** A point at distance `a = x − hinge` from the hinge, on a plane turned by the angle θ (degrees, ≥ 0), moves to `x′ = hinge + a × cos θ` and back to `z′ = −s × a × sin θ`: the further from the screen edge, the further away. The hinge itself stays on the screen plane, so every tilted point is at or behind it, and a card at θ = 0 is on the screen plane, in front of every tilted card.
+- **Depth.** A card can also be pushed back as a whole, `depth` pixels (≥ 0) further from the viewer than its plane: `z′ − depth`. Seen in perspective it shrinks towards the band's eye by `distance / (distance + depth)`, without turning.
 - **Eye.** Each band is seen from in front of its own centre: `eyeX` is the middle of the band, `eyeY` the monitor's middle height, `distance` pixels in front of the screen. A point at depth `z′` is drawn at `eye + (p − eye) × distance / (distance − z′)` on both axes.
 
   Why not one eye at the monitor's centre: seen from there, the receding inner side of a band converges towards the centre, like a corridor wall, which stretches a card towards the focus area and cancels its narrowing. From in front of the band, the turn foreshortens the card.
@@ -16,8 +17,9 @@ All coordinates are monitor-local pixels. The screen is the plane z = 0; z < 0 i
 
 ## Card transform
 
-`cardSurface({ x, y, side, angle, hingeX, eyeX, eyeY, distance })` gives the transform for a card whose top-left corner is at (`x`, `y`): the 4×4 matrix, row-major, that maps a point (u, v) of the card (its own coordinates) to where it is drawn, in the card's own coordinates again (the plugin applies it as the card's `transform`, before its position).
+`cardSurface({ x, y, side, angle, depth, hingeX, eyeX, eyeY, distance })` gives the transform for a card whose top-left corner is at (`x`, `y`): the 4×4 matrix, row-major, that maps a point (u, v) of the card (its own coordinates) to where it is drawn, in the card's own coordinates again (the plugin applies it as the card's `transform`, before its position).
 
-- At θ = 0 it is the identity.
+- At θ = 0 and depth 0 it is the identity.
+- At θ = 0 with a depth, it scales the card about the eye by `distance / (distance + depth)`.
 - The card's points on the hinge line stay where they are.
 - Two cards of the same band at the same angle agree: a world point drawn through either card's transform lands on the same pixel.
