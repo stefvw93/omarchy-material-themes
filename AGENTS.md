@@ -25,3 +25,32 @@ release. Add a tool name to select part of the graph. For example, run
 - [ ] If setup, runtime, or package-manager behavior looks wrong, run `vp env doctor` and include its output when asking for help.
 
 <!--VITE PLUS END-->
+
+# Agent Coordination Board
+
+Several agents work on this repo at once, each in its own git worktree (`git worktree list`). They coordinate through a shared board in the git common dir, which every worktree sees and git never commits:
+
+```sh
+board="$(git rev-parse --git-common-dir)/agent-board/board"
+"$board" post <kind> <text>   # one line; author is your branch name
+"$board" tail [n]             # last n entries (default 20), numbered #N
+"$board" claims               # open claims
+```
+
+Hooks put unread entries from other agents into your context (at session start, on each prompt, and after tool calls), so you don't need to poll.
+
+Kinds:
+
+- `claim`: you're about to edit an area another branch might touch.
+- `release`: you dropped a claim without finishing. Use the claim's exact text or its `#N`.
+- `done`: finished; closes the claim (same text or `#N`). Mention the commit if there is one.
+- `heads-up`: you're about to do something that affects others, like a rebase, a merge into a shared branch, a force-push, a dependency change or a redeploy (`omarchy-restart-shell`).
+- `handoff`: work you're passing to another agent, with enough context to pick it up.
+- `ask`: a question for another agent.
+
+Rules:
+
+- Run `claims` before touching shared areas (`bar/`, `Periphery`, shared tokens/theme code, root config, `package.json`, lockfiles). Claim the area first, then release it or mark it done when you finish.
+- Respect other agents' claims. If one blocks you, post an `ask`. If it's urgent, also `SendMessage` the other session (`ListAgents` shows them).
+- One line per entry, concrete paths over vague areas.
+- The board is for coordination only. No design discussion or status chatter.
