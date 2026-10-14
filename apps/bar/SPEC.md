@@ -80,10 +80,10 @@ While narrowed, the body has the full corner (a pill). Pointer input reaches onl
 
 ### Body colour
 
-| Bar         | Docked (full width)                                                    | Floating (narrowed to the focus area)                          |
-| ----------- | ---------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Opaque      | the M3 app bar's container: the theme's `[bar] background` (`surface`) | the standard floating toolbar's container: `surface-container` |
-| Transparent | no container, a legibility shadow                                      | no container, a legibility shadow                              |
+| Bar         | Docked (full width)                                                                                          | Floating (narrowed to the focus area)                                                                                 |
+| ----------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| Opaque      | the M3 app bar's container: the theme's `[bar] background` (`surface`), text its `[bar] text` (`on-surface`) | the standard floating toolbar's container: `surface-container`, text `on-surface`, both from the theme's colour roles |
+| Transparent | no container, a legibility shadow                                                                            | no container, a legibility shadow                                                                                     |
 
 - The container colour changes between docked and floating on the effects default spring.
 - The floating body has no elevation. The spec allows that over a visually distinct background (the pill floats over the wallpaper), and a shadow wouldn't fit: the bar window stays exactly `barSize` high, because the stock popups place themselves from its height.

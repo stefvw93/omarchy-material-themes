@@ -82,7 +82,9 @@ Item {
   property color themeForeground: Color.bar.text
   property color themeContrastForeground: Color.background
   property color transparentForeground: Color.bar.text
-  property color foreground: themeForeground
+  // stef.bar: floating, the text pairs with the floating toolbar's
+  // surface-container from the same scheme: on-surface (SPEC.md, Body colour).
+  property color foreground: root.focusArea && root.focusArea.on && !root.vertical && !root.transparent ? themeScheme.color["on-surface"] : themeForeground
   property color barForeground: useTransparentForeground ? transparentForeground : themeForeground
   property bool foregroundAnimationEnabled: true
   property color background: Color.bar.background
