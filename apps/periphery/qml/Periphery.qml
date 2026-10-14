@@ -242,6 +242,9 @@ Item {
   // A flight whose switch hasn't come this long after its dispatch (a key
   // to the workspace already shown) ends: its ghosts are still on the tiles.
   readonly property int switchWaitMs: ms(150)
+  // Trial ghost motion: emphasized decelerate over medium4 (see the ghosts).
+  readonly property int easeMs: ms(400)
+  readonly property var easeCurve: [0.05, 0.7, 0.1, 1, 1, 1]
   // How far the switch backdrop reaches into the bands, to cover the border
   // (general:border_size) of a window tiled flush against the band.
   readonly property int coverBleed: 2
@@ -1222,17 +1225,24 @@ Item {
         onTargetChanged: if (target) lastTarget = target
         // At rest it sits on its target, at full size, so it keeps capturing.
         // armed: the spatial spring flies the ghost; otherwise it jumps.
-        SpringValue { id: flyX; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: flyer.armed; target: flyer.launched && !flyer.flying ? flyer.fx : (flyer.lastTarget ? flyer.lastTarget.x : 0) }
-        SpringValue { id: flyY; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: flyer.armed; target: flyer.launched && !flyer.flying ? flyer.fy : (flyer.lastTarget ? flyer.lastTarget.y : 0) }
-        SpringValue { id: flyW; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: flyer.armed; target: flyer.launched && !flyer.flying ? flyer.fw : (flyer.lastTarget ? flyer.lastTarget.w : 1) }
-        SpringValue { id: flyH; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: flyer.armed; target: flyer.launched && !flyer.flying ? flyer.fh : (flyer.lastTarget ? flyer.lastTarget.h : 1) }
+        // Trial: an ease-out instead of the spatial spring. M3's pairing for
+        // entering the screen: md.sys.motion.easing.emphasized.decelerate
+        // over md.sys.motion.duration.medium4 (styles/motion/easing-and-duration).
+        property real gx: flyer.launched && !flyer.flying ? flyer.fx : (flyer.lastTarget ? flyer.lastTarget.x : 0)
+        property real gy: flyer.launched && !flyer.flying ? flyer.fy : (flyer.lastTarget ? flyer.lastTarget.y : 0)
+        property real gw: flyer.launched && !flyer.flying ? flyer.fw : (flyer.lastTarget ? flyer.lastTarget.w : 1)
+        property real gh: flyer.launched && !flyer.flying ? flyer.fh : (flyer.lastTarget ? flyer.lastTarget.h : 1)
+        Behavior on gx { enabled: flyer.armed; NumberAnimation { duration: root.easeMs; easing.type: Easing.BezierSpline; easing.bezierCurve: root.easeCurve } }
+        Behavior on gy { enabled: flyer.armed; NumberAnimation { duration: root.easeMs; easing.type: Easing.BezierSpline; easing.bezierCurve: root.easeCurve } }
+        Behavior on gw { enabled: flyer.armed; NumberAnimation { duration: root.easeMs; easing.type: Easing.BezierSpline; easing.bezierCurve: root.easeCurve } }
+        Behavior on gh { enabled: flyer.armed; NumberAnimation { duration: root.easeMs; easing.type: Easing.BezierSpline; easing.bezierCurve: root.easeCurve } }
         SpringValue { id: flyFade; spring: root.springEffects; target: flyer.target ? 1 : 0 }
         // On whole pixels: a window drawn at a fraction of a pixel is
         // resampled, soft, and would snap sharp at the hand-off.
-        x: Math.round(flyX.value)
-        y: Math.round(flyY.value)
-        width: Math.round(flyW.value)
-        height: Math.round(flyH.value)
+        x: Math.round(flyer.gx)
+        y: Math.round(flyer.gy)
+        width: Math.round(flyer.gw)
+        height: Math.round(flyer.gh)
         visible: !!root.ghosted[address]
         opacity: flyFade.value
         Component.onCompleted: root.ghostItems[address] = flyer
