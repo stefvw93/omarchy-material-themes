@@ -171,6 +171,12 @@ Token values come from the spec's token data ([material-3/](material-3/README.md
 - **Choice:** The ghost redoes Hyprland's blur from Hyprland's live options: MultiEffect over the wallpaper with radius size × 2^passes (how far dual-kawase reaches: each pass halves the image and samples size away; 48 px for size 6, 3 passes), blurMax 64 stretched by blurMultiplier past it; contrast − 1, brightness − 1 and vibrancy as MultiEffect's contrast, brightness and saturation. Blur off, or size or passes missing, is no blur. Hyprland's noise is not redone.
 - **Why:** A value derived from the compositor's own settings follows any theme or blur change and replaces a radius matched by eye; the ghost then looks like the window it hands off to.
 
+### `special.scrim`: Hyprland: behind a special workspace (the scratchpad)
+
+- **Spec:** Modal surfaces (dialogs, modal sheets, time pickers) sit above a scrim that makes the content behind them less prominent: "Scrims use the scrim color role at an opacity of 32%" (citations.scrimOpacity). M3 has no blur.
+- **Choice:** A shown special workspace is a modal layer over the desktop: Hyprland's dim_special is the scrim opacity (its dim is black, the scrim role's colour). On top of the scrim, Hyprland blurs what is behind it (decoration:blur:special, tokens.special.blur), with the shared blur size and passes (tokens.blur); not M3, and off with the token.
+- **Why:** The scratchpad's windows take focus as a dialog does, so they get its scrim. The blur follows Android 16, which blurs behind its notification shade, Quick Settings and Recents "to add depth and preserve context", and stays a choice because the spec has none.
+
 ### `studio.colors`: Omaterial Studio: its own colours
 
 - **Spec:** Silent: Studio is a tool for the desktop, not a product with its own brand colour.

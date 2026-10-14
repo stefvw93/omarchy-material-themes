@@ -101,6 +101,8 @@ export const defaultTokens = {
     /** Between tabs, and between the tabs and the window (the spec's 2dp connected-group padding). */
     padding: "space25" as MeasurementStep,
   },
+  /** Not M3: Hyprland's one blur, behind the flyouts and the special workspace. */
+  blur: { size: 6, passes: 3 },
   /**
    * The one exception to M3's opaque surfaces: flyouts opened from the bar
    * (tray popups, OSD, dropdowns) may be translucent with blur behind them.
@@ -108,7 +110,10 @@ export const defaultTokens = {
   flyouts: {
     translucent: true,
     alpha: 0.9,
-    blur: { size: 6, passes: 3 },
+  },
+  /** Behind a shown special workspace (the scratchpad): the M3 scrim, blurred unless off. */
+  special: {
+    blur: true,
   },
   expo: {
     outerMargin: "space600" as MeasurementStep,
@@ -193,10 +198,17 @@ const nearestStep = (px: unknown): MeasurementStep | undefined => {
 /**
  * tokens.json v1 (pixel values, gradient angle, shadow, blur) to v2. Pixel
  * spacing moves to the nearest md.sys.measurement step; values M3 now decides
- * (gaps, border angle, shadows, periphery durations) are dropped.
+ * (gaps, border angle, shadows, periphery durations) are dropped. An earlier
+ * v2's flyouts.blur moves to the shared blur.
  */
 export const migrateTokens = (json: unknown): unknown => {
-  if (!isPlainObject(json) || json["version"] === 2) return json;
+  if (!isPlainObject(json)) return json;
+  if (json["version"] === 2) {
+    // Blur used to be the flyouts' own (flyouts.blur); it is shared now.
+    const flyouts = json["flyouts"];
+    if (!isPlainObject(flyouts) || flyouts["blur"] === undefined) return json;
+    return { ...json, blur: json["blur"] ?? flyouts["blur"] };
+  }
   const v1 = json as Record<string, Record<string, unknown> | undefined>;
   const steps = (group: Record<string, unknown> | undefined, keys: ReadonlyArray<string>) => {
     const out: Record<string, unknown> = {};
@@ -212,7 +224,7 @@ export const migrateTokens = (json: unknown): unknown => {
     version: 2,
     motion: v1["motion"],
     border: v1["border"]?.["width"] === 3 ? { width: "focus-indicator" } : undefined,
-    flyouts: v1["blur"] ? { blur: v1["blur"] } : undefined,
+    blur: v1["blur"],
     expo: {
       ...steps(expo, ["outerMargin", "tileGap", "tilePadding", "rise"]),
       tileStagger: expo["tileStagger"],

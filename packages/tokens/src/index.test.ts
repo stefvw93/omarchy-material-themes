@@ -106,7 +106,12 @@ describe("migrateTokens", () => {
     expect(tokens.expo).toEqual(defaultTokens.expo);
     expect(tokens.periphery).toEqual(defaultTokens.periphery);
     expect(tokens.motion.scheme).toBe("expressive");
-    expect(tokens.flyouts.blur).toEqual({ size: 6, passes: 3 });
+    expect(tokens.blur).toEqual({ size: 6, passes: 3 });
+  });
+
+  it("moves v1's blur to the shared blur", () => {
+    const tokens = resolveTokens(JSON.stringify({ ...v1, blur: { size: 9, passes: 2 } }));
+    expect(tokens.blur).toEqual({ size: 9, passes: 2 });
   });
 
   it("snaps off-grid pixels to the nearest step and drops what M3 decides", () => {
@@ -122,6 +127,18 @@ describe("migrateTokens", () => {
   it("leaves v2 alone", () => {
     const v2 = { version: 2, density: -1 };
     expect(migrateTokens(v2)).toBe(v2);
+  });
+
+  it("moves an older v2's flyouts.blur to the shared blur", () => {
+    const tokens = resolveTokens(
+      JSON.stringify({ version: 2, flyouts: { alpha: 0.8, blur: { size: 9, passes: 2 } } }),
+    );
+    expect(tokens.blur).toEqual({ size: 9, passes: 2 });
+    expect(tokens.flyouts.alpha).toBe(0.8);
+    const both = resolveTokens(
+      JSON.stringify({ version: 2, blur: { size: 4 }, flyouts: { blur: { size: 9 } } }),
+    );
+    expect(both.blur.size).toBe(4);
   });
 });
 
@@ -193,14 +210,40 @@ describe("hyprlandTokensLua", () => {
     );
   });
 
-  it("blurs only the flyouts, and nothing when the exception is off", () => {
+  it("blurs the flyouts with the shared blur", () => {
     expect(lua).toContain('namespace = "^omarchy-(bar|osd|keyboard-panel)$"');
+    expect(lua).toContain("size = 6,\n      passes = 3,");
+  });
+
+  it("puts the scrim behind a special workspace, blurred unless the token is off", () => {
+    expect(lua).toContain("dim_special = 0.32,");
+    expect(lua).toContain("special = true,");
+    const unblurred = hyprlandTokensLua({ ...defaultTokens, special: { blur: false } });
+    expect(unblurred).toContain("dim_special = 0.32,");
+    expect(unblurred).toContain("special = false,");
+    expect(unblurred).toContain("enabled = true,");
+    expect(unblurred).toContain("layer_rule");
+  });
+
+  it("blurs the special workspace with the flyouts' exception off", () => {
     const opaque = hyprlandTokensLua({
       ...defaultTokens,
       flyouts: { ...defaultTokens.flyouts, translucent: false },
     });
     expect(opaque).not.toContain("layer_rule");
-    expect(opaque).toContain("enabled = false,");
+    expect(opaque).toContain("enabled = true,");
+    expect(opaque).toContain("special = true,");
+  });
+
+  it("blurs nothing with both off, and keeps the scrim", () => {
+    const none = hyprlandTokensLua({
+      ...defaultTokens,
+      flyouts: { ...defaultTokens.flyouts, translucent: false },
+      special: { blur: false },
+    });
+    expect(none).not.toContain("layer_rule");
+    expect(none).toContain("enabled = false,");
+    expect(none).toContain("dim_special = 0.32,");
   });
 
   it("gives tiled windows no shadow", () => {

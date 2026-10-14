@@ -33,8 +33,8 @@ const ranges: Record<string, { min: number; max: number; step: number; unit?: st
   // One step is 1px of body text (md.sys.typescale.body-medium is 14).
   "type.scale": { min: 10 / 14, max: 28 / 14, step: 1 / 14, unit: "×" },
   "flyouts.alpha": { min: 0.5, max: 1, step: 0.01 },
-  "flyouts.blur.size": { min: 0, max: 20, step: 1 },
-  "flyouts.blur.passes": { min: 0, max: 8, step: 1 },
+  "blur.size": { min: 0, max: 20, step: 1 },
+  "blur.passes": { min: 0, max: 8, step: 1 },
   "expo.tileScaleFrom": { min: 0.5, max: 1, step: 0.01 },
   "expo.windowScaleFrom": { min: 0.5, max: 1, step: 0.01 },
 };
@@ -71,7 +71,18 @@ const groups: ReadonlyArray<{
     title: "Bar flyouts (not M3)",
     description:
       "The one exception to M3's opaque surfaces: popups opened from the bar may be translucent over a blur",
-    paths: ["flyouts.translucent", "flyouts.alpha", "flyouts.blur.size", "flyouts.blur.passes"],
+    paths: ["flyouts.translucent", "flyouts.alpha"],
+  },
+  {
+    title: "Special workspace",
+    description:
+      "Behind the scratchpad: the M3 scrim, always; a blur on top of it is not M3 (as Android blurs behind its shade)",
+    paths: ["special.blur"],
+  },
+  {
+    title: "Blur (not M3)",
+    description: "Hyprland's one blur, behind the bar flyouts and the special workspace",
+    paths: ["blur.size", "blur.passes"],
   },
   {
     title: "Exposé",

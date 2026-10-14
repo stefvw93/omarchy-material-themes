@@ -51,14 +51,15 @@ export const TokensSchema = Schema.Struct({
     shape: Schema.Literals(groupbarShapes),
     padding: Step,
   }),
+  blur: Schema.Struct({
+    size: Px,
+    passes: Schema.Int.check(Schema.isBetween({ minimum: 0, maximum: 8 })),
+  }),
   flyouts: Schema.Struct({
     translucent: Schema.Boolean,
     alpha: Fraction,
-    blur: Schema.Struct({
-      size: Px,
-      passes: Schema.Int.check(Schema.isBetween({ minimum: 0, maximum: 8 })),
-    }),
   }),
+  special: Schema.Struct({ blur: Schema.Boolean }),
   expo: Schema.Struct({
     outerMargin: Step,
     tileGap: Step,
@@ -227,7 +228,9 @@ export const hyprlandTokensLua = (tokens: Tokens): string => {
   interpretation("window.corner");
   const gaps = gapsOf(tokens);
   const shadow = windowShadow();
+  interpretation("special.scrim");
   const flyouts = tokens.flyouts.translucent;
+  const blur = flyouts || tokens.special.blur;
   return `-- Material 3 shape, spacing and motion, from ~/.config/omarchy/stef/tokens.json
 -- (@stef/tokens). Do not edit: change the tokens (Omaterial Studio, or
 -- \`stef tokens set\`) and regenerate.
@@ -249,8 +252,10 @@ hl.config({
       render_power = ${shadow.renderPower},
       scale = 1,
     },
+    -- Behind a shown special workspace: md.sys.color.scrim at the scrim opacity.
+    dim_special = ${citations.scrimOpacity.value},
     blur = {
-      enabled = ${flyouts},${flyouts ? `\n      size = ${tokens.flyouts.blur.size},\n      passes = ${tokens.flyouts.blur.passes},\n      popups = true,\n      special = false,` : ""}
+      enabled = ${blur},${blur ? `\n      size = ${tokens.blur.size},\n      passes = ${tokens.blur.passes},\n      popups = true,\n      special = ${tokens.special.blur},` : ""}
     },
   },
 })

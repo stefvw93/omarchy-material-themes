@@ -23,12 +23,14 @@ hl.config({
       render_power = 2,
       scale = 1,
     },
+    -- Behind a shown special workspace: md.sys.color.scrim at the scrim opacity.
+    dim_special = 0.32,
     blur = {
       enabled = true,
       size = 6,
       passes = 3,
       popups = true,
-      special = false,
+      special = true,
     },
   },
 })
