@@ -159,7 +159,72 @@ export const m3Data = {
     },
     "md.comp.primary-navigation-tab.with-label-text.inactive.label-text.color": {
       "role": "on-surface-variant"
-    }
+    },
+    "md.comp.filled-text-field.container.color": {
+      "role": "surface-container-highest"
+    },
+    "md.comp.filled-text-field.active-indicator.color": {
+      "role": "on-surface-variant"
+    },
+    "md.comp.filled-text-field.active-indicator.height": 1,
+    "md.comp.filled-text-field.focus.active-indicator.color": {
+      "role": "primary"
+    },
+    "md.comp.filled-text-field.focus.active-indicator.height": 2,
+    "md.comp.filled-text-field.error.focus.active-indicator.color": {
+      "role": "error"
+    },
+    "md.comp.filled-text-field.caret.color": {
+      "role": "primary"
+    },
+    "md.comp.filled-text-field.error.focus.caret.color": {
+      "role": "error"
+    },
+    "md.comp.filled-text-field.input-text.color": {
+      "role": "on-surface"
+    },
+    "md.comp.filled-text-field.input-text.placeholder.color": {
+      "role": "on-surface-variant"
+    },
+    "md.comp.filled-text-field.input-text.type": {
+      "size": 16,
+      "lineHeight": 24,
+      "weight": 400,
+      "tracking": 0.5
+    },
+    "md.comp.filled-text-field.supporting-text.color": {
+      "role": "on-surface-variant"
+    },
+    "md.comp.filled-text-field.supporting-text.type": {
+      "size": 12,
+      "lineHeight": 16,
+      "weight": 400,
+      "tracking": 0.4
+    },
+    "md.comp.filled-text-field.error.supporting-text.color": {
+      "role": "error"
+    },
+    "md.comp.filled-text-field.trailing-icon.color": {
+      "role": "on-surface-variant"
+    },
+    "md.comp.filled-text-field.trailing-icon.size": 24,
+    "md.comp.icon-button.standard.icon.color": {
+      "role": "on-surface-variant"
+    },
+    "md.comp.icon-button.standard.disabled.icon.color": {
+      "role": "on-surface"
+    },
+    "md.comp.icon-button.standard.disabled.icon.opacity": 0.38,
+    "md.comp.icon-button.standard.hovered.state-layer.color": {
+      "role": "on-surface-variant"
+    },
+    "md.comp.icon-button.standard.hovered.state-layer.opacity": 0.08,
+    "md.comp.icon-button.standard.pressed.state-layer.color": {
+      "role": "on-surface-variant"
+    },
+    "md.comp.icon-button.standard.pressed.state-layer.opacity": 0.1,
+    "md.comp.icon-button.small.container.height": 40,
+    "md.comp.icon-button.small.icon.size": 24
   },
   "scrimOpacity": 0.32,
   "connectedButtonGroup": {
