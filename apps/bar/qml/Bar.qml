@@ -1142,6 +1142,60 @@ Item {
     return out
   }
 
+  // stef.bar: whether `item` shows within `slot`: visible all the way up, and
+  // its centre inside every clipping ancestor (the tray's closed drawer clips
+  // its icons out of view).
+  function shownInSlot(item, slot) {
+    if (!item.visible || item.opacity === 0) return false
+    for (var p = item.parent; p && p !== slot; p = p.parent) {
+      if (!p.visible || p.opacity === 0) return false
+      if (p.clip) {
+        var c = item.mapToItem(p, item.width / 2, item.height / 2)
+        if (c.x < 0 || c.y < 0 || c.x > p.width || c.y > p.height) return false
+      }
+    }
+    return true
+  }
+
+  // stef.bar: a widget's pointer-cursor mouse areas that aren't part of a
+  // registered click target: buttons it handles itself (the tray's icons).
+  function pointerAreas(node, slot, out) {
+    var kids = node.children || []
+    for (var i = 0; i < kids.length; i++) {
+      var kid = kids[i]
+      if (kid.hoverEnabled === true && kid.enabled && kid.cursorShape === Qt.PointingHandCursor
+          && clickTargets.indexOf(kid.parent) === -1 && root.shownInSlot(kid, slot)) out.push(kid)
+      root.pointerAreas(kid, slot, out)
+    }
+    return out
+  }
+
+  // stef.bar: every button of a widget for hover and the cursor: its click
+  // targets and the buttons it handles itself, as extents in `item`.
+  function slotHoverButtons(slot, item) {
+    var out = slotButtons(slot, item).filter(function(b) { return root.shownInSlot(b.target, slot) })
+    var areas = slot.activeItem ? root.pointerAreas(slot.activeItem, slot, []) : []
+    for (var i = 0; i < areas.length; i++) {
+      var at = areas[i].mapToItem(item, 0, 0)
+      out.push({ target: areas[i], x: root.vertical ? at.y : at.x, width: root.vertical ? areas[i].height : areas[i].width })
+    }
+    out.sort(function(a, b) { return a.x - b.x })
+    return out
+  }
+
+  // stef.bar: the button the pointer lights up: the one under it, else the
+  // nearest of several (no dead zone between them), else the click target.
+  function hoverButtonAt(slot, localX, localY) {
+    var buttons = slotHoverButtons(slot, slot)
+    var along = root.vertical ? localY : localX
+    for (var i = 0; i < buttons.length; i++) {
+      if (along >= buttons[i].x && along <= buttons[i].x + buttons[i].width) return buttons[i].target
+    }
+    if (buttons.length > 1 && localX >= 0 && localX <= slot.width && localY >= 0 && localY <= slot.height)
+      return buttons[Model.nearestButton(buttons, along)].target
+    return moduleClickTargetAt(slot, localX, localY)
+  }
+
   function pressModuleClickTarget(slot, button, localX, localY) {
     var target = moduleClickTargetAt(slot, localX, localY)
     if (!target) return false
@@ -2061,10 +2115,10 @@ Item {
       // pressed one while pressed, in its part's corners. A widget made of
       // several buttons lights up only the hovered one (SPEC.md, Segments).
       readonly property var hoverTarget: slot.hovered && !root.vertical
-        ? root.moduleClickTargetAt(slot, moduleHover.point.position.x, moduleHover.point.position.y) : null
+        ? root.hoverButtonAt(slot, moduleHover.point.position.x, moduleHover.point.position.y) : null
       readonly property var buttonLayer: {
         if (!hoverTarget || !corners) return null
-        var buttons = root.slotButtons(slot, segmentPart)
+        var buttons = root.slotHoverButtons(slot, segmentPart)
         if (buttons.length < 2) return null
         for (var i = 0; i < buttons.length; i++) {
           if (buttons[i].target === hoverTarget)
@@ -2174,7 +2228,7 @@ Item {
       // picked at (0,0) or the last press: the stock bar's widgets start at
       // 0, but a segment's padding puts (0,0) beside the widget, and padded
       // widgets showed an arrow.
-      cursorShape: root.moduleClickTargetAt(slot, moduleHover.point.position.x, moduleHover.point.position.y) ? Qt.PointingHandCursor : Qt.ArrowCursor
+      cursorShape: root.hoverButtonAt(slot, moduleHover.point.position.x, moduleHover.point.position.y) ? Qt.PointingHandCursor : Qt.ArrowCursor
       // Do not assign drag.target here: ModuleSlot is owned by Row/Column
       // positioners, and mutating slot.x/slot.y can leave stale offsets that
       // make neighboring modules overlap after a small aborted drag.
