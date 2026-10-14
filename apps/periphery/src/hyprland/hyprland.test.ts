@@ -122,19 +122,19 @@ describe("hookStateLua", () => {
 
   it("opens it with the bands, the focus area and its rule, nothing selected", () => {
     expect(hookStateLua(on)).toBe(
-      `if periphery_open then periphery_open(true, false, 380, 2180, 0, 1440, ${rule("s[false]", 0, 380, 0, 380)}); periphery_select(nil) end`,
+      `if periphery_open then periphery_open(true, false, 380, 2180, 0, 1440, ${rule("s[false]", 0, 380, 0, 380)}, nil); periphery_select(nil) end`,
     );
   });
 
   it("passes the selected address and the monitor's offset", () => {
     expect(hookStateLua({ ...on, monX: 2560, monY: 100.4, selected: "0x56c7bf423bd0" })).toBe(
-      `if periphery_open then periphery_open(true, false, 2940, 4740, 100, 1540, ${rule("s[false]", 0, 380, 0, 380)}); periphery_select("0x56c7bf423bd0") end`,
+      `if periphery_open then periphery_open(true, false, 2940, 4740, 100, 1540, ${rule("s[false]", 0, 380, 0, 380)}, nil); periphery_select("0x56c7bf423bd0") end`,
     );
   });
 
   it("gives the monitor's regular workspaces the outer gaps plus the bands", () => {
     expect(hookStateLua({ ...on, monitor: "DP-3", gapsOut: [8, 6, 4, 2] })).toContain(
-      `, ${rule("s[false] m[DP-3]", 8, 386, 4, 382)});`,
+      `, ${rule("s[false] m[DP-3]", 8, 386, 4, 382)}, "DP-3");`,
     );
     expect(
       hookStateLua({ ...on, monitor: "HDMI-A-1", gapsOut: [8.4, 8, 8, 8], sideW: 379.6 }),
@@ -143,7 +143,7 @@ describe("hookStateLua", () => {
 
   it("has no rule without bands", () => {
     expect(hookStateLua({ ...on, sideW: 0, monitor: "DP-3" })).toContain(
-      "periphery_open(true, false, 0, 2560, 0, 1440, nil);",
+      'periphery_open(true, false, 0, 2560, 0, 1440, nil, "DP-3");',
     );
   });
 
@@ -151,6 +151,7 @@ describe("hookStateLua", () => {
     const lua = hookStateLua({ ...on, monitor: 'DP-3"] } os.execute("x") --' });
     expect(lua).toContain(rule("s[false]", 0, 380, 0, 380));
     expect(lua).not.toContain("os.execute");
+    expect(lua).toContain(", nil); periphery_select");
   });
 
   it("never lets anything but an address into the Lua", () => {

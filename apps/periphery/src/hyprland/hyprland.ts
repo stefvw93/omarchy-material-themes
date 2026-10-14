@@ -70,7 +70,7 @@ export function hookStateLua(state: HookState): string {
   // Nothing but an address ever reaches Lua code.
   const selected = /^0x[0-9a-fA-F]+$/.test(state.selected) ? `"${state.selected}"` : "nil";
   return (
-    `if periphery_open then periphery_open(${[state.cardsLeft, state.cardsRight, ...bounds, focusRuleLua(state)].join(", ")}); ` +
+    `if periphery_open then periphery_open(${[state.cardsLeft, state.cardsRight, ...bounds, focusRuleLua(state), monitorLua(state)].join(", ")}); ` +
     `periphery_select(${selected}) end`
   );
 }
@@ -79,14 +79,23 @@ export function hookStateLua(state: HookState): string {
  * The focus area as a workspace rule: the monitor's regular workspaces get
  * the bands as extra side gaps, so special ones keep the full width.
  */
+// Nothing but a monitor name ever reaches Lua code.
+const safeMonitor = (state: HookState) =>
+  state.monitor && /^[A-Za-z0-9_.-]+$/.test(state.monitor) ? state.monitor : undefined;
+
+/** The monitor's name for the focus area announcements, or nil. */
+function monitorLua(state: HookState): string {
+  const name = safeMonitor(state);
+  return name ? `"${name}"` : "nil";
+}
+
 function focusRuleLua(state: HookState): string {
   const side = Math.round(state.sideW);
   if (!(side > 0)) return "nil";
   const [t = 0, r = 0, b = 0, l = 0] = state.gapsOut ?? [];
   const gaps = [t, r + side, b, l + side].map(Math.round);
-  // Nothing but a monitor name ever reaches Lua code.
-  const monitor =
-    state.monitor && /^[A-Za-z0-9_.-]+$/.test(state.monitor) ? ` m[${state.monitor}]` : "";
+  const name = safeMonitor(state);
+  const monitor = name ? ` m[${name}]` : "";
   return (
     `{ workspace = "s[false]${monitor}", ` +
     `gaps_out = { top = ${gaps[0]}, right = ${gaps[1]}, bottom = ${gaps[2]}, left = ${gaps[3]} } }`

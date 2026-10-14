@@ -131,11 +131,27 @@ local function apply_focus_rule(rule)
   periphery_focus_rule = key
 end
 
-function periphery_open(left, right, x0, x1, y0, y1, rule)
+-- The focus area on Hyprland's event socket, for other plugins (the bar):
+-- custom>>periphery>>x0,x1,monitor, or custom>>periphery>>off. Only changes;
+-- periphery_announce() repeats the last one for a listener that starts late.
+local announced = nil
+
+local function announce(state)
+  if state == announced then return end
+  announced = state
+  hl.dispatch(hl.dsp.event("periphery>>" .. state))
+end
+
+function periphery_announce()
+  hl.dispatch(hl.dsp.event("periphery>>" .. (announced or "off")))
+end
+
+function periphery_open(left, right, x0, x1, y0, y1, rule, monitor)
   periphery = periphery or {}
   periphery.bands = { l = left, r = right }
   periphery.focus = { x0 = x0, x1 = x1, y0 = y0, y1 = y1 }
   apply_focus_rule(rule)
+  if monitor then announce(x0 .. "," .. x1 .. "," .. monitor) end
   report_tabs()
 end
 
@@ -152,6 +168,7 @@ end
 function periphery_close()
   if periphery then periphery_select(nil) end
   apply_focus_rule(nil)
+  if announced then announce("off") end
   periphery = nil
   tabs_sent = nil
 end

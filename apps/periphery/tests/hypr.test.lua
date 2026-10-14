@@ -43,6 +43,7 @@ local function fake()
         move = ctor("move"),
       },
       focus = ctor("focus"),
+      event = ctor("event"),
     },
   }
   function hl.dispatch(d)
@@ -265,6 +266,45 @@ test("closing, or opening without a rule, drops the rule", function()
   periphery_open(true, true, 388, 2172, 0, 1440, rule)
   periphery_open(true, true, 0, 2560, 0, 1440, nil)
   eq(log.rules[2].enabled, false, "after open without a rule")
+  periphery_close()
+end)
+
+local function events(log)
+  local out = {}
+  for _, d in ipairs(log.dispatched) do
+    if type(d) == "table" and d.kind == "event" then table.insert(out, d.args) end
+  end
+  return out
+end
+
+test("the focus area is announced when it changes, and off on close", function()
+  local log = fake()
+  periphery_open(true, true, 388, 2172, 0, 1440, rule, "DP-3")
+  periphery_open(false, true, 388, 2172, 0, 1440, rule, "DP-3")
+  periphery_open(true, true, 300, 2260, 0, 1440, rule, "DP-3")
+  periphery_close()
+  local e = events(log)
+  eq(#e, 3, "announcements")
+  eq(e[1], "periphery>>388,2172,DP-3")
+  eq(e[2], "periphery>>300,2260,DP-3")
+  eq(e[3], "periphery>>off")
+end)
+
+test("periphery_announce repeats the current state", function()
+  local log = fake()
+  periphery_announce()
+  periphery_open(true, true, 388, 2172, 0, 1440, rule, "DP-3")
+  periphery_announce()
+  local e = events(log)
+  eq(e[1], "periphery>>off")
+  eq(e[3], "periphery>>388,2172,DP-3")
+  periphery_close()
+end)
+
+test("without a monitor name nothing is announced", function()
+  local log = fake()
+  periphery_open(true, true, 388, 2172, 0, 1440, rule, nil)
+  eq(#events(log), 0, "announcements")
   periphery_close()
 end)
 

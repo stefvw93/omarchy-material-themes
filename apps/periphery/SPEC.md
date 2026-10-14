@@ -53,6 +53,15 @@ The mode leaves special workspaces (the scratchpad) alone. They keep Hyprland's 
 
 The cards stay in the bands, under the scrim and the special workspace's windows. The focus keys on a window of a special workspace keep Hyprland's own focus: they never enter a band.
 
+### Focus area announcements
+
+Other plugins (the bar, `stef.bar`) follow the focus area without depending on this plugin: the hook announces it on Hyprland's event socket, with Hyprland's `event` dispatcher.
+
+- When the focus area changes (the mode turns on, the ratio or monitor changes): `custom>>periphery>><x0>,<x1>,<monitor>`, the focus area's left and right edge in global pixels and the monitor's name.
+- When the mode turns off: `custom>>periphery>>off`.
+- Only changes are announced; the state the plugin sends on every selection change announces nothing new.
+- `periphery_announce()` announces the current state again (`off` before anything), for a listener that starts later.
+
 ### Placement of groups
 
 The plugin shows the occupied regular workspaces (id > 0) of the focused monitor. It does not show the current workspace or special workspaces.
@@ -438,6 +447,7 @@ Manual checks:
 17. `SUPER + F` on a selected card: Hyprland goes to its workspace and the window is fullscreen.
 18. `hyprctl eval 'error(tostring(periphery))'`: a table while on, `nil` after the mode turns off.
 19. Open the scratchpad: it tiles at full width over the scrim, and nothing behind it moves, the bar included. `SUPER + ←` on its leftmost window doesn't select a card.
+20. `socat -u UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock - | grep periphery`, then toggle the mode: `custom>>periphery>>380,2180,DP-3` on, `custom>>periphery>>off` off.
 
 ## Out of scope
 
