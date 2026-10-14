@@ -94,7 +94,7 @@ The bands follow macOS Mission Control: every window is visible, a workspace kee
 
 Cards are turned 8° towards the focus area (tilt), with perspective. A selected or dragged card turns flat and comes to the front. Both move on the spatial default spring.
 
-Each thumbnail fills its card. A window on a hidden workspace keeps its last frame, which can have its old size (after the mode turned on, or a shell restart) until the window draws again; the frame is then stretched to the card rather than letterboxed in it.
+Each thumbnail fills its card. A window on a hidden workspace keeps its last frame, which can have its old size (after the mode turned on, or a shell restart) until the window draws again; the frame then covers the card, cropped, rather than letterboxed in it.
 
 ### Workspace switch animation
 

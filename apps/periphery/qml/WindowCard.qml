@@ -49,9 +49,14 @@ Item {
     anchors.fill: parent
     radius: card.props.rounding
 
+    // Covers the card at the frame's own aspect, cropped by the clip: a
+    // stale frame of a hidden window (its old size) never letterboxes.
     ScreencopyView {
       id: thumb
-      anchors.fill: parent
+      readonly property real aspect: sourceSize.width > 0 && sourceSize.height > 0 ? sourceSize.width / sourceSize.height : parent.width / Math.max(1, parent.height)
+      anchors.centerIn: parent
+      width: Math.max(parent.width, parent.height * aspect)
+      height: Math.max(parent.height, parent.width / aspect)
       captureSource: card.host.opened && card.win.toplevel ? card.win.toplevel.wayland : null
       live: card.host.opened
     }

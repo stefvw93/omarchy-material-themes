@@ -155,6 +155,16 @@ Item {
   property string selected: ""
   // The window that was active when the card got selected.
   property string selectedOver: ""
+  // The pile of the selected card, fanned out so each tab can be reached; it
+  // closes when the selection leaves the pile.
+  readonly property string openPile: root.selected && root.winData[root.selected] ? root.winData[root.selected].pile : ""
+  // A card's rect as drawn: its fan rect while its pile is open.
+  function drawnRect(card) { return card.pile !== "" && card.pile === root.openPile && card.fan ? card.fan : card }
+  function drawnCards() {
+    var out = {}
+    for (var a in root.winData) out[a] = root.drawnRect(root.winData[a])
+    return out
+  }
   // Which bands have cards, for the focus keys to move into.
   property bool cardsLeft: false
   property bool cardsRight: false
@@ -218,8 +228,9 @@ Item {
   readonly property int groupGap: root.m3.periphery.groupGap
   // The title-small label line, then the card gap to the cards.
   readonly property int headerHeight: root.typeOf("title-small").lineHeight + root.cardGap
-  // How far a group's map may stretch vertically to use a tall band.
-  readonly property real maxStretch: 6
+  // How far a card at rest turns towards the focus area, in degrees; a
+  // selected or dragged card turns flat (interpretation periphery.components).
+  readonly property real cardTilt: 8
   // Global animation speed: 1 is normal, 0.25 plays every animation 4x
   // slower to inspect it, 2 twice as fast. Scales the timeouts and the
   // springs (stiffness by speed² keeps their shape, in time scaled by speed).
@@ -366,7 +377,7 @@ Item {
 
   // A focus key on the selected card (src/selection/specs.md).
   function stepSelection(dir) {
-    var step = Selection.stepSelection(root.winData, root.selected, dir, root.focusRects, root.monW, root.sideW) // qmllint disable missing-property
+    var step = Selection.stepSelection(root.drawnCards(), root.selected, dir, root.focusRects, root.monW, root.sideW) // qmllint disable missing-property
     if (step.kind === "select") root.select(step.address)
     else if (step.kind === "focus") {
       root.clearSelection()
@@ -731,13 +742,16 @@ Item {
         ry: ipc.at[1],
         rw: Math.max(1, ipc.size[0]),
         rh: Math.max(1, ipc.size[1]),
+        // A tab group piles up, its shown tab in front (src/layout/specs.md).
+        tabGroup: (ipc.grouped || []).length > 1 ? root.normalizeAddress(ipc.grouped[0]) : "",
+        shownTab: root.shownTabs.has(address),
       })
     }
 
     root.tabGroups = groups
     others.sort(function(a, b) { return a.address < b.address ? -1 : a.address > b.address ? 1 : 0 })
     var signature = JSON.stringify([root.sideW, root.reserved[1], root.reserved[3], current, others.map(function(w) {
-      return [w.address, w.wsId, w.wsName, w.title, w.floating, w.rx, w.ry, w.rw, w.rh]
+      return [w.address, w.wsId, w.wsName, w.title, w.floating, w.rx, w.ry, w.rw, w.rh, w.tabGroup, w.shownTab]
     }), Object.keys(focus).map(function(a) { var f = focus[a]; return [a, f.fullscreen, f.x, f.y, f.w, f.h] })])
     if (signature === root.layoutSignature) return
     root.layoutSignature = signature
@@ -747,7 +761,7 @@ Item {
     var layout = Layout.layoutBands(others, current, { // qmllint disable missing-property
       monW: root.monW, monH: root.monH, sideW: root.sideW, bandMargin: root.bandMargin,
       cardGap: root.cardGap, groupGap: root.groupGap, headerHeight: root.headerHeight,
-      maxStretch: root.maxStretch, top: root.reserved[1], bottom: root.reserved[3],
+      top: root.reserved[1], bottom: root.reserved[3],
     })
     root.winData = layout.cards
     root.headers = layout.headers
@@ -1038,10 +1052,17 @@ Item {
         // Hidden, not faded, while its ghost flies: the ghost lands on it.
         visible: !!shown && !root.ghosted[address]
         // Placement moves on the spatial spring once the card has settled in.
-        SpringValue { id: cardX; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.shown ? card.shown.x : 0 }
-        SpringValue { id: cardY; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.shown ? card.shown.y : 0 }
-        SpringValue { id: cardW; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.shown ? card.shown.w : 0 }
-        SpringValue { id: cardH; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.shown ? card.shown.h : 0 }
+        // Its pile fanned out: the card moves to its fan rect.
+        readonly property var place: card.shown ? root.drawnRect(card.shown) : null
+        readonly property bool fanned: !!card.shown && card.shown.pile !== "" && card.shown.pile === root.openPile
+        SpringValue { id: cardX; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.x : 0 }
+        SpringValue { id: cardY; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.y : 0 }
+        SpringValue { id: cardW; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.w : 0 }
+        SpringValue { id: cardH; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.h : 0 }
+        // In front: floating cards over tiled ones, a pile's front tab over
+        // the ones behind, an open pile over its neighbours, the selection
+        // over everything.
+        z: (card.shown && card.shown.z !== undefined ? card.shown.z : 0) + (card.fanned ? 500 : 0) + (card.selected ? 1000 : 0)
         // On whole pixels, like the ghosts that land on it.
         x: Math.round(cardX.value)
         y: Math.round(cardY.value)
@@ -1057,10 +1078,22 @@ Item {
         property real leaveTo: 0
         // The spatial spring, like Hyprland's workspace slide it travels with.
         SpringValue { id: slide; spring: root.springSpatial; epsilon: root.pixelEpsilon; target: card.leaving ? card.leaveTo : (card.settled ? 0 : card.arriveFrom) }
-        transform: Translate {
-          x: root.cardSlideVertical ? 0 : Math.round(slide.value)
-          y: root.cardSlideVertical ? Math.round(slide.value) : 0
-        }
+        // Turned towards the focus area, with perspective; flat while selected
+        // or dragged.
+        SpringValue { id: tilt; spring: root.springSpatial; target: card.selected || card.dragging ? 0 : 1 }
+        readonly property real tiltAngle: (card.place && card.place.x + card.place.w / 2 < root.monW / 2 ? -1 : 1) * root.cardTilt * tilt.value
+        transform: [
+          Translate {
+            x: root.cardSlideVertical ? 0 : Math.round(slide.value)
+            y: root.cardSlideVertical ? Math.round(slide.value) : 0
+          },
+          Rotation {
+            origin.x: card.width / 2
+            origin.y: card.height / 2
+            axis { x: 0; y: 1; z: 0 }
+            angle: card.tiltAngle
+          }
+        ]
         SpringValue { id: fade; spring: root.springEffects; target: card.settled && !card.leaving ? (card.dragging ? root.draggedSourceOpacity : 1) : 0 }
         opacity: fade.value
         onOpacityChanged: if (leaving && opacity === 0) root.removeSlot(address)
