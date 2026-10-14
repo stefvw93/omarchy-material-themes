@@ -1114,6 +1114,23 @@ Item {
     return null
   }
 
+  // stef.bar: a widget's own clickable buttons (the workspaces' numbers), as
+  // extents in `item` from its start, so each can have its own state layer.
+  function slotButtons(slot, item) {
+    var out = []
+    for (var i = 0; i < clickTargets.length; i++) {
+      var target = clickTargets[i]
+      if (!moduleTargetClickable(target)) continue
+      var inside = false
+      for (var p = target.parent; p; p = p.parent) if (p === slot) { inside = true; break }
+      if (!inside) continue
+      var at = target.mapToItem(item, 0, 0)
+      out.push({ target: target, x: root.vertical ? at.y : at.x, width: root.vertical ? target.height : target.width })
+    }
+    out.sort(function(a, b) { return a.x - b.x })
+    return out
+  }
+
   function pressModuleClickTarget(slot, button, localX, localY) {
     var target = moduleClickTargetAt(slot, localX, localY)
     if (!target) return false
@@ -2030,13 +2047,28 @@ Item {
       color: root.segmentColor
 
       // The widget's M3 state layer: on-surface at the hover opacity, the
-      // pressed one while pressed, in its part's corners.
+      // pressed one while pressed, in its part's corners. A widget made of
+      // several buttons lights up only the hovered one (SPEC.md, Segments).
+      readonly property var hoverTarget: slot.hovered && !root.vertical
+        ? root.moduleClickTargetAt(slot, moduleHover.point.position.x, moduleHover.point.position.y) : null
+      readonly property var buttonLayer: {
+        if (!hoverTarget || !corners) return null
+        var buttons = root.slotButtons(slot, segmentPart)
+        if (buttons.length < 2) return null
+        for (var i = 0; i < buttons.length; i++) {
+          if (buttons[i].target === hoverTarget)
+            return Model.buttonStateLayer({ width: segmentPart.width, corners: corners }, buttons, i, root.segmentCorner) // qmllint disable missing-property
+        }
+        return null
+      }
       Rectangle {
-        anchors.fill: parent
-        topLeftRadius: parent.topLeftRadius
-        topRightRadius: parent.topRightRadius
-        bottomLeftRadius: parent.bottomLeftRadius
-        bottomRightRadius: parent.bottomRightRadius
+        x: segmentPart.buttonLayer ? segmentPart.buttonLayer.x : 0
+        width: segmentPart.buttonLayer ? segmentPart.buttonLayer.width : parent.width
+        height: parent.height
+        topLeftRadius: segmentPart.buttonLayer ? segmentPart.buttonLayer.corners.topLeft : parent.topLeftRadius
+        topRightRadius: segmentPart.buttonLayer ? segmentPart.buttonLayer.corners.topRight : parent.topRightRadius
+        bottomLeftRadius: segmentPart.buttonLayer ? segmentPart.buttonLayer.corners.bottomLeft : parent.bottomLeftRadius
+        bottomRightRadius: segmentPart.buttonLayer ? segmentPart.buttonLayer.corners.bottomRight : parent.bottomRightRadius
         color: root.foreground
         opacity: modulePointer.pressed ? tokens.m3.state.pressed : (slot.hovered ? tokens.m3.state.hover : 0)
       }

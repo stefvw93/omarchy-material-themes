@@ -150,6 +150,39 @@ export function segmentCorners(
   return { topLeft: start, topRight: end, bottomLeft: start, bottomRight: end };
 }
 
+export interface ButtonExtent {
+  readonly x: number;
+  readonly width: number;
+}
+
+export interface StateLayer extends ButtonExtent {
+  readonly corners: Corners;
+}
+
+export function buttonStateLayer(
+  part: { readonly width: number; readonly corners: Corners },
+  buttons: ReadonlyArray<ButtonExtent>,
+  index: number,
+  innerCorner: number,
+): StateLayer | null {
+  const button = buttons[index];
+  if (button === undefined) return null;
+  const first = index === 0;
+  const last = index === buttons.length - 1;
+  const x0 = first ? 0 : button.x;
+  const x1 = last ? part.width : button.x + button.width;
+  return {
+    x: x0,
+    width: x1 - x0,
+    corners: {
+      topLeft: first ? part.corners.topLeft : innerCorner,
+      bottomLeft: first ? part.corners.bottomLeft : innerCorner,
+      topRight: last ? part.corners.topRight : innerCorner,
+      bottomRight: last ? part.corners.bottomRight : innerCorner,
+    },
+  };
+}
+
 export function isIconItem(contentWidth: number, barSize: number, id: string): boolean {
   if (!(contentWidth > 0)) return false;
   return contentWidth <= barSize || id === "omarchy.tray";

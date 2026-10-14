@@ -35,6 +35,8 @@ The bar's own decisions, without Qt: Periphery's focus area and where the body g
 
 `segmentCorners(plan, shape, height, corner)`: the four corner radii `{ topLeft, topRight, bottomLeft, bottomRight }` of an item's part, `height` high, in a horizontal bar (start is left). At an `"outer"` side: `height / 2` for the round shape, `corner` for the square one. At an `"inner"` side: `corner`. At a `"join"` side: 0.
 
+`buttonStateLayer(part, buttons, index, innerCorner)`: where a widget with several buttons (the workspaces) draws the state layer of its `index`-th button, so each button lights up on its own. `part` is the widget's part of its segment, `{ width, corners }`; `buttons` are its buttons' extents in the part, `{ x, width }`, ordered from the start. The layer spans the button's own extent, except that the first button's reaches back to the part's start and the last button's on to the part's end (over the segment's padding), taking the part's corners there. Its other sides take `innerCorner`, the connected button group's inner corner. A lone button spans the whole part. An index outside `buttons` gives `null`.
+
 `isIconItem(contentWidth, barSize, id)`: whether a widget counts as an icon item: its content is no wider than `barSize`, or it is the tray (`omarchy.tray`). A widget with no width is not.
 
 `entryKey(entry)`: an entry's content as a string that doesn't depend on key order (objects' keys sorted, at every depth), so an entry and a copy of it with reordered keys (as a QML Repeater hands its delegates) give the same key.

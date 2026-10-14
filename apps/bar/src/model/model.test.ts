@@ -8,6 +8,7 @@ import {
   isIconItem,
   legibilityShadow,
   parseFocusEvent,
+  buttonStateLayer,
   segmentCorners,
   segmentPlan,
 } from "./model.ts";
@@ -267,5 +268,50 @@ describe("entryKey", () => {
     expect(entryKey({ id: "a" })).not.toBe(entryKey({ id: "b" }));
     expect(entryKey({ id: "a", items: [1, 2] })).not.toBe(entryKey({ id: "a", items: [2, 1] }));
     expect(entryKey("omarchy.clock")).toBe('"omarchy.clock"');
+  });
+});
+
+describe("buttonStateLayer", () => {
+  const corners = { topLeft: 16, topRight: 16, bottomLeft: 16, bottomRight: 16 };
+  const part = { width: 120, corners };
+  // Five workspace numbers, 20 wide, 2 apart, after 10 of padding.
+  const buttons = [10, 32, 54, 76, 98].map((x) => ({ x, width: 20 }));
+
+  it("spans a middle button with the inner corner all round", () => {
+    expect(buttonStateLayer(part, buttons, 2, 4)).toEqual({
+      x: 54,
+      width: 20,
+      corners: { topLeft: 4, topRight: 4, bottomLeft: 4, bottomRight: 4 },
+    });
+  });
+
+  it("reaches the part's start from the first button, in its start corners", () => {
+    expect(buttonStateLayer(part, buttons, 0, 4)).toEqual({
+      x: 0,
+      width: 30,
+      corners: { topLeft: 16, topRight: 4, bottomLeft: 16, bottomRight: 4 },
+    });
+  });
+
+  it("reaches the part's end from the last button, in its end corners", () => {
+    expect(buttonStateLayer(part, buttons, 4, 4)).toEqual({
+      x: 98,
+      width: 22,
+      corners: { topLeft: 4, topRight: 16, bottomLeft: 4, bottomRight: 16 },
+    });
+  });
+
+  it("covers the whole part for a lone button", () => {
+    expect(buttonStateLayer(part, [{ x: 10, width: 20 }], 0, 4)).toEqual({
+      x: 0,
+      width: 120,
+      corners,
+    });
+  });
+
+  it("gives null for an index that isn't a button", () => {
+    expect(buttonStateLayer(part, buttons, 5, 4)).toBeNull();
+    expect(buttonStateLayer(part, buttons, -1, 4)).toBeNull();
+    expect(buttonStateLayer(part, [], 0, 4)).toBeNull();
   });
 });
