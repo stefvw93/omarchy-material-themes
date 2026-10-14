@@ -102,7 +102,10 @@ local function report_tabs()
   local list = table.concat(shown, " ")
   if list == tabs_sent then return end
   tabs_sent = list
-  shell("tabs " .. (list == "" and "none" or list))
+  -- One quoted argument: the plugin's tabs() takes a single string, and
+  -- omarchy-shell drops a call with more arguments (silently, with -q).
+  -- Addresses are 0x and hex digits only, so the quotes are safe.
+  shell("tabs '" .. (list == "" and "none" or list) .. "'")
 end
 
 for _, event in ipairs({ "window.active", "window.open", "window.close", "window.move_to_workspace" }) do

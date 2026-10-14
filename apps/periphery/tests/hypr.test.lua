@@ -500,7 +500,7 @@ test("the mode turning on reports the shown tabs, sorted, once", function()
   local b = group("0xA1", "0xA2", "0xA9")
   state.all = { a[1], a[2], b[1], b[2], b[3], { address = "0xC" } }
   periphery_open(true, true, 380, 2180, 0, 1440)
-  eq(last(log.exec), "omarchy-shell -q stef.periphery tabs 0xA1 0xB2")
+  eq(last(log.exec), "omarchy-shell -q stef.periphery tabs '0xA1 0xB2'")
   local n = #log.exec
   periphery_open(true, true, 380, 2180, 0, 1440)
   eq(#log.exec, n, "not reported again unchanged")
@@ -509,7 +509,7 @@ end)
 test("no tab groups reports none", function()
   local log = fake()
   periphery_open(true, true, 380, 2180, 0, 1440)
-  eq(last(log.exec), "omarchy-shell -q stef.periphery tabs none")
+  eq(last(log.exec), "omarchy-shell -q stef.periphery tabs 'none'")
 end)
 
 test("a tab switch reports the new shown tab; nothing while the mode is off", function()
@@ -521,7 +521,7 @@ test("a tab switch reports the new shown tab; nothing while the mode is off", fu
   periphery_open(true, true, 380, 2180, 0, 1440)
   g.current = windows[2]
   log.events["window.active"]()
-  eq(last(log.exec), "omarchy-shell -q stef.periphery tabs 0xA2")
+  eq(last(log.exec), "omarchy-shell -q stef.periphery tabs '0xA2'")
 end)
 
 test("the mode turning off forgets what was reported", function()

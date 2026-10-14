@@ -180,7 +180,7 @@ Every tab of a tab group has its own card, like any window. Only the shown tab i
 | Shown tab  | Flies from its tile to its card.                 | Flies from its card to its tile.                  |
 | Hidden tab | Its card fades in on the effects default spring. | Its card fades out on the effects default spring. |
 
-Hyprland reports `hidden: false` for every tab, so the hook tells the plugin which tabs are shown (`group.current`): `tabs <address> …` with the shown tab of every tab group (`tabs none` without any), when the mode turns on (the hook is reset first, so this always reports) and whenever the active window changes (a tab switch makes the new tab active), a window opens, closes or moves to another workspace; only when the list changed since the last report. A tab group's shown tab doesn't change while its workspace is hidden. A flight to a hidden tab shows it: it flies in, and its group's shown tab until then counts as hidden.
+Hyprland reports `hidden: false` for every tab, so the hook tells the plugin which tabs are shown (`group.current`): `tabs '<address> …'` with the shown tab of every tab group, as one quoted argument (`tabs 'none'` without any; the plugin's `tabs` takes one string, and `omarchy-shell` drops a call with more arguments), when the mode turns on (the hook is reset first, so this always reports) and whenever the active window changes (a tab switch makes the new tab active), a window opens, closes or moves to another workspace; only when the list changed since the last report. A tab group's shown tab doesn't change while its workspace is hidden. A flight to a hidden tab shows it: it flies in, and its group's shown tab until then counts as hidden.
 
 #### Hyprland's workspace animation
 
