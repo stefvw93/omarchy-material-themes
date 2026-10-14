@@ -12,16 +12,16 @@ An Omarchy shell `service` plugin, cloned from `omarchy.lock`. Status: v1 (view)
 
 Which M3 component each part is: interpretation `lock.components`.
 
-| Part            | What                                                                                       |
-| --------------- | ------------------------------------------------------------------------------------------ |
-| Wallpaper       | The current background, sharp, under the scrim (scrim role, 32%).                          |
-| Clock           | Time (display-large) and date (title-medium), white.                                       |
-| Avatar          | 96dp circle: `~/.face`, else the user name's initial on primary-container.                 |
-| Name            | `$USER`, title-large, white.                                                               |
-| Password        | Filled text field, always focused: 2dp primary active indicator, error in the error state. |
-| Fingerprint     | Leading glyph in the field when a sensor is enrolled.                                      |
-| Submit          | Arrow icon button in the field; disabled while the field is empty or a check runs.         |
-| Supporting text | The failure (error), or "Checking…" while PAM runs.                                        |
+| Part            | What                                                                                               |
+| --------------- | -------------------------------------------------------------------------------------------------- |
+| Wallpaper       | The current background, sharp, under the scrim (scrim role, 32%).                                  |
+| Clock           | Time (display-large) and date (title-medium), white.                                               |
+| Avatar          | 96dp circle: `~/.face` (see README.md, Avatar), else the user name's initial on primary-container. |
+| Name            | `$USER`, title-large, white.                                                                       |
+| Password        | Filled text field, always focused: 2dp primary active indicator, error in the error state.         |
+| Fingerprint     | Leading glyph in the field when a sensor is enrolled.                                              |
+| Submit          | Arrow icon button in the field; disabled while the field is empty or a check runs.                 |
+| Supporting text | The failure (error), or "Checking…" while PAM runs.                                                |
 
 ## Safety
 

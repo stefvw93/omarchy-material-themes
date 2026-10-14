@@ -23,6 +23,17 @@ omarchy-shell lock hidePreview
 
 Changes to the view need `omarchy-restart-shell` (the lock stays loaded across plugin reloads); deploy does that.
 
+## Avatar
+
+The avatar shows `~/.face`, a PNG or JPEG (no extension needed), cropped to a 96px circle: a square picture of at least 256×256 with the face centred works best. Without one, it shows the user name's initial on the theme's primary container.
+
+```bash
+magick ~/Pictures/me.jpg -resize 512x512 jpg:$HOME/.face   # or just: cp ~/Pictures/me.jpg ~/.face
+omarchy-restart-shell                                      # while unlocked
+```
+
+The view looks for `~/.face` when the shell loads it, so a new picture shows after a shell restart. Check it with `omarchy-shell lock preview`.
+
 ## If the lock gets stuck
 
 When the lock screen is up but won't unlock:
