@@ -44,15 +44,13 @@ export interface Rect {
 
 /**
  * A card: the window's own fields, minus its real rect, plus the card rect at
- * rest, its stacking order in the band, its pile and its rect in the fan.
+ * rest, its stacking order in the band and its pile.
  */
 export type Card<W extends LayoutWindow = LayoutWindow> = Omit<W, "rx" | "ry" | "rw" | "rh"> &
   Rect & {
     z: number;
-    /** Its tab group's key; "" for a window on its own. */
+    /** Its tab group's key, open or closed; "" for a window on its own. */
     pile: string;
-    /** Where it goes while its pile is fanned out; null for a window on its own. */
-    fan: Rect | null;
   };
 
 export interface Header extends Rect {
@@ -96,6 +94,8 @@ const MAX_COMBOS = 729;
 /** A window on its own, or a pile: the tabs of one tab group, back to front. */
 interface Unit<W extends LayoutWindow> {
   windows: W[];
+  /** Its place in the input: the last tie-break in a column. */
+  order: number;
   rx: number;
   ry: number;
   rw: number;
@@ -104,22 +104,16 @@ interface Unit<W extends LayoutWindow> {
   extra: number;
 }
 
-/** A group laid out in some columns: the columns' units and its floating windows. */
+/** A group laid out in some columns. */
 interface Candidate<W extends LayoutWindow> {
   columns: Unit<W>[][];
-  floats: W[];
-  /** The tiled windows' bounding box, real pixels: where floats map from. */
-  box: Rect;
 }
 
 interface Packed<W extends LayoutWindow> {
-  /** The group's body: columns and floating cards. */
+  /** The group's body: the columns' bounding box. */
   w: number;
   h: number;
-  /** The columns' bounding box inside the body. */
-  cols: Rect;
   units: { unit: Unit<W>; x: number; y: number; cw: number; ch: number }[];
-  floats: { window: W; x: number; y: number; w: number; h: number }[];
 }
 
 /** The whole layout: bands, cards and headers. See specs.md. */
@@ -127,6 +121,8 @@ export function layoutBands<W extends LayoutWindow>(
   windows: readonly W[],
   current: number,
   geometry: Geometry,
+  /** The open pile's tab group key; "" for none. */
+  open = "",
 ): Layout<W> {
   const byWs = new Map<number, { label: string; windows: W[] }>();
   for (const w of windows) {
@@ -138,7 +134,7 @@ export function layoutBands<W extends LayoutWindow>(
   const groupsOf = (ids: number[]) =>
     ids.map((id) => {
       const g = byWs.get(id)!;
-      return { id, label: g.label, windows: g.windows };
+      return { id, label: g.label, windows: g.windows, open };
     });
 
   const cards: Record<string, Card<W>> = {};
@@ -155,19 +151,20 @@ export function layoutBands<W extends LayoutWindow>(
 }
 
 // Windows on their own and piles, in input order; a pile's shown tab in
-// front (the last tab without one).
-function unitsOf<W extends LayoutWindow>(windows: readonly W[]): Unit<W>[] {
+// front (the last tab without one). The open pile's tabs are on their own.
+function unitsOf<W extends LayoutWindow>(windows: readonly W[], open: string): Unit<W>[] {
   const units: Unit<W>[] = [];
   const piles: Record<string, Unit<W>> = {};
-  for (const w of windows) {
-    const pile = w.tabGroup ? piles[w.tabGroup] : undefined;
+  windows.forEach((w, order) => {
+    const piled = w.tabGroup !== "" && w.tabGroup !== open;
+    const pile = piled ? piles[w.tabGroup] : undefined;
     if (pile) pile.windows.push(w);
     else {
-      const unit = { windows: [w], rx: 0, ry: 0, rw: 0, rh: 0, extra: 0 };
+      const unit = { windows: [w], order, rx: 0, ry: 0, rw: 0, rh: 0, extra: 0 };
       units.push(unit);
-      if (w.tabGroup) piles[w.tabGroup] = unit;
+      if (piled) piles[w.tabGroup] = unit;
     }
-  }
+  });
   for (const u of units) {
     const box = bounds(u.windows.map((w) => ({ x: w.rx, y: w.ry, w: w.rw, h: w.rh })));
     u.rx = box.x;
@@ -196,18 +193,40 @@ function bounds(rects: readonly Rect[]): Rect {
 }
 
 // Units whose x ranges overlap by more than 4 px share a real column (also
-// through a chain); columns left to right, each top to bottom.
-function realColumns<W extends LayoutWindow>(units: readonly Unit<W>[]): Unit<W>[][] {
-  const sorted = units.slice().sort((a, b) => a.rx - b.rx || a.ry - b.ry);
+// through a chain); columns left to right. Each floating unit joins the
+// column nearest its centre. Every column runs top to bottom.
+function realColumns<W extends LayoutWindow>(
+  units: readonly Unit<W>[],
+  floats: readonly Unit<W>[],
+): Unit<W>[][] {
+  const sorted = units.slice().sort((a, b) => a.rx - b.rx || a.ry - b.ry || a.order - b.order);
   const columns: Unit<W>[][] = [];
-  let end = -Infinity;
+  const ranges: { x0: number; x1: number }[] = [];
   for (const u of sorted) {
-    const column = columns[columns.length - 1];
-    if (column && u.rx < end - 4) column.push(u);
-    else columns.push([u]);
-    end = column && u.rx < end - 4 ? Math.max(end, u.rx + u.rw) : u.rx + u.rw;
+    const range = ranges[ranges.length - 1];
+    if (range && u.rx < range.x1 - 4) {
+      columns[columns.length - 1]!.push(u);
+      range.x1 = Math.max(range.x1, u.rx + u.rw);
+    } else {
+      columns.push([u]);
+      ranges.push({ x0: u.rx, x1: u.rx + u.rw });
+    }
   }
-  for (const column of columns) column.sort((a, b) => a.ry - b.ry || a.rx - b.rx);
+  for (const f of floats) {
+    const cx = f.rx + f.rw / 2;
+    let best = 0;
+    let bestD = Infinity;
+    ranges.forEach((r, i) => {
+      const d = Math.max(0, r.x0 - cx, cx - r.x1);
+      if (d < bestD) {
+        bestD = d;
+        best = i;
+      }
+    });
+    columns[best]!.push(f);
+  }
+  for (const column of columns)
+    column.sort((a, b) => a.ry - b.ry || a.rx - b.rx || a.order - b.order);
   return columns;
 }
 
@@ -250,22 +269,20 @@ function mergeColumns<W extends LayoutWindow>(real: Unit<W>[][], k: number): Uni
   return merged;
 }
 
-// A group's candidate layouts: 1 to min(real columns, 3) columns.
-function candidatesOf<W extends LayoutWindow>(windows: readonly W[]): Candidate<W>[] {
-  const tiled = windows.filter((w) => !w.floating);
-  const floats = tiled.length > 0 ? windows.filter((w) => w.floating) : [];
-  const units = unitsOf(tiled.length > 0 ? tiled : windows);
-  const box = bounds(units.map((u) => ({ x: u.rx, y: u.ry, w: u.rw, h: u.rh })));
-  const real = realColumns(units);
+// A group's candidate layouts: 1 to min(real columns, 3) columns. Floating
+// units join the tiled units' columns; without tiled units they make them.
+function candidatesOf<W extends LayoutWindow>(windows: readonly W[], open: string): Candidate<W>[] {
+  const units = unitsOf(windows, open);
+  const tiled = units.filter((u) => !u.windows[0]!.floating);
+  const floats = units.filter((u) => u.windows[0]!.floating);
+  const real = tiled.length > 0 ? realColumns(tiled, floats) : realColumns(floats, []);
   const out: Candidate<W>[] = [];
-  for (let k = 1; k <= Math.min(real.length, 3); k++)
-    out.push({ columns: mergeColumns(real, k), floats, box });
+  for (let k = 1; k <= Math.min(real.length, 3); k++) out.push({ columns: mergeColumns(real, k) });
   return out;
 }
 
 // A candidate at scale s: columns side by side, units stacked and centred in
-// their column, shorter columns centred against the tallest; floating cards
-// mapped from the tiled box onto the columns and kept inside the body.
+// their column, shorter columns centred against the tallest.
 function pack<W extends LayoutWindow>(c: Candidate<W>, s: number, gap: number): Packed<W> {
   const cols = c.columns.map((units) => {
     const sizes = units.map((u) => ({ unit: u, cw: u.rw * s, ch: u.rh * s }));
@@ -275,17 +292,13 @@ function pack<W extends LayoutWindow>(c: Candidate<W>, s: number, gap: number): 
       h: sizes.reduce((sum, z) => sum + z.ch + z.unit.extra, 0) + gap * (sizes.length - 1),
     };
   });
-  const colsW = cols.reduce((sum, col) => sum + col.w, 0) + gap * (cols.length - 1);
-  const colsH = Math.max(...cols.map((col) => col.h));
-  const floatSizes = c.floats.map((window) => ({ window, w: window.rw * s, h: window.rh * s }));
-  const w = Math.max(colsW, ...floatSizes.map((f) => f.w));
-  const h = Math.max(colsH, ...floatSizes.map((f) => f.h));
-  const colsRect = { x: (w - colsW) / 2, y: (h - colsH) / 2, w: colsW, h: colsH };
+  const w = cols.reduce((sum, col) => sum + col.w, 0) + gap * (cols.length - 1);
+  const h = Math.max(...cols.map((col) => col.h));
 
   const units: Packed<W>["units"] = [];
-  let x = colsRect.x;
+  let x = 0;
   for (const col of cols) {
-    let y = colsRect.y + (colsH - col.h) / 2;
+    let y = (h - col.h) / 2;
     for (const z of col.sizes) {
       const uw = z.cw + z.unit.extra;
       units.push({ unit: z.unit, x: x + (col.w - uw) / 2, y, cw: z.cw, ch: z.ch });
@@ -293,20 +306,7 @@ function pack<W extends LayoutWindow>(c: Candidate<W>, s: number, gap: number): 
     }
     x += col.w + gap;
   }
-  const keep = (at: number, size: number, body: number) =>
-    size >= body ? (body - size) / 2 : Math.max(0, Math.min(body - size, at));
-  const floats = floatSizes.map((f) => {
-    const cx = colsRect.x + ((f.window.rx + f.window.rw / 2 - c.box.x) / c.box.w) * colsW;
-    const cy = colsRect.y + ((f.window.ry + f.window.rh / 2 - c.box.y) / c.box.h) * colsH;
-    return {
-      window: f.window,
-      x: keep(cx - f.w / 2, f.w, w),
-      y: keep(cy - f.h / 2, f.h, h),
-      w: f.w,
-      h: f.h,
-    };
-  });
-  return { w, h, cols: colsRect, units, floats };
+  return { w, h, units };
 }
 
 // The largest scale, at most MAX_SCALE, at which the body fits maxW × maxH.
@@ -330,7 +330,7 @@ function fitScale(c: Candidate<LayoutWindow>, gap: number, maxW: number, maxH: n
 // factor, the combination with the largest product of scales; the groups
 // stacked and centred. See specs.md.
 function placeSide<W extends LayoutWindow>(
-  input: { id: number; label: string; windows: W[] }[],
+  input: { id: number; label: string; windows: W[]; open: string }[],
   bandX: number,
   geo: Geometry,
   cards: Record<string, Card<W>>,
@@ -351,7 +351,7 @@ function placeSide<W extends LayoutWindow>(
 
   const groups = input.map((g) => ({
     ...g,
-    options: candidatesOf(g.windows).map((c) => ({
+    options: candidatesOf(g.windows, g.open).map((c) => ({
       c,
       sMax: fitScale(c as Candidate<LayoutWindow>, gap, bandW, freeH),
     })),
@@ -407,8 +407,6 @@ function placeSide<W extends LayoutWindow>(
     packed.reduce((sum, p) => sum + p.h, 0) +
     groups.length * geo.headerHeight +
     (groups.length - 1) * geo.groupGap;
-  const bandTop = top + geo.bandMargin;
-  const bandBottom = geo.monH - (geo.bottom ?? 0) - geo.bandMargin;
   let y = top + (bandH - used) / 2;
   groups.forEach((g, i) => {
     const p = packed[i]!;
@@ -419,7 +417,6 @@ function placeSide<W extends LayoutWindow>(
       const n = it.unit.windows.length;
       const ux = x0 + it.x;
       const uy = y0 + it.y;
-      const fan = n > 1 ? fanOf(n, ux, uy, it.cw, it.ch, it.unit.extra) : null;
       it.unit.windows.forEach((w, j) => {
         const off = it.unit.extra - Math.min(PILE_MAX, n - 1 - j) * PILE_STEP;
         cards[w.address] = cardOf(w, {
@@ -428,45 +425,15 @@ function placeSide<W extends LayoutWindow>(
           w: it.cw,
           h: it.ch,
           z: j,
-          pile: n > 1 ? w.tabGroup : "",
-          fan: fan ? fan[j]! : null,
+          pile: w.tabGroup,
         });
       });
     }
-    for (const f of p.floats)
-      cards[f.window.address] = cardOf(f.window, {
-        x: x0 + f.x,
-        y: y0 + f.y,
-        w: f.w,
-        h: f.h,
-        z: 100,
-        pile: "",
-        fan: null,
-      });
     y += geo.headerHeight + p.h + geo.groupGap;
   });
-
-  // A pile's tabs lined up vertically, back at the top, each half a card
-  // below the one before (less when the band is short); centred on the pile
-  // and kept inside the band.
-  function fanOf(n: number, ux: number, uy: number, cw: number, ch: number, extra: number) {
-    const room = bandBottom - bandTop;
-    const step = Math.max(0, Math.min(ch / 2, (room - ch) / (n - 1)));
-    const fanH = ch + step * (n - 1);
-    const cx = ux + (cw + extra) / 2;
-    const cy = uy + (ch + extra) / 2;
-    const fx = Math.max(bandX, Math.min(bandX + bandW - cw, cx - cw / 2));
-    const fy = Math.max(bandTop, Math.min(bandBottom - fanH, cy - fanH / 2));
-    const out: Rect[] = [];
-    for (let j = 0; j < n; j++) out.push({ x: fx, y: fy + step * j, w: cw, h: ch });
-    return out;
-  }
 }
 
-function cardOf<W extends LayoutWindow>(
-  w: W,
-  placed: Rect & { z: number; pile: string; fan: Rect | null },
-): Card<W> {
+function cardOf<W extends LayoutWindow>(w: W, placed: Rect & { z: number; pile: string }): Card<W> {
   const { rx: _rx, ry: _ry, rw: _rw, rh: _rh, ...rest } = w;
   return { ...rest, ...placed } as Card<W>;
 }

@@ -23,6 +23,8 @@ Item {
   readonly property var props: host.propsOf(win.address)
   // 0 at rest, 1 lifted (selected): the shadow fades in with the lift.
   property real liftAmount: 0
+  // Sliding to a new place (set by the host).
+  property bool moving: false
 
   // Lifted: the elevated card's hover shadow.
   RectangularShadow {
@@ -134,16 +136,23 @@ Item {
       moved = false
     }
     // Pointer input selects the card, also after the focus keys moved the
-    // selection away while the pointer stayed here (latest input wins).
+    // selection away while the pointer stayed here (latest input wins). Only
+    // the pointer moving counts: a card that slides under a still pointer,
+    // or is still sliding, isn't selected.
+    function pointed(x, y) {
+      var moved = card.host.pointerMoved(mapToItem(null, x, y))
+      if (moved && !card.moving && !card.selected) card.host.select(card.win.address)
+    }
     onEntered: {
       card.host.pointerOn(card.win.address)
-      card.host.select(card.win.address)
+      pointed(mouseX, mouseY)
     }
-    // Pointing away lets go of the card (host.pointerOff).
-    onExited: card.host.pointerOff(card.win.address)
+    // Pointing away lets go of the card (host.pointerOff); sliding away from
+    // under the pointer doesn't.
+    onExited: card.host.pointerOff(card.win.address, card.moving)
     onPositionChanged: function(event) {
       if (!pressed) {
-        if (!card.selected) card.host.select(card.win.address)
+        pointed(event.x, event.y)
         return
       }
       var p = mapToItem(null, event.x, event.y)

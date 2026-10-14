@@ -146,12 +146,10 @@ describe("layoutBands", () => {
     );
     for (const card of Object.values(layout.cards)) {
       const x = card.wsId === 1 ? leftX : rightX;
-      for (const r of card.fan ? [card, card.fan] : [card]) {
-        expect(r.x).toBeGreaterThanOrEqual(x - 0.01);
-        expect(r.x + r.w).toBeLessThanOrEqual(x + bandW + 0.01);
-        expect(r.y).toBeGreaterThanOrEqual(geometry.bandMargin - 0.01);
-        expect(r.y + r.h).toBeLessThanOrEqual(geometry.monH - geometry.bandMargin + 0.01);
-      }
+      expect(card.x).toBeGreaterThanOrEqual(x - 0.01);
+      expect(card.x + card.w).toBeLessThanOrEqual(x + bandW + 0.01);
+      expect(card.y).toBeGreaterThanOrEqual(geometry.bandMargin - 0.01);
+      expect(card.y + card.h).toBeLessThanOrEqual(geometry.monH - geometry.bandMargin + 0.01);
     }
   });
 
@@ -239,40 +237,53 @@ describe("layoutBands", () => {
     }
   });
 
-  it("leaves no two cards of a group closer than the card gap, apart from piles and floats", () => {
-    const layout = layoutBands(
-      [...tiledPair(1), ...tiledPair(3), ...tiledPair(4), win(5, 385, 31, 1790, 1404)],
-      2,
-      geometry,
-    );
-    const cards = band(Object.values(layout.cards), rightX);
-    expect(cards).toHaveLength(5);
-    for (let i = 0; i < cards.length; i++)
-      for (let j = i + 1; j < cards.length; j++)
-        expect(separated(cards[i]!, cards[j]!, geometry.cardGap)).toBe(true);
+  it("leaves no two cards closer than the card gap, apart from a closed pile's tabs", () => {
+    const windows = [
+      ...tiledPair(1),
+      ...tiledPair(3),
+      win(3, 900, 400, 900, 600, { floating: true }),
+      ...tabs(4, 3, 0),
+      win(4, 1300, 31, 870, 1404),
+      win(4, 400, 300, 1500, 800, { floating: true }),
+      ...tabs(5, 2, 1),
+      win(5, 385, 31, 1790, 1404),
+    ];
+    for (const open of ["", "g4"]) {
+      const layout = layoutBands(windows, 2, geometry, open);
+      const cards = band(Object.values(layout.cards), rightX).filter(
+        (c) => c.pile === "" || c.pile === open,
+      );
+      expect(cards).toHaveLength(open ? 9 : 6);
+      for (let i = 0; i < cards.length; i++)
+        for (let j = i + 1; j < cards.length; j++)
+          expect(separated(cards[i]!, cards[j]!, geometry.cardGap)).toBe(true);
+    }
   });
 
-  it("puts a floating window over the tiled cards where it sits, in front", () => {
-    const tiled = win(3, 385, 31, 1784, 1404);
-    const floating = win(3, 385 + 446, 31 + 351, 600, 400, { floating: true });
-    const layout = layoutBands([tiled, floating], 2, geometry);
-    const t = layout.cards[tiled.address]!;
-    const f = layout.cards[floating.address]!;
-    // Its centre at (0.25 + 300/1784, 0.25 + 200/1404) of the tiled box.
-    expect(f.x + f.w / 2).toBeCloseTo(t.x + t.w * (0.25 + 300 / 1784), 6);
-    expect(f.y + f.h / 2).toBeCloseTo(t.y + t.h * (0.25 + 200 / 1404), 6);
-    expect(f.z).toBeGreaterThanOrEqual(100);
-    expect(t.z).toBeLessThan(100);
+  it("packs a floating window into its column, by its real height", () => {
+    // A tall tile on the left; on the right two tiles stacked, a float
+    // between them in real y.
+    const left = win(3, 385, 31, 892, 1404);
+    const top = win(3, 1283, 31, 892, 690);
+    const bottom = win(3, 1283, 731, 892, 704);
+    const floating = win(3, 1400, 400, 600, 400, { floating: true });
+    const layout = layoutBands([floating, bottom, top, left], 2, geometry);
+    const [f, t, b] = [floating, top, bottom].map((w) => layout.cards[w.address]!);
+    expect(f!.y).toBeGreaterThan(t!.y + t!.h);
+    expect(b!.y).toBeGreaterThan(f!.y + f!.h);
+    expect(f!.z).toBe(0);
   });
 
-  it("keeps a floating card inside its group", () => {
-    const tiled = win(3, 385, 31, 1784, 1404);
-    const floating = win(3, 2000, 1300, 600, 400, { floating: true });
-    const layout = layoutBands([tiled, floating], 2, geometry);
-    const t = layout.cards[tiled.address]!;
-    const f = layout.cards[floating.address]!;
-    expect(f.x + f.w).toBeLessThanOrEqual(t.x + t.w + 0.01);
-    expect(f.y + f.h).toBeLessThanOrEqual(t.y + t.h + 0.01);
+  it("puts a floating window in the column nearest its centre, never bridging columns", () => {
+    // A wide float over both columns, above them in real y, its centre
+    // nearer the right one: it goes just above the right tile, whether the
+    // columns stay apart or merge (left column first).
+    const pair = [win(3, 385, 31, 892, 1404), win(3, 1283, 31, 892, 1404)];
+    const floating = win(3, 600, 10, 1400, 300, { floating: true });
+    const layout = layoutBands([...pair, floating], 2, geometry);
+    const [l, r, f] = [...pair, floating].map((w) => layout.cards[w.address]!);
+    expect(f!.y + f!.h).toBeLessThan(r!.y);
+    expect(l!.y).toBeLessThan(f!.y + f!.h);
   });
 
   it("packs a group of only floating windows like tiled ones", () => {
@@ -317,32 +328,33 @@ describe("layoutBands", () => {
     expect(layout.cards[pile[1]!.address]!.z).toBeGreaterThan(layout.cards[pile[0]!.address]!.z);
   });
 
-  it("fans a pile out vertically, each tab at least half visible, front tab at the bottom", () => {
+  it("lays the open pile's tabs out as cards of their own, in input order", () => {
     const pile = tabs(3, 3, 2);
-    const layout = layoutBands([...pile, win(3, 1300, 31, 870, 1404)], 2, geometry);
-    const fans = pile.map((w) => layout.cards[w.address]!.fan!);
-    const rest = layout.cards[pile[2]!.address]!;
-    for (let i = 1; i < fans.length; i++) {
-      expect(fans[i]!.y - fans[i - 1]!.y).toBeCloseTo(rest.h / 2, 6);
-      expect(fans[i]!.x).toBeCloseTo(fans[0]!.x, 6);
-      expect(fans[i]!.w).toBeCloseTo(rest.w, 6);
+    const other = win(3, 1300, 31, 870, 1404);
+    const closed = layoutBands([...pile, other], 2, geometry);
+    const open = layoutBands([...pile, other], 2, geometry, "g3");
+    const cards = pile.map((w) => open.cards[w.address]!);
+    for (const c of cards) {
+      expect(c.pile).toBe("g3");
+      expect(c.z).toBe(0);
     }
+    expect(cards[1]!.y).toBeGreaterThan(cards[0]!.y + cards[0]!.h);
+    expect(cards[2]!.y).toBeGreaterThan(cards[1]!.y + cards[1]!.h);
+    // The other card moved aside.
+    expect(open.cards[other.address]).not.toEqual(closed.cards[other.address]);
   });
 
-  it("shrinks the fan's steps when the band is too short", () => {
-    const pile = tabs(3, 5, 0);
-    const short = { ...geometry, monH: 500 };
-    const layout = layoutBands(pile, 2, short);
-    const fans = pile.map((w) => layout.cards[w.address]!.fan!);
-    expect(fans[0]!.y).toBeGreaterThanOrEqual(short.bandMargin - 0.01);
-    expect(fans[4]!.y + fans[4]!.h).toBeLessThanOrEqual(short.monH - short.bandMargin + 0.01);
+  it("ignores an open pile that isn't in the band", () => {
+    const windows = [...tabs(3, 3, 2), win(3, 1300, 31, 870, 1404)];
+    expect(layoutBands(windows, 2, geometry, "elsewhere")).toEqual(
+      layoutBands(windows, 2, geometry),
+    );
   });
 
-  it("gives a window on its own no pile and no fan", () => {
+  it("gives a window on its own no pile", () => {
     const only = win(3, 385, 31, 892, 1404);
     const card = layoutBands([only], 2, geometry).cards[only.address]!;
     expect(card.pile).toBe("");
-    expect(card.fan).toBeNull();
     expect(card.z).toBe(0);
   });
 

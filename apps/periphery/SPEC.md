@@ -17,26 +17,26 @@ Scott Jenson showed a prototype at a KDE event (["Are we really going to use the
 
 ## Ubiquitous language
 
-| Term                 | Definition                                                                                                                                                     |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Focus area           | The centred part of the monitor. Regular workspaces tile only in this area.                                                                                    |
-| Band                 | The part of the monitor at the left or right of the focus area.                                                                                                |
-| Periphery            | The two bands together.                                                                                                                                        |
-| Card                 | The live thumbnail of one window in a band.                                                                                                                    |
-| Group                | The cards of one workspace, with the workspace label above them.                                                                                               |
-| Pile                 | The cards of one tab group, stacked: the shown tab in front, the other tabs peeking out behind it.                                                             |
-| Fan                  | A pile spread out, so every tab's card can be pointed at. A pile fans out while one of its tabs is selected.                                                   |
-| Tilt                 | The turn of a band's plane about the monitor's outer edge, its inner side further away, like a curved display. A selected card leaves the plane and lies flat. |
-| Ratio                | Focus area width divided by monitor height. The default is `1.25` (5:4).                                                                                       |
-| Side width (`sideW`) | The width of one band: `(monW - round(monH × ratio)) / 2`.                                                                                                     |
-| Drop                 | The release of a drag. The drop position selects the target workspace.                                                                                         |
-| Selection            | The one card that has the focus instead of a focus area window. Set by hovering a card or by the focus keys.                                                   |
-| Tab group            | Hyprland's window group: several windows on one tile, one shown at a time, with a tab bar above it.                                                            |
-| Shown tab            | The window of a tab group that its tile shows. The group's other windows are hidden tabs.                                                                      |
-| Ghost                | A live copy of a window (`ScreencopyView`) that flies over the screen during a flight.                                                                         |
-| Flight               | A workspace switch in which ghosts fly between tiles and cards over a wallpaper backdrop.                                                                      |
-| Hand-off             | The frame in which the ghosts and the backdrop go, and the real windows and cards show.                                                                        |
-| Routed switch        | A workspace switch from a key that goes through the hook first, so the plugin can fly it.                                                                      |
+| Term                 | Definition                                                                                                                                                                          |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Focus area           | The centred part of the monitor. Regular workspaces tile only in this area.                                                                                                         |
+| Band                 | The part of the monitor at the left or right of the focus area.                                                                                                                     |
+| Periphery            | The two bands together.                                                                                                                                                             |
+| Card                 | The live thumbnail of one window in a band.                                                                                                                                         |
+| Group                | The cards of one workspace, with the workspace label above them.                                                                                                                    |
+| Pile                 | The cards of one tab group, stacked: the shown tab in front, the other tabs peeking out behind it.                                                                                  |
+| Open pile            | A pile while one of its tabs is selected: the band lays out again with each tab as a card of its own, and the other cards move aside. It closes when the selection leaves the pile. |
+| Tilt                 | The turn of a band's plane about the monitor's outer edge, its inner side further away, like a curved display. A selected card leaves the plane and lies flat.                      |
+| Ratio                | Focus area width divided by monitor height. The default is `1.25` (5:4).                                                                                                            |
+| Side width (`sideW`) | The width of one band: `(monW - round(monH × ratio)) / 2`.                                                                                                                          |
+| Drop                 | The release of a drag. The drop position selects the target workspace.                                                                                                              |
+| Selection            | The one card that has the focus instead of a focus area window. Set by hovering a card or by the focus keys.                                                                        |
+| Tab group            | Hyprland's window group: several windows on one tile, one shown at a time, with a tab bar above it.                                                                                 |
+| Shown tab            | The window of a tab group that its tile shows. The group's other windows are hidden tabs.                                                                                           |
+| Ghost                | A live copy of a window (`ScreencopyView`) that flies over the screen during a flight.                                                                                              |
+| Flight               | A workspace switch in which ghosts fly between tiles and cards over a wallpaper backdrop.                                                                                           |
+| Hand-off             | The frame in which the ghosts and the backdrop go, and the real windows and cards show.                                                                                             |
+| Routed switch        | A workspace switch from a key that goes through the hook first, so the plugin can fly it.                                                                                           |
 
 ## Behaviour
 
@@ -88,9 +88,10 @@ The bands follow macOS Mission Control: every window is visible, a workspace kee
 
 1. Each workspace group has its own scale. A group first fills the band's width; then all groups of a band shrink by one factor until the band's height holds them. A lone window is as wide as the band (at most half its real size).
 2. A group's tiled windows keep the side they tile on: a window tiled on the left is in the left column, one on the right in the right column, top to bottom within a column. A crowded band keeps more columns; a roomy one merges them, down to a single column, left side first. Shorter columns are centred against the tallest, so the columns stagger.
-3. A tab group is a pile: one card per tab, the shown tab in front and up to three tabs peeking out behind it, up and to the left. Selecting a tab of a pile (hover or the focus keys) fans it out: its tabs line up vertically, each one at least half visible, in front of the other cards. The fan closes when the selection leaves the pile.
-4. A floating window's card overlaps the tiled cards where the window really sits on its workspace, in front of them.
-5. The groups are stacked down the band, `groupGap` apart, centred vertically. The workspace label is above the top card of its group.
+3. A tab group is a pile: one card per tab, the shown tab in front and up to three tabs peeking out behind it, up and to the left. Selecting a tab of a pile (hover or the focus keys) opens it: the band lays out again with each tab as a card of its own, one below the other in the pile's column, and the other cards move aside on the spatial spring. The pile closes when the selection leaves it.
+4. A floating window's card is packed into the column nearest where the window sits, between the tiled cards above and below it.
+
+Cards never overlap, apart from the tabs of a closed pile: Mission Control and Exposé don't overlap windows either, and a card half under another is awkward to point at. 5. The groups are stacked down the band, `groupGap` apart, centred vertically. The workspace label is above the top card of its group.
 
 Each band is one surface in world space ([src/surface/specs.md](src/surface/specs.md)): a plane hinged on the monitor's outer edge and turned 12° back (tilt), seen in perspective from in front of the band (`viewDistance`). Every card of the band lies on that plane, so the cards share one vanishing point, and a tilted card looks a little narrower (about 95% of its width) with its inner edge further away: a depth cue, not an effect. The hinge is on the screen plane and every tilted point is behind it, so a card that leaves the plane and lies flat on the screen plane is in front of every tilted card, everywhere: drawing it on top never contradicts its depth.
 
@@ -218,7 +219,7 @@ While a card is selected:
 The selection clears when:
 
 - the pointer moves over the focus area (a pointer that rests there during a keyboard selection doesn't count until it moves 4 px);
-- the pointer leaves the selected card and is over no card 120 ms later (`leaveMs`): onto empty band space, or out of the band. The delay lets the pointer cross a gap to the next card, and lets a pile fan out under a pointer that holds still;
+- the pointer leaves the selected card and is over no card 120 ms later (`leaveMs`): onto empty band space, or out of the band. The delay lets the pointer cross a gap to the next card. A card that slides out from under the pointer (a pile opening or closing) keeps the selection;
 - focus moves to a window (pointer, keys, a click, anything);
 - the workspace switches, a card drag starts, a card is clicked, or the selected window leaves the bands (closed, moved);
 - Escape or Return is pressed, or the mode turns off.
@@ -261,7 +262,7 @@ A `hyprctl reload` starts a fresh Lua state. The plugin sends its state again on
 
 | Action                         | Result                                                                                                                                                                                           |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Hover                          | Selects the card (see [Periphery selection](#periphery-selection)).                                                                                                                              |
+| Hover                          | Selects the card (see [Periphery selection](#periphery-selection)), when the pointer moves: a card that slides under a still pointer, or is still sliding, isn't selected.                       |
 | Click                          | Focus the window with the Exposé flight (see [The Exposé flight](#the-exposé-flight)). Hyprland goes to its workspace. That workspace leaves the periphery and the previous workspace enters it. |
 | Drag, drop in the focus area   | Move the window to the current workspace and focus it. Dwindle tiles it next to the window under the pointer.                                                                                    |
 | Drag, drop on another group    | Move the window to the workspace of that group.                                                                                                                                                  |
@@ -378,7 +379,7 @@ hl.dsp.window.move({ workspace = "2", follow = false, window = "address:0x56c7bf
 
 ### Tunables (top of `Periphery.qml`)
 
-Motion is Material 3 springs from the tokens' motion scheme (`tokens.m3.springs`, `SpringValue`): spatial default for card and ghost geometry, the cards' travel, the tilt and the fan, effects default for every fade, spatial fast for the drag grow (interpretation `periphery.components`). They follow `motion.scheme` live.
+Motion is Material 3 springs from the tokens' motion scheme (`tokens.m3.springs`, `SpringValue`): spatial default for card and ghost geometry, the cards' travel, the tilt and a pile opening, effects default for every fade, spatial fast for the drag grow (interpretation `periphery.components`). They follow `motion.scheme` live.
 
 | Property                      | Default                  | Effect                                                                                                                                                                                         |
 | ----------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

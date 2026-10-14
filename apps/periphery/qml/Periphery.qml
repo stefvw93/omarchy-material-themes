@@ -156,19 +156,14 @@ Item {
   property string selected: ""
   // The window that was active when the card got selected.
   property string selectedOver: ""
-  // The pile of the selected card, fanned out so each tab can be reached; it
-  // closes when the selection leaves the pile.
+  // The pile of the selected card, open: the band relays out with each of
+  // its tabs as a card of its own. It closes when the selection leaves the
+  // pile.
   readonly property string openPile: root.selected && root.winData[root.selected] ? root.winData[root.selected].pile : ""
-  // A card's rect as drawn: its fan rect while its pile is open.
-  function drawnRect(card) { return card.pile !== "" && card.pile === root.openPile && card.fan ? card.fan : card }
+  onOpenPileChanged: root.rebuild()
   // A card's tilt at rest, unselected: +cardTilt in the left band, −cardTilt
   // in the right (the sign is the band's side).
   function restTilt(rect) { return rect ? (rect.x + rect.w / 2 < root.monW / 2 ? 1 : -1) * root.cardTilt : 0 }
-  function drawnCards() {
-    var out = {}
-    for (var a in root.winData) out[a] = root.drawnRect(root.winData[a])
-    return out
-  }
   // Which bands have cards, for the focus keys to move into.
   property bool cardsLeft: false
   property bool cardsRight: false
@@ -396,15 +391,25 @@ Item {
 
   // The card under the pointer ("" for none). Leaving the selected card
   // clears the selection unless the pointer is on a card leaveMs later: it
-  // may be crossing a gap, or a pile may be fanning out under it.
+  // may be crossing a gap.
   property string pointerCard: ""
   function pointerOn(address) {
     root.pointerCard = address
     leaveTimer.stop()
   }
-  function pointerOff(address) {
+  // slid: the card moved out from under the pointer (a pile opening or
+  // closing reflows the band), which lets go of nothing.
+  function pointerOff(address, slid) {
     if (root.pointerCard === address) root.pointerCard = ""
-    if (root.selected === address) leaveTimer.restart()
+    if (root.selected === address && !slid) leaveTimer.restart()
+  }
+  // Only the pointer moving selects a card, not a card moving under a still
+  // pointer: the pointer's scene position at its last move over a card.
+  property point pointerAt: Qt.point(-1, -1)
+  function pointerMoved(p) {
+    if (Math.abs(p.x - root.pointerAt.x) < 1 && Math.abs(p.y - root.pointerAt.y) < 1) return false
+    root.pointerAt = p
+    return true
   }
   Timer {
     id: leaveTimer
@@ -422,7 +427,7 @@ Item {
 
   // A focus key on the selected card (src/selection/specs.md).
   function stepSelection(dir) {
-    var step = Selection.stepSelection(root.drawnCards(), root.selected, dir, root.focusRects, root.monW, root.sideW) // qmllint disable missing-property
+    var step = Selection.stepSelection(root.winData, root.selected, dir, root.focusRects, root.monW, root.sideW) // qmllint disable missing-property
     if (step.kind === "select") root.select(step.address)
     else if (step.kind === "focus") {
       root.clearSelection()
@@ -797,7 +802,7 @@ Item {
     others.sort(function(a, b) { return a.address < b.address ? -1 : a.address > b.address ? 1 : 0 })
     var signature = JSON.stringify([root.sideW, root.reserved[1], root.reserved[3], current, others.map(function(w) {
       return [w.address, w.wsId, w.wsName, w.title, w.floating, w.rx, w.ry, w.rw, w.rh, w.tabGroup, w.shownTab]
-    }), Object.keys(focus).map(function(a) { var f = focus[a]; return [a, f.fullscreen, f.x, f.y, f.w, f.h] })])
+    }), root.openPile, Object.keys(focus).map(function(a) { var f = focus[a]; return [a, f.fullscreen, f.x, f.y, f.w, f.h] })])
     if (signature === root.layoutSignature) return
     root.layoutSignature = signature
     root.focusRects = focus
@@ -807,7 +812,7 @@ Item {
       monW: root.monW, monH: root.monH, sideW: root.sideW, bandMargin: root.bandMargin,
       cardGap: root.cardGap, groupGap: root.groupGap, headerHeight: root.headerHeight,
       top: root.reserved[1], bottom: root.reserved[3],
-    })
+    }, root.openPile)
     root.winData = layout.cards
     root.headers = layout.headers
     if (root.selected && !layout.cards[root.selected]) root.clearSelection()
@@ -1097,17 +1102,16 @@ Item {
         // Hidden, not faded, while its ghost flies: the ghost lands on it.
         visible: !!shown && !root.ghosted[address]
         // Placement moves on the spatial spring once the card has settled in.
-        // Its pile fanned out: the card moves to its fan rect.
-        readonly property var place: card.shown ? root.drawnRect(card.shown) : null
-        readonly property bool fanned: !!card.shown && card.shown.pile !== "" && card.shown.pile === root.openPile
+        readonly property var place: card.shown
         SpringValue { id: cardX; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.x : 0 }
         SpringValue { id: cardY; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.y : 0 }
         SpringValue { id: cardW; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.w : 0 }
         SpringValue { id: cardH; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.h : 0 }
-        // In front: floating cards over tiled ones, a pile's front tab over
-        // the ones behind, an open pile over its neighbours, the selection
-        // over everything.
-        z: (card.shown && card.shown.z !== undefined ? card.shown.z : 0) + (card.fanned ? 500 : 0) + (card.selected ? 1000 : 0)
+        // In front: a closed pile's front tab over the ones behind, the
+        // selection over everything.
+        z: (card.shown && card.shown.z !== undefined ? card.shown.z : 0) + (card.selected ? 1000 : 0)
+        // Sliding to a new place: the pointer doesn't select it meanwhile.
+        moving: cardX.running || cardY.running || cardW.running || cardH.running
         // On whole pixels, like the ghosts that land on it.
         x: Math.round(cardX.value)
         y: Math.round(cardY.value)

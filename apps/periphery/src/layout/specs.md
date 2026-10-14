@@ -1,11 +1,12 @@
 # Layout (`src/layout`)
 
-Places the windows of the other workspaces as cards in the bands, Mission Control style: each workspace is a group at its own scale, its windows packed in columns on the side they tile on, its tab groups piled up. Pure: windows and geometry in, cards and group headers out. Terms as in [SPEC.md](../../SPEC.md#ubiquitous-language).
+Places the windows of the other workspaces as cards in the bands, Mission Control style: each workspace is a group at its own scale, its windows packed in columns on the side they tile on, its tab groups piled up. Cards never overlap, except the tabs of a pile. Pure: windows and geometry in, cards and group headers out. Terms as in [SPEC.md](../../SPEC.md#ubiquitous-language).
 
 ## Input
 
 - **Windows:** every window on the monitor that is not on the current workspace, with its workspace id and name, title, class, floating state, its real position and size (`rx`, `ry`, `rw`, `rh`, global pixels), its tab group (`tabGroup`: a key shared by the tabs of one Hyprland group, `""` for a window on its own) and whether it is the tab its tile shows (`shownTab`). Windows on special workspaces (id ≤ 0) are left out by the caller.
 - **Current:** the id of the workspace in the focus area.
+- **Open pile:** the tab group key of the pile that is open (`""` for none). The plugin opens the pile of the selected card.
 - **Geometry:** monitor width and height, `sideW`, `bandMargin`, `cardGap`, `groupGap`, `headerHeight`, and the space reserved at the monitor's top and bottom (`top`, `bottom`: the bar; 0 when absent).
 
 ## Bands
@@ -34,25 +35,19 @@ A group's windows form units, each placed as one block:
 
 - A window on its own is a unit.
 - The tabs of one tab group (the same non-empty `tabGroup`) are one unit, a **pile**. Its real rect is the tabs' bounding box. The shown tab is in front; the other tabs are behind it in input order, the first one furthest back. Without a shown tab, the last tab is in front.
+- The tabs of the **open pile** are units on their own, in input order: the band is packed again with every tab as a card of its own, and the other cards move aside to make room for them.
 
 A pile is `pileStep × min(pileMax, tabs − 1)` larger than one card, both ways (`pileStep` 7 px, `pileMax` 3). The front tab sits at the bottom right; each tab further back is `pileStep` further up and left, until `pileMax` steps; tabs beyond that sit at the last step. Every tab of a pile has the same card size: the pile's real rect at the group's scale.
 
-The **tiled units** of a group are its units of tiled windows. Its floating windows are units only when the group has no tiled window (see [Floating windows](#floating-windows)).
+The **tiled units** of a group are its units of tiled windows, its **floating units** its units of floating windows.
 
 ## Columns
 
-1. **Real columns.** Tiled units whose real x ranges overlap by more than 4 px are in the same real column, also through a chain (a wide window above two narrow ones makes one column of three). Real columns are ordered left to right. Within one, units run top to bottom by real y, then left to right.
+1. **Real columns.** Tiled units whose real x ranges overlap by more than 4 px are in the same real column, also through a chain (a wide window above two narrow ones makes one column of three). Real columns are ordered left to right. A group without tiled windows makes its real columns from its floating units the same way.
+   **Floating units** of a group with tiled windows join the real column whose real x range is nearest their real centre x (distance 0 inside it; on a tie, the left one). They never join or bridge columns.
+   Within a real column, units run top to bottom by real y, then by real x, then in input order.
 2. **Candidates.** A group can be laid out in k columns, k from 1 to min(real columns, 3). For k smaller than the number of real columns, adjacent real columns are merged: of all the ways to split them into k runs, the one whose tallest column (in real pixels, summed heights) is lowest; ties go to the earlier split. A merged column holds its real columns' units one after another, left real column first; k = 1 puts every real column in one column that way.
 3. **Packing at scale `s`.** A unit is its real size × `s` (plus the pile's extra). A column is as wide as its widest unit; its units are stacked `cardGap` apart, each centred in the column's width. Columns stand side by side, `cardGap` apart. A column shorter than the tallest is centred against it (a staggered masonry). The packed width and height are the bounding box of the columns.
-
-## Floating windows
-
-In a group with tiled windows, a floating window's card overlaps the tiled cards where the window really sits:
-
-- Its size is its real size × the group's scale.
-- Its centre maps from the bounding box of the group's tiled windows (real rects) onto the packed rect, both axes independently.
-- It is kept inside the group's body: the packed width, and the group's height (below). A card larger than the body in one axis is centred on it in that axis.
-- The group's height is the larger of the packed height and its tallest floating card.
 
 ## Scale
 
@@ -72,16 +67,7 @@ Consequence: a lone window fills the band's width, unless that makes it more tha
 
 ## Stacking
 
-Each card has a `z`: within a band, a higher `z` is drawn in front. Tiled cards (and floating cards of a group without tiled windows) have `z` 0 + the tab's place in its pile from the back (0 for a window on its own); floating cards in a group with tiled windows have 100 + the same.
-
-## Fan
-
-A pile can fan out (the plugin opens it when one of its tabs is selected). For every tab of a pile, the layout also gives its **fan rect**:
-
-- The tabs keep their card size and line up vertically, from the furthest back at the top to the front tab at the bottom, each `cardH / 2` below the one before: every tab shows at least its top half.
-- Horizontally the fan is centred on the pile; it is kept inside the band's inner width.
-- Vertically the fan is centred on the pile, then kept inside the band (between `top + bandMargin` and `monH − bottom − bandMargin`). When the band is too short for half-height steps, the steps shrink to fit.
-- A window on its own has no fan rect (`null`).
+Each card has a `z`: within a band, a higher `z` is drawn in front. A closed pile's tab has its place in the pile from the back (0 furthest back); every other card has 0. Only a closed pile's tabs overlap.
 
 ## Headers
 
@@ -89,6 +75,6 @@ Each group has a header: its workspace label, `headerHeight` tall, directly abov
 
 ## Output
 
-- **Cards** keyed by window address: the window's fields (address, title, class, workspace id, and anything else the caller passed along) without its real rect, with the card rect `x`, `y`, `w`, `h` in monitor-local pixels (at rest), `z`, `pile` (its tab group key, `""` for a window on its own) and `fan` (its fan rect, or `null`).
+- **Cards** keyed by window address: the window's fields (address, title, class, workspace id, and anything else the caller passed along) without its real rect, with the card rect `x`, `y`, `w`, `h` in monitor-local pixels (at rest), `z` and `pile` (its tab group key, open or closed; `""` for a window on its own).
 - **Headers:** `{ id, label, x, y, w, h }` per group, left band first, each band top to bottom.
 - **Left and right:** the workspace ids per band, in order.

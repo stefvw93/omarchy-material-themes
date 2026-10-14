@@ -1,6 +1,6 @@
 # Periphery exposé (`stef.periphery`)
 
-An Omarchy shell plugin for wide monitors. One key squeezes tiling into a centred focus area. The windows of your other workspaces stay visible as live cards in the side bands, Mission Control style: each workspace at its own scale, its windows on the side they tile on, tab groups as piles that fan out when you point at them, and the cards turned slightly inwards, like a curved display. Hover a card or move focus onto it with the arrow keys, and your close and fullscreen keys act on it. Press Enter or click a card to fly to its window. Drag a card to move its window between workspaces.
+An Omarchy shell plugin for wide monitors. One key squeezes tiling into a centred focus area. The windows of your other workspaces stay visible as live cards in the side bands, Mission Control style: each workspace at its own scale, its windows on the side they tile on, tab groups as piles that open when you point at them, and no card overlapping another, and the cards turned slightly inwards, like a curved display. Hover a card or move focus onto it with the arrow keys, and your close and fullscreen keys act on it. Press Enter or click a card to fly to its window. Drag a card to move its window between workspaces.
 
 [SPEC.md](SPEC.md) describes the behaviour and the internals in detail.
 

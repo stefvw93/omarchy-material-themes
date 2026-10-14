@@ -101,8 +101,8 @@ describe("stepSelection", () => {
     expect(step("gone", "d")).toEqual({ kind: "clear" });
   });
 
-  // The plugin passes the rects as drawn: a closed pile's tabs 7 px apart, a
-  // fanned pile's tabs half a card apart.
+  // The plugin passes its current layout: a closed pile's tabs 7 px apart, an
+  // open pile's tabs cards of their own.
   it("steps through a closed pile's tabs, up and left to the ones behind", () => {
     const pile = {
       back: { x: 16, y: 100, w: 300, h: 200 },
@@ -116,14 +116,14 @@ describe("stepSelection", () => {
     expect(at("back", "d")).toEqual({ kind: "select", address: "middle" });
   });
 
-  it("steps through a fanned pile's tabs top to bottom", () => {
-    const fan = {
+  it("steps through an open pile's tabs top to bottom", () => {
+    const open = {
       back: { x: 30, y: 100, w: 300, h: 200 },
-      middle: { x: 30, y: 200, w: 300, h: 200 },
-      front: { x: 30, y: 300, w: 300, h: 200 },
+      middle: { x: 30, y: 310, w: 300, h: 200 },
+      front: { x: 30, y: 520, w: 300, h: 200 },
     };
     const at = (selected: string, dir: "l" | "r" | "u" | "d") =>
-      stepSelection(fan, selected, dir, tiles, monW, sideW);
+      stepSelection(open, selected, dir, tiles, monW, sideW);
     expect(at("back", "d")).toEqual({ kind: "select", address: "middle" });
     expect(at("front", "u")).toEqual({ kind: "select", address: "middle" });
   });
