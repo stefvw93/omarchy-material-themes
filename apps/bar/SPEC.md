@@ -40,7 +40,7 @@ From `shell.json` `bar`:
 - `position`: `top`, `bottom`, `left` or `right`, as in the stock bar.
 - `layout.left`, `layout.center`, `layout.right`: the entries. A string is an id; an object needs an `id`, the other keys are its inline settings. Anything else is dropped. The tray (`omarchy.tray`) always goes to the inner end of its section: first in `right`, last in `left` and `center`.
 - `centerAnchor`: an id in `center`. When present, that entry sits in the exact centre of the body, the entries before it to its left, the entries after it to its right. Otherwise the centre section as a whole is centred.
-- `transparent`: the body has no container colour; the text colour follows the stock contrast probe (`omarchy-bar-text-color`).
+- `transparent`: the body has no container colour; the text colour follows the stock contrast probe (`omarchy-bar-text-color`), and the content gets a legibility shadow ([Body colour](#body-colour)).
 
 Dragging an entry reorders the layout, dragging the bar's centre moves it to another edge, and a double-click on the centre toggles transparency, all as in the stock bar.
 
@@ -77,6 +77,17 @@ A widget with `open()`, `close()` and `opened` is a panel widget. Only one popup
 Periphery announces its focus area on Hyprland's event socket (Periphery's SPEC.md, Focus area announcements): `custom>>periphery>>x0,x1,monitor` while on, `custom>>periphery>>off` when off. On that monitor's bar window, when the bar is at the top or bottom, the body moves to `[x0, x1]` (global pixels, made local to the screen) on the spatial default spring. On other monitors, on a vertical bar, and when off, it spans the window. At start the bar asks for the current state (`periphery_announce`).
 
 While narrowed, the body has the full corner (a pill). Pointer input reaches only the body.
+
+### Body colour
+
+| Bar         | Docked (full width)                                                    | Floating (narrowed to the focus area)                          |
+| ----------- | ---------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Opaque      | the M3 app bar's container: the theme's `[bar] background` (`surface`) | the standard floating toolbar's container: `surface-container` |
+| Transparent | no container, a legibility shadow                                      | no container, a legibility shadow                              |
+
+- The container colour changes between docked and floating on the effects default spring.
+- The floating body has no elevation. The spec allows that over a visually distinct background (the pill floats over the wallpaper), and a shadow wouldn't fit: the bar window stays exactly `barSize` high, because the stock popups place themselves from its height.
+- The legibility shadow (not M3, interpretation `bar.transparent`) sits behind all of the body's content, glyphs and icons alike: offset 1 px down, blurred 3 px, at 0.5 opacity, in black or white, whichever contrasts more with the bar's text colour (`barForeground`). It is drawn only while the bar is transparent.
 
 ## Architecture
 

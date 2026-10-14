@@ -8,6 +8,7 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Layouts
 import qs.Commons
 import qs.Ui
@@ -825,6 +826,11 @@ Item {
     id: tokens
     textBase: Style.fontBaseSize
   }
+  // stef.bar: the theme's colour roles, for the floating body (SPEC.md, Body colour).
+  Scheme {
+    id: themeScheme
+    omarchy: ({ background: Color.background, foreground: Color.foreground, accent: Color.accent, muted: Color.muted, urgent: Color.urgent })
+  }
   property var focusArea: null
 
   Connections {
@@ -1316,6 +1322,10 @@ Item {
     SpringValue { id: bodyW; spring: tokens.springs.spatial_default; epsilon: 0.5; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.width }
     // md.sys.shape.corner.full while it floats in the focus area.
     SpringValue { id: bodyCorner; spring: tokens.springs.effects_default; epsilon: 0.05; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.narrowed ? barWindow.height / 2 : 0 }
+    // Docked it is the app bar's container, floating the standard floating
+    // toolbar's (surface-container); the colour moves on the effects spring.
+    SpringValue { id: bodyFloat; spring: tokens.springs.effects_default; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.narrowed ? 1 : 0 }
+    readonly property color floatingColor: themeScheme.color["surface-container"]
 
     Rectangle {
       id: body
@@ -1323,11 +1333,29 @@ Item {
       width: Math.round(bodyW.value)
       height: parent.height
       radius: bodyCorner.value
-      color: root.transparent ? "transparent" : root.background
+      color: root.transparent ? "transparent" : Qt.rgba(
+        root.background.r + (barWindow.floatingColor.r - root.background.r) * bodyFloat.value,
+        root.background.g + (barWindow.floatingColor.g - root.background.g) * bodyFloat.value,
+        root.background.b + (barWindow.floatingColor.b - root.background.b) * bodyFloat.value,
+        root.background.a + (barWindow.floatingColor.a - root.background.a) * bodyFloat.value)
 
     Loader {
       anchors.fill: parent
       sourceComponent: root.vertical ? verticalBar : horizontalBar
+
+      // stef.bar: a transparent bar's content gets a legibility shadow behind
+      // every glyph and icon (interpretation bar.transparent): 1 px down,
+      // 3 px blur, half opacity, black or white against the text colour.
+      layer.enabled: root.transparent
+      layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: Model.legibilityShadow(String(root.barForeground))
+        shadowOpacity: 0.5
+        shadowVerticalOffset: 1
+        shadowHorizontalOffset: 0
+        blurMax: 12
+        shadowBlur: 0.25
+      }
 
       // A child of the loader, not a sibling of the sections: an ancestor stays
       // hovered while the pointer is over a widget, where a sibling would lose

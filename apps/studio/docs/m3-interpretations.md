@@ -173,9 +173,15 @@ Token values come from the spec's token data ([material-3/](material-3/README.md
 
 ### `bar.focus-area`: Bar (stef.bar): the bar while Periphery's focus area is on
 
-- **Spec:** Silent: an app bar spans its window. Motion: "Most motion should use the default speed, while smaller elements may use fast and larger elements may use slow" (citations.springSpeeds); spatial springs move things, effects springs change colour and opacity.
-- **Choice:** The bar is the theme's app bar (shell.components). While Periphery is on, its body narrows to the focus area and floats there: md.sys.shape.corner.full, moving on spatial default; the corner rounds on effects default. Off, it spans the screen with no corner, as before.
-- **Why:** The bar belongs to the work in the focus area, so it moves with it like the windows do (spatial default); a full corner marks it as floating rather than docked to the screen edge.
+- **Spec:** Silent on a bar that narrows. Floating toolbars use the standard colour scheme's "Surface container" and "have elevation by default. If the content beneath the toolbar is visually distinct, elevation can be removed." Motion: "Most motion should use the default speed, while smaller elements may use fast and larger elements may use slow" (citations.springSpeeds); spatial springs move things, effects springs change colour and opacity.
+- **Choice:** Docked, the bar is the theme's app bar (shell.components). While Periphery is on, its body narrows to the focus area and becomes a standard floating toolbar: surface-container, md.sys.shape.corner.full, no elevation. It moves on spatial default; the corner and colour change on effects default.
+- **Why:** Narrowed, the bar floats over the wallpaper like a floating toolbar, not docked to the edge like an app bar. It floats over a visually distinct background, and the bar window must stay bar-high for the stock popups, so the elevation is removed as the spec allows.
+
+### `bar.transparent`: Bar (stef.bar): the transparent bar's legibility shadow
+
+- **Spec:** M3 has no text shadow. For text over imagery: "Add a translucent scrim or bounding shape beneath the text or icon to help ensure proper contrast."
+- **Choice:** A transparent bar (the stock toggle) has no container; its text colour follows the stock contrast probe, and all of its content gets one shadow: 1 px down, 3 px blur, 0.5 opacity, black or white, whichever has the higher WCAG contrast with the text colour. Not M3.
+- **Why:** The user's choice of a transparent bar over the wallpaper: a scrim would darken the wallpaper the transparency is for, while a soft shadow keeps glyphs legible over busy or mid-tone wallpapers where no text colour alone reaches contrast.
 
 ### `special.scrim`: Hyprland: behind a special workspace (the scratchpad)
 

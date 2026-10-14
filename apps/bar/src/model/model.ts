@@ -30,3 +30,18 @@ export function bodyGeometry(
   const x1 = Math.min(screen.width, Math.max(0, focus.x1 - screen.x));
   return { x: x0, width: x1 - x0, narrowed: true };
 }
+
+// WCAG relative luminance of an sRGB channel (0–255).
+const channel = (v: number) => {
+  const c = v / 255;
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+};
+
+export function legibilityShadow(text: string): "#000000" | "#ffffff" {
+  const m = /^#(?:[0-9a-f]{2})?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(text);
+  if (!m) return "#000000";
+  const [r, g, b] = [m[1]!, m[2]!, m[3]!].map((h) => channel(parseInt(h, 16)));
+  const l = 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+  // Contrast ratio (L1 + 0.05) / (L2 + 0.05) against white (L 1) and black (L 0).
+  return 1.05 / (l + 0.05) > (l + 0.05) / 0.05 ? "#ffffff" : "#000000";
+}
