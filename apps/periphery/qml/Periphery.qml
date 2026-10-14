@@ -28,9 +28,9 @@ import "lib/flight.mjs" as Flight
 // window onto a band sends it away too (see dropWindow and the release bind
 // in hypr/bindings.lua).
 //
-// Two invisible Bottom-layer surfaces reserve the side bands. Hyprland lays
-// out Bottom before Top, so the bar (Top layer) and the tiler both end up in
-// the centre. Cards are drawn on one fullscreen Bottom-layer surface (below
+// A workspace rule (hypr.lua, periphery_open) gives the monitor's regular
+// workspaces the bands as side gaps, so they tile in the centre; special
+// workspaces (the scratchpad) and the bar keep the full width. Cards are drawn on one fullscreen Bottom-layer surface (below
 // windows, above the wallpaper) so they can slide between sides; a dragged
 // card is drawn on an Overlay surface so it stays above the focus windows.
 Item {
@@ -163,7 +163,7 @@ Item {
   readonly property string luaState: Hypr.hookStateLua({ // qmllint disable missing-property
     opened: root.opened, cardsLeft: root.cardsLeft, cardsRight: root.cardsRight,
     monX: root.monX, monY: root.monY, monW: root.monW, monH: root.monH, sideW: root.sideW,
-    selected: root.selected,
+    selected: root.selected, monitor: root.targetMonitor ? root.targetMonitor.name : "", gapsOut: root.gapsOut,
   })
   onLuaStateChanged: root.sendLuaState()
 
@@ -198,6 +198,8 @@ Item {
   // is its Hyprland inactive border. Width and rounding are Hyprland's.
   property int windowBorder: 1
   property int windowRounding: 0
+  // Hyprland's outer gaps [top, right, bottom, left]; the bands add to the sides.
+  property var gapsOut: [0, 0, 0, 0]
   readonly property var activeBorder: Border.hyprlandActiveSpec(root.accent, root.windowBorder)
   readonly property var inactiveBorder: Border.surfaceSpec("popups", "border", root.border, root.windowBorder)
   // A window's own ghost properties, or the global ones until they are read.
@@ -309,6 +311,12 @@ Item {
     ghosts.clear()
   }
 
+  // A shell that crashed left the focus area's rule in Hyprland: drop it.
+  // The gaps are read now, so the first rule the mode sends has them.
+  Component.onCompleted: {
+    Quickshell.execDetached(["hyprctl", "eval", "if periphery_close then periphery_close() end"])
+    decorProc.running = true
+  }
   Component.onDestruction: {
     root.restoreHyprSlide()
     root.restoreShadows()
@@ -407,12 +415,13 @@ Item {
   // Hyprland's border width and rounding, for the cards.
   Process {
     id: decorProc
-    command: ["sh", "-c", "hyprctl -j getoption general:border_size; hyprctl -j getoption decoration:rounding"]
+    command: ["sh", "-c", "hyprctl -j getoption general:border_size; hyprctl -j getoption decoration:rounding; hyprctl -j getoption general:gaps_out"]
     stdout: StdioCollector {
       onStreamFinished: {
         var decoration = Hypr.parseDecoration(text) // qmllint disable missing-property
         if (decoration.borderSize !== undefined) root.windowBorder = decoration.borderSize
         if (decoration.rounding !== undefined) root.windowRounding = decoration.rounding
+        if (decoration.gapsOut !== undefined) root.gapsOut = decoration.gapsOut
       }
     }
   }
@@ -724,7 +733,7 @@ Item {
 
     root.tabGroups = groups
     others.sort(function(a, b) { return a.address < b.address ? -1 : a.address > b.address ? 1 : 0 })
-    var signature = JSON.stringify([root.sideW, current, others.map(function(w) {
+    var signature = JSON.stringify([root.sideW, root.reserved[1], root.reserved[3], current, others.map(function(w) {
       return [w.address, w.wsId, w.wsName, w.title, w.floating, w.rx, w.ry, w.rw, w.rh]
     }), Object.keys(focus).map(function(a) { var f = focus[a]; return [a, f.fullscreen, f.x, f.y, f.w, f.h] })])
     if (signature === root.layoutSignature) return
@@ -735,7 +744,7 @@ Item {
     var layout = Layout.layoutBands(others, current, { // qmllint disable missing-property
       monW: root.monW, monH: root.monH, sideW: root.sideW, bandMargin: root.bandMargin,
       cardGap: root.cardGap, groupGap: root.groupGap, headerHeight: root.headerHeight,
-      maxStretch: root.maxStretch,
+      maxStretch: root.maxStretch, top: root.reserved[1], bottom: root.reserved[3],
     })
     root.winData = layout.cards
     root.headers = layout.headers
@@ -957,24 +966,6 @@ Item {
       refreshTimer.restart()
     }
   }
-
-  // Reserves a side band. 1px wide and input-transparent: only its exclusive
-  // zone matters.
-  component Reserve: PanelWindow { // qmllint disable uncreatable-type
-    visible: root.opened && root.sideW > 0
-    screen: root.targetScreen
-    implicitWidth: 1
-    color: "transparent"
-    exclusionMode: ExclusionMode.Normal
-    exclusiveZone: root.sideW
-    mask: Region {}
-    WlrLayershell.namespace: "omarchy-periphery-reserve"
-    WlrLayershell.layer: WlrLayer.Bottom
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-  }
-
-  Reserve { anchors { top: true; bottom: true; left: true } }
-  Reserve { anchors { top: true; bottom: true; right: true } }
 
   PanelWindow { // qmllint disable uncreatable-type
     id: stage

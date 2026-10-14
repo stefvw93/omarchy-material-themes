@@ -26,6 +26,9 @@ export interface Geometry {
   groupGap: number;
   headerHeight: number;
   maxStretch: number;
+  /** Reserved at the monitor's top and bottom (the bar); 0 when absent. */
+  top?: number;
+  bottom?: number;
 }
 
 export interface Rect {
@@ -123,8 +126,10 @@ function placeSide<W extends LayoutWindow>(
 ): void {
   if (input.length === 0) return;
   const bandW = geo.sideW - geo.bandMargin * 2;
+  const top = geo.top ?? 0;
+  const bandH = geo.monH - top - (geo.bottom ?? 0);
   const availH =
-    geo.monH -
+    bandH -
     geo.bandMargin * 2 -
     input.length * geo.headerHeight -
     (input.length - 1) * geo.groupGap;
@@ -153,7 +158,7 @@ function placeSide<W extends LayoutWindow>(
     (groups.length - 1) * geo.groupGap;
 
   const regions: Rect[] = [];
-  let y = (geo.monH - used) / 2;
+  let y = top + (bandH - used) / 2;
   for (const body of bodies) {
     regions.push({ x: bandX, y: y + geo.headerHeight, w: bandW, h: body });
     y += geo.headerHeight + body + geo.groupGap;

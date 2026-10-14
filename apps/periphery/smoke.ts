@@ -28,17 +28,20 @@ const smoke: SmokeTest<Hyprland | OmarchyShell> = ({ id }) =>
     if (!wasOn) yield* toggle;
 
     yield* check("mode on: hook state is a table", yield* modeOn);
-    const on = yield* reserved;
+    // The focus area is a workspace rule on the regular workspaces, not reserved space.
+    const rule = yield* hypr.evalValue("tostring(periphery_focus_rule)");
     yield* check(
-      "mode on: bands reserved",
-      on[0] > 0 && on[2] > 0 && on[0] === on[2],
-      on.join(","),
+      "mode on: regular workspaces get the bands as side gaps",
+      /^s\[false\] m\[[^\]]+\] \d+ \d+ \d+ \d+$/.test(rule),
+      rule,
     );
+    const on = yield* reserved;
+    yield* check("mode on: no bands reserved", on[0] === 0 && on[2] === 0, on.join(","));
 
     yield* toggle;
     yield* check("mode off: hook state is nil", !(yield* modeOn));
-    const off = yield* reserved;
-    yield* check("mode off: bands released", off[0] === 0 && off[2] === 0, off.join(","));
+    const offRule = yield* hypr.evalValue("tostring(periphery_focus_rule)");
+    yield* check("mode off: no workspace rule", offRule === "nil", offRule);
     const left = (yield* hypr.binds).filter((b) => b.description.startsWith("Periphery:")).length;
     yield* check("mode off: no Periphery binds left", left === 0, `${left} left`);
 

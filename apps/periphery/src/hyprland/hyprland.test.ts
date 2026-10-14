@@ -117,16 +117,40 @@ describe("hookStateLua", () => {
     );
   });
 
-  it("opens it with the bands and the focus area, nothing selected", () => {
+  const rule = (workspace: string, t: number, r: number, b: number, l: number) =>
+    `{ workspace = "${workspace}", gaps_out = { top = ${t}, right = ${r}, bottom = ${b}, left = ${l} } }`;
+
+  it("opens it with the bands, the focus area and its rule, nothing selected", () => {
     expect(hookStateLua(on)).toBe(
-      "if periphery_open then periphery_open(true, false, 380, 2180, 0, 1440); periphery_select(nil) end",
+      `if periphery_open then periphery_open(true, false, 380, 2180, 0, 1440, ${rule("s[false]", 0, 380, 0, 380)}); periphery_select(nil) end`,
     );
   });
 
   it("passes the selected address and the monitor's offset", () => {
     expect(hookStateLua({ ...on, monX: 2560, monY: 100.4, selected: "0x56c7bf423bd0" })).toBe(
-      'if periphery_open then periphery_open(true, false, 2940, 4740, 100, 1540); periphery_select("0x56c7bf423bd0") end',
+      `if periphery_open then periphery_open(true, false, 2940, 4740, 100, 1540, ${rule("s[false]", 0, 380, 0, 380)}); periphery_select("0x56c7bf423bd0") end`,
     );
+  });
+
+  it("gives the monitor's regular workspaces the outer gaps plus the bands", () => {
+    expect(hookStateLua({ ...on, monitor: "DP-3", gapsOut: [8, 6, 4, 2] })).toContain(
+      `, ${rule("s[false] m[DP-3]", 8, 386, 4, 382)});`,
+    );
+    expect(
+      hookStateLua({ ...on, monitor: "HDMI-A-1", gapsOut: [8.4, 8, 8, 8], sideW: 379.6 }),
+    ).toContain(rule("s[false] m[HDMI-A-1]", 8, 388, 8, 388));
+  });
+
+  it("has no rule without bands", () => {
+    expect(hookStateLua({ ...on, sideW: 0, monitor: "DP-3" })).toContain(
+      "periphery_open(true, false, 0, 2560, 0, 1440, nil);",
+    );
+  });
+
+  it("never lets anything but a monitor name into the rule", () => {
+    const lua = hookStateLua({ ...on, monitor: 'DP-3"] } os.execute("x") --' });
+    expect(lua).toContain(rule("s[false]", 0, 380, 0, 380));
+    expect(lua).not.toContain("os.execute");
   });
 
   it("never lets anything but an address into the Lua", () => {
@@ -149,6 +173,21 @@ describe("parseDecoration", () => {
       borderSize: 2,
     });
     expect(parseDecoration("")).toEqual({});
+  });
+
+  const gaps = (css: string) => `{"option": "general:gaps_out", "css": "${css}", "set": true }`;
+
+  it("reads the outer gaps as CSS shorthand", () => {
+    expect(parseDecoration(gaps("8 6 4 2")).gapsOut).toEqual([8, 6, 4, 2]);
+    expect(parseDecoration(gaps("5")).gapsOut).toEqual([5, 5, 5, 5]);
+    expect(parseDecoration(gaps("4 10")).gapsOut).toEqual([4, 10, 4, 10]);
+    expect(parseDecoration(gaps("1 2 3")).gapsOut).toEqual([1, 2, 3, 2]);
+  });
+
+  it("leaves out outer gaps it can't read", () => {
+    expect(parseDecoration(gaps("a b")).gapsOut).toBeUndefined();
+    expect(parseDecoration(gaps("1 2 3 4 5")).gapsOut).toBeUndefined();
+    expect(parseDecoration(gaps("")).gapsOut).toBeUndefined();
   });
 });
 

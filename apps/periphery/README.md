@@ -1,6 +1,6 @@
 # Periphery exposé (`stef.periphery`)
 
-An Omarchy shell plugin for wide monitors. One key squeezes tiling and the bar into a centred focus area. The windows of your other workspaces stay visible as live cards in the side bands. Hover a card or move focus onto it with the arrow keys, and your close and fullscreen keys act on it. Press Enter or click a card to fly to its window. Drag a card to move its window between workspaces.
+An Omarchy shell plugin for wide monitors. One key squeezes tiling into a centred focus area. The windows of your other workspaces stay visible as live cards in the side bands. Hover a card or move focus onto it with the arrow keys, and your close and fullscreen keys act on it. Press Enter or click a card to fly to its window. Drag a card to move its window between workspaces.
 
 [SPEC.md](SPEC.md) describes the behaviour and the internals in detail.
 
@@ -59,7 +59,7 @@ Then run `omarchy restart shell` and press `SUPER + E`.
 
 ```bash
 hyprctl eval 'error(type(periphery_select))'   # "function": the hook is loaded
-hyprctl monitors -j | jq '.[].reserved'         # [380, 26, 380, 0] with the mode on, on a 2560×1440 monitor
+hyprctl clients -j | jq '.[] | select(.workspace.id == 1) | .at[0]'   # 391 with the mode on, on a 2560×1440 monitor
 ```
 
 Hover a card: it gets your theme's active border, and the active window's border turns inactive. `SUPER + W` now closes the card's window, not the window in the focus area. Enter goes to it.

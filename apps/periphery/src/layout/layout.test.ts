@@ -104,6 +104,26 @@ describe("layoutBands", () => {
     expect(wrapped.right).toEqual([2]);
   });
 
+  it("keeps the bands clear of the reserved top and bottom", () => {
+    const barred = { ...geometry, top: 32, bottom: 20 };
+    const layout = layoutBands([...tiledPair(1), ...tiledPair(3), ...tiledPair(4)], 2, barred);
+    for (const card of Object.values(layout.cards)) {
+      expect(card.y).toBeGreaterThanOrEqual(barred.top + barred.bandMargin - 0.01);
+      expect(card.y + card.h).toBeLessThanOrEqual(
+        barred.monH - barred.bottom - barred.bandMargin + 0.01,
+      );
+    }
+    for (const header of layout.headers)
+      expect(header.y).toBeGreaterThanOrEqual(barred.top + barred.bandMargin - 0.01);
+  });
+
+  it("centres a short band between the reserved top and bottom", () => {
+    const layout = layoutBands(tiledPair(1), 2, { ...geometry, top: 40 });
+    const header = layout.headers[0]!;
+    const plain = layoutBands(tiledPair(1), 2, geometry).headers[0]!;
+    expect(header.y - plain.y).toBeCloseTo(20, 5);
+  });
+
   it("keeps every card inside its band", () => {
     const layout = layoutBands([...tiledPair(1), ...tiledPair(3), ...tiledPair(4)], 2, geometry);
     for (const card of Object.values(layout.cards)) {

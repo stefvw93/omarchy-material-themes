@@ -58,11 +58,19 @@ local function fake()
   end
   function hl.timer(fn, opts) table.insert(log.timers, { fn = fn, opts = opts }) end
   function hl.on(event, fn) log.events[event] = fn end
+  log.rules = {}
+  function hl.workspace_rule(spec)
+    local r = { spec = spec, enabled = true }
+    function r:set_enabled(on) self.enabled = on end
+    table.insert(log.rules, r)
+    return r
+  end
   function hl.get_windows() return state.all end
   function hl.get_active_window()
     if not state.active then return nil end
     local w = state.active
     w.workspace = {
+      special = state.special or false,
       get_windows = function() return state.windows end,
     }
     return w
@@ -75,6 +83,7 @@ local function fake()
 
   _G.hl = hl
   _G.periphery = nil
+  _G.periphery_focus_rule = nil
   dofile("hypr/hypr.lua")
   return log, state
 end
@@ -213,6 +222,50 @@ test("a band without cards keeps the native focus at the edge", function()
   hl.dispatch(hl.dsp.focus({ direction = "l" }))
   eq(last(log.dispatched).kind, "focus")
   eq(#calls(log), 0, "no plugin call")
+end)
+
+test("a focus key on a special workspace's window keeps the native focus", function()
+  local log, state = fake()
+  state.special = true
+  periphery_open(true, true, 380, 2180, 0, 1440)
+  hl.dispatch(hl.dsp.focus({ direction = "l" }))
+  eq(last(log.dispatched).kind, "focus")
+  eq(#calls(log), 0, "no plugin call")
+end)
+
+local rule = { workspace = "s[false] m[DP-3]", gaps_out = { top = 8, right = 388, bottom = 8, left = 388 } }
+
+test("opening applies the focus area's workspace rule once", function()
+  local log = fake()
+  periphery_open(true, true, 388, 2172, 0, 1440, rule)
+  periphery_open(false, true, 388, 2172, 0, 1440, { workspace = rule.workspace, gaps_out = rule.gaps_out })
+  eq(#log.rules, 1, "rules made")
+  eq(log.rules[1].spec.workspace, "s[false] m[DP-3]")
+  eq(log.rules[1].spec.gaps_out.left, 388)
+  eq(log.rules[1].enabled, true)
+  eq(periphery_focus_rule, "s[false] m[DP-3] 8 388 8 388")
+  periphery_close()
+  eq(periphery_focus_rule, nil, "after close")
+end)
+
+test("a changed rule replaces the old one", function()
+  local log = fake()
+  periphery_open(true, true, 388, 2172, 0, 1440, rule)
+  periphery_open(true, true, 300, 2260, 0, 1440, { workspace = rule.workspace, gaps_out = { top = 8, right = 308, bottom = 8, left = 308 } })
+  eq(#log.rules, 2, "rules made")
+  eq(log.rules[1].enabled, false, "old rule")
+  eq(log.rules[2].enabled, true, "new rule")
+end)
+
+test("closing, or opening without a rule, drops the rule", function()
+  local log = fake()
+  periphery_open(true, true, 388, 2172, 0, 1440, rule)
+  periphery_close()
+  eq(log.rules[1].enabled, false, "after close")
+  periphery_open(true, true, 388, 2172, 0, 1440, rule)
+  periphery_open(true, true, 0, 2560, 0, 1440, nil)
+  eq(log.rules[2].enabled, false, "after open without a rule")
+  periphery_close()
 end)
 
 test("up and down never enter a band", function()

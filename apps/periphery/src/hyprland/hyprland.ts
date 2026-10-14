@@ -52,6 +52,10 @@ export interface HookState {
   monH: number;
   sideW: number;
   selected: string;
+  /** The monitor's name, for the focus area's workspace rule. */
+  monitor?: string;
+  /** Hyprland's outer gaps, [top, right, bottom, left]. */
+  gapsOut?: readonly number[];
 }
 
 /** The `hyprctl eval` string that hands the plugin's state to hypr.lua. */
@@ -66,14 +70,34 @@ export function hookStateLua(state: HookState): string {
   // Nothing but an address ever reaches Lua code.
   const selected = /^0x[0-9a-fA-F]+$/.test(state.selected) ? `"${state.selected}"` : "nil";
   return (
-    `if periphery_open then periphery_open(${[state.cardsLeft, state.cardsRight, ...bounds].join(", ")}); ` +
+    `if periphery_open then periphery_open(${[state.cardsLeft, state.cardsRight, ...bounds, focusRuleLua(state)].join(", ")}); ` +
     `periphery_select(${selected}) end`
+  );
+}
+
+/**
+ * The focus area as a workspace rule: the monitor's regular workspaces get
+ * the bands as extra side gaps, so special ones keep the full width.
+ */
+function focusRuleLua(state: HookState): string {
+  const side = Math.round(state.sideW);
+  if (!(side > 0)) return "nil";
+  const [t = 0, r = 0, b = 0, l = 0] = state.gapsOut ?? [];
+  const gaps = [t, r + side, b, l + side].map(Math.round);
+  // Nothing but a monitor name ever reaches Lua code.
+  const monitor =
+    state.monitor && /^[A-Za-z0-9_.-]+$/.test(state.monitor) ? ` m[${state.monitor}]` : "";
+  return (
+    `{ workspace = "s[false]${monitor}", ` +
+    `gaps_out = { top = ${gaps[0]}, right = ${gaps[1]}, bottom = ${gaps[2]}, left = ${gaps[3]} } }`
   );
 }
 
 export interface Decoration {
   borderSize?: number;
   rounding?: number;
+  /** general:gaps_out as [top, right, bottom, left]. */
+  gapsOut?: [number, number, number, number];
 }
 
 /** Border width and rounding from two `hyprctl -j getoption` outputs. */
@@ -85,9 +109,20 @@ export function parseDecoration(text: string): Decoration {
   const result: Decoration = {};
   const borderSize = read("general:border_size");
   const rounding = read("decoration:rounding");
+  const gapsOut = cssGaps(/"general:gaps_out",\s*"css":\s*"([^"]*)"/.exec(text)?.[1]);
   if (borderSize !== undefined) result.borderSize = borderSize;
   if (rounding !== undefined) result.rounding = rounding;
+  if (gapsOut !== undefined) result.gapsOut = gapsOut;
   return result;
+}
+
+/** CSS shorthand ("8", "8 4", "8 4 2", "8 4 2 1") as [top, right, bottom, left]. */
+function cssGaps(css: string | undefined): [number, number, number, number] | undefined {
+  if (css === undefined || css.trim() === "") return undefined;
+  const v = css.trim().split(/\s+/).map(Number);
+  if (v.length > 4 || v.some((n) => !Number.isFinite(n))) return undefined;
+  const [t, r = t, b = t, l = r] = v as [number, number?, number?, number?];
+  return [t, r, b, l];
 }
 
 const ADDRESS = /^0x[0-9a-fA-F]+$/;

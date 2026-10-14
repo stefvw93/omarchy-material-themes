@@ -6,7 +6,7 @@ Places the windows of the other workspaces as cards in the bands. Pure: windows 
 
 - **Windows:** every window on the monitor that is not on the current workspace, with its workspace id and name, title, class, floating state, and its real position and size (`rx`, `ry`, `rw`, `rh`, global pixels). Windows on special workspaces (id ≤ 0) are left out by the caller.
 - **Current:** the id of the workspace in the focus area.
-- **Geometry:** monitor width and height, `sideW`, `bandMargin`, `cardGap`, `groupGap`, `headerHeight`, `maxStretch`.
+- **Geometry:** monitor width and height, `sideW`, `bandMargin`, `cardGap`, `groupGap`, `headerHeight`, `maxStretch`, and the space reserved at the monitor's top and bottom (`top`, `bottom`: the bar; 0 when absent).
 
 ## Bands
 
@@ -30,9 +30,9 @@ Within a group, windows are in reading order: tiled windows first, left to right
 
 ## Cards
 
-The band's inner width is `bandW = sideW − 2 × bandMargin`. The left band's cards start at x = `bandMargin`, the right band's at x = `monW − sideW + bandMargin`.
+The band's inner width is `bandW = sideW − 2 × bandMargin`. A band spans from `top` to `monH − bottom`: the bar keeps the full width above or below it. The left band's cards start at x = `bandMargin`, the right band's at x = `monW − sideW + bandMargin`.
 
-1. Each group gets a vertical slice of the band. The slice height is proportional to the group's bounding box height at band width (`bandW × box.h / box.w`), stretched by one factor for the whole band, up to `maxStretch`, to use the band's height. The slices are centred vertically, each below a header of `headerHeight`, with `groupGap` between groups.
+1. Each group gets a vertical slice of the band. The slice height is proportional to the group's bounding box height at band width (`bandW × box.h / box.w`), stretched by one factor for the whole band, up to `maxStretch`, to use the band's height. The slices are centred vertically in the band, each below a header of `headerHeight`, with `groupGap` between groups.
 2. The centre of each window maps from the group's bounding box into the slice (anisotropic when stretched).
 3. All cards in a band use one scale. A card keeps its window's aspect ratio.
 4. Overlapping cards (closer than `cardGap`) are pushed apart along the axis with the smaller overlap, if there is room on that axis; otherwise along the other axis. Cards stay inside their slice. Ties keep reading order: the earlier window goes left or up.

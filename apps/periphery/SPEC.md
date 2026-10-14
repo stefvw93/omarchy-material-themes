@@ -19,7 +19,7 @@ Scott Jenson showed a prototype at a KDE event (["Are we really going to use the
 
 | Term                 | Definition                                                                                                   |
 | -------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Focus area           | The centred part of the monitor. Tiling and the bar use only this area.                                      |
+| Focus area           | The centred part of the monitor. Regular workspaces tile only in this area.                                  |
 | Band                 | The part of the monitor at the left or right of the focus area.                                              |
 | Periphery            | The two bands together.                                                                                      |
 | Card                 | The live thumbnail of one window in a band.                                                                  |
@@ -41,9 +41,17 @@ Scott Jenson showed a prototype at a KDE event (["Are we really going to use the
 
 `SUPER + E` toggles the mode. The mode stays on until the next toggle, a shell restart, or a plugin reload.
 
-When the mode turns on, Hyprland re-tiles the current workspace into the focus area. The bar shrinks to the focus area width. When the mode turns off, both return to full width.
+When the mode turns on, Hyprland re-tiles the current workspace into the focus area. When the mode turns off, it returns to full width. The bar keeps the full monitor width; the bands start below it.
+
+The focus area is a Hyprland workspace rule, not reserved space: while the mode is on, the regular workspaces of the monitor (`s[false] m[<monitor>]`) get `gaps_out` of the theme's outer gaps plus `sideW` at the left and right. Reserved space (an exclusive zone) would apply to every workspace on the monitor, special ones included.
 
 On DP-3 with the default ratio: focus area 1800 px, each band 380 px.
+
+### Special workspaces
+
+The mode leaves special workspaces (the scratchpad) alone. They keep Hyprland's own gaps and tile at full width, with dwindle, over the theme's scrim. Showing or hiding one moves nothing behind it: the current workspace and the bar stay as they are.
+
+The cards stay in the bands, under the scrim and the special workspace's windows. The focus keys on a window of a special workspace keep Hyprland's own focus: they never enter a band.
 
 ### Placement of groups
 
@@ -282,15 +290,14 @@ SPEC.md                this file
 
 ### Layer surfaces
 
-The plugin creates 4 layer surfaces on the focused monitor (the reserve surface twice). All exist only while the mode is on.
+The plugin creates 2 layer surfaces on the focused monitor. Both exist only while the mode is on, and neither reserves space.
 
-| Namespace                        | Layer   | Size                                        | Exclusive zone | Input      | Use                                                                      |
-| -------------------------------- | ------- | ------------------------------------------- | -------------- | ---------- | ------------------------------------------------------------------------ |
-| `omarchy-periphery-reserve` (×2) | Bottom  | 1 px wide, full height, left and right edge | `sideW`        | none       | Reserve the bands.                                                       |
-| `omarchy-periphery`              | Bottom  | full screen                                 | ignore         | bands only | Draw the groups and cards.                                               |
-| `omarchy-periphery-fx`           | Overlay | full screen                                 | ignore         | none       | Draw the switch ghosts and backdrop, the dragged card and drop outlines. |
+| Namespace              | Layer   | Size        | Exclusive zone | Input      | Use                                                                      |
+| ---------------------- | ------- | ----------- | -------------- | ---------- | ------------------------------------------------------------------------ |
+| `omarchy-periphery`    | Bottom  | full screen | ignore         | bands only | Draw the groups and cards.                                               |
+| `omarchy-periphery-fx` | Overlay | full screen | ignore         | none       | Draw the switch ghosts and backdrop, the dragged card and drop outlines. |
 
-Hyprland arranges layer surfaces in layer order: Background, Bottom, Top, Overlay. A surface with an exclusive zone gets the area that is left after the surfaces before it. The reserve surfaces are on the Bottom layer, so they take the bands first. The Omarchy bar is on the Top layer, so it gets only the focus area width. The bar needs no change.
+The bands get their room from the workspace rule ([Toggle](#toggle)). The Omarchy bar keeps its exclusive zone at the top of the full monitor width; the bands and the switch backdrop start below the reserved area.
 
 The cards are on the Bottom layer: above the wallpaper, below all windows. A floating window can move over a band and cover cards.
 
@@ -378,12 +385,13 @@ Colours are the theme's M3 roles (`Scheme.qml`: `omaterial.json`, or approximate
 ## Constraints and gotchas
 
 - **Plugin reload turns the mode off.** Any write under `~/.config/omarchy/plugins/` reloads the plugins, `vp run deploy` included. Press `SUPER + E` again. The hot reload is not reliable: after a deploy, run `omarchy restart shell`.
-- **Hidden workspaces keep their old tiling.** Hyprland re-tiles only the visible workspace when the reserved area changes. A workspace that was tiled at full width keeps that layout until you visit it. Its cards still show the correct relative positions.
+- **Hidden workspaces keep their old tiling.** Hyprland re-tiles only the visible workspace when the gaps rule changes. A workspace that was tiled at full width keeps that layout until you visit it. Its cards still show the correct relative positions.
 - **Frame rate costs GPU.** Every card captures at the screen frame rate. Many windows in the periphery increase GPU load.
 - **Floating windows keep their position.** A floating window that you drop in the focus area stays floating at its last position. It does not move to the drop point.
 - **Dropped real window: active window.** The release bind uses `hl.get_active_window()`. This is correct because Hyprland focuses the window it drags. A release with SUPER held and no drag also calls the plugin. The plugin ignores it if the pointer is in the focus area. Over a band, the focused window moves (a SUPER-click on empty band space).
 - **One monitor.** The mode uses the monitor that has focus when it turns on. It does not follow a monitor focus change: the bands keep showing the workspaces around that monitor's active workspace. Multi-monitor is not tested.
 - **Fullscreen** windows cover the full monitor, bands included.
+- **The gaps rule lives in Hyprland.** Unlike a layer surface, it outlives the plugin. The plugin removes it when the mode turns off, when it unloads, and once when it loads (after a crash); a Hyprland reload starts without it.
 - **Narrow bands.** On a 16:9 monitor the bands are narrow (380 px at 5:4). The solver stacks cards vertically. A wider monitor or a smaller ratio gives larger cards.
 - **The hook loads before Omarchy's bindings.** Wrapping in `bindings.lua` or the theme is too late: Omarchy's keys are bound by then. After adding the hook, run `hyprctl reload` once. Without the hook the plugin works, but hovering and the focus keys don't reach the cards.
 - **Focus keys go through `omarchy-shell`.** `enter` and `step` start a process per key press (a few tens of ms). Close and fullscreen run in the hook and have no delay.
@@ -402,11 +410,11 @@ Colours are the theme's M3 roles (`Scheme.qml`: `omaterial.json`, or approximate
 omarchy restart shell
 omarchy-shell shell toggle stef.periphery '{}'
 
-hyprctl monitors -j | jq '.[].reserved'          # [380, 26, 380, 0]
-hyprctl layers -j | jq '.["DP-3"].levels."2"'    # omarchy-bar: x 380, w 1800
+hyprctl clients -j | jq '.[] | select(.workspace.id == <current>) | .at[0]'   # 391: 380 + gaps_out 8 + border 3
+hyprctl monitors -j | jq '.[].reserved'          # [0, 26, 0, 0]: only the bar
 
 omarchy-shell shell toggle stef.periphery '{}'
-hyprctl monitors -j | jq '.[].reserved'          # [0, 26, 0, 0]
+hyprctl clients -j | jq '.[] | select(.workspace.id == <current>) | .at[0]'   # 11
 ```
 
 Manual checks:
@@ -429,6 +437,7 @@ Manual checks:
 16. On the leftmost window, `SUPER + ←` selects a card in the left band. `SUPER + ↑/↓` move through the cards and groups, `SUPER + →` goes back to the focus area window on that edge. The same on the right.
 17. `SUPER + F` on a selected card: Hyprland goes to its workspace and the window is fullscreen.
 18. `hyprctl eval 'error(tostring(periphery))'`: a table while on, `nil` after the mode turns off.
+19. Open the scratchpad: it tiles at full width over the scrim, and nothing behind it moves, the bar included. `SUPER + ←` on its leftmost window doesn't select a card.
 
 ## Out of scope
 

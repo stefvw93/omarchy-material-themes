@@ -109,10 +109,33 @@ for _, event in ipairs({ "window.active", "window.open", "window.close", "window
   hl.on(event, report_tabs)
 end
 
-function periphery_open(left, right, x0, x1, y0, y1)
+-- The focus area is a workspace rule: the monitor's regular workspaces get
+-- the bands as side gaps, special ones keep the full width. Reserved space
+-- would narrow every workspace. One rule at a time, made again only when it
+-- changes: a new rule re-tiles. periphery_focus_rule describes the rule in
+-- force (workspace and gaps), nil without one.
+local focus_rule = nil
+periphery_focus_rule = nil
+
+local function rule_key(rule)
+  if not rule then return nil end
+  local g = rule.gaps_out
+  return table.concat({ rule.workspace, g.top, g.right, g.bottom, g.left }, " ")
+end
+
+local function apply_focus_rule(rule)
+  local key = rule_key(rule)
+  if key == periphery_focus_rule then return end
+  if focus_rule then focus_rule:set_enabled(false) end
+  focus_rule = rule and hl.workspace_rule(rule) or nil
+  periphery_focus_rule = key
+end
+
+function periphery_open(left, right, x0, x1, y0, y1, rule)
   periphery = periphery or {}
   periphery.bands = { l = left, r = right }
   periphery.focus = { x0 = x0, x1 = x1, y0 = y0, y1 = y1 }
+  apply_focus_rule(rule)
   report_tabs()
 end
 
@@ -128,6 +151,7 @@ end
 
 function periphery_close()
   if periphery then periphery_select(nil) end
+  apply_focus_rule(nil)
   periphery = nil
   tabs_sent = nil
 end
@@ -240,9 +264,12 @@ hl.dsp.focus = function(args)
   return function()
     if not periphery then return hl.dispatch(native) end
     if periphery.selected then return shell("step " .. dir) end
+    -- A special workspace (the scratchpad) tiles at full width over the
+    -- bands: its windows keep Hyprland's focus.
+    local active = hl.get_active_window()
+    if active and active.workspace and active.workspace.special then return hl.dispatch(native) end
     if periphery.bands and periphery.bands[dir] and at_edge(dir) then
       -- The active window goes along: the plugin's view of it can lag.
-      local active = hl.get_active_window()
       return shell("enter " .. dir .. " " .. (active and active.address or "none"))
     end
     hl.dispatch(native)

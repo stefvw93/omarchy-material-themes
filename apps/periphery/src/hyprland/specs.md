@@ -31,16 +31,19 @@ How far cards travel with a workspace switch, following Hyprland's style string:
 The `hyprctl eval` string that hands the plugin's state to `hypr.lua`:
 
 - Mode off: `if periphery_close then periphery_close() end`.
-- Mode on: `if periphery_open then periphery_open(<left>, <right>, <x0>, <x1>, <y0>, <y1>); periphery_select(<selected>) end`
+- Mode on: `if periphery_open then periphery_open(<left>, <right>, <x0>, <x1>, <y0>, <y1>, <rule>); periphery_select(<selected>) end`
   - `left`, `right`: whether each band has cards (`true`/`false`);
   - `x0`, `x1`: the focus area's left and right edge, `y0`, `y1`: the monitor's top and bottom, global pixels, rounded;
+  - `rule`: the focus area's workspace rule (SPEC.md, [Toggle](../../SPEC.md#toggle)), `{ workspace = "s[false] m[<monitor>]", gaps_out = { top = <t>, right = <r>, bottom = <b>, left = <l> } }`. The gaps are the outer gaps, with `sideW` added at the left and right, rounded; missing outer gaps are 0. A monitor name other than letters, digits, `-`, `_` and `.` is left out (`s[false]`): nothing but a name reaches Lua code. With `sideW` 0 the rule is `nil`;
   - `selected`: the address in double quotes, or `nil`.
 - An address that is not `0x` followed by hex digits counts as no selection: nothing but an address ever reaches Lua code.
 - The `if … then` guard keeps the eval harmless when the hook is not loaded.
 
 ## Decoration
 
-From the output of `hyprctl -j getoption general:border_size; hyprctl -j getoption decoration:rounding` (two JSON objects, one after the other): the border width and the rounding, each as an integer, or absent when not found.
+From the output of `hyprctl -j getoption general:border_size; hyprctl -j getoption decoration:rounding; hyprctl -j getoption general:gaps_out` (JSON objects, one after the other): the border width and the rounding, each as an integer, and the outer gaps as `[top, right, bottom, left]`; each absent when not found.
+
+The outer gaps are CSS shorthand in the `css` field: one value for all sides, two for top/bottom and left/right, three for top, left/right and bottom, four for top, right, bottom and left. Anything else is absent.
 
 ## Blur
 
