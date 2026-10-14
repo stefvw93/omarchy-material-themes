@@ -6,8 +6,10 @@ import type { WallhavenItem } from "@/features/wallhaven/service";
 import { cn } from "@/lib/utils";
 import type { FC, PropsWithChildren } from "react";
 
-// 216px is based on the max width of wallhavens `thumbs.large` (432px)
-const COLS = "grid-cols-[repeat(auto-fill,minmax(216px,1fr))]";
+// 216px is based on the max width of wallhavens `thumbs.large` (432px).
+// A column is never narrower than a quarter of the row, so at most 4 fit.
+const COLS =
+  "grid-cols-[repeat(auto-fill,minmax(max(216px,calc((100%_-_3_*_var(--spacing)_*_2)/4)),1fr))]";
 const GRID = cn("grid content-start flex-1 min-h-0 gap-2 pr-px", COLS);
 
 export type ImageGridProps = PropsWithChildren<
