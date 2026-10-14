@@ -180,7 +180,7 @@ Every tab of a tab group has its own card, like any window. Only the shown tab i
 | Shown tab  | Flies from its tile to its card.                 | Flies from its card to its tile.                  |
 | Hidden tab | Its card fades in on the effects default spring. | Its card fades out on the effects default spring. |
 
-Hyprland reports `hidden: false` for every tab, so the hook tells the plugin which tabs are shown (`group.current`): `tabs <address> …` with the shown tab of every tab group (`tabs none` without any), when the mode turns on and whenever the active window changes (a tab switch makes the new tab active), a window opens, closes or moves to another workspace; only when the list changed since the last report. A tab group's shown tab doesn't change while its workspace is hidden. A flight to a hidden tab shows it: it flies in, and its group's shown tab until then counts as hidden.
+Hyprland reports `hidden: false` for every tab, so the hook tells the plugin which tabs are shown (`group.current`): `tabs <address> …` with the shown tab of every tab group (`tabs none` without any), when the mode turns on (the hook is reset first, so this always reports) and whenever the active window changes (a tab switch makes the new tab active), a window opens, closes or moves to another workspace; only when the list changed since the last report. A tab group's shown tab doesn't change while its workspace is hidden. A flight to a hidden tab shows it: it flies in, and its group's shown tab until then counts as hidden.
 
 #### Hyprland's workspace animation
 
@@ -315,13 +315,13 @@ One full-screen surface draws both bands. A card can then animate from one band 
 ### Data flow
 
 1. Hyprland raw events start a refresh: window open, close, move, float change, workspace create, destroy, rename and switch, monitor focus, fullscreen and pin.
-2. The refresh calls `Hyprland.refreshToplevels()`. After 80 ms it reads `lastIpcObject` of each toplevel.
+2. The refresh calls `Hyprland.refreshToplevels()`. After 80 ms it reads `lastIpcObject` of each toplevel, and refreshes the monitors: their reserved area changes without an event when the bar resizes (`stef.bar` grows its exclusive zone as it floats in the focus area), and the switch backdrop and the bands start below it.
 3. `rebuild()` builds the groups, sorts them into bands and runs the solver.
 4. A layout signature skips the rebuild if nothing changed.
 5. A `ListModel` keyed by window address keeps one card delegate per window. A card that changes position moves on the spatial default spring. A new card fades in at its position on the effects default spring.
 6. `rebuild()` also caches the tiles of the current workspace (`focusRects`), the start rects of a workspace switch.
 7. A window new to the plugin gets its `opacity`, `opacity_inactive`, `border_size` and `rounding` read in one `hyprctl --batch` (`j/getprop`), for its ghost. A reload reads them again for every window.
-8. A 3 s timer resyncs titles and sizes that change without a structural event. It stops during a drag.
+8. A 3 s timer resyncs titles and sizes (and, through step 2, the reserved area) that change without a structural event. It stops during a drag.
 
 ### IPC
 
@@ -400,7 +400,8 @@ Colours are the theme's M3 roles (`Scheme.qml`: `omaterial.json`, or approximate
 - **Dropped real window: active window.** The release bind uses `hl.get_active_window()`. This is correct because Hyprland focuses the window it drags. A release with SUPER held and no drag also calls the plugin. The plugin ignores it if the pointer is in the focus area. Over a band, the focused window moves (a SUPER-click on empty band space).
 - **One monitor.** The mode uses the monitor that has focus when it turns on. It does not follow a monitor focus change: the bands keep showing the workspaces around that monitor's active workspace. Multi-monitor is not tested.
 - **Fullscreen** windows cover the full monitor, bands included.
-- **The gaps rule lives in Hyprland.** Unlike a layer surface, it outlives the plugin. The plugin removes it when the mode turns off, when it unloads, and once when it loads (after a crash); a Hyprland reload starts without it.
+- **The gaps rule lives in Hyprland.** Unlike a layer surface, it outlives the plugin. The plugin removes it when the mode turns off and when it unloads, and resets the hook each time the mode turns on (below); a Hyprland reload starts without it.
+- **The hook's state outlives the plugin.** `omarchy-restart-shell` ends the shell without the plugin's unload, so the hook can still hold a previous instance's state: its rule, its last tab report, its announced focus area. The first state the plugin sends after the mode turns on starts with `periphery_close()`, in the same ordered queue as the open that follows, so the hook starts clean and reports the shown tabs again (without it, the first flights after a restart lost every tab group's shown tab).
 - **Narrow bands.** On a 16:9 monitor the bands are narrow (380 px at 5:4). The solver stacks cards vertically. A wider monitor or a smaller ratio gives larger cards.
 - **The hook loads before Omarchy's bindings.** Wrapping in `bindings.lua` or the theme is too late: Omarchy's keys are bound by then. After adding the hook, run `hyprctl reload` once. Without the hook the plugin works, but hovering and the focus keys don't reach the cards.
 - **Focus keys go through `omarchy-shell`.** `enter` and `step` start a process per key press (a few tens of ms). Close and fullscreen run in the hook and have no delay.

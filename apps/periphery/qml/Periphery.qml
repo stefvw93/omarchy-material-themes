@@ -281,6 +281,7 @@ Item {
       root.monH = geometry.h
       root.targetScreen = geometry.screen
     }
+    root.hookReset = true
     root.opened = true
     root.shownWorkspace = root.currentWorkspaceId()
     root.layoutSignature = ""
@@ -311,12 +312,8 @@ Item {
     ghosts.clear()
   }
 
-  // A shell that crashed left the focus area's rule in Hyprland: drop it.
   // The gaps are read now, so the first rule the mode sends has them.
-  Component.onCompleted: {
-    Quickshell.execDetached(["hyprctl", "eval", "if periphery_close then periphery_close() end"])
-    decorProc.running = true
-  }
+  Component.onCompleted: decorProc.running = true
   Component.onDestruction: {
     root.restoreHyprSlide()
     root.restoreShadows()
@@ -325,10 +322,16 @@ Item {
 
   // One hyprctl at a time, so the states reach hypr.lua in order; a state
   // that changed meanwhile goes after.
+  // The hook's state outlives the plugin (a shell restart skips the unload):
+  // the first state after the mode turns on resets it in the same queue, so
+  // it starts clean and reports the shown tabs again (SPEC.md, gotchas).
+  property bool hookReset: false
   function sendLuaState() {
     if (luaProc.running || root.luaState === root.luaSent) return
     root.luaSent = root.luaState
-    luaProc.command = ["hyprctl", "eval", root.luaState]
+    var reset = root.hookReset && root.opened
+    if (reset) root.hookReset = false
+    luaProc.command = ["hyprctl", "eval", (reset ? Hypr.hookStateLua({ opened: false }) + "; " : "") + root.luaState] // qmllint disable missing-property
     luaProc.running = true
   }
 
@@ -949,10 +952,16 @@ Item {
     }
   }
 
+  // The monitors too: the reserved area (where the backdrop and the bands
+  // start) changes without an event when the bar resizes, as stef.bar does
+  // when it floats in the focus area.
   Timer {
     id: refreshTimer
     interval: 80
-    onTriggered: root.rebuild()
+    onTriggered: {
+      Hyprland.refreshMonitors()
+      root.rebuild()
+    }
   }
 
   // Titles and sizes that change without a structural event are picked
