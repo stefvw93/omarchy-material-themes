@@ -160,8 +160,9 @@ Item {
   readonly property string openPile: root.selected && root.winData[root.selected] ? root.winData[root.selected].pile : ""
   // A card's rect as drawn: its fan rect while its pile is open.
   function drawnRect(card) { return card.pile !== "" && card.pile === root.openPile && card.fan ? card.fan : card }
-  // A card's tilt at rest, unselected: turned towards the focus area.
-  function restTilt(rect) { return rect ? (rect.x + rect.w / 2 < root.monW / 2 ? -1 : 1) * root.cardTilt : 0 }
+  // A card's tilt at rest, unselected: its outer edge nearer, so the band
+  // curves in towards the focus area like a curved display.
+  function restTilt(rect) { return rect ? (rect.x + rect.w / 2 < root.monW / 2 ? 1 : -1) * root.cardTilt : 0 }
   function drawnCards() {
     var out = {}
     for (var a in root.winData) out[a] = root.drawnRect(root.winData[a])
@@ -257,6 +258,9 @@ Item {
   // A flight whose switch hasn't come this long after its dispatch (a key
   // to the workspace already shown) ends: its ghosts are still on the tiles.
   readonly property int switchWaitMs: ms(150)
+  // How long after the pointer leaves the selected card, for a card that
+  // isn't under it, the selection clears (pointerOff).
+  readonly property int leaveMs: ms(120)
   // Trial ghost motion: emphasized decelerate over medium4 (see the ghosts).
   readonly property int easeMs: ms(400)
   readonly property var easeCurve: [0.05, 0.7, 0.1, 1, 1, 1]
@@ -367,6 +371,24 @@ Item {
 
   function clearSelection() {
     root.selected = ""
+  }
+
+  // The card under the pointer ("" for none). Leaving the selected card
+  // clears the selection unless the pointer is on a card leaveMs later: it
+  // may be crossing a gap, or a pile may be fanning out under it.
+  property string pointerCard: ""
+  function pointerOn(address) {
+    root.pointerCard = address
+    leaveTimer.stop()
+  }
+  function pointerOff(address) {
+    if (root.pointerCard === address) root.pointerCard = ""
+    if (root.selected === address) leaveTimer.restart()
+  }
+  Timer {
+    id: leaveTimer
+    interval: root.leaveMs
+    onTriggered: if (root.pointerCard === "" && root.dragAddress === "") root.clearSelection()
   }
 
   // A focus key moved past the focus area's edge towards a band ("l" or

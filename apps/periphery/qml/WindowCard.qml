@@ -120,7 +120,12 @@ Item {
     }
     // Pointer input selects the card, also after the focus keys moved the
     // selection away while the pointer stayed here (latest input wins).
-    onEntered: card.host.select(card.win.address)
+    onEntered: {
+      card.host.pointerOn(card.win.address)
+      card.host.select(card.win.address)
+    }
+    // Pointing away lets go of the card (host.pointerOff).
+    onExited: card.host.pointerOff(card.win.address)
     onPositionChanged: function(event) {
       if (!pressed) {
         if (!card.selected) card.host.select(card.win.address)
