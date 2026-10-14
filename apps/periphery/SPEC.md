@@ -146,6 +146,8 @@ The blur is Hyprland's dual-kawase blur redone with `MultiEffect` over the wallp
 - `contrast` − 1, `brightness` − 1 and `vibrancy` become `MultiEffect`'s contrast, brightness and saturation.
 - Not redone: Hyprland's noise (0.0117).
 
+The wallpaper (`current/background`, the backdrop's and the blur's) and the blur options are read when the mode turns on and after every config reload: a theme switch repoints the wallpaper, then reloads Hyprland.
+
 What still differs at the hand-off:
 
 - A floating window's shadow comes back after the landing.

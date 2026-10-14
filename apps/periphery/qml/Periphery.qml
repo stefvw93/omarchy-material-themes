@@ -920,6 +920,9 @@ Item {
       if (event.name === "configreloaded") {
         root.luaSent = ""
         root.sendLuaState()
+        // A theme switch repoints current/background before it reloads
+        // Hyprland, so this is when the backdrop's wallpaper changes.
+        if (!wallpaperProc.running) wallpaperProc.running = true
         if (!decorProc.running) decorProc.running = true
         if (!blurProc.running) blurProc.running = true
         root.windowProps = ({})
