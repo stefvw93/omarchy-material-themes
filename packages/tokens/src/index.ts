@@ -56,6 +56,7 @@ export const TokensSchema = Schema.Struct({
     size: Schema.Literals(groupbarSizes),
     gap: Step,
     padding: Step,
+    inset: Step,
   }),
   blur: Schema.Struct({
     size: Px,

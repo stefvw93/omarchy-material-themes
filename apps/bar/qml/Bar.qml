@@ -1477,7 +1477,7 @@ Item {
           width: barWindow.width
         }, barWindow.edges)
     readonly property var edges: Model.floatingEdges(root.gapsOut, root.gapsIn, root.position)
-    readonly property real sideMargin: barWindow.bodyGeometry.narrowed ? 0 : Math.round(Style.space(8) / 2)
+    readonly property real sideMargin: barWindow.bodyGeometry.narrowed ? 0 : (tokens.m3.space[tokens.value.bar.inset] || 0)
     property bool bodySettled: false
     onWidthChanged: if (width > 0 && !bodySettled) Qt.callLater(function() { barWindow.bodySettled = true })
     SpringValue { id: bodyX; spring: tokens.springs.spatial_default; epsilon: 0.5; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.x }

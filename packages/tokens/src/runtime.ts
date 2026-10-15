@@ -111,6 +111,8 @@ export const defaultTokens = {
     gap: "space25" as MeasurementStep,
     /** At both ends of a segment, on top of the widgets' own margins (≈ 12dp in all, the xsmall button's leading space). */
     padding: "space50" as MeasurementStep,
+    /** Docked, from the screen's left and right edges to the first and last segment (floating, none: they line up with the windows). */
+    inset: "space50" as MeasurementStep,
   },
   /**
    * The one exception to M3's opaque surfaces: flyouts opened from the bar
@@ -161,6 +163,7 @@ export const tokenChoices: Readonly<Record<string, ReadonlyArray<unknown>>> = {
   "bar.size": groupbarSizes,
   "bar.gap": measurementSteps,
   "bar.padding": measurementSteps,
+  "bar.inset": measurementSteps,
   "layout.margin": measurementSteps,
   "layout.spacer": measurementSteps,
   "layout.workspaceGap": measurementSteps,

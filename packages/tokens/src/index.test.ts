@@ -74,25 +74,33 @@ describe("resolveTokens", () => {
 });
 
 describe("bar tokens", () => {
-  it("default to a round extra-small connected group with the spec's 2dp gap", () => {
+  it("default to a round extra-small connected group with the spec's 2dp gap, inset 4dp", () => {
     expect(defaultTokens.bar).toEqual({
       shape: "round",
       size: "xsmall",
       gap: "space25",
       padding: "space50",
+      inset: "space50",
     });
   });
 
   it("take known choices and reject the rest", () => {
     const tokens = resolveTokens(
-      JSON.stringify({ version: 2, bar: { shape: "square", size: "blob", padding: "space100" } }),
+      JSON.stringify({
+        version: 2,
+        bar: { shape: "square", size: "blob", padding: "space100", inset: "space300" },
+      }),
     );
     expect(tokens.bar).toEqual({
       shape: "square",
       size: "xsmall",
       gap: "space25",
       padding: "space100",
+      inset: "space300",
     });
+    expect(resolveTokens(JSON.stringify({ version: 2, bar: { inset: "12px" } })).bar.inset).toBe(
+      "space50",
+    );
   });
 });
 
