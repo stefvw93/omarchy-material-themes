@@ -9,8 +9,10 @@ import "lib/text.mjs" as Text
 // Omaterial theme pins every type size, so nothing follows it. This service
 // rescales the theme's sizes and text containers by base-size / 12 whenever
 // the text size or the theme changes, from the unscaled sizes the theme ships
-// in omaterial.json. Under other themes there is no omaterial.json; it does
-// nothing.
+// in omaterial.json. What comes from the tokens (the type scale, the bar and
+// its icon buttons) is taken from the live tokens.json, so Studio's changes
+// apply without re-applying the theme. Under other themes there is no
+// omaterial.json; it does nothing.
 Item {
   id: root
 
@@ -22,16 +24,24 @@ Item {
   property var spec: null
   property string appliedGroupbar: ""
 
+  // The user's design tokens, live from tokens.json.
+  Tokens {
+    id: tokens
+    textBase: Style.fontBaseSize // qmllint disable missing-property
+    onValueChanged: Qt.callLater(root.apply)
+  }
+
   function apply() {
     if (!root.spec) return
     var base = Style.fontBaseSize // qmllint disable missing-property
-    var patch = Text.shellPatch(root.spec, base, Color.themeShellValues) // qmllint disable missing-property
+    var spec = Text.liveSpec(root.spec, tokens.value, tokens.m3.comp) // qmllint disable missing-property
+    var patch = Text.shellPatch(spec, base, Color.themeShellValues) // qmllint disable missing-property
     if (patch) {
       // Same path as a theme switch: the theme's values, then the user's on top.
       Color.themeShellValues = patch // qmllint disable missing-property
       Color.mergeShell() // qmllint disable missing-property
     }
-    var lua = Text.groupbarLua(root.spec, base) // qmllint disable missing-property
+    var lua = Text.groupbarLua(spec, base) // qmllint disable missing-property
     if (lua !== root.appliedGroupbar && !groupbarProc.running) {
       root.appliedGroupbar = lua
       if (lua) {

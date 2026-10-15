@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
-import { groupbarLua, shellPatch, specOf, type TextSpec } from "./text.ts";
+import { defaultTokens } from "@stef/tokens/runtime";
+import { groupbarLua, liveSpec, shellPatch, specOf, type TextSpec } from "./text.ts";
 
 const spec: TextSpec = {
   typeScale: 1,
@@ -50,5 +51,32 @@ describe("groupbarLua", () => {
 
   it("is empty without group bar keys", () => {
     expect(groupbarLua({ ...spec, sizes: {}, containers: {} }, 20)).toBe("");
+  });
+});
+
+describe("liveSpec", () => {
+  const comp = {
+    "md.comp.icon-button.xsmall.container.height": 32,
+    "md.comp.icon-button.xsmall.icon.size": 20,
+    "md.comp.icon-button.xsmall.narrow.leading-space": 4,
+    "md.comp.icon-button.xsmall.default.leading-space": 6,
+    "md.comp.icon-button.xsmall.wide.leading-space": 10,
+  };
+
+  it("takes the type scale from the live tokens, not the theme", () => {
+    const tokens = { ...defaultTokens, type: { scale: 1.5 } };
+    expect(liveSpec(spec, tokens, comp).typeScale).toBe(1.5);
+    expect(shellPatch(liveSpec(spec, tokens, comp), 12, theme)!["font.body"]).toBe("21");
+  });
+
+  it("sizes the bar from the live tokens", () => {
+    const tokens = { ...defaultTokens, bar: { ...defaultTokens.bar, gap: "space50" as const } };
+    const live = liveSpec(spec, tokens, comp);
+    expect(live.containers["bar.size-horizontal"]).toEqual({ height: 40, lineHeight: 20 });
+    expect(live.sizes["font.body"]).toBe(14);
+  });
+
+  it("keeps the theme's bar without the M3 values", () => {
+    expect(liveSpec(spec, defaultTokens, {}).containers["bar.size-horizontal"]).toBeUndefined();
   });
 });

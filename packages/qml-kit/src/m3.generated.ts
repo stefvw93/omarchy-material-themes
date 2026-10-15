@@ -106,6 +106,11 @@ export const m3Data = {
     }
   },
   "comp": {
+    "md.comp.icon-button.xsmall.container.height": 32,
+    "md.comp.icon-button.xsmall.icon.size": 20,
+    "md.comp.icon-button.xsmall.narrow.leading-space": 4,
+    "md.comp.icon-button.xsmall.default.leading-space": 6,
+    "md.comp.icon-button.xsmall.wide.leading-space": 10,
     "md.comp.filled-card.container.color": {
       "role": "surface-container-highest"
     },

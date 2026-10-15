@@ -16,6 +16,7 @@ import {
   nearestButton,
   segmentCorners,
   segmentPlan,
+  standsAlone,
   stateLayerPart,
   transparency,
 } from "./model.ts";
@@ -451,5 +452,28 @@ describe("glyphFontSize", () => {
 
   it("keeps the icon size when the extent is unknown", () => {
     expect(glyphFontSize(20, 0)).toBe(20);
+  });
+});
+
+describe("standing alone", () => {
+  it("is the workspaces", () => {
+    expect(standsAlone("omarchy.workspaces")).toBe(true);
+    expect(standsAlone("omarchy.menu")).toBe(false);
+  });
+
+  it("keeps an alone icon item out of its icon neighbours' segment", () => {
+    const plan = segmentPlan(
+      [
+        { visible: true, icon: true },
+        { visible: true, icon: true, alone: true },
+        { visible: true, icon: true },
+      ],
+      "left",
+    );
+    expect(plan.map((p) => [p.start, p.end])).toEqual([
+      ["outer", "inner"],
+      ["inner", "inner"],
+      ["inner", "outer"],
+    ]);
   });
 });

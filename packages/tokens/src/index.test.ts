@@ -1,6 +1,9 @@
 import { Schema } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import {
+  barTextSpec,
+  iconButtonAt,
+  iconButtonDpOf,
   cornerRadius,
   cssVariables,
   defaultTokens,
@@ -109,6 +112,43 @@ describe("bar tokens", () => {
     expect(resolveTokens(JSON.stringify({ version: 2, bar: { inset: "12px" } })).bar.inset).toBe(
       "space50",
     );
+  });
+});
+
+describe("bar icon buttons", () => {
+  const button = {
+    containerHeight: 32,
+    iconSize: 20,
+    leadingSpace: { narrow: 4, default: 6, wide: 10 },
+  };
+
+  it("make the bar a button with the gap above and below", () => {
+    expect(barTextSpec(defaultTokens, button, 20).containers["bar.size-horizontal"]).toEqual({
+      height: 36,
+      lineHeight: 20,
+    });
+    const gap = { ...defaultTokens, bar: { ...defaultTokens.bar, gap: "space50" as const } };
+    expect(barTextSpec(gap, button, 20).containers["bar.size-vertical"]!.height).toBe(40);
+  });
+
+  it("are an icon of the chosen width, scaled with the text size and type scale", () => {
+    expect(iconButtonAt(defaultTokens, button, 12)).toEqual({ iconSize: 20, width: 32 });
+    const wide = { ...defaultTokens, bar: { ...defaultTokens.bar, iconWidth: "wide" as const } };
+    expect(iconButtonAt(wide, button, 12)).toEqual({ iconSize: 20, width: 40 });
+    expect(iconButtonAt(defaultTokens, button, 18)).toEqual({ iconSize: 30, width: 42 });
+    expect(iconButtonAt({ ...defaultTokens, type: { scale: 1.5 } }, button, 12).iconSize).toBe(30);
+  });
+
+  it("read the button from the plugins' M3 values, or nothing", () => {
+    const comp = {
+      "md.comp.icon-button.xsmall.container.height": 32,
+      "md.comp.icon-button.xsmall.icon.size": 20,
+      "md.comp.icon-button.xsmall.narrow.leading-space": 4,
+      "md.comp.icon-button.xsmall.default.leading-space": 6,
+      "md.comp.icon-button.xsmall.wide.leading-space": 10,
+    };
+    expect(iconButtonDpOf(comp)).toEqual(button);
+    expect(iconButtonDpOf({})).toBeNull();
   });
 });
 

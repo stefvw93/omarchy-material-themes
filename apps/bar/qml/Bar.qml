@@ -876,7 +876,7 @@ Item {
       // knob, and its content but for what it hides while closed.
       var contentWidth = item ? item.implicitWidth - (match.revealed ? 0 : (match.hiddenExtent || 0)) + (match.knobWidth || 0) : 0
       var shown = !!item && item.visible && contentWidth > 0
-      items.push({ group: entries[i].group, visible: shown, icon: shown && Model.isIconItem(contentWidth, Style.bar.iconSlot, root.entryId(entries[i])) })
+      items.push({ group: entries[i].group, visible: shown, icon: shown && Model.isIconItem(contentWidth, root.iconButton.width, root.entryId(entries[i])), alone: Model.standsAlone(root.entryId(entries[i])) })
       if (index < 0 && key === own) index = i
     }
     var plan = Model.segmentPlan(items, slot.region)
@@ -2075,6 +2075,15 @@ Item {
   Component { id: forkedIndicators; IndicatorsWidget {} }
   Component { id: forkedTray; TrayWidget {} }
 
+  // stef.bar: every icon button in the bar, from the live tokens and text
+  // size (interpretation bar.icons): `width` and `iconSize` in px. Omarchy's
+  // Style takes only the bar's sizes from a theme, so the bar applies these
+  // itself; its fallbacks only until the tokens load.
+  readonly property var iconButton: {
+    var button = Model.iconButtonDpOf(tokens.m3.comp)
+    return button ? Model.iconButtonAt(tokens.value, button, Style.fontBaseSize) : { width: Style.bar.iconSlot, iconSize: Style.bar.iconCanvas }
+  }
+
   // stef.bar: one rule for every icon button in the bar, stock or ours
   // (GlyphFit.qml; interpretation bar.icons): each BarIconButton found in a
   // slot gets a GlyphFit, once.
@@ -2088,7 +2097,7 @@ Item {
       if (kid && kid.opticalSize !== undefined && kid.slotSize !== undefined && kid.fixedWidth !== undefined
           && root.glyphFitted.indexOf(kid) === -1) {
         root.glyphFitted = root.glyphFitted.filter(function(b) { return !!b }).concat([kid])
-        glyphFitComponent.createObject(kid, { button: kid })
+        glyphFitComponent.createObject(kid, { button: kid, host: root })
       }
       root.fitIconButtons(kid)
     }
@@ -2174,6 +2183,10 @@ Item {
     property bool revealed: false
     Timer { id: closeDrawer; interval: 120; onTriggered: slot.revealed = false }
     Binding { when: slot.isDrawer; target: slot.activeItem; property: "revealed"; value: slot.revealed }
+    // Our forks' icon buttons that aren't BarIconButtons (the workspaces'
+    // numbers, the tray's icons) take the bar's icon button too.
+    Binding { when: !!slot.activeItem && slot.activeItem.iconSlot !== undefined; target: slot.activeItem; property: "iconSlot"; value: root.iconButton.width }
+    Binding { when: !!slot.activeItem && slot.activeItem.iconSize !== undefined; target: slot.activeItem; property: "iconSize"; value: root.iconButton.iconSize }
     readonly property bool hasKnob: isDrawer && (hiddenExtent > 0 || revealed)
     readonly property real knobWidth: hasKnob ? drawerKnob.implicitWidth : 0
     readonly property bool knobHovered: hasKnob && knobHover.hovered

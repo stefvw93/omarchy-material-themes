@@ -13,6 +13,7 @@ import { type MotionSchemeName, motionSchemes } from "@stef/motion";
 import { measurementTokens } from "@stef/m3/sys/measurement";
 import { shapeTokens } from "@stef/m3/sys/shape";
 import { resolveToken } from "@stef/m3/token";
+import { scaleText } from "./text-scale.ts";
 
 /** md.sys.measurement steps (space100 = 8dp). */
 export const measurementSteps = [
@@ -307,3 +308,72 @@ export const layoutOf = (tokens: Tokens) => ({
 
 /** Where the user override lives, relative to $HOME. */
 export const tokensFile = ".config/omarchy/stef/tokens.json";
+
+/** M3's extra-small icon button, in dp: what the bar's sizes are made of (interpretation bar.icons). */
+export interface IconButtonDp {
+  readonly containerHeight: number;
+  readonly iconSize: number;
+  readonly leadingSpace: Readonly<Record<IconButtonWidth, number>>;
+}
+
+/** The extra-small icon button from the plugins' M3 component values (tokens.m3.comp); null without them. */
+export const iconButtonDpOf = (comp: Readonly<Record<string, unknown>>): IconButtonDp | null => {
+  const dp = (name: string) => {
+    const v = comp[`md.comp.icon-button.xsmall.${name}`];
+    return typeof v === "number" ? v : undefined;
+  };
+  const containerHeight = dp("container.height");
+  const iconSize = dp("icon.size");
+  const narrow = dp("narrow.leading-space");
+  const regular = dp("default.leading-space");
+  const wide = dp("wide.leading-space");
+  if (
+    containerHeight === undefined ||
+    iconSize === undefined ||
+    narrow === undefined ||
+    regular === undefined ||
+    wide === undefined
+  )
+    return null;
+  return { containerHeight, iconSize, leadingSpace: { narrow, default: regular, wide } };
+};
+
+/**
+ * The bar's height from the tokens (interpretation bar.icons), at 1×: a full
+ * extra-small icon button with tokens.bar.gap above and below, as a container
+ * that grows by a line of body text. Omarchy's shell takes only the bar's
+ * sizes from a theme; the theme writer and stef.omaterial (live) share this.
+ */
+export const barTextSpec = (tokens: Tokens, button: IconButtonDp, bodyLineHeight: number) => {
+  const bar = {
+    height: button.containerHeight + 2 * spacing(tokens.bar.gap),
+    lineHeight: bodyLineHeight,
+  };
+  return {
+    containers: { "bar.size-horizontal": bar, "bar.size-vertical": bar } as Record<
+      string,
+      { readonly height: number; readonly lineHeight: number }
+    >,
+  };
+};
+
+/**
+ * Every icon button in the bar at the user's text size (interpretation
+ * bar.icons), in px: the icon, and the button's width (the icon and
+ * tokens.bar.iconWidth's space either side), which grows by the icon. The
+ * shell can't be given these, so stef.bar applies them itself.
+ */
+export const iconButtonAt = (tokens: Tokens, button: IconButtonDp, baseSize: number) => {
+  const icon = button.iconSize;
+  const scaled = scaleText(
+    {
+      typeScale: tokens.type.scale,
+      sizes: { icon },
+      containers: {
+        width: { height: icon + 2 * button.leadingSpace[tokens.bar.iconWidth], lineHeight: icon },
+      },
+    },
+    baseSize,
+  );
+  return { iconSize: scaled["icon"]!, width: scaled["width"]! };
+};

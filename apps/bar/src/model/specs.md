@@ -30,13 +30,13 @@ The bar's own decisions, without Qt: Periphery's focus area and where the body g
 
 ## Segments
 
-`segmentPlan(items, section)`, `items` in layout order `{ group?, visible, icon }`: for each item, how its part of a segment is drawn, `{ visible, start, end, gapAfter }`.
+`segmentPlan(items, section)`, `items` in layout order `{ group?, visible, icon, alone? }`: for each item, how its part of a segment is drawn, `{ visible, start, end, gapAfter }`.
 
 - An item's group is its `group` when it is a non-empty string, else `section`.
 - Hidden items get `{ visible: false, start: "join", end: "join", gapAfter: false }` and are skipped for everything else: the visible items before and after a hidden one are neighbours.
 - `start` and `end` say what is at that side of the item, against its visible neighbour on that side:
   - `"outer"`: no neighbour in the same group (the group's first or last);
-  - `"join"`: a neighbour in the same group, and both are icon items: they share one segment;
+  - `"join"`: a neighbour in the same group, and both are icon items, neither `alone`: they share one segment;
   - `"inner"`: otherwise, a neighbour in the same group in another segment.
 - `gapAfter`: the next visible item exists and is in another group.
 
@@ -57,6 +57,8 @@ The bar's own decisions, without Qt: Periphery's focus area and where the body g
 At `width = full` every pin gives `startPad`. A drawer that hides part of its content settles narrower than `full` (`drawerWidth`); pinned to the end, its hidden part then sits before `startPad`, under the knob.
 
 `drawerWidth(full, hiddenExtent, revealed)`: the width a drawer's slot settles at: `full` while revealed, else `full − hiddenExtent`, never below 0. A widget that hides nothing has `hiddenExtent` 0.
+
+`standsAlone(id)`: whether a widget is always a segment of its own, even among icon items: the workspaces (`omarchy.workspaces`), a control of their own, set off from the menu beside them.
 
 `isIconItem(contentWidth, iconWidth, id)`: whether a widget counts as an icon item: its content is no wider than `iconWidth` (one icon button, the theme's icon slot), or it is a row of icon buttons: the tray (`omarchy.tray`), the indicators (`omarchy.indicators`) or the workspaces (`omarchy.workspaces`). A widget with no width is not.
 

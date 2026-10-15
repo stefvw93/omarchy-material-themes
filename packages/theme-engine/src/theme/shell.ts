@@ -12,6 +12,7 @@ import {
   typographyOf,
 } from "@stef/m3";
 import {
+  barTextSpec,
   groupbarTextSpec,
   layoutSpace,
   type MeasurementStep,
@@ -88,43 +89,37 @@ export const textSpecOf = (input: ShellInput): TextSpec => {
   const { ctx, densityPx } = shell(input);
   const size = (name: TokenName) => typographyOf(name, ctx).size ?? 0;
   const line = (name: TokenName) => typographyOf(name, ctx).lineHeight ?? 0;
-  // The bar holds full extra-small icon buttons, tokens.bar.gap above and
-  // below them (interpretation bar.icons).
-  const bar = {
-    height:
-      numberOf("md.comp.icon-button.xsmall.container.height", ctx) +
-      2 * spacing(input.tokens.bar.gap),
-    lineHeight: line("md.sys.typescale.body-medium"),
-  };
+  // The bar and its icon buttons, from the tokens (interpretation bar.icons):
+  // the same formula stef.omaterial applies live.
+  interpretation("bar.icons");
+  const barSpec = barTextSpec(
+    input.tokens,
+    {
+      containerHeight: numberOf("md.comp.icon-button.xsmall.container.height", ctx),
+      iconSize: numberOf("md.comp.icon-button.xsmall.icon.size", ctx),
+      leadingSpace: {
+        narrow: numberOf("md.comp.icon-button.xsmall.narrow.leading-space", ctx),
+        default: numberOf("md.comp.icon-button.xsmall.default.leading-space", ctx),
+        wide: numberOf("md.comp.icon-button.xsmall.wide.leading-space", ctx),
+      },
+    },
+    line("md.sys.typescale.body-medium"),
+  );
   const button = {
     height: numberOf("md.comp.button.xsmall.container.height", ctx) + densityPx,
     lineHeight: line("md.sys.typescale.label-large"),
   };
-  // Every icon button in the bar (interpretation bar.icons): the icon as a
-  // size, the button's width as a container that grows by the icon.
-  interpretation("bar.icons");
-  const icon = numberOf("md.comp.icon-button.xsmall.icon.size", ctx);
-  const iconSpace = numberOf(
-    `md.comp.icon-button.xsmall.${input.tokens.bar.iconWidth}.leading-space`,
-    ctx,
-  );
-  const iconButton = { height: icon + 2 * iconSpace, lineHeight: icon };
   // Hyprland's group tabs, sized by the tokens (interpretation hyprland.groupbar).
   const groupbar = groupbarTextSpec(input.tokens);
   return {
     typeScale: input.tokens.type.scale,
     sizes: {
       ...Object.fromEntries(Object.entries(fontRoles).map(([key, role]) => [key, size(role)])),
-      "bar.icon-font": icon,
-      "bar.icon-canvas": icon,
       ...groupbar.sizes,
     },
     ...(groupbar.halves ? { halves: groupbar.halves } : {}),
     containers: {
-      "bar.size-horizontal": bar,
-      "bar.size-vertical": bar,
-      "bar.icon-slot": iconButton,
-      "bar.status-slot": iconButton,
+      ...barSpec.containers,
       "spacing.control-height": button,
       "spacing.popup-row-height": {
         height: numberOf("md.comp.menus.menu-item.height", ctx) + densityPx,
@@ -194,17 +189,8 @@ export const shellSections = (input: ShellInput): Readonly<Record<string, ShellS
       "bar.size-vertical",
       `md.comp.icon-button.xsmall.container.height + 2 × tokens.bar.gap (${input.tokens.bar.gap})`,
     ),
-    // Every icon button: an extra-small icon button of tokens.bar.iconWidth (interpretation bar.icons).
-    "icon-font": textScaled("bar.icon-font", "md.comp.icon-button.xsmall.icon.size"),
-    "icon-canvas": textScaled("bar.icon-canvas", "md.comp.icon-button.xsmall.icon.size"),
-    "icon-slot": textScaled(
-      "bar.icon-slot",
-      `md.comp.icon-button.xsmall.icon.size + 2 × ${input.tokens.bar.iconWidth}.leading-space`,
-    ),
-    "status-slot": textScaled(
-      "bar.status-slot",
-      `md.comp.icon-button.xsmall.icon.size + 2 × ${input.tokens.bar.iconWidth}.leading-space`,
-    ),
+    // Omarchy takes only the bar's sizes from a theme: stef.bar sizes its
+    // icon buttons itself (interpretation bar.icons).
   };
 
   const focusIndicator = color("md.comp.menus.menu-item.focus.indicator.color");

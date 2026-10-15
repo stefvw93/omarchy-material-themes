@@ -8,7 +8,3 @@ active           = "#ffb4ab"  # md.comp.badge.color (error)
 scale-with-font  = false  # sizes come from tokens
 size-horizontal  = 36  # md.comp.icon-button.xsmall.container.height + 2 × tokens.bar.gap (space25)
 size-vertical    = 36  # md.comp.icon-button.xsmall.container.height + 2 × tokens.bar.gap (space25)
-icon-font        = 20  # md.comp.icon-button.xsmall.icon.size
-icon-canvas      = 20  # md.comp.icon-button.xsmall.icon.size
-icon-slot        = 32  # md.comp.icon-button.xsmall.icon.size + 2 × default.leading-space
-status-slot      = 32  # md.comp.icon-button.xsmall.icon.size + 2 × default.leading-space

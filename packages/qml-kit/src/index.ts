@@ -15,6 +15,8 @@ export {
 } from "./m3.ts";
 export {
   defaultTokens,
+  iconButtonAt,
+  iconButtonDpOf,
   resolveTokens,
   springsOf,
   tokensFile,

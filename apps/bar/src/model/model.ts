@@ -112,6 +112,8 @@ export interface SegmentItem {
   readonly visible: boolean;
   /** An icon widget: consecutive ones share a segment. */
   readonly icon: boolean;
+  /** Always a segment of its own, even among icon widgets (standsAlone). */
+  readonly alone?: boolean;
 }
 
 /** What is at one side of an item: its group's edge, another segment, or an icon it shares a segment with. */
@@ -140,7 +142,7 @@ export function segmentPlan(items: readonly SegmentItem[], section: string): Seg
   const plan: Segment[] = items.map(() => hiddenSegment);
   const edge = (a: SegmentItem, b: SegmentItem | undefined): SegmentEdge => {
     if (!b || groupOf(b) !== groupOf(a)) return "outer";
-    return a.icon && b.icon ? "join" : "inner";
+    return a.icon && b.icon && !a.alone && !b.alone ? "join" : "inner";
   };
   shown.forEach((i, k) => {
     const item = items[i]!;
@@ -241,6 +243,13 @@ const liveArea = 20 / 24;
 export function glyphFontSize(iconSize: number, extentPerPx: number): number {
   if (!(extentPerPx > 0)) return iconSize;
   return Math.round((iconSize * liveArea) / extentPerPx);
+}
+
+/** Widgets that are always a segment of their own (specs.md). */
+const aloneIds = ["omarchy.workspaces"];
+
+export function standsAlone(id: string): boolean {
+  return aloneIds.indexOf(id) >= 0;
 }
 
 export function nearestButton(buttons: ReadonlyArray<ButtonExtent>, x: number): number {

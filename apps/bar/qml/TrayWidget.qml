@@ -31,7 +31,10 @@ BarWidget {
   readonly property var drawerItems: bucket("drawer")
   readonly property var allItems: bucket("all")
   readonly property int drawerCount: drawerItems.length
-  readonly property int trayItemExtent: Style.bar.iconSlot
+  // stef.bar: the bar's icon button and icon size, set by the bar (interpretation bar.icons).
+  property real iconSlot: Style.bar.iconSlot
+  property real iconSize: Style.bar.iconCanvas
+  readonly property int trayItemExtent: root.iconSlot
   readonly property int trayItemGap: 0
   readonly property int trayJoinGap: 0
   readonly property int drawerExtent: drawerCount > 0 ? drawerCount * trayItemExtent + (drawerCount - 1) * trayItemGap : 0
@@ -759,8 +762,8 @@ BarWidget {
     // stef.bar: the bar's icon size (interpretation bar.icons).
     TrayIcon {
       anchors.centerIn: parent
-      width: Style.bar.iconCanvas
-      height: Style.bar.iconCanvas
+      width: root.iconSize
+      height: root.iconSize
       icon: trayItemRoot.modelData.icon
     }
 

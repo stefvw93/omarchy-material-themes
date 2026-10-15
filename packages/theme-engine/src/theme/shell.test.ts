@@ -1,7 +1,6 @@
 import { defaultTokens } from "@stef/tokens";
 import { describe, expect, it } from "vite-plus/test";
 import { createPaletteFromHex } from "../palette.ts";
-import { scaleText } from "@stef/tokens/text-scale";
 import { shellSections, textSpecOf, tintAlpha } from "./shell.ts";
 
 const palette = createPaletteFromHex("#4285f4", {
@@ -87,25 +86,21 @@ describe("shell sections", () => {
   });
 });
 
-describe("bar icon buttons", () => {
-  const withWidth = (iconWidth: "narrow" | "default" | "wide") =>
-    shellSections({
+describe("the bar", () => {
+  it("is an extra-small icon button with tokens.bar.gap above and below", () => {
+    expect(s["bar"]!["size-horizontal"]!.value).toBe(36);
+    const gap = shellSections({
       palette,
-      tokens: { ...defaultTokens, bar: { ...defaultTokens.bar, iconWidth } },
+      tokens: { ...defaultTokens, bar: { ...defaultTokens.bar, gap: "space50" } },
     });
-
-  it("are extra-small icon buttons: a 20dp icon in a slot of the chosen width", () => {
-    expect(s["bar"]!["icon-font"]!.value).toBe(20);
-    expect(s["bar"]!["icon-canvas"]!.value).toBe(20);
-    expect(withWidth("narrow")["bar"]!["icon-slot"]!.value).toBe(28);
-    expect(withWidth("default")["bar"]!["status-slot"]!.value).toBe(32);
-    expect(withWidth("wide")["bar"]!["icon-slot"]!.value).toBe(40);
+    expect(gap["bar"]!["size-vertical"]!.value).toBe(40);
   });
 
-  it("grow with the text size: the icon by the scale, the slot by the icon", () => {
-    const scaled = scaleText(textSpecOf({ palette, tokens: defaultTokens }), 18);
-    expect(scaled["bar.icon-font"]).toBe(30);
-    expect(scaled["bar.icon-slot"]).toBe(42);
-    expect(scaled["bar.status-slot"]).toBe(42);
+  it("leaves the icon sizes to stef.bar: Omarchy takes only the bar's sizes from a theme", () => {
+    for (const key of ["icon-font", "icon-canvas", "icon-slot", "status-slot"])
+      expect(s["bar"]![key]).toBeUndefined();
+    expect(
+      textSpecOf({ palette, tokens: defaultTokens }).containers["bar.icon-slot"],
+    ).toBeUndefined();
   });
 });

@@ -2,6 +2,7 @@
 // changes (interpretation text.scale). The theme pins every size, so the
 // shell's own base-size scaling never reaches it; this applies the same
 // multiplier the generator does, to the theme's values in the running shell.
+import { barTextSpec, iconButtonDpOf, type Tokens } from "@stef/tokens/runtime";
 import { scaleText, type TextSpec } from "@stef/tokens/text-scale";
 
 export { scaleText, type TextSpec };
@@ -19,6 +20,25 @@ export const specOf = (json: string): TextSpec | null => {
   } catch {
     return null;
   }
+};
+
+/**
+ * The theme's text spec with what comes from the tokens taken from the live
+ * tokens.json: the type scale, and the bar's height (the shared barTextSpec,
+ * interpretation bar.icons). `comp` is the plugins' M3 component values
+ * (tokens.m3.comp); without the icon button's, the theme's bar stays.
+ */
+export const liveSpec = (
+  spec: TextSpec,
+  tokens: Tokens,
+  comp: Readonly<Record<string, unknown>>,
+): TextSpec => {
+  const typeScale = tokens.type.scale;
+  const button = iconButtonDpOf(comp);
+  if (!button) return { ...spec, typeScale };
+  const bodyLine = spec.containers["bar.size-horizontal"]?.lineHeight ?? 20;
+  const bar = barTextSpec(tokens, button, bodyLine);
+  return { ...spec, typeScale, containers: { ...spec.containers, ...bar.containers } };
 };
 
 /** Keys Hyprland owns; the rest are the shell's `section.key`. */

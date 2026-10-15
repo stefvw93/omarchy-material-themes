@@ -34,6 +34,12 @@ export const typeStyles = [
 
 /** Component tokens the plugins read (Phases 10 and 11 of the plan). */
 export const compAllowlist = [
+  // The bar's icon buttons (interpretation bar.icons): sized live by stef.omaterial.
+  "md.comp.icon-button.xsmall.container.height",
+  "md.comp.icon-button.xsmall.icon.size",
+  "md.comp.icon-button.xsmall.narrow.leading-space",
+  "md.comp.icon-button.xsmall.default.leading-space",
+  "md.comp.icon-button.xsmall.wide.leading-space",
   "md.comp.filled-card.container.color",
   "md.comp.filled-card.container.shape",
   "md.comp.filled-card.container.elevation",

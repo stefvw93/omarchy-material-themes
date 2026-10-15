@@ -39,8 +39,9 @@ BarWidget {
     root.bar.run("hyprctl dispatch " + Util.shellQuote("hl.dsp.focus({ workspace = \"" + id + "\" })"))
   }
 
-  // stef.bar: the numbers are icon buttons sharing a segment: no gaps
-  // (interpretation bar.icons).
+  // stef.bar: the numbers are icon buttons sharing a segment: no gaps, the
+  // bar's icon button width, set by the bar (interpretation bar.icons).
+  property real iconSlot: Style.bar.iconSlot
   readonly property real trailingGap: 0
 
   implicitWidth: grid.implicitWidth + trailingGap
@@ -69,7 +70,7 @@ BarWidget {
         opacity: occupied || focused ? 1 : 0.5
         horizontalMargin: 6
         verticalPadding: 6
-        fixedWidth: root.vertical ? root.barSize : Style.bar.iconSlot
+        fixedWidth: root.vertical ? root.barSize : root.iconSlot
         fixedHeight: root.barSize
         onPressed: function() { root.focusWorkspace(modelData) }
       }
