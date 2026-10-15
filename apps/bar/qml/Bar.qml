@@ -1489,14 +1489,18 @@ Item {
     // Docked it is the app bar's container, floating the standard floating
     // toolbar's (surface-container); the colour moves on the effects spring.
     SpringValue { id: bodyFloat; spring: tokens.springs.effects_default; animated: barWindow.bodySettled; target: barWindow.bodyGeometry.narrowed ? 1 : 0 }
+    // While the body moves, by fractions of a pixel, the sections are layers
+    // that move smoothly; the widgets' hinted text would step on its own.
+    readonly property bool bodyMoving: bodyX.running || bodyW.running || bodyMargin.running
     // Floating, the body has no container: its segments carry the colour.
     readonly property color floatingColor: Qt.rgba(root.background.r, root.background.g, root.background.b, 0)
 
     Rectangle {
       id: body
-      x: Math.round(bodyX.value)
-      width: Math.round(bodyW.value)
-      y: root.position === "bottom" ? 0 : Math.round(bodyMargin.value)
+      // stef.bar: unrounded, so it moves smoothly; the springs land on whole pixels.
+      x: bodyX.value
+      width: bodyW.value
+      y: root.position === "bottom" ? 0 : bodyMargin.value
       height: root.vertical ? parent.height : root.barSize
       radius: bodyCorner.value
       color: root.transparent ? "transparent" : root.mixColor(root.background, barWindow.floatingColor, bodyFloat.value)
@@ -1602,20 +1606,25 @@ Item {
       Item {
         anchors.fill: parent
 
-        CenterModules { anchors.fill: parent }
+        CenterModules { anchors.fill: parent; moving: barWindow.bodyMoving }
 
-        // stef.bar: half the stock margin docked, none floating, where the
-        // outer segments line up with the windows (SPEC.md, Segments).
+        // stef.bar: tokens.bar.inset docked, none floating, where the outer
+        // segments line up with the windows (SPEC.md, Segments). Layers while
+        // the body moves (SPEC.md, Following the focus area).
         LeftModules {
           anchors.left: parent.left
           anchors.leftMargin: barWindow.sideMargin
           anchors.verticalCenter: parent.verticalCenter
+          layer.enabled: barWindow.bodyMoving
+          layer.smooth: true
         }
 
         RightModules {
           anchors.right: parent.right
           anchors.rightMargin: barWindow.sideMargin
           anchors.verticalCenter: parent.verticalCenter
+          layer.enabled: barWindow.bodyMoving
+          layer.smooth: true
         }
       }
     }
@@ -1786,6 +1795,9 @@ Item {
     id: centerRoot
 
     property var entries: root.layoutEntries("center")
+    // stef.bar: while the body moves, each piece is a layer, centred by
+    // fractions of a pixel (SPEC.md, Following the focus area).
+    property bool moving: false
     readonly property bool hasAnchor: root.entryIndex(entries, root.centerAnchor) !== -1
     readonly property var anchorEntry: root.findCenterAnchorEntry()
 
@@ -1811,6 +1823,9 @@ Item {
           entries: centerRoot.entries
           region: "center"
           anchors.centerIn: parent
+          anchors.alignWhenCentered: !centerRoot.moving
+          layer.enabled: centerRoot.moving
+          layer.smooth: true
         }
 
         ModuleList {
@@ -1819,6 +1834,8 @@ Item {
           region: "center"
           anchors.right: centerAnchorModule.left
           anchors.verticalCenter: centerAnchorModule.verticalCenter
+          layer.enabled: centerRoot.moving
+          layer.smooth: true
         }
 
         ModuleSlot {
@@ -1827,6 +1844,9 @@ Item {
           entry: centerRoot.anchorEntry
           region: "center"
           anchors.centerIn: parent
+          anchors.alignWhenCentered: !centerRoot.moving
+          layer.enabled: centerRoot.moving
+          layer.smooth: true
         }
 
         ModuleList {
@@ -1835,6 +1855,8 @@ Item {
           region: "center"
           anchors.left: centerAnchorModule.right
           anchors.verticalCenter: centerAnchorModule.verticalCenter
+          layer.enabled: centerRoot.moving
+          layer.smooth: true
         }
       }
     }
