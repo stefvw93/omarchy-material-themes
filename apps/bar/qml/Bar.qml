@@ -2255,7 +2255,9 @@ Item {
       // picked at (0,0) or the last press: the stock bar's widgets start at
       // 0, but a segment's padding puts (0,0) beside the widget, and padded
       // widgets showed an arrow.
-      cursorShape: root.hoverButtonAt(slot, moduleHover.point.position.x, moduleHover.point.position.y) ? Qt.PointingHandCursor : Qt.ArrowCursor
+      // Only while hovered: the lookup walks the widget's items and depends on
+      // their opacity, so unhovered slots re-ran it on every frame of any fade.
+      cursorShape: slot.hovered && root.hoverButtonAt(slot, moduleHover.point.position.x, moduleHover.point.position.y) ? Qt.PointingHandCursor : Qt.ArrowCursor
       // Do not assign drag.target here: ModuleSlot is owned by Row/Column
       // positioners, and mutating slot.x/slot.y can leave stale offsets that
       // make neighboring modules overlap after a small aborted drag.
