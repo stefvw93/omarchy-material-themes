@@ -864,12 +864,23 @@ Item {
     var own = Model.entryKey(slot.entry)
     var items = []
     var index = -1
+    var idIndex = -1
     for (var i = 0; i < entries.length; i++) {
       var key = Model.entryKey(entries[i])
       var match = null
       for (var j = 0; j < root.moduleSlots.length; j++) {
         var other = root.moduleSlots[j]
         if (other && Model.entryKey(other.entry) === key && root.sameWindow(root.slotWindow(other), window)) { match = other; break }
+      }
+      // stef.bar: a widget's inline settings change in place (the tray's
+      // pinned and hidden lists), leaving its slot's entry behind the
+      // layout's; then find it by id in the same section.
+      if (!match) {
+        for (var m = 0; m < root.moduleSlots.length; m++) {
+          var byId = root.moduleSlots[m]
+          if (byId && byId.region === slot.region && root.entryId(byId.entry) === root.entryId(entries[i])
+              && root.sameWindow(root.slotWindow(byId), window)) { match = byId; break }
+        }
       }
       var item = match ? match.activeItem : null
       // stef.bar: what shows of a drawer (SPEC.md, Segments: Drawers): its
@@ -878,7 +889,9 @@ Item {
       var shown = !!item && item.visible && contentWidth > 0
       items.push({ group: entries[i].group, visible: shown, icon: shown && Model.isIconItem(contentWidth, root.iconButton.width, root.entryId(entries[i])), alone: Model.standsAlone(root.entryId(entries[i])) })
       if (index < 0 && key === own) index = i
+      if (idIndex < 0 && root.entryId(entries[i]) === root.entryId(slot.entry)) idIndex = i
     }
+    if (index < 0) index = idIndex
     var plan = Model.segmentPlan(items, slot.region)
     if (index < 0) return { visible: false, start: "join", end: "join", gapAfter: false, icon: false }
     // stef.bar: whether it is an icon item, which has no segment padding.
@@ -2218,7 +2231,7 @@ Item {
     // numbers, the tray's icons) take the bar's icon button too.
     Binding { when: !!slot.activeItem && slot.activeItem.iconSlot !== undefined; target: slot.activeItem; property: "iconSlot"; value: root.iconButton.width }
     Binding { when: !!slot.activeItem && slot.activeItem.iconSize !== undefined; target: slot.activeItem; property: "iconSize"; value: root.iconButton.iconSize }
-    readonly property bool hasKnob: isDrawer && (hiddenExtent > 0 || revealed)
+    readonly property bool hasKnob: isDrawer && (hiddenExtent > 0 || revealed || activeItem.keepsKnob === true)
     readonly property real knobWidth: hasKnob ? drawerKnob.implicitWidth : 0
     readonly property bool knobHovered: hasKnob && knobHover.hovered
     readonly property real contentX: Model.contentX(pin, width, fullWidth, startPad + knobWidth)

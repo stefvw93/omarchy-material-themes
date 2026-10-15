@@ -19,6 +19,10 @@ BarWidget {
   // stef.bar: horizontal, set by the bar; `hiddenExtent` is the drawer it hides.
   property bool revealed: false
   readonly property real hiddenExtent: root.vertical ? 0 : drawerExtent
+  // stef.bar: the knob stays while there are any apps, hidden ones included:
+  // a right click on it is the way to the icon manager, so hiding every app
+  // mustn't take it away.
+  readonly property bool keepsKnob: !root.vertical && allItems.length > 0
   property bool managePopupOpen: false
   property bool trayMenuOpen: false
   property var activeTrayItem: null
@@ -220,7 +224,7 @@ BarWidget {
     persistTrayState(p, h)
   }
 
-  visible: pinnedItems.length > 0 || drawerCount > 0
+  visible: pinnedItems.length > 0 || drawerCount > 0 || keepsKnob
   clip: false
   implicitWidth: root.vertical ? root.barSize : trayContent.implicitWidth
   implicitHeight: root.vertical ? trayContent.implicitHeight : root.barSize
