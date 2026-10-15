@@ -2222,6 +2222,8 @@ Item {
       bar: root
       x: slot.startPad
       height: parent.height
+      // The status icons' slot, as the weather and the indicators themselves.
+      slotSize: Style.bar.statusSlot
       // A handle, not a button: nf-md-drag_vertical in on-surface-variant, no
       // state layer, tooltip or click (SPEC.md, Segments: The indicators' knob).
       text: "\udb80\udddb"
