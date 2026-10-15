@@ -225,6 +225,24 @@ export function drawerWidth(full: number, hiddenExtent: number, revealed: boolea
   return revealed ? full : Math.max(0, full - hiddenExtent);
 }
 
+/** Whether a button's text is one glyph (specs.md, Icon buttons). */
+export function isSingleGlyph(text: string): boolean {
+  if (text.length === 1) return true;
+  if (text.length !== 2) return false;
+  const high = text.charCodeAt(0);
+  const low = text.charCodeAt(1);
+  return high >= 0xd800 && high <= 0xdbff && low >= 0xdc00 && low <= 0xdfff;
+}
+
+/** A Material icon's live area: 20 of its 24 grid units. */
+const liveArea = 20 / 24;
+
+/** The font size at which a glyph fills the live area at `iconSize` (specs.md). */
+export function glyphFontSize(iconSize: number, extentPerPx: number): number {
+  if (!(extentPerPx > 0)) return iconSize;
+  return Math.round((iconSize * liveArea) / extentPerPx);
+}
+
 export function nearestButton(buttons: ReadonlyArray<ButtonExtent>, x: number): number {
   for (let i = 0; i + 1 < buttons.length; i++) {
     const here = buttons[i]!;

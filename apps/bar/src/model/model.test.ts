@@ -5,6 +5,8 @@ import {
   drawerWidth,
   cssGapsOf,
   entryKey,
+  glyphFontSize,
+  isSingleGlyph,
   exclusiveZone,
   floatingEdges,
   isIconItem,
@@ -423,5 +425,31 @@ describe("contentX for a closed drawer", () => {
   it("puts the hidden part before the start, under the knob", () => {
     // full 4 + 160 + 0; closed: 160 − 96 hidden.
     expect(contentX("end", drawerWidth(164, 96, false), 164, 4)).toBe(-92);
+  });
+});
+
+describe("isSingleGlyph", () => {
+  it("is one code point, a surrogate pair included", () => {
+    expect(isSingleGlyph("\uf053")).toBe(true);
+    expect(isSingleGlyph("\udb80\uddd8")).toBe(true);
+  });
+
+  it("is not empty text or more than one glyph", () => {
+    expect(isSingleGlyph("")).toBe(false);
+    expect(isSingleGlyph("45% \udb80\udc79")).toBe(false);
+    expect(isSingleGlyph("ab")).toBe(false);
+  });
+});
+
+describe("glyphFontSize", () => {
+  it("fills the live area, 20 of 24 units of the icon", () => {
+    // A glyph as wide as its font size: 20 × 20 / 24.
+    expect(glyphFontSize(20, 1)).toBe(17);
+    // A glyph drawn at 0.6 of its font size needs a bigger one.
+    expect(glyphFontSize(20, 0.6)).toBe(28);
+  });
+
+  it("keeps the icon size when the extent is unknown", () => {
+    expect(glyphFontSize(20, 0)).toBe(20);
   });
 });

@@ -144,11 +144,11 @@
     },
     "containers": {
       "bar.size-horizontal": {
-        "height": 32,
+        "height": 36,
         "lineHeight": 20
       },
       "bar.size-vertical": {
-        "height": 32,
+        "height": 36,
         "lineHeight": 20
       },
       "bar.icon-slot": {

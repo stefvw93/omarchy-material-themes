@@ -52,7 +52,7 @@ describe("shell sections", () => {
   it("size the shell from the type scale and components", () => {
     expect(v("font", "body")).toBe(14);
     expect(v("font", "heading")).toBe(22);
-    expect(v("bar", "size-horizontal")).toBe(32);
+    expect(v("bar", "size-horizontal")).toBe(36);
     expect(v("spacing", "control-height")).toBe(32);
     expect(v("spacing", "popup-row-height")).toBe(44);
   });
@@ -72,7 +72,7 @@ describe("shell sections", () => {
     // 20 + label-large line 20 × 0.5; 32 + menu-item label line 20 × 0.5.
     expect(dense["spacing"]?.["control-height"]?.value).toBe(30);
     expect(dense["spacing"]?.["popup-row-height"]?.value).toBe(42);
-    expect(dense["bar"]?.["size-horizontal"]?.value).toBe(42);
+    expect(dense["bar"]?.["size-horizontal"]?.value).toBe(46);
     // Padding and icons do not scale.
     expect(dense["spacing"]?.["control-padding-y"]?.value).toBe(0);
     expect(dense["font"]?.["icon"]?.value).toBe(20);

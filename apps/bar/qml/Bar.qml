@@ -2075,6 +2075,25 @@ Item {
   Component { id: forkedIndicators; IndicatorsWidget {} }
   Component { id: forkedTray; TrayWidget {} }
 
+  // stef.bar: one rule for every icon button in the bar, stock or ours
+  // (GlyphFit.qml; interpretation bar.icons): each BarIconButton found in a
+  // slot gets a GlyphFit, once.
+  Component { id: glyphFitComponent; GlyphFit {} }
+  property var glyphFitted: []
+  function fitIconButtons(node) {
+    if (!node) return
+    var kids = node.children || []
+    for (var i = 0; i < kids.length; i++) {
+      var kid = kids[i]
+      if (kid && kid.opticalSize !== undefined && kid.slotSize !== undefined && kid.fixedWidth !== undefined
+          && root.glyphFitted.indexOf(kid) === -1) {
+        root.glyphFitted = root.glyphFitted.filter(function(b) { return !!b }).concat([kid])
+        glyphFitComponent.createObject(kid, { button: kid })
+      }
+      root.fitIconButtons(kid)
+    }
+  }
+
   component ModuleSlot: Item {
     id: slot
 
@@ -2464,7 +2483,18 @@ Item {
       }
     }
 
-    onActiveItemChanged: Qt.callLater(injectProps)
+    onActiveItemChanged: {
+      Qt.callLater(injectProps)
+      fitTimer.restart()
+    }
+    // stef.bar: fit the slot's icon buttons, again whenever its widget
+    // changes size (indicators and tray icons come and go).
+    Timer { id: fitTimer; interval: 0; onTriggered: root.fitIconButtons(slot) }
+    Connections {
+      target: slot.activeItem
+      ignoreUnknownSignals: true
+      function onImplicitWidthChanged() { fitTimer.restart() }
+    }
     onModuleSettingsChanged: injectProps()
 
     function injectProps() {

@@ -60,6 +60,12 @@ At `width = full` every pin gives `startPad`. A drawer that hides part of its co
 
 `isIconItem(contentWidth, iconWidth, id)`: whether a widget counts as an icon item: its content is no wider than `iconWidth` (one icon button, the theme's icon slot), or it is a row of icon buttons: the tray (`omarchy.tray`), the indicators (`omarchy.indicators`) or the workspaces (`omarchy.workspaces`). A widget with no width is not.
 
+## Icon buttons
+
+`isSingleGlyph(text)`: whether a button's text is one glyph: one code point, a surrogate pair included. Empty text and anything longer (a percentage beside an icon) is not.
+
+`glyphFontSize(iconSize, extentPerPx)`: the font size at which a glyph fills a Material icon's live area at `iconSize`: 20 of the icon's 24 grid units, so `iconSize × 20 / 24`. `extentPerPx` is the glyph's visible extent (the larger of its tight width and height) per pixel of font size. Rounded to a whole pixel; `iconSize` when the extent is unknown (0 or less).
+
 `entryKey(entry)`: an entry's content as a string that doesn't depend on key order (objects' keys sorted, at every depth), so an entry and a copy of it with reordered keys (as a QML Repeater hands its delegates) give the same key.
 
 ## Legibility shadow

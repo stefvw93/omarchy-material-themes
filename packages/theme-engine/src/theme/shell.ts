@@ -88,8 +88,12 @@ export const textSpecOf = (input: ShellInput): TextSpec => {
   const { ctx, densityPx } = shell(input);
   const size = (name: TokenName) => typographyOf(name, ctx).size ?? 0;
   const line = (name: TokenName) => typographyOf(name, ctx).lineHeight ?? 0;
+  // The bar holds full extra-small icon buttons, tokens.bar.gap above and
+  // below them (interpretation bar.icons).
   const bar = {
-    height: numberOf("md.comp.icon-button.xsmall.container.height", ctx),
+    height:
+      numberOf("md.comp.icon-button.xsmall.container.height", ctx) +
+      2 * spacing(input.tokens.bar.gap),
     lineHeight: line("md.sys.typescale.body-medium"),
   };
   const button = {
@@ -184,9 +188,12 @@ export const shellSections = (input: ShellInput): Readonly<Record<string, ShellS
     // The bar holds extra-small icon buttons and body text (interpretation text.scale).
     "size-horizontal": textScaled(
       "bar.size-horizontal",
-      "md.comp.icon-button.xsmall.container.height",
+      `md.comp.icon-button.xsmall.container.height + 2 × tokens.bar.gap (${input.tokens.bar.gap})`,
     ),
-    "size-vertical": textScaled("bar.size-vertical", "md.comp.icon-button.xsmall.container.height"),
+    "size-vertical": textScaled(
+      "bar.size-vertical",
+      `md.comp.icon-button.xsmall.container.height + 2 × tokens.bar.gap (${input.tokens.bar.gap})`,
+    ),
     // Every icon button: an extra-small icon button of tokens.bar.iconWidth (interpretation bar.icons).
     "icon-font": textScaled("bar.icon-font", "md.comp.icon-button.xsmall.icon.size"),
     "icon-canvas": textScaled("bar.icon-canvas", "md.comp.icon-button.xsmall.icon.size"),
