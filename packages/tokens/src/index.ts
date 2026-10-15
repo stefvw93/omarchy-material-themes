@@ -17,6 +17,7 @@ import {
   densityLevels,
   groupbarShapes,
   groupbarSizes,
+  iconButtonWidths,
   measurementSteps,
   spacing,
   springsOf,
@@ -57,6 +58,7 @@ export const TokensSchema = Schema.Struct({
     gap: Step,
     padding: Step,
     inset: Step,
+    iconWidth: Schema.Literals(iconButtonWidths),
   }),
   blur: Schema.Struct({
     size: Px,

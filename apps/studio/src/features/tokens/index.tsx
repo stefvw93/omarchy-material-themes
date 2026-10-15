@@ -70,8 +70,8 @@ const groups: ReadonlyArray<{
   {
     title: "Bar",
     description:
-      "stef.bar's segments, an M3 connected button group: round (outer corners full, inner the size's corner) or square, the button size's corner, the gap between segments (the spec's 2dp), the padding at a segment's ends, and the docked bar's inset from the screen's sides",
-    paths: ["bar.shape", "bar.size", "bar.gap", "bar.padding", "bar.inset"],
+      "stef.bar's segments, an M3 connected button group: round (outer corners full, inner the size's corner) or square, the button size's corner, the gap between segments (the spec's 2dp), the padding at a text segment's ends (icon buttons space themselves), the docked bar's inset from the screen's sides, and the width of every icon button (M3's narrow, default or wide extra-small icon button)",
+    paths: ["bar.shape", "bar.size", "bar.gap", "bar.padding", "bar.inset", "bar.iconWidth"],
   },
   {
     title: "Bar flyouts (not M3)",

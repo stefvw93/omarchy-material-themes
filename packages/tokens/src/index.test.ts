@@ -81,6 +81,7 @@ describe("bar tokens", () => {
       gap: "space25",
       padding: "space50",
       inset: "space50",
+      iconWidth: "default",
     });
   });
 
@@ -88,7 +89,13 @@ describe("bar tokens", () => {
     const tokens = resolveTokens(
       JSON.stringify({
         version: 2,
-        bar: { shape: "square", size: "blob", padding: "space100", inset: "space300" },
+        bar: {
+          shape: "square",
+          size: "blob",
+          padding: "space100",
+          inset: "space300",
+          iconWidth: "wide",
+        },
       }),
     );
     expect(tokens.bar).toEqual({
@@ -97,6 +104,7 @@ describe("bar tokens", () => {
       gap: "space25",
       padding: "space100",
       inset: "space300",
+      iconWidth: "wide",
     });
     expect(resolveTokens(JSON.stringify({ version: 2, bar: { inset: "12px" } })).bar.inset).toBe(
       "space50",

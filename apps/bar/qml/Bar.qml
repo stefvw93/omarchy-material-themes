@@ -875,11 +875,14 @@ Item {
       // stef.bar: the indicators' knob keeps their segment, and counts in its width.
       var contentWidth = item ? item.implicitWidth + (match.knobWidth || 0) : 0
       var shown = !!item && item.visible && contentWidth > 0
-      items.push({ group: entries[i].group, visible: shown, icon: shown && Model.isIconItem(contentWidth, root.barSize, root.entryId(entries[i])) })
+      items.push({ group: entries[i].group, visible: shown, icon: shown && Model.isIconItem(contentWidth, Style.bar.iconSlot, root.entryId(entries[i])) })
       if (index < 0 && key === own) index = i
     }
     var plan = Model.segmentPlan(items, slot.region)
-    return index >= 0 ? plan[index] : { visible: false, start: "join", end: "join", gapAfter: false }
+    if (index < 0) return { visible: false, start: "join", end: "join", gapAfter: false, icon: false }
+    // stef.bar: whether it is an icon item, which has no segment padding.
+    var part = plan[index]
+    return { visible: part.visible, start: part.start, end: part.end, gapAfter: part.gapAfter, icon: items[index].icon }
   }
 
   // Hyprland's gaps [top, right, bottom, left], which follow the tokens'
@@ -2108,9 +2111,10 @@ Item {
     onSegmentChanged: if (segment && segment.visible) lastShownSegment = segment
     readonly property var drawnSegment: segment && !segment.visible && slotWidth.running && lastShownSegment ? lastShownSegment : segment
     readonly property real gapAfter: segment && segment.gapAfter ? root.groupGap : 0
-    // The bar padding at a segment's ends, not between icons sharing one.
-    readonly property real startPad: segment && segment.visible && segment.start !== "join" ? root.segmentPadding : 0
-    readonly property real endPad: segment && segment.visible && segment.end !== "join" ? root.segmentPadding : 0
+    // The bar padding at a text segment's ends; icon buttons space themselves
+    // (SPEC.md, Segments: Spacing).
+    readonly property real startPad: segment && segment.visible && !segment.icon && segment.start !== "join" ? root.segmentPadding : 0
+    readonly property real endPad: segment && segment.visible && !segment.icon && segment.end !== "join" ? root.segmentPadding : 0
     // Whole pixels, so the segments after a fractional widget (the clock's
     // text) keep even gaps.
     implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : Math.ceil(activeItem.implicitWidth) + knobWidth + startPad + endPad + gapAfter) : 0

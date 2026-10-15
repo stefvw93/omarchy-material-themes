@@ -1,7 +1,8 @@
 import { defaultTokens } from "@stef/tokens";
 import { describe, expect, it } from "vite-plus/test";
 import { createPaletteFromHex } from "../palette.ts";
-import { shellSections, tintAlpha } from "./shell.ts";
+import { scaleText } from "@stef/tokens/text-scale";
+import { shellSections, textSpecOf, tintAlpha } from "./shell.ts";
 
 const palette = createPaletteFromHex("#4285f4", {
   variant: "tonal-spot",
@@ -83,5 +84,28 @@ describe("shell sections", () => {
     for (const [name, section] of Object.entries(s))
       for (const [key, { source }] of Object.entries(section))
         expect(source, `${name}.${key}`).not.toBe("");
+  });
+});
+
+describe("bar icon buttons", () => {
+  const withWidth = (iconWidth: "narrow" | "default" | "wide") =>
+    shellSections({
+      palette,
+      tokens: { ...defaultTokens, bar: { ...defaultTokens.bar, iconWidth } },
+    });
+
+  it("are extra-small icon buttons: a 20dp icon in a slot of the chosen width", () => {
+    expect(s["bar"]!["icon-font"]!.value).toBe(20);
+    expect(s["bar"]!["icon-canvas"]!.value).toBe(20);
+    expect(withWidth("narrow")["bar"]!["icon-slot"]!.value).toBe(28);
+    expect(withWidth("default")["bar"]!["status-slot"]!.value).toBe(32);
+    expect(withWidth("wide")["bar"]!["icon-slot"]!.value).toBe(40);
+  });
+
+  it("grow with the text size: the icon by the scale, the slot by the icon", () => {
+    const scaled = scaleText(textSpecOf({ palette, tokens: defaultTokens }), 18);
+    expect(scaled["bar.icon-font"]).toBe(30);
+    expect(scaled["bar.icon-slot"]).toBe(42);
+    expect(scaled["bar.status-slot"]).toBe(42);
   });
 });

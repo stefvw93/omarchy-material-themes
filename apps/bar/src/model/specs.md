@@ -56,7 +56,7 @@ The bar's own decisions, without Qt: Periphery's focus area and where the body g
 
 At `width = full` every pin gives `startPad`.
 
-`isIconItem(contentWidth, barSize, id)`: whether a widget counts as an icon item: its content is no wider than `barSize`, or it is the tray (`omarchy.tray`). A widget with no width is not.
+`isIconItem(contentWidth, iconWidth, id)`: whether a widget counts as an icon item: its content is no wider than `iconWidth` (one icon button, the theme's icon slot), or it is a row of icon buttons: the tray (`omarchy.tray`) or the indicators (`omarchy.indicators`). A widget with no width is not.
 
 `entryKey(entry)`: an entry's content as a string that doesn't depend on key order (objects' keys sorted, at every depth), so an entry and a copy of it with reordered keys (as a QML Repeater hands its delegates) give the same key.
 

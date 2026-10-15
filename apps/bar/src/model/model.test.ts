@@ -252,12 +252,15 @@ describe("segmentCorners", () => {
 });
 
 describe("isIconItem", () => {
-  it("is a widget no wider than the bar, or the tray", () => {
-    expect(isIconItem(27, 32, "omarchy.audio")).toBe(true);
+  it("is a widget no wider than one icon button, or a row of them", () => {
     expect(isIconItem(32, 32, "omarchy.audio")).toBe(true);
+    expect(isIconItem(40, 40, "omarchy.audio")).toBe(true);
+    expect(isIconItem(41, 40, "omarchy.audio")).toBe(false);
     expect(isIconItem(143, 32, "omarchy.clock")).toBe(false);
     expect(isIconItem(81, 32, "omarchy.tray")).toBe(true);
+    expect(isIconItem(96, 32, "omarchy.indicators")).toBe(true);
     expect(isIconItem(0, 32, "omarchy.audio")).toBe(false);
+    expect(isIconItem(0, 32, "omarchy.indicators")).toBe(false);
   });
 });
 

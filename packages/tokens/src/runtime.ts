@@ -61,6 +61,10 @@ export type GroupbarSize = (typeof groupbarSizes)[number];
 
 /** The connected group's square variant, or its round one (fully round outer corners). */
 export const groupbarShapes = ["square", "round"] as const;
+
+/** md.comp.icon-button widths: the space either side of the icon (narrow, default or wide). */
+export const iconButtonWidths = ["narrow", "default", "wide"] as const;
+export type IconButtonWidth = (typeof iconButtonWidths)[number];
 export type GroupbarShape = (typeof groupbarShapes)[number];
 
 /** Window border width: an outline (1dp) or a focus indicator (3dp). */
@@ -113,6 +117,8 @@ export const defaultTokens = {
     padding: "space50" as MeasurementStep,
     /** Docked, from the screen's left and right edges to the first and last segment (floating, none: they line up with the windows). */
     inset: "space50" as MeasurementStep,
+    /** Every icon button in the bar: an extra-small icon button of this width (interpretation bar.icons). */
+    iconWidth: "default" as IconButtonWidth,
   },
   /**
    * The one exception to M3's opaque surfaces: flyouts opened from the bar
@@ -164,6 +170,7 @@ export const tokenChoices: Readonly<Record<string, ReadonlyArray<unknown>>> = {
   "bar.gap": measurementSteps,
   "bar.padding": measurementSteps,
   "bar.inset": measurementSteps,
+  "bar.iconWidth": iconButtonWidths,
   "layout.margin": measurementSteps,
   "layout.spacer": measurementSteps,
   "layout.workspaceGap": measurementSteps,

@@ -138,6 +138,8 @@
       "font.heading": 22,
       "font.display": 24,
       "font.display-large": 28,
+      "bar.icon-font": 20,
+      "bar.icon-canvas": 20,
       "groupbar.font_size": 14
     },
     "containers": {
@@ -146,6 +148,14 @@
         "lineHeight": 20
       },
       "bar.size-vertical": {
+        "height": 32,
+        "lineHeight": 20
+      },
+      "bar.icon-slot": {
+        "height": 32,
+        "lineHeight": 20
+      },
+      "bar.status-slot": {
         "height": 32,
         "lineHeight": 20
       },

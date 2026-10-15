@@ -8,3 +8,7 @@ active           = "#ba1a1a"  # md.comp.badge.color (error)
 scale-with-font  = false  # sizes come from tokens
 size-horizontal  = 32  # md.comp.icon-button.xsmall.container.height
 size-vertical    = 32  # md.comp.icon-button.xsmall.container.height
+icon-font        = 20  # md.comp.icon-button.xsmall.icon.size
+icon-canvas      = 20  # md.comp.icon-button.xsmall.icon.size
+icon-slot        = 32  # md.comp.icon-button.xsmall.icon.size + 2 × default.leading-space
+status-slot      = 32  # md.comp.icon-button.xsmall.icon.size + 2 × default.leading-space

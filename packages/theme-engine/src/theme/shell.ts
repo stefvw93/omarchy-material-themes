@@ -96,18 +96,31 @@ export const textSpecOf = (input: ShellInput): TextSpec => {
     height: numberOf("md.comp.button.xsmall.container.height", ctx) + densityPx,
     lineHeight: line("md.sys.typescale.label-large"),
   };
+  // Every icon button in the bar (interpretation bar.icons): the icon as a
+  // size, the button's width as a container that grows by the icon.
+  interpretation("bar.icons");
+  const icon = numberOf("md.comp.icon-button.xsmall.icon.size", ctx);
+  const iconSpace = numberOf(
+    `md.comp.icon-button.xsmall.${input.tokens.bar.iconWidth}.leading-space`,
+    ctx,
+  );
+  const iconButton = { height: icon + 2 * iconSpace, lineHeight: icon };
   // Hyprland's group tabs, sized by the tokens (interpretation hyprland.groupbar).
   const groupbar = groupbarTextSpec(input.tokens);
   return {
     typeScale: input.tokens.type.scale,
     sizes: {
       ...Object.fromEntries(Object.entries(fontRoles).map(([key, role]) => [key, size(role)])),
+      "bar.icon-font": icon,
+      "bar.icon-canvas": icon,
       ...groupbar.sizes,
     },
     ...(groupbar.halves ? { halves: groupbar.halves } : {}),
     containers: {
       "bar.size-horizontal": bar,
       "bar.size-vertical": bar,
+      "bar.icon-slot": iconButton,
+      "bar.status-slot": iconButton,
       "spacing.control-height": button,
       "spacing.popup-row-height": {
         height: numberOf("md.comp.menus.menu-item.height", ctx) + densityPx,
@@ -174,6 +187,17 @@ export const shellSections = (input: ShellInput): Readonly<Record<string, ShellS
       "md.comp.icon-button.xsmall.container.height",
     ),
     "size-vertical": textScaled("bar.size-vertical", "md.comp.icon-button.xsmall.container.height"),
+    // Every icon button: an extra-small icon button of tokens.bar.iconWidth (interpretation bar.icons).
+    "icon-font": textScaled("bar.icon-font", "md.comp.icon-button.xsmall.icon.size"),
+    "icon-canvas": textScaled("bar.icon-canvas", "md.comp.icon-button.xsmall.icon.size"),
+    "icon-slot": textScaled(
+      "bar.icon-slot",
+      `md.comp.icon-button.xsmall.icon.size + 2 × ${input.tokens.bar.iconWidth}.leading-space`,
+    ),
+    "status-slot": textScaled(
+      "bar.status-slot",
+      `md.comp.icon-button.xsmall.icon.size + 2 × ${input.tokens.bar.iconWidth}.leading-space`,
+    ),
   };
 
   const focusIndicator = color("md.comp.menus.menu-item.focus.indicator.color");

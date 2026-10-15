@@ -229,9 +229,12 @@ export function nearestButton(buttons: ReadonlyArray<ButtonExtent>, x: number): 
   return buttons.length - 1;
 }
 
-export function isIconItem(contentWidth: number, barSize: number, id: string): boolean {
+/** Widgets that are a row of icon buttons, whatever their width. */
+const iconRows = ["omarchy.tray", "omarchy.indicators"];
+
+export function isIconItem(contentWidth: number, iconWidth: number, id: string): boolean {
   if (!(contentWidth > 0)) return false;
-  return contentWidth <= barSize || id === "omarchy.tray";
+  return contentWidth <= iconWidth || iconRows.indexOf(id) >= 0;
 }
 
 const sortedKeys = (value: unknown): unknown => {
