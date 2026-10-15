@@ -70,10 +70,6 @@ Item {
   // True while the pointer is over any bar, widgets included.
   readonly property bool barHovered: barHoverCount > 0
   property bool centerSectionRevealHeld: false
-  // stef.bar: a click on the indicators' knob keeps them revealed until the
-  // next click (SPEC.md, Segments: The indicators' knob).
-  property bool indicatorsPinned: false
-  onIndicatorsPinnedChanged: if (indicatorsPinned) centerSectionRevealHeld = true; else centerSectionRevealTimer.restart()
   property bool centerHoverRevealSuppressed: false
   property int barConfigSerial: 0
   property string position: "top"
@@ -949,7 +945,7 @@ Item {
     // in setCenterSectionHovered, so a timer left pending by a pointer that dipped
     // off the bar and came back cannot reveal indicators it never pointed at.
     // stef.bar: horizontal, the knob's segment holds it, not the whole bar.
-    onTriggered: if (!root.centerSectionHovered && !root.indicatorsPinned && (!root.vertical ? true : !root.barHovered)) root.centerSectionRevealHeld = false
+    onTriggered: if (!root.centerSectionHovered && (!root.vertical ? true : !root.barHovered)) root.centerSectionRevealHeld = false
   }
 
   function run(command) {
@@ -1104,6 +1100,7 @@ Item {
   }
 
   function moduleClickTargetAt(slot, localX, localY) {
+    if (slot.knobHovered) return null
     for (var i = clickTargets.length - 1; i >= 0; i--) {
       var target = clickTargets[i]
       if (!moduleTargetClickable(target)) continue
@@ -1197,6 +1194,8 @@ Item {
   // stef.bar: the button the pointer lights up: the one under it, else the
   // nearest of several (no dead zone between them), else the click target.
   function hoverButtonAt(slot, localX, localY) {
+    // stef.bar: the indicators' knob is no button, nor anyone else's.
+    if (slot.knobHovered) return null
     var buttons = slotHoverButtons(slot, slot)
     var along = root.vertical ? localY : localX
     for (var i = 0; i < buttons.length; i++) {
@@ -2128,6 +2127,7 @@ Item {
     // content (SPEC.md, Segments: The indicators' knob).
     readonly property bool hasKnob: moduleName === "omarchy.indicators" && !root.vertical
     readonly property real knobWidth: hasKnob ? indicatorsKnob.implicitWidth : 0
+    readonly property bool knobHovered: hasKnob && knobHover.hovered
     readonly property real contentWidth: Math.max(0, implicitWidth - startPad - endPad - gapAfter - knobWidth)
     readonly property real contentX: Model.contentX(pin, width, implicitWidth, startPad + knobWidth)
     clip: slotWidth.running
@@ -2201,7 +2201,7 @@ Item {
         bottomLeftRadius: segmentPart.buttonLayer ? segmentPart.buttonLayer.corners.bottomLeft : parent.bottomLeftRadius
         bottomRightRadius: segmentPart.buttonLayer ? segmentPart.buttonLayer.corners.bottomRight : parent.bottomRightRadius
         color: root.foreground
-        opacity: modulePointer.pressed ? tokens.m3.state.pressed : (slot.hovered ? tokens.m3.state.hover : 0)
+        opacity: slot.knobHovered ? 0 : (modulePointer.pressed ? tokens.m3.state.pressed : (slot.hovered ? tokens.m3.state.hover : 0))
       }
     }
 
@@ -2211,10 +2211,20 @@ Item {
       bar: root
       x: slot.startPad
       height: parent.height
-      // nf-fa-caret: towards where the indicators come out, back once out.
-      text: root.centerSectionRevealHeld ? "\uf0da" : "\uf0d9"
-      tooltipText: root.indicatorsPinned ? "Unpin indicators" : "Pin indicators"
-      onPressed: function() { root.indicatorsPinned = !root.indicatorsPinned }
+      // A handle, not a button: nf-md-drag_vertical in on-surface-variant, no
+      // state layer, tooltip or click (SPEC.md, Segments: The indicators' knob).
+      text: "\udb80\udddb"
+      foreground: themeScheme.color["on-surface-variant"]
+      interactive: false
+      pressable: false
+    }
+
+    // The knob's area, with the segment padding before it.
+    Item {
+      visible: slot.hasKnob
+      width: slot.startPad + slot.knobWidth
+      height: parent.height
+      HoverHandler { id: knobHover }
     }
 
     // stef.bar: the content, clipped after the knob, so the indicators come
