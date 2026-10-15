@@ -13,6 +13,7 @@ import {
   nearestButton,
   segmentCorners,
   segmentPlan,
+  stateLayerPart,
   transparency,
 } from "./model.ts";
 
@@ -375,5 +376,25 @@ describe("contentX", () => {
   it("puts every pin at the start padding once settled", () => {
     for (const pin of ["start", "end", "center"] as const)
       expect(contentX(pin, 100, 100, 4)).toBe(4);
+  });
+});
+
+describe("stateLayerPart", () => {
+  const corners = { topLeft: 16, bottomLeft: 16, topRight: 4, bottomRight: 4 };
+
+  it("is the whole part without a start", () => {
+    expect(stateLayerPart({ width: 90, corners }, 0, 4)).toEqual({ x: 0, width: 90, corners });
+  });
+
+  it("starts after the knob with the inner corner, keeping the part's end corners", () => {
+    expect(stateLayerPart({ width: 90, corners }, 30, 4)).toEqual({
+      x: 30,
+      width: 60,
+      corners: { topLeft: 4, bottomLeft: 4, topRight: 4, bottomRight: 4 },
+    });
+  });
+
+  it("is never narrower than nothing", () => {
+    expect(stateLayerPart({ width: 20, corners }, 30, 4).width).toBe(0);
   });
 });

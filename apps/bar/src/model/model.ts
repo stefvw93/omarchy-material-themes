@@ -202,6 +202,24 @@ export function buttonStateLayer(
   };
 }
 
+export function stateLayerPart(
+  part: { readonly width: number; readonly corners: Corners },
+  start: number,
+  innerCorner: number,
+): StateLayer {
+  if (!(start > 0)) return { x: 0, width: part.width, corners: part.corners };
+  return {
+    x: start,
+    width: Math.max(0, part.width - start),
+    corners: {
+      topLeft: innerCorner,
+      bottomLeft: innerCorner,
+      topRight: part.corners.topRight,
+      bottomRight: part.corners.bottomRight,
+    },
+  };
+}
+
 export function nearestButton(buttons: ReadonlyArray<ButtonExtent>, x: number): number {
   for (let i = 0; i + 1 < buttons.length; i++) {
     const here = buttons[i]!;

@@ -2182,24 +2182,35 @@ Item {
       // several buttons lights up only the hovered one (SPEC.md, Segments).
       readonly property var hoverTarget: slot.hovered && !root.vertical
         ? root.hoverButtonAt(slot, moduleHover.point.position.x, moduleHover.point.position.y) : null
+      // What the state layers may cover: all of the part, or on the
+      // indicators' segment what comes after the knob (SPEC.md, Segments:
+      // The indicators' knob).
+      readonly property var hoverPart: corners
+        ? Model.stateLayerPart({ width: width, corners: corners }, slot.hasKnob ? slot.startPad + slot.knobWidth - x : 0, root.segmentCorner)
+        : null
       readonly property var buttonLayer: {
-        if (!hoverTarget || !corners) return null
+        if (!hoverTarget || !hoverPart) return null
         var buttons = root.slotHoverButtons(slot, segmentPart)
-        if (buttons.length < 2) return null
-        for (var i = 0; i < buttons.length; i++) {
-          if (buttons[i].target === hoverTarget)
-            return Model.buttonStateLayer({ width: segmentPart.width, corners: corners }, buttons, i, root.segmentCorner)
+        if (buttons.length < (slot.hasKnob ? 1 : 2)) return null
+        var from = hoverPart.x
+        var within = buttons.map(function(b) { return { target: b.target, x: b.x - from, width: b.width } })
+        for (var i = 0; i < within.length; i++) {
+          if (within[i].target === hoverTarget) {
+            var layer = Model.buttonStateLayer({ width: hoverPart.width, corners: hoverPart.corners }, within, i, root.segmentCorner)
+            return layer ? { x: layer.x + from, width: layer.width, corners: layer.corners } : null
+          }
         }
         return null
       }
       Rectangle {
-        x: segmentPart.buttonLayer ? segmentPart.buttonLayer.x : 0
-        width: segmentPart.buttonLayer ? segmentPart.buttonLayer.width : parent.width
+        readonly property var area: segmentPart.buttonLayer || segmentPart.hoverPart
+        x: area ? area.x : 0
+        width: area ? area.width : parent.width
         height: parent.height
-        topLeftRadius: segmentPart.buttonLayer ? segmentPart.buttonLayer.corners.topLeft : parent.topLeftRadius
-        topRightRadius: segmentPart.buttonLayer ? segmentPart.buttonLayer.corners.topRight : parent.topRightRadius
-        bottomLeftRadius: segmentPart.buttonLayer ? segmentPart.buttonLayer.corners.bottomLeft : parent.bottomLeftRadius
-        bottomRightRadius: segmentPart.buttonLayer ? segmentPart.buttonLayer.corners.bottomRight : parent.bottomRightRadius
+        topLeftRadius: area ? area.corners.topLeft : parent.topLeftRadius
+        topRightRadius: area ? area.corners.topRight : parent.topRightRadius
+        bottomLeftRadius: area ? area.corners.bottomLeft : parent.bottomLeftRadius
+        bottomRightRadius: area ? area.corners.bottomRight : parent.bottomRightRadius
         color: root.foreground
         opacity: slot.knobHovered ? 0 : (modulePointer.pressed ? tokens.m3.state.pressed : (slot.hovered ? tokens.m3.state.hover : 0))
       }
