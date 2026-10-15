@@ -13,3 +13,25 @@ update the version above.
 diff -u apps/bar/upstream/Bar.qml /usr/share/omarchy/shell/plugins/bar/Bar.qml
 diff -u apps/bar/upstream/Bar.qml apps/bar/qml/Bar.qml   # our changes
 ```
+
+## Forked widgets
+
+`upstream/widgets/` holds the stock widgets stef.bar draws from its own forks
+(`qml/*Widget.qml`, plus `qml/TrayModel.js` unchanged), from the same Omarchy
+version. Bar.qml's `forkedWidgets` maps their ids to the forks.
+
+| Fork                         | Upstream                                       |
+| ---------------------------- | ---------------------------------------------- |
+| `qml/MenuWidget.qml`         | `plugins/menu/BarWidget.qml`                   |
+| `qml/WorkspacesWidget.qml`   | `plugins/bar/widgets/Workspaces.qml`           |
+| `qml/IndicatorsWidget.qml`   | `plugins/bar/widgets/Indicators.qml`           |
+| `qml/TrayWidget.qml`         | `plugins/bar/widgets/Tray.qml` (+ `TrayModel.js`) |
+
+```bash
+diff -u apps/bar/upstream/widgets/Tray.qml /usr/share/omarchy/shell/plugins/bar/widgets/Tray.qml
+diff -u apps/bar/upstream/widgets/Tray.qml apps/bar/qml/TrayWidget.qml   # our changes
+```
+
+The indicators fork loads Omarchy's own indicators (`Dnd.qml`, …) from its
+install (`$OMARCHY_PATH/shell/plugins/bar/indicators/`), as the bar loads every
+other stock widget.

@@ -872,8 +872,9 @@ Item {
         if (other && Model.entryKey(other.entry) === key && root.sameWindow(root.slotWindow(other), window)) { match = other; break }
       }
       var item = match ? match.activeItem : null
-      // stef.bar: the indicators' knob keeps their segment, and counts in its width.
-      var contentWidth = item ? item.implicitWidth + (match.knobWidth || 0) : 0
+      // stef.bar: what shows of a drawer (SPEC.md, Segments: Drawers): its
+      // knob, and its content but for what it hides while closed.
+      var contentWidth = item ? item.implicitWidth - (match.revealed ? 0 : (match.hiddenExtent || 0)) + (match.knobWidth || 0) : 0
       var shown = !!item && item.visible && contentWidth > 0
       items.push({ group: entries[i].group, visible: shown, icon: shown && Model.isIconItem(contentWidth, Style.bar.iconSlot, root.entryId(entries[i])) })
       if (index < 0 && key === own) index = i
@@ -1825,7 +1826,7 @@ Item {
         CenterGestureArea { anchors.fill: parent }
 
         // stef.bar: the indicators' knob reveals them, not the whole centre
-        // (SPEC.md, Segments: The indicators' knob).
+        // (SPEC.md, Segments: Drawers).
 
         ModuleList {
           visible: !centerRoot.hasAnchor
@@ -2060,6 +2061,20 @@ Item {
     }
   }
 
+  // stef.bar: the stock widgets we fork, by id: the menu and the workspaces
+  // as M3 icon buttons, the indicators and the tray as drawers (SPEC.md,
+  // Segments; upstream/README.md).
+  readonly property var forkedWidgets: ({
+    "omarchy.menu": forkedMenu,
+    "omarchy.workspaces": forkedWorkspaces,
+    "omarchy.indicators": forkedIndicators,
+    "omarchy.tray": forkedTray
+  })
+  Component { id: forkedMenu; MenuWidget {} }
+  Component { id: forkedWorkspaces; WorkspacesWidget {} }
+  Component { id: forkedIndicators; IndicatorsWidget {} }
+  Component { id: forkedTray; TrayWidget {} }
+
   component ModuleSlot: Item {
     id: slot
 
@@ -2078,7 +2093,8 @@ Item {
       var w = root.barWidgetRegistry.widgets
       if (customType) return null
       var registryName = root.canonicalWidgetId(moduleName)
-      return w[registryName] ? w[registryName].component : null
+      // stef.bar: our forks of stock widgets stand in for them (upstream/README.md).
+      return w[registryName] ? (root.forkedWidgets[registryName] || w[registryName].component) : null
     }
     readonly property bool qmlCustom: customType === "qml"
     readonly property bool commandCustom: customType === "command"
@@ -2117,7 +2133,11 @@ Item {
     readonly property real endPad: segment && segment.visible && !segment.icon && segment.end !== "join" ? root.segmentPadding : 0
     // Whole pixels, so the segments after a fractional widget (the clock's
     // text) keep even gaps.
-    implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : Math.ceil(activeItem.implicitWidth) + knobWidth + startPad + endPad + gapAfter) : 0
+    readonly property real contentWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : Math.ceil(activeItem.implicitWidth)) : 0
+    // stef.bar: the width at which the whole content shows; a drawer settles
+    // narrower while closed (SPEC.md, Segments: Drawers).
+    readonly property real fullWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : contentWidth + knobWidth + startPad + endPad + gapAfter) : 0
+    implicitWidth: Model.drawerWidth(fullWidth, hiddenExtent, revealed)
     implicitHeight: activeItem && activeItem.visible ? activeItem.implicitHeight : 0
     // stef.bar: the slot follows its width on the spatial spring, in whole
     // pixels; the content keeps its own width, pinned to `pin`, and is clipped
@@ -2127,13 +2147,18 @@ Item {
     property bool widthAnimated: false
     Timer { interval: 1000; running: !root.vertical; onTriggered: slot.widthAnimated = true }
     SpringValue { id: slotWidth; spring: tokens.springs.spatial_default; epsilon: 0.5; animated: slot.widthAnimated && !root.vertical; target: slot.implicitWidth }
-    // stef.bar: the indicators' knob sits at the slot's start, before the
-    // content (SPEC.md, Segments: The indicators' knob).
-    readonly property bool hasKnob: moduleName === "omarchy.indicators" && !root.vertical
-    readonly property real knobWidth: hasKnob ? indicatorsKnob.implicitWidth : 0
+    // stef.bar: a drawer (a widget with a `hiddenExtent`: the indicators, the
+    // tray) hides that much of its content's start under a knob at the slot's
+    // start, and reveals it on hover (SPEC.md, Segments: Drawers).
+    readonly property bool isDrawer: !root.vertical && !!activeItem && activeItem.hiddenExtent !== undefined
+    readonly property real hiddenExtent: isDrawer ? activeItem.hiddenExtent : 0
+    property bool revealed: false
+    Timer { id: closeDrawer; interval: 120; onTriggered: slot.revealed = false }
+    Binding { when: slot.isDrawer; target: slot.activeItem; property: "revealed"; value: slot.revealed }
+    readonly property bool hasKnob: isDrawer && (hiddenExtent > 0 || revealed)
+    readonly property real knobWidth: hasKnob ? drawerKnob.implicitWidth : 0
     readonly property bool knobHovered: hasKnob && knobHover.hovered
-    readonly property real contentWidth: Math.max(0, implicitWidth - startPad - endPad - gapAfter - knobWidth)
-    readonly property real contentX: Model.contentX(pin, width, implicitWidth, startPad + knobWidth)
+    readonly property real contentX: Model.contentX(pin, width, fullWidth, startPad + knobWidth)
     clip: slotWidth.running
     width: root.vertical ? implicitWidth : Math.round(slotWidth.value)
     height: implicitHeight
@@ -2147,7 +2172,15 @@ Item {
 
     HoverHandler {
       id: moduleHover
-      onHoveredChanged: if (slot.hasKnob) root.setCenterSectionHovered(hovered)
+      onHoveredChanged: {
+        if (!slot.isDrawer) return
+        if (hovered) {
+          closeDrawer.stop()
+          slot.revealed = true
+        } else {
+          closeDrawer.restart()
+        }
+      }
     }
 
     BorderSurface {
@@ -2162,16 +2195,14 @@ Item {
 
     // stef.bar: the widget's part of its segment. Half the gap in from a side
     // that meets another segment, so neighbours sit the gap apart; flush where
-    // icons share a segment. The tray's part starts where its drawer is drawn.
-    readonly property real revealOffset: activeItem && !root.vertical && activeItem.drawerExtent !== undefined && activeItem.revealExtent !== undefined
-      ? Math.max(0, activeItem.drawerExtent - activeItem.revealExtent) : 0
+    // icons share a segment.
     Rectangle {
       id: segmentPart
       visible: !!slot.drawnSegment && slot.drawnSegment.visible
       readonly property var corners: slot.drawnSegment ? Model.segmentCorners(slot.drawnSegment, tokens.value.bar.shape, height, root.segmentCorner) : null
       readonly property real startInset: slot.drawnSegment && slot.drawnSegment.start === "inner" ? root.segmentGap / 2 : 0
       readonly property real endInset: slot.drawnSegment && slot.drawnSegment.end === "inner" ? root.segmentGap / 2 : 0
-      x: startInset + slot.revealOffset
+      x: startInset
       width: Math.max(0, slot.width - slot.gapAfter - x - endInset)
       height: root.segmentHeight
       y: Math.round((slot.height - height) / 2)
@@ -2186,9 +2217,8 @@ Item {
       // several buttons lights up only the hovered one (SPEC.md, Segments).
       readonly property var hoverTarget: slot.hovered && !root.vertical
         ? root.hoverButtonAt(slot, moduleHover.point.position.x, moduleHover.point.position.y) : null
-      // What the state layers may cover: all of the part, or on the
-      // indicators' segment what comes after the knob (SPEC.md, Segments:
-      // The indicators' knob).
+      // What the state layers may cover: all of the part, or on a drawer's
+      // segment what comes after the knob (SPEC.md, Segments: Drawers).
       readonly property var hoverPart: corners
         ? Model.stateLayerPart({ width: width, corners: corners }, slot.hasKnob ? slot.startPad + slot.knobWidth - x : 0, root.segmentCorner)
         : null
@@ -2221,31 +2251,37 @@ Item {
     }
 
     BarIconButton {
-      id: indicatorsKnob
+      id: drawerKnob
       visible: slot.hasKnob
       bar: root
       x: slot.startPad
       height: parent.height
-      // The status icons' slot, as the weather and the indicators themselves.
-      slotSize: Style.bar.statusSlot
-      // A handle, not a button: nf-md-drag_vertical in on-surface-variant, no
-      // state layer, tooltip or click (SPEC.md, Segments: The indicators' knob).
-      text: "\udb80\udddb"
+      // An icon button like every other in the bar (interpretation bar.icons).
+      slotSize: Style.bar.iconSlot
+      // Not a button: nf-md-dots_horizontal (more_horiz) in on-surface-variant,
+      // no state layer, tooltip or click (SPEC.md, Segments: Drawers).
+      text: "\udb80\uddd8"
       foreground: themeScheme.color["on-surface-variant"]
       interactive: false
       pressable: false
     }
 
-    // The knob's area, with the segment padding before it.
+    // The knob's area, with the segment padding before it. A right-click
+    // there opens the tray's icon manager, as its stock chevron did.
     Item {
       visible: slot.hasKnob
       width: slot.startPad + slot.knobWidth
       height: parent.height
       HoverHandler { id: knobHover }
+      TapHandler {
+        acceptedButtons: Qt.RightButton
+        enabled: !!slot.activeItem && slot.activeItem.managePopupOpen !== undefined
+        onTapped: slot.activeItem.managePopupOpen = !slot.activeItem.managePopupOpen
+      }
     }
 
-    // stef.bar: the content, clipped after the knob, so the indicators come
-    // out from under it as the slot grows.
+    // stef.bar: the content, clipped after the knob, so a drawer's hidden part
+    // comes out from under it as the slot grows, and goes back as it shrinks.
     Item {
       id: contentArea
       x: slot.startPad + slot.knobWidth

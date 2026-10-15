@@ -220,6 +220,11 @@ export function stateLayerPart(
   };
 }
 
+/** The width a drawer's slot settles at (specs.md). */
+export function drawerWidth(full: number, hiddenExtent: number, revealed: boolean): number {
+  return revealed ? full : Math.max(0, full - hiddenExtent);
+}
+
 export function nearestButton(buttons: ReadonlyArray<ButtonExtent>, x: number): number {
   for (let i = 0; i + 1 < buttons.length; i++) {
     const here = buttons[i]!;
@@ -230,7 +235,7 @@ export function nearestButton(buttons: ReadonlyArray<ButtonExtent>, x: number): 
 }
 
 /** Widgets that are a row of icon buttons, whatever their width. */
-const iconRows = ["omarchy.tray", "omarchy.indicators"];
+const iconRows = ["omarchy.tray", "omarchy.indicators", "omarchy.workspaces"];
 
 export function isIconItem(contentWidth: number, iconWidth: number, id: string): boolean {
   if (!(contentWidth > 0)) return false;

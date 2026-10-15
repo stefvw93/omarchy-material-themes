@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import {
   bodyGeometry,
   contentX,
+  drawerWidth,
   cssGapsOf,
   entryKey,
   exclusiveZone,
@@ -260,6 +261,7 @@ describe("isIconItem", () => {
     expect(isIconItem(81, 32, "omarchy.tray")).toBe(true);
     expect(isIconItem(96, 32, "omarchy.indicators")).toBe(true);
     expect(isIconItem(0, 32, "omarchy.audio")).toBe(false);
+    expect(isIconItem(160, 32, "omarchy.workspaces")).toBe(true);
     expect(isIconItem(0, 32, "omarchy.indicators")).toBe(false);
   });
 });
@@ -399,5 +401,27 @@ describe("stateLayerPart", () => {
 
   it("is never narrower than nothing", () => {
     expect(stateLayerPart({ width: 20, corners }, 30, 4).width).toBe(0);
+  });
+});
+
+describe("drawerWidth", () => {
+  it("is the full width while revealed", () => {
+    expect(drawerWidth(160, 96, true)).toBe(160);
+  });
+
+  it("hides the hidden extent while closed, never below nothing", () => {
+    expect(drawerWidth(160, 96, false)).toBe(64);
+    expect(drawerWidth(40, 96, false)).toBe(0);
+  });
+
+  it("is the full width for a widget that hides nothing", () => {
+    expect(drawerWidth(32, 0, false)).toBe(32);
+  });
+});
+
+describe("contentX for a closed drawer", () => {
+  it("puts the hidden part before the start, under the knob", () => {
+    // full 4 + 160 + 0; closed: 160 − 96 hidden.
+    expect(contentX("end", drawerWidth(164, 96, false), 164, 4)).toBe(-92);
   });
 });
