@@ -70,6 +70,10 @@ Item {
   // True while the pointer is over any bar, widgets included.
   readonly property bool barHovered: barHoverCount > 0
   property bool centerSectionRevealHeld: false
+  // stef.bar: a click on the indicators' knob keeps them revealed until the
+  // next click (SPEC.md, Segments: The indicators' knob).
+  property bool indicatorsPinned: false
+  onIndicatorsPinnedChanged: if (indicatorsPinned) centerSectionRevealHeld = true; else centerSectionRevealTimer.restart()
   property bool centerHoverRevealSuppressed: false
   property int barConfigSerial: 0
   property string position: "top"
@@ -872,8 +876,10 @@ Item {
         if (other && Model.entryKey(other.entry) === key && root.sameWindow(root.slotWindow(other), window)) { match = other; break }
       }
       var item = match ? match.activeItem : null
-      var shown = !!item && item.visible && item.implicitWidth > 0
-      items.push({ group: entries[i].group, visible: shown, icon: shown && Model.isIconItem(item.implicitWidth, root.barSize, root.entryId(entries[i])) })
+      // stef.bar: the indicators' knob keeps their segment, and counts in its width.
+      var contentWidth = item ? item.implicitWidth + (match.knobWidth || 0) : 0
+      var shown = !!item && item.visible && contentWidth > 0
+      items.push({ group: entries[i].group, visible: shown, icon: shown && Model.isIconItem(contentWidth, root.barSize, root.entryId(entries[i])) })
       if (index < 0 && key === own) index = i
     }
     var plan = Model.segmentPlan(items, slot.region)
@@ -942,7 +948,8 @@ Item {
     // Collapse only. Opening the peek is the center section's own gesture, done
     // in setCenterSectionHovered, so a timer left pending by a pointer that dipped
     // off the bar and came back cannot reveal indicators it never pointed at.
-    onTriggered: if (!root.centerSectionHovered && !root.barHovered) root.centerSectionRevealHeld = false
+    // stef.bar: horizontal, the knob's segment holds it, not the whole bar.
+    onTriggered: if (!root.centerSectionHovered && !root.indicatorsPinned && (!root.vertical ? true : !root.barHovered)) root.centerSectionRevealHeld = false
   }
 
   function run(command) {
@@ -1815,9 +1822,8 @@ Item {
 
         CenterGestureArea { anchors.fill: parent }
 
-        HoverHandler {
-          onHoveredChanged: root.setCenterSectionHovered(hovered)
-        }
+        // stef.bar: the indicators' knob reveals them, not the whole centre
+        // (SPEC.md, Segments: The indicators' knob).
 
         ModuleList {
           visible: !centerRoot.hasAnchor
@@ -2108,7 +2114,7 @@ Item {
     readonly property real endPad: segment && segment.visible && segment.end !== "join" ? root.segmentPadding : 0
     // Whole pixels, so the segments after a fractional widget (the clock's
     // text) keep even gaps.
-    implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : Math.ceil(activeItem.implicitWidth) + startPad + endPad + gapAfter) : 0
+    implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : Math.ceil(activeItem.implicitWidth) + knobWidth + startPad + endPad + gapAfter) : 0
     implicitHeight: activeItem && activeItem.visible ? activeItem.implicitHeight : 0
     // stef.bar: the slot follows its width on the spatial spring, in whole
     // pixels; the content keeps its own width, pinned to `pin`, and is clipped
@@ -2118,8 +2124,12 @@ Item {
     property bool widthAnimated: false
     Timer { interval: 1000; running: !root.vertical; onTriggered: slot.widthAnimated = true }
     SpringValue { id: slotWidth; spring: tokens.springs.spatial_default; epsilon: 0.5; animated: slot.widthAnimated && !root.vertical; target: slot.implicitWidth }
-    readonly property real contentWidth: Math.max(0, implicitWidth - startPad - endPad - gapAfter)
-    readonly property real contentX: Model.contentX(pin, width, implicitWidth, startPad)
+    // stef.bar: the indicators' knob sits at the slot's start, before the
+    // content (SPEC.md, Segments: The indicators' knob).
+    readonly property bool hasKnob: moduleName === "omarchy.indicators" && !root.vertical
+    readonly property real knobWidth: hasKnob ? indicatorsKnob.implicitWidth : 0
+    readonly property real contentWidth: Math.max(0, implicitWidth - startPad - endPad - gapAfter - knobWidth)
+    readonly property real contentX: Model.contentX(pin, width, implicitWidth, startPad + knobWidth)
     clip: slotWidth.running
     width: root.vertical ? implicitWidth : Math.round(slotWidth.value)
     height: implicitHeight
@@ -2131,7 +2141,10 @@ Item {
       root.unregisterModuleSlot(slot)
     }
 
-    HoverHandler { id: moduleHover }
+    HoverHandler {
+      id: moduleHover
+      onHoveredChanged: if (slot.hasKnob) root.setCenterSectionHovered(hovered)
+    }
 
     BorderSurface {
       visible: slot.dragSource
@@ -2192,48 +2205,70 @@ Item {
       }
     }
 
-    Loader {
-      id: componentLoader
-      active: !slot.qmlCustom && !slot.registered
-      sourceComponent: slot.commandCustom ? customCommandModuleComponent : emptyModuleComponent
-      // stef.bar: the content's own width, at slot.contentX.
-      x: slot.contentX
-      width: slot.contentWidth
+    BarIconButton {
+      id: indicatorsKnob
+      visible: slot.hasKnob
+      bar: root
+      x: slot.startPad
       height: parent.height
-      opacity: slot.dragSource ? 0.22 : 1.0
-      onLoaded: {
-        slot.injectProps()
-        Qt.callLater(slot.injectProps)
-      }
+      // nf-fa-caret: towards where the indicators come out, back once out.
+      text: root.centerSectionRevealHeld ? "\uf0da" : "\uf0d9"
+      tooltipText: root.indicatorsPinned ? "Unpin indicators" : "Pin indicators"
+      onPressed: function() { root.indicatorsPinned = !root.indicatorsPinned }
     }
 
-    Loader {
-      id: registryLoader
-      active: slot.registered
-      sourceComponent: slot.registered ? slot.registryComponent : null
-      // stef.bar: the content's own width, at slot.contentX.
-      x: slot.contentX
-      width: slot.contentWidth
+    // stef.bar: the content, clipped after the knob, so the indicators come
+    // out from under it as the slot grows.
+    Item {
+      id: contentArea
+      x: slot.startPad + slot.knobWidth
+      width: Math.max(0, slot.width - x)
       height: parent.height
-      opacity: slot.dragSource ? 0.22 : 1.0
-      onLoaded: {
-        slot.injectProps()
-        Qt.callLater(slot.injectProps)
-      }
-    }
+      clip: slot.hasKnob || slotWidth.running
 
-    Loader {
-      id: qmlLoader
-      active: slot.qmlCustom
-      source: slot.qmlCustom ? root.customModuleSource(slot.entry) : ""
-      // stef.bar: the content's own width, at slot.contentX.
-      x: slot.contentX
-      width: slot.contentWidth
-      height: parent.height
-      opacity: slot.dragSource ? 0.22 : 1.0
-      onLoaded: {
-        slot.injectProps()
-        Qt.callLater(slot.injectProps)
+      Loader {
+        id: componentLoader
+        active: !slot.qmlCustom && !slot.registered
+        sourceComponent: slot.commandCustom ? customCommandModuleComponent : emptyModuleComponent
+        // stef.bar: the content's own width, at slot.contentX.
+        x: slot.contentX - contentArea.x
+        width: slot.contentWidth
+        height: parent.height
+        opacity: slot.dragSource ? 0.22 : 1.0
+        onLoaded: {
+          slot.injectProps()
+          Qt.callLater(slot.injectProps)
+        }
+      }
+
+      Loader {
+        id: registryLoader
+        active: slot.registered
+        sourceComponent: slot.registered ? slot.registryComponent : null
+        // stef.bar: the content's own width, at slot.contentX.
+        x: slot.contentX - contentArea.x
+        width: slot.contentWidth
+        height: parent.height
+        opacity: slot.dragSource ? 0.22 : 1.0
+        onLoaded: {
+          slot.injectProps()
+          Qt.callLater(slot.injectProps)
+        }
+      }
+
+      Loader {
+        id: qmlLoader
+        active: slot.qmlCustom
+        source: slot.qmlCustom ? root.customModuleSource(slot.entry) : ""
+        // stef.bar: the content's own width, at slot.contentX.
+        x: slot.contentX - contentArea.x
+        width: slot.contentWidth
+        height: parent.height
+        opacity: slot.dragSource ? 0.22 : 1.0
+        onLoaded: {
+          slot.injectProps()
+          Qt.callLater(slot.injectProps)
+        }
       }
     }
 
