@@ -46,6 +46,14 @@ The bar's own decisions, without Qt: Periphery's focus area and where the body g
 
 `nearestButton(buttons, x)`: which of a widget's buttons (extents `{ x, width }` ordered from the start, as for `buttonStateLayer`) a point `x` along the widget belongs to, so the gaps between buttons have no dead zone: each gap is split at its midpoint between its two buttons, and everything before the first button or after the last belongs to that button. No buttons gives -1.
 
+`contentX(pin, width, full, startPad)`: where a widget's content sits in its slot while the slot's width moves to a new width. `width` is the slot's current width, `full` the width it is moving to (the content's own width plus the paddings and the gap after), `startPad` the padding before the content. The content keeps its own width (`full` minus the paddings and the gap) and is pinned by `pin`:
+
+- `"start"`: at `startPad`;
+- `"end"`: so its end stays where it ends at `full`: `width − full + startPad`;
+- `"center"`: halfway between: `startPad + (width − full) / 2`, rounded to a whole pixel.
+
+At `width = full` every pin gives `startPad`.
+
 `isIconItem(contentWidth, barSize, id)`: whether a widget counts as an icon item: its content is no wider than `barSize`, or it is the tray (`omarchy.tray`). A widget with no width is not.
 
 `entryKey(entry)`: an entry's content as a string that doesn't depend on key order (objects' keys sorted, at every depth), so an entry and a copy of it with reordered keys (as a QML Repeater hands its delegates) give the same key.

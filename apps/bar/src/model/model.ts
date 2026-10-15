@@ -31,6 +31,15 @@ export function transparency(transparent: boolean, vertical: boolean): Transpare
   return { segmented: !vertical, onWallpaper: transparent && vertical };
 }
 
+/** Which side of its slot a widget's content is pinned to while the slot's width moves (specs.md). */
+export type SlotPin = "start" | "end" | "center";
+
+export function contentX(pin: SlotPin, width: number, full: number, startPad: number): number {
+  if (pin === "end") return width - full + startPad;
+  if (pin === "center") return startPad + Math.round((width - full) / 2);
+  return startPad;
+}
+
 export function parseFocusEvent(data: string): FocusArea | null {
   const m = /^periphery>>(?:(off)|(\d+),(\d+),([^,\s]+))$/.exec(data);
   if (!m) return null;

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
   bodyGeometry,
+  contentX,
   cssGapsOf,
   entryKey,
   exclusiveZone,
@@ -353,5 +354,26 @@ describe("transparency", () => {
   it("puts a transparent vertical bar's content on the wallpaper", () => {
     expect(transparency(true, true)).toEqual({ segmented: false, onWallpaper: true });
     expect(transparency(false, true)).toEqual({ segmented: false, onWallpaper: false });
+  });
+});
+
+describe("contentX", () => {
+  it("keeps start-pinned content at the start padding", () => {
+    expect(contentX("start", 20, 100, 4)).toBe(4);
+  });
+
+  it("keeps end-pinned content's end where it ends at the full width", () => {
+    expect(contentX("end", 20, 100, 4)).toBe(-76);
+    expect(contentX("end", 130, 100, 4)).toBe(34);
+  });
+
+  it("centres centre-pinned content, in whole pixels", () => {
+    expect(contentX("center", 21, 100, 4)).toBe(-35);
+    expect(contentX("center", 60, 100, 4)).toBe(-16);
+  });
+
+  it("puts every pin at the start padding once settled", () => {
+    for (const pin of ["start", "end", "center"] as const)
+      expect(contentX(pin, 100, 100, 4)).toBe(4);
   });
 });

@@ -1789,6 +1789,7 @@ Item {
   component RightModules: ModuleList {
     entries: root.layoutEntries("right")
     region: "right"
+    pin: "end"
   }
 
   component CenterModules: Item {
@@ -1822,6 +1823,7 @@ Item {
           visible: !centerRoot.hasAnchor
           entries: centerRoot.entries
           region: "center"
+          pin: "center"
           anchors.centerIn: parent
           anchors.alignWhenCentered: !centerRoot.moving
           layer.enabled: centerRoot.moving
@@ -1832,6 +1834,7 @@ Item {
           visible: centerRoot.hasAnchor
           entries: root.entriesBefore(centerRoot.entries, root.centerAnchor)
           region: "center"
+          pin: "end"
           anchors.right: centerAnchorModule.left
           anchors.verticalCenter: centerAnchorModule.verticalCenter
           layer.enabled: centerRoot.moving
@@ -1843,6 +1846,7 @@ Item {
           visible: centerRoot.hasAnchor
           entry: centerRoot.anchorEntry
           region: "center"
+          pin: "center"
           anchors.centerIn: parent
           anchors.alignWhenCentered: !centerRoot.moving
           layer.enabled: centerRoot.moving
@@ -1994,6 +1998,9 @@ Item {
 
     property var entries: []
     property string region: ""
+    // stef.bar: the side its slots' content is pinned to while a slot's width
+    // moves (SPEC.md, Segments: Size changes).
+    property string pin: "start"
 
     visible: entries.length > 0
     // A hidden list must not build its modules. The center section declares
@@ -2019,6 +2026,7 @@ Item {
             required property var modelData
             entry: modelData
             region: moduleListRoot.region
+            pin: moduleListRoot.pin
           }
         }
       }
@@ -2037,6 +2045,7 @@ Item {
             required property var modelData
             entry: modelData
             region: moduleListRoot.region
+            pin: moduleListRoot.pin
           }
         }
       }
@@ -2087,6 +2096,12 @@ Item {
     // stef.bar: the slot's segment, and the layout spacer after the last
     // segment of a group; the content keeps its own width.
     readonly property var segment: root.segmented ? root.segmentFor(slot) : null
+    // The segment as drawn: a widget that empties keeps its last visible
+    // segment while its slot shrinks to nothing (SPEC.md, Segments: Size
+    // changes). The paddings and the width follow the live one.
+    property var lastShownSegment: null
+    onSegmentChanged: if (segment && segment.visible) lastShownSegment = segment
+    readonly property var drawnSegment: segment && !segment.visible && slotWidth.running && lastShownSegment ? lastShownSegment : segment
     readonly property real gapAfter: segment && segment.gapAfter ? root.groupGap : 0
     // The bar padding at a segment's ends, not between icons sharing one.
     readonly property real startPad: segment && segment.visible && segment.start !== "join" ? root.segmentPadding : 0
@@ -2095,7 +2110,18 @@ Item {
     // text) keep even gaps.
     implicitWidth: activeItem && activeItem.visible ? (root.vertical ? root.barSize : Math.ceil(activeItem.implicitWidth) + startPad + endPad + gapAfter) : 0
     implicitHeight: activeItem && activeItem.visible ? activeItem.implicitHeight : 0
-    width: implicitWidth
+    // stef.bar: the slot follows its width on the spatial spring, in whole
+    // pixels; the content keeps its own width, pinned to `pin`, and is clipped
+    // while the slot is moving (SPEC.md, Segments: Size changes). Not while
+    // the bar starts, nor on a vertical bar.
+    property string pin: "start"
+    property bool widthAnimated: false
+    Timer { interval: 1000; running: !root.vertical; onTriggered: slot.widthAnimated = true }
+    SpringValue { id: slotWidth; spring: tokens.springs.spatial_default; epsilon: 0.5; animated: slot.widthAnimated && !root.vertical; target: slot.implicitWidth }
+    readonly property real contentWidth: Math.max(0, implicitWidth - startPad - endPad - gapAfter)
+    readonly property real contentX: Model.contentX(pin, width, implicitWidth, startPad)
+    clip: slotWidth.running
+    width: root.vertical ? implicitWidth : Math.round(slotWidth.value)
     height: implicitHeight
     z: modulePointer.dragging ? 100 : 0
 
@@ -2124,10 +2150,10 @@ Item {
       ? Math.max(0, activeItem.drawerExtent - activeItem.revealExtent) : 0
     Rectangle {
       id: segmentPart
-      visible: !!slot.segment && slot.segment.visible
-      readonly property var corners: slot.segment ? Model.segmentCorners(slot.segment, tokens.value.bar.shape, height, root.segmentCorner) : null
-      readonly property real startInset: slot.segment && slot.segment.start === "inner" ? root.segmentGap / 2 : 0
-      readonly property real endInset: slot.segment && slot.segment.end === "inner" ? root.segmentGap / 2 : 0
+      visible: !!slot.drawnSegment && slot.drawnSegment.visible
+      readonly property var corners: slot.drawnSegment ? Model.segmentCorners(slot.drawnSegment, tokens.value.bar.shape, height, root.segmentCorner) : null
+      readonly property real startInset: slot.drawnSegment && slot.drawnSegment.start === "inner" ? root.segmentGap / 2 : 0
+      readonly property real endInset: slot.drawnSegment && slot.drawnSegment.end === "inner" ? root.segmentGap / 2 : 0
       x: startInset + slot.revealOffset
       width: Math.max(0, slot.width - slot.gapAfter - x - endInset)
       height: root.segmentHeight
@@ -2170,9 +2196,10 @@ Item {
       id: componentLoader
       active: !slot.qmlCustom && !slot.registered
       sourceComponent: slot.commandCustom ? customCommandModuleComponent : emptyModuleComponent
-      anchors.fill: parent
-      anchors.leftMargin: slot.startPad
-      anchors.rightMargin: slot.endPad + slot.gapAfter
+      // stef.bar: the content's own width, at slot.contentX.
+      x: slot.contentX
+      width: slot.contentWidth
+      height: parent.height
       opacity: slot.dragSource ? 0.22 : 1.0
       onLoaded: {
         slot.injectProps()
@@ -2184,9 +2211,10 @@ Item {
       id: registryLoader
       active: slot.registered
       sourceComponent: slot.registered ? slot.registryComponent : null
-      anchors.fill: parent
-      anchors.leftMargin: slot.startPad
-      anchors.rightMargin: slot.endPad + slot.gapAfter
+      // stef.bar: the content's own width, at slot.contentX.
+      x: slot.contentX
+      width: slot.contentWidth
+      height: parent.height
       opacity: slot.dragSource ? 0.22 : 1.0
       onLoaded: {
         slot.injectProps()
@@ -2198,9 +2226,10 @@ Item {
       id: qmlLoader
       active: slot.qmlCustom
       source: slot.qmlCustom ? root.customModuleSource(slot.entry) : ""
-      anchors.fill: parent
-      anchors.leftMargin: slot.startPad
-      anchors.rightMargin: slot.endPad + slot.gapAfter
+      // stef.bar: the content's own width, at slot.contentX.
+      x: slot.contentX
+      width: slot.contentWidth
+      height: parent.height
       opacity: slot.dragSource ? 0.22 : 1.0
       onLoaded: {
         slot.injectProps()
