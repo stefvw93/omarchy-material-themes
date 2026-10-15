@@ -847,12 +847,20 @@ Item {
   readonly property real segmentHeight: root.barSize - 2 * root.segmentGap
   readonly property real segmentCorner: tokens.m3.connectedButtonGroup.corners[tokens.value.bar.size] || 0
   readonly property real groupGap: root.gapsIn[0] + root.gapsIn[2]
-  // Docked the segments are one step up from the bar (surface-container-high),
-  // floating the floating toolbar's surface-container; on the effects spring.
+  // Docked on the body the segments are surface-container-highest, the top of
+  // the container scale over the bar's surface; docked on a transparent bar
+  // surface-container-high; floating the floating toolbar's
+  // surface-container; on the effects spring.
+  // Both are as translucent as the bar's body: the shell's [bar]
+  // background-alpha (spec exception shell.translucency, SPEC.md, Colour).
   SpringValue { id: floatMix; spring: tokens.springs.effects_default; target: root.focusArea && root.focusArea.on && !root.vertical ? 1 : 0 }
   function mixColor(a, b, t) { return Qt.rgba(a.r + (b.r - a.r) * t, a.g + (b.g - a.g) * t, a.b + (b.b - a.b) * t, a.a + (b.a - a.a) * t) }
-  readonly property color segmentDocked: themeScheme.color["surface-container-high"]
-  readonly property color segmentFloating: themeScheme.color["surface-container"]
+  function barAlpha(c) { return Qt.rgba(c.r, c.g, c.b, root.background.a) }
+  // Typed as colours first: the scheme's roles are hex strings, which have no .r/.g/.b.
+  readonly property color containerDocked: themeScheme.color[root.transparent ? "surface-container-high" : "surface-container-highest"]
+  readonly property color containerColor: themeScheme.color["surface-container"]
+  readonly property color segmentDocked: root.barAlpha(root.containerDocked)
+  readonly property color segmentFloating: root.barAlpha(root.containerColor)
   readonly property color segmentColor: root.mixColor(root.segmentDocked, root.segmentFloating, floatMix.value)
 
   // A slot's segment: its section's visible entries, in layout order, on its

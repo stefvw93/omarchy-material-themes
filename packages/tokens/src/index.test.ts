@@ -16,6 +16,8 @@ import {
   spacing,
   springsOf,
   TokensSchema,
+  translucencyLua,
+  translucentAlpha,
 } from "./index.ts";
 
 describe("defaultTokens", () => {
@@ -213,11 +215,28 @@ describe("migrateTokens", () => {
       JSON.stringify({ version: 2, flyouts: { alpha: 0.8, blur: { size: 9, passes: 2 } } }),
     );
     expect(tokens.blur).toEqual({ size: 9, passes: 2 });
-    expect(tokens.flyouts.alpha).toBe(0.8);
+    expect(tokens.translucency.flyouts.alpha).toBe(0.8);
     const both = resolveTokens(
       JSON.stringify({ version: 2, blur: { size: 4 }, flyouts: { blur: { size: 9 } } }),
     );
     expect(both.blur.size).toBe(4);
+  });
+
+  it("moves an older v2's flyouts to translucency.flyouts", () => {
+    const tokens = resolveTokens(
+      JSON.stringify({ version: 2, flyouts: { translucent: false, alpha: 0.8 } }),
+    );
+    expect(tokens.translucency.flyouts).toEqual({ enabled: false, alpha: 0.8 });
+    expect(tokens.translucency.bar).toEqual(defaultTokens.translucency.bar);
+    expect(migrateTokens({ version: 2, flyouts: {} })).not.toHaveProperty("flyouts");
+    const both = resolveTokens(
+      JSON.stringify({
+        version: 2,
+        flyouts: { alpha: 0.8 },
+        translucency: { flyouts: { enabled: true, alpha: 0.7 } },
+      }),
+    );
+    expect(both.translucency.flyouts.alpha).toBe(0.7);
   });
 });
 
@@ -233,6 +252,10 @@ describe("layoutOf", () => {
 
 describe("hyprlandTokensLua", () => {
   const lua = hyprlandTokensLua(defaultTokens);
+  const off = {
+    bar: { enabled: false, alpha: 0.85 },
+    flyouts: { enabled: false, alpha: 0.9 },
+  };
 
   it("sets spec gaps, border and corner", () => {
     expect(gapsOf(defaultTokens)).toEqual({ outer: 24, inner: 12, workspaces: 32 });
@@ -289,9 +312,36 @@ describe("hyprlandTokensLua", () => {
     );
   });
 
-  it("blurs the flyouts with the shared blur", () => {
+  it("blurs the bar and the flyouts with the shared blur", () => {
     expect(lua).toContain('namespace = "^omarchy-(bar|osd|keyboard-panel)$"');
     expect(lua).toContain("size = 6,\n      passes = 3,");
+    expect(lua).toContain('name = "m3-translucency"');
+    expect(lua).toContain("enabled = true, blur = true");
+  });
+
+  it("blurs behind every pixel above the lowest alpha that is on", () => {
+    expect(translucentAlpha(defaultTokens)).toBe(0.85);
+    expect(lua).toContain("ignore_alpha = 0.84 ");
+    const flyoutsOnly = {
+      ...defaultTokens,
+      translucency: { ...defaultTokens.translucency, bar: { enabled: false, alpha: 0.6 } },
+    };
+    expect(translucentAlpha(flyoutsOnly)).toBe(0.9);
+    expect(translucencyLua(flyoutsOnly)).toContain("ignore_alpha = 0.89 ");
+  });
+
+  it("is a Lua string hyprctl eval takes, not one it reads as a flag", () => {
+    expect(translucencyLua(defaultTokens)).toMatch(/^hl\.layer_rule\(/);
+  });
+
+  it("blurs with only the bar translucent", () => {
+    const barOnly = hyprlandTokensLua({
+      ...defaultTokens,
+      translucency: { ...defaultTokens.translucency, flyouts: { enabled: false, alpha: 0.9 } },
+      special: { blur: false },
+    });
+    expect(barOnly).toContain("enabled = true,");
+    expect(barOnly).toContain("ignore_alpha = 0.84 ");
   });
 
   it("puts the scrim behind a special workspace, blurred unless the token is off", () => {
@@ -304,12 +354,9 @@ describe("hyprlandTokensLua", () => {
     expect(unblurred).toContain("layer_rule");
   });
 
-  it("blurs the special workspace with the flyouts' exception off", () => {
-    const opaque = hyprlandTokensLua({
-      ...defaultTokens,
-      flyouts: { ...defaultTokens.flyouts, translucent: false },
-    });
-    expect(opaque).not.toContain("layer_rule");
+  it("blurs the special workspace with the translucency exception off", () => {
+    const opaque = hyprlandTokensLua({ ...defaultTokens, translucency: off });
+    expect(opaque).toContain("enabled = false, blur = true");
     expect(opaque).toContain("enabled = true,");
     expect(opaque).toContain("special = true,");
   });
@@ -317,10 +364,11 @@ describe("hyprlandTokensLua", () => {
   it("blurs nothing with both off, and keeps the scrim", () => {
     const none = hyprlandTokensLua({
       ...defaultTokens,
-      flyouts: { ...defaultTokens.flyouts, translucent: false },
+      translucency: off,
       special: { blur: false },
     });
-    expect(none).not.toContain("layer_rule");
+    expect(none).toContain('name = "m3-translucency"');
+    expect(none).toContain("enabled = false, blur = true");
     expect(none).toContain("enabled = false,");
     expect(none).toContain("dim_special = 0.32,");
   });

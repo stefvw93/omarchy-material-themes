@@ -98,11 +98,12 @@ The widgets sit in segments, like ChromeOS's shelf: each group of widgets is an 
 
 ### Colour
 
-| Bar         | Docked (full width)                                                                               | Floating (narrowed to the focus area)                            |
-| ----------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Opaque      | body: the app bar's `surface` (the theme's `[bar] background`); segments `surface-container-high` | body: none; segments: the floating toolbar's `surface-container` |
-| Transparent | body: none; segments `surface-container-high`                                                     | as opaque                                                        |
+| Bar         | Docked (full width)                                                                                  | Floating (narrowed to the focus area)                            |
+| ----------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Opaque      | body: the app bar's `surface` (the theme's `[bar] background`); segments `surface-container-highest` | body: none; segments: the floating toolbar's `surface-container` |
+| Transparent | body: none; segments `surface-container-high`                                                        | as opaque                                                        |
 
+- Translucent (a spec exception, `shell.translucency`; all exceptions in `apps/studio/docs/m3-exceptions.md`): the body and the segments, docked and floating, take the alpha of the shell's `[bar] background` (`tokens.translucency.bar`, 0.85 by default; 1 when it is off in Studio's Tokens > Translucency), which the theme writes and `stef.omaterial` keeps live. A docked segment is translucent on the translucent body. Hyprland blurs what is behind them (the `m3-translucency` layer rule, with the shared `tokens.blur`), as ChromeOS blurs behind its shelf. The text, icons, state layers and the selected container stay opaque.
 - Text is `on-surface` throughout: docked the theme's `[bar] text`, floating from the same colour roles as the segments.
 - The colours change between docked and floating on the effects default spring.
 - Nothing floating has elevation. The spec allows that over a visually distinct background (the segments float over the wallpaper), and a shadow wouldn't fit: the bar window ends right below the body, because the stock popups place themselves from its height.
@@ -128,7 +129,7 @@ The shell calls the bar (as `shell.bar`) and stock widgets use it as `bar`. The 
 | ------------- | ----- | -------------------------- | --------------------------- | -------- |
 | `omarchy-bar` | Top   | full width, `barSize` high | `barSize`, none when hidden | the body |
 
-The namespace is the stock bar's: the flyout blur rule and other rules match it. Popups (`PopupCard`, `KeyboardPanel`) assume the window spans its edge; only the body narrows.
+The namespace is the stock bar's: the translucency blur rule (`m3-translucency`, for the body, the segments and the popups) and other rules match it. Popups (`PopupCard`, `KeyboardPanel`) assume the window spans its edge; only the body narrows.
 
 ## Out of scope (milestone 1)
 

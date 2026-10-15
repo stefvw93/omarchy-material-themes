@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vite-plus/test";
 import { defaultTokens } from "@stef/tokens/runtime";
-import { groupbarLua, liveSpec, shellPatch, specOf, type TextSpec } from "./text.ts";
+import {
+  groupbarLua,
+  liveSpec,
+  shellPatch,
+  specOf,
+  type TextSpec,
+  translucencyPatch,
+} from "./text.ts";
 
 const spec: TextSpec = {
   typeScale: 1,
@@ -78,5 +85,39 @@ describe("liveSpec", () => {
 
   it("keeps the theme's bar without the M3 values", () => {
     expect(liveSpec(spec, defaultTokens, {}).containers["bar.size-horizontal"]).toBeUndefined();
+  });
+});
+
+describe("translucencyPatch", () => {
+  const written = {
+    "bar.background-alpha": "0.85",
+    "popups.background-alpha": "0.9",
+    "menu.text": "#ffffff",
+  };
+
+  it("is null when the theme has the tokens' alphas", () => {
+    expect(translucencyPatch(defaultTokens, written)).toBeNull();
+  });
+
+  it("puts in the live alphas and keeps the rest", () => {
+    const tokens = {
+      ...defaultTokens,
+      translucency: {
+        bar: { enabled: true, alpha: 0.7 },
+        flyouts: { enabled: true, alpha: 0.9 },
+      },
+    };
+    expect(translucencyPatch(tokens, written)).toEqual({
+      ...written,
+      "bar.background-alpha": "0.7",
+    });
+  });
+
+  it("makes a surface that is off opaque", () => {
+    const tokens = {
+      ...defaultTokens,
+      translucency: { ...defaultTokens.translucency, flyouts: { enabled: false, alpha: 0.9 } },
+    };
+    expect(translucencyPatch(tokens, written)?.["popups.background-alpha"]).toBe("1");
   });
 });

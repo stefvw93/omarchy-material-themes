@@ -59,17 +59,22 @@ describe("theme files", () => {
     }),
   );
 
-  it.effect("keep the shell opaque, except the flyouts when the exception is on", () =>
+  it.effect("keep the shell opaque, except the bar and flyouts while translucent", () =>
     Effect.gen(function* () {
       const on = yield* render();
       expect(on["shell.popups.toml"]).toMatch(/background-alpha = 0\.9 /);
-      for (const name of ["bar", "tooltip", "notifications", "menu", "polkit", "lock"])
+      expect(on["shell.bar.toml"]).toMatch(/background-alpha = 0\.85 /);
+      for (const name of ["tooltip", "notifications", "menu", "polkit", "lock"])
         expect(on[`shell.${name}.toml`], name).toMatch(/background-alpha\s+= 1 /);
       const off = yield* render({
         ...defaultTokens,
-        flyouts: { ...defaultTokens.flyouts, translucent: false },
+        translucency: {
+          bar: { ...defaultTokens.translucency.bar, enabled: false },
+          flyouts: { ...defaultTokens.translucency.flyouts, enabled: false },
+        },
       });
       expect(off["shell.popups.toml"]).toMatch(/background-alpha = 1 /);
+      expect(off["shell.bar.toml"]).toMatch(/background-alpha = 1 /);
     }),
   );
 });

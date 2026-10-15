@@ -23,7 +23,8 @@ import {
 const ranges: Record<string, { min: number; max: number; step: number; unit?: string }> = {
   // One step is 1px of body text (md.sys.typescale.body-medium is 14).
   "type.scale": { min: 10 / 14, max: 28 / 14, step: 1 / 14, unit: "×" },
-  "flyouts.alpha": { min: 0.5, max: 1, step: 0.01 },
+  "translucency.bar.alpha": { min: 0.5, max: 1, step: 0.01 },
+  "translucency.flyouts.alpha": { min: 0.5, max: 1, step: 0.01 },
   "blur.size": { min: 0, max: 20, step: 1 },
   "blur.passes": { min: 0, max: 8, step: 1 },
   "expo.tileScaleFrom": { min: 0.5, max: 1, step: 0.01 },
@@ -65,10 +66,15 @@ const groups: ReadonlyArray<{
     paths: ["bar.shape", "bar.size", "bar.gap", "bar.padding", "bar.inset", "bar.iconWidth"],
   },
   {
-    title: "Bar flyouts (not M3)",
+    title: "Translucency (not M3)",
     description:
-      "The one exception to M3's opaque surfaces: popups opened from the bar may be translucent over a blur",
-    paths: ["flyouts.translucent", "flyouts.alpha"],
+      "A spec exception, as ChromeOS's shelf: the bar and the flyouts opened from it are translucent over the blur, each at its own alpha; off is opaque, as M3 has it",
+    paths: [
+      "translucency.bar.enabled",
+      "translucency.bar.alpha",
+      "translucency.flyouts.enabled",
+      "translucency.flyouts.alpha",
+    ],
   },
   {
     title: "Special workspace",
@@ -78,7 +84,8 @@ const groups: ReadonlyArray<{
   },
   {
     title: "Blur (not M3)",
-    description: "Hyprland's one blur, behind the bar flyouts and the special workspace",
+    description:
+      "Hyprland's one blur, behind the translucent bar and flyouts and the special workspace",
     paths: ["blur.size", "blur.passes"],
   },
   {

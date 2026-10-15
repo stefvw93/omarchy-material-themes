@@ -16,6 +16,7 @@ export default defineConfig({
       "apps/lock/upstream/**",
       "apps/studio/docs/material-3/**",
       "apps/studio/docs/m3-interpretations.md",
+      "apps/studio/docs/m3-exceptions.md",
       "packages/m3/spec/**",
       "packages/m3/src/generated/**",
       "packages/qml-kit/src/m3.generated.ts",

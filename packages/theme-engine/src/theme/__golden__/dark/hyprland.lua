@@ -56,8 +56,8 @@ hl.config({
 -- Elevation: tiled windows rest at level 0 (no shadow), floating windows at level 3.
 hl.window_rule({ name = "m3-tiled-level0", match = { float = false }, no_shadow = true })
 
--- The one non-M3 exception: bar flyouts are translucent over a blurred backdrop.
-hl.layer_rule({ name = "m3-flyouts", match = { namespace = "^omarchy-(bar|osd|keyboard-panel)$" }, blur = true, blur_popups = true, ignore_alpha = 0.89 })
+-- Not M3 (the spec exception shell.translucency): the bar and its flyouts are translucent over a blurred backdrop.
+hl.layer_rule({ name = "m3-translucency", match = { namespace = "^omarchy-(bar|osd|keyboard-panel)$" }, enabled = true, blur = true, blur_popups = true, ignore_alpha = 0.84 })
 
 -- Material 3 "standard" springs (md.sys.motion.spring.*), mass 1.
 -- Hyprland takes the damping coefficient: 2 * ratio * sqrt(stiffness).

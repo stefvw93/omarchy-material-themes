@@ -2,10 +2,10 @@
 // changes (interpretation text.scale). The theme pins every size, so the
 // shell's own base-size scaling never reaches it; this applies the same
 // multiplier the generator does, to the theme's values in the running shell.
-import { barTextSpec, iconButtonDpOf, type Tokens } from "@stef/tokens/runtime";
+import { barTextSpec, iconButtonDpOf, type Tokens, translucencyLua } from "@stef/tokens/runtime";
 import { scaleText, type TextSpec } from "@stef/tokens/text-scale";
 
-export { scaleText, type TextSpec };
+export { scaleText, type TextSpec, translucencyLua };
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v);
@@ -72,4 +72,27 @@ export const groupbarLua = (spec: TextSpec, baseSize: number): string => {
     .filter(isGroupbar)
     .map((key) => `${key.slice("groupbar.".length)} = ${scaled[key]}`);
   return fields.length ? `hl.config({ group = { groupbar = { ${fields.join(", ")} } } })` : "";
+};
+
+/**
+ * The theme's parsed shell.toml with the live tokens' translucency in (the
+ * spec exception shell.translucency): the bar's and the flyouts' background
+ * alpha, 1 where a surface is off. Null when it already has them.
+ */
+export const translucencyPatch = (
+  tokens: Tokens,
+  theme: Readonly<Record<string, string>>,
+): Record<string, string> | null => {
+  const { bar, flyouts } = tokens.translucency;
+  const want: Record<string, string> = {
+    "bar.background-alpha": String(bar.enabled ? bar.alpha : 1),
+    "popups.background-alpha": String(flyouts.enabled ? flyouts.alpha : 1),
+  };
+  let next: Record<string, string> | null = null;
+  for (const key of Object.keys(want)) {
+    if (theme[key] === want[key]) continue;
+    next ??= { ...theme };
+    next[key] = want[key]!;
+  }
+  return next;
 };

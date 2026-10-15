@@ -166,16 +166,23 @@ export const shellSections = (input: ShellInput): Readonly<Record<string, ShellS
   });
   const opaque = fixed(1, "M3 containers are opaque");
   const full = fixed(1, "full opacity");
-  const flyoutAlpha = input.tokens.flyouts.translucent
-    ? fixed(input.tokens.flyouts.alpha, "tokens.flyouts.alpha (the bar-flyout exception)")
-    : opaque;
+  // Not M3: the bar and its flyouts are translucent over a blur.
+  interpretation("shell.translucency");
+  const { translucency } = input.tokens;
+  const translucent = (surface: "bar" | "flyouts"): ShellValue =>
+    translucency[surface].enabled
+      ? fixed(
+          translucency[surface].alpha,
+          `tokens.translucency.${surface}.alpha (spec exception shell.translucency)`,
+        )
+      : opaque;
   const scrimAlpha = fixed(citations.scrimOpacity.value, "citations.scrimOpacity");
 
   interpretation("shell.components");
 
   const bar: ShellSection = {
     background: color("md.comp.app-bar.container.color"),
-    "background-alpha": opaque,
+    "background-alpha": translucent("bar"),
     text: color("md.comp.app-bar.title.color"),
     active: color("md.comp.badge.color"),
     "scale-with-font": fixed(false, "sizes come from tokens"),
@@ -306,7 +313,7 @@ export const shellSections = (input: ShellInput): Readonly<Record<string, ShellS
 
   const popups: ShellSection = {
     background: color("md.comp.menus.standard.container.color"),
-    "background-alpha": flyoutAlpha,
+    "background-alpha": translucent("flyouts"),
     text: color("md.comp.menus.standard.menu-item.label-text.color"),
     border: color("md.comp.outlined-card.outline.color"),
     "border-alpha": full,
@@ -411,7 +418,7 @@ export const shellSections = (input: ShellInput): Readonly<Record<string, ShellS
 
 /** What each section is, for the file's header comment. */
 export const sectionNotes: Readonly<Record<string, string>> = {
-  bar: "The bar: an M3 app bar (opaque, level 0). Attention modules use the badge colour.",
+  bar: "The bar: an M3 app bar (level 0), translucent over a blur (spec exception shell.translucency). Attention modules use the badge colour.",
   hyprland:
     "Border tokens other sections can reference: the focus indicator colour, and the outline for passive edges.",
   controls:
@@ -419,7 +426,7 @@ export const sectionNotes: Readonly<Record<string, string>> = {
   spacing:
     "Every spacing pinned to md.sys.measurement steps or component tokens, at the user's density.",
   font: "Type sizes from the M3 type scale (the font family stays the user's Omarchy font).",
-  popups: "Bar flyouts: an M3 menu. The one place translucency is allowed (tokens.flyouts).",
+  popups: "Bar flyouts: an M3 menu, translucent over a blur (spec exception shell.translucency).",
   tooltip: "An M3 plain tooltip.",
   notifications: "An M3 elevated card.",
   menu: "The launcher-style menu: an M3 search view with a scrim; results are list items.",

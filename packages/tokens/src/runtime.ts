@@ -106,7 +106,7 @@ export const defaultTokens = {
     /** Between tabs, and between the tabs and the window (the spec's 2dp connected-group padding). */
     padding: "space25" as MeasurementStep,
   },
-  /** Not M3: Hyprland's one blur, behind the flyouts and the special workspace. */
+  /** Not M3: Hyprland's one blur, behind the translucent surfaces and the special workspace. */
   blur: { size: 6, passes: 3 },
   /** stef.bar's segments: a connected button group (interpretation bar.segments). */
   bar: {
@@ -122,12 +122,15 @@ export const defaultTokens = {
     iconWidth: "default" as IconButtonWidth,
   },
   /**
-   * The one exception to M3's opaque surfaces: flyouts opened from the bar
-   * (tray popups, OSD, dropdowns) may be translucent with blur behind them.
+   * Not M3 (interpretation shell.translucency, a spec exception): the bar and
+   * the flyouts opened from it (tray popups, OSD, dropdowns) are translucent
+   * over the shared blur, as ChromeOS's shelf and system UI are.
    */
-  flyouts: {
-    translucent: true,
-    alpha: 0.9,
+  translucency: {
+    /** The bar's body and segments. */
+    bar: { enabled: true, alpha: 0.85 },
+    /** Popups opened from the bar, the OSD and the keyboard panel. */
+    flyouts: { enabled: true, alpha: 0.9 },
   },
   /** Behind a shown special workspace (the scratchpad): the M3 scrim, blurred unless off. */
   special: {
@@ -223,15 +226,30 @@ const nearestStep = (px: unknown): MeasurementStep | undefined => {
  * tokens.json v1 (pixel values, gradient angle, shadow, blur) to v2. Pixel
  * spacing moves to the nearest md.sys.measurement step; values M3 now decides
  * (gaps, border angle, shadows, periphery durations) are dropped. An earlier
- * v2's flyouts.blur moves to the shared blur.
+ * v2's flyouts moves to translucency.flyouts, and its flyouts.blur to the
+ * shared blur.
  */
 export const migrateTokens = (json: unknown): unknown => {
   if (!isPlainObject(json)) return json;
   if (json["version"] === 2) {
-    // Blur used to be the flyouts' own (flyouts.blur); it is shared now.
+    // The flyouts used to be the one translucent surface (flyouts), with
+    // their own blur (flyouts.blur); both are shared now.
     const flyouts = json["flyouts"];
-    if (!isPlainObject(flyouts) || flyouts["blur"] === undefined) return json;
-    return { ...json, blur: json["blur"] ?? flyouts["blur"] };
+    if (!isPlainObject(flyouts)) return json;
+    const rest: Record<string, unknown> = { ...json };
+    delete rest["flyouts"];
+    const translucency = isPlainObject(json["translucency"]) ? json["translucency"] : {};
+    return {
+      ...rest,
+      blur: json["blur"] ?? flyouts["blur"],
+      translucency: {
+        ...translucency,
+        flyouts: translucency["flyouts"] ?? {
+          enabled: flyouts["translucent"],
+          alpha: flyouts["alpha"],
+        },
+      },
+    };
   }
   const v1 = json as Record<string, Record<string, unknown> | undefined>;
   const steps = (group: Record<string, unknown> | undefined, keys: ReadonlyArray<string>) => {
@@ -305,6 +323,32 @@ export const layoutOf = (tokens: Tokens) => ({
   },
   windowCorner: cornerRadius(tokens.shape.windowCorner),
 });
+
+/** The layers with translucent surfaces: the bar (and its popups), the OSD, the keyboard panel. */
+export const translucentLayers = "^omarchy-(bar|osd|keyboard-panel)$";
+
+/**
+ * The lowest alpha among the translucent surfaces that are on, or null when
+ * none is: Hyprland blurs behind every pixel above one cutoff, which must sit
+ * below each of them.
+ */
+export const translucentAlpha = (tokens: Tokens): number | null => {
+  const { bar, flyouts } = tokens.translucency;
+  const alphas = [bar, flyouts].filter((s) => s.enabled && s.alpha < 1).map((s) => s.alpha);
+  return alphas.length ? Math.min(...alphas) : null;
+};
+
+/**
+ * The layer rule that blurs behind the translucent surfaces (interpretation
+ * shell.translucency). Always the same named rule, turned off when no surface
+ * is translucent, so `hyprctl eval` can turn it on and off live. No leading
+ * comment: `hyprctl eval` reads an argument starting with "-" as a flag.
+ */
+export const translucencyLua = (tokens: Tokens): string => {
+  const alpha = translucentAlpha(tokens);
+  const cutoff = alpha === null ? 0 : Math.round((alpha - 0.01) * 1000) / 1000;
+  return `hl.layer_rule({ name = "m3-translucency", match = { namespace = "${translucentLayers}" }, enabled = ${alpha !== null}, blur = true, blur_popups = true, ignore_alpha = ${cutoff} })`;
+};
 
 /** Where the user override lives, relative to $HOME. */
 export const tokensFile = ".config/omarchy/stef/tokens.json";

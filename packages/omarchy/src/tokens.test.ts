@@ -33,8 +33,8 @@ describe("tokenDiff", () => {
   });
 
   it("drops groups whose leaves all match", () => {
-    const tokens = { ...defaultTokens, flyouts: { ...defaultTokens.flyouts } };
-    expect(tokenDiff(defaultTokens, tokens)).not.toHaveProperty("flyouts");
+    const tokens = { ...defaultTokens, translucency: { ...defaultTokens.translucency } };
+    expect(tokenDiff(defaultTokens, tokens)).not.toHaveProperty("translucency");
   });
 
   it("is undefined for anything but two objects", () => {

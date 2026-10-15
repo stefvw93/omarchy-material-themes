@@ -15,6 +15,7 @@ export {
 export {
   type Interpretation,
   type InterpretationId,
+  type SpecException,
   interpretation,
   interpretations,
 } from "./interpretations.ts";

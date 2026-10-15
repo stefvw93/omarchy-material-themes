@@ -22,6 +22,8 @@ import {
   spacing,
   springsOf,
   type Tokens,
+  translucencyLua,
+  translucentAlpha,
 } from "./runtime.ts";
 
 export * from "./runtime.ts";
@@ -64,9 +66,9 @@ export const TokensSchema = Schema.Struct({
     size: Px,
     passes: Schema.Int.check(Schema.isBetween({ minimum: 0, maximum: 8 })),
   }),
-  flyouts: Schema.Struct({
-    translucent: Schema.Boolean,
-    alpha: Fraction,
+  translucency: Schema.Struct({
+    bar: Schema.Struct({ enabled: Schema.Boolean, alpha: Fraction }),
+    flyouts: Schema.Struct({ enabled: Schema.Boolean, alpha: Fraction }),
   }),
   special: Schema.Struct({ blur: Schema.Boolean }),
   expo: Schema.Struct({
@@ -224,9 +226,6 @@ export const animationLeaves: ReadonlyArray<{
   { leaf: "specialWorkspace", spring: "spatial_slow", style: "slidevert" },
 ];
 
-/** The layers whose surfaces are bar flyouts: the bar (its popups), the OSD, the keyboard panel. */
-export const flyoutLayers = "^omarchy-(bar|osd|keyboard-panel)$";
-
 /**
  * Hyprland's shape, spacing and motion from the tokens, without colour. The
  * theme's hyprland.lua adds colour on top; on its own (as
@@ -238,8 +237,8 @@ export const hyprlandTokensLua = (tokens: Tokens): string => {
   const gaps = gapsOf(tokens);
   const shadow = windowShadow();
   interpretation("special.scrim");
-  const flyouts = tokens.flyouts.translucent;
-  const blur = flyouts || tokens.special.blur;
+  interpretation("shell.translucency");
+  const blur = translucentAlpha(tokens) !== null || tokens.special.blur;
   return `-- Material 3 shape, spacing and motion, from ~/.config/omarchy/stef/tokens.json
 -- (@stef/tokens). Do not edit: change the tokens (Omaterial Studio, or
 -- \`stef tokens set\`) and regenerate.
@@ -273,14 +272,10 @@ ${groupbarLua(tokens)}
 
 -- Elevation: tiled windows rest at level 0 (no shadow), floating windows at level 3.
 hl.window_rule({ name = "m3-tiled-level0", match = { float = false }, no_shadow = true })
-${
-  flyouts
-    ? `
--- The one non-M3 exception: bar flyouts are translucent over a blurred backdrop.
-hl.layer_rule({ name = "m3-flyouts", match = { namespace = "${flyoutLayers}" }, blur = true, blur_popups = true, ignore_alpha = ${round(tokens.flyouts.alpha - 0.01)} })
-`
-    : ""
-}
+
+-- Not M3 (the spec exception shell.translucency): the bar and its flyouts are translucent over a blurred backdrop.
+${translucencyLua(tokens)}
+
 -- Material 3 "${tokens.motion.scheme}" springs (md.sys.motion.spring.*), mass 1.
 -- Hyprland takes the damping coefficient: 2 * ratio * sqrt(stiffness).
 ${curvesLua(tokens)}
