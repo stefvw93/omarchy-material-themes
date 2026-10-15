@@ -252,6 +252,12 @@ export function standsAlone(id: string): boolean {
   return aloneIds.indexOf(id) >= 0;
 }
 
+/** A selected button's corners: the toggle icon button's shape morph (specs.md). */
+export function selectedCorners(shape: string, height: number, mediumCorner: number): Corners {
+  const r = shape === "round" ? mediumCorner : height / 2;
+  return { topLeft: r, topRight: r, bottomLeft: r, bottomRight: r };
+}
+
 export function nearestButton(buttons: ReadonlyArray<ButtonExtent>, x: number): number {
   for (let i = 0; i + 1 < buttons.length; i++) {
     const here = buttons[i]!;

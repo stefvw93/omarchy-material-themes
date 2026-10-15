@@ -16,6 +16,7 @@ import {
   nearestButton,
   segmentCorners,
   segmentPlan,
+  selectedCorners,
   standsAlone,
   stateLayerPart,
   transparency,
@@ -475,5 +476,25 @@ describe("standing alone", () => {
       ["inner", "inner"],
       ["inner", "outer"],
     ]);
+  });
+});
+
+describe("selectedCorners", () => {
+  it("morphs the round shape to the medium corner", () => {
+    expect(selectedCorners("round", 32, 12)).toEqual({
+      topLeft: 12,
+      topRight: 12,
+      bottomLeft: 12,
+      bottomRight: 12,
+    });
+  });
+
+  it("morphs the square shape to fully round", () => {
+    expect(selectedCorners("square", 32, 12)).toEqual({
+      topLeft: 16,
+      topRight: 16,
+      bottomLeft: 16,
+      bottomRight: 16,
+    });
   });
 });

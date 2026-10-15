@@ -2088,6 +2088,34 @@ Item {
   // (GlyphFit.qml; interpretation bar.icons): each BarIconButton found in a
   // slot gets a GlyphFit, once.
   Component { id: glyphFitComponent; GlyphFit {} }
+
+  // stef.bar: a selected widget's buttons draw their content on-primary
+  // (SPEC.md, Segments: Selected), each through a Binding that puts its own
+  // colour back after. Not the drawer knob, which isn't part of the selection.
+  Component {
+    id: selectedContentComponent
+    Binding {
+      required property Item slot
+      property: "foreground"
+      value: themeScheme.color["on-primary"]
+      when: slot.panelOpen && !(slot.activeItem && slot.activeItem.activeTrayAnchor)
+      restoreMode: Binding.RestoreBindingOrValue
+    }
+  }
+  property var selectedBound: []
+  function bindSelectedContent(slot, node) {
+    if (!node) return
+    var kids = node.children || []
+    for (var i = 0; i < kids.length; i++) {
+      var kid = kids[i]
+      if (kid && kid.foreground !== undefined && kid.activeColor !== undefined && kid.objectName !== "stefDrawerKnob"
+          && root.selectedBound.indexOf(kid) === -1) {
+        root.selectedBound = root.selectedBound.filter(function(b) { return !!b }).concat([kid])
+        selectedContentComponent.createObject(kid, { target: kid, slot: slot })
+      }
+      root.bindSelectedContent(slot, kid)
+    }
+  }
   property var glyphFitted: []
   function fitIconButtons(node) {
     if (!node) return
@@ -2181,7 +2209,10 @@ Item {
     readonly property bool isDrawer: !root.vertical && !!activeItem && activeItem.hiddenExtent !== undefined
     readonly property real hiddenExtent: isDrawer ? activeItem.hiddenExtent : 0
     property bool revealed: false
-    Timer { id: closeDrawer; interval: 120; onTriggered: slot.revealed = false }
+    // It stays open while its widget's menu or popup is open (SPEC.md,
+    // Segments: Selected), and closes once that's gone and the pointer left.
+    Timer { id: closeDrawer; interval: 120; onTriggered: if (!slot.panelOpen) slot.revealed = false }
+    onPanelOpenChanged: if (!panelOpen && isDrawer && !moduleHover.hovered) closeDrawer.restart()
     Binding { when: slot.isDrawer; target: slot.activeItem; property: "revealed"; value: slot.revealed }
     // Our forks' icon buttons that aren't BarIconButtons (the workspaces'
     // numbers, the tray's icons) take the bar's icon button too.
@@ -2268,6 +2299,30 @@ Item {
         }
         return null
       }
+      // stef.bar: a widget with its panel or menu open is a selected toggle
+      // icon button: primary, in the selected shape; in the tray, only the
+      // app whose menu is open (SPEC.md, Segments: Selected).
+      readonly property var selectedArea: {
+        if (!slot.panelOpen || !hoverPart || root.vertical) return null
+        var corners = Model.selectedCorners(tokens.value.bar.shape, height, tokens.m3.corner["medium"] || 0)
+        var anchor = slot.activeItem && slot.activeItem.activeTrayAnchor ? slot.activeItem.activeTrayAnchor : null
+        if (anchor) {
+          var at = anchor.mapToItem(segmentPart, 0, 0)
+          return { x: at.x, width: anchor.width, corners: corners }
+        }
+        return { x: hoverPart.x, width: hoverPart.width, corners: corners }
+      }
+      Rectangle {
+        visible: !!segmentPart.selectedArea
+        x: segmentPart.selectedArea ? segmentPart.selectedArea.x : 0
+        width: segmentPart.selectedArea ? segmentPart.selectedArea.width : 0
+        height: parent.height
+        topLeftRadius: segmentPart.selectedArea ? segmentPart.selectedArea.corners.topLeft : 0
+        topRightRadius: segmentPart.selectedArea ? segmentPart.selectedArea.corners.topRight : 0
+        bottomLeftRadius: segmentPart.selectedArea ? segmentPart.selectedArea.corners.bottomLeft : 0
+        bottomRightRadius: segmentPart.selectedArea ? segmentPart.selectedArea.corners.bottomRight : 0
+        color: themeScheme.color["primary"]
+      }
       Rectangle {
         readonly property var area: segmentPart.buttonLayer || segmentPart.hoverPart
         x: area ? area.x : 0
@@ -2277,13 +2332,14 @@ Item {
         topRightRadius: area ? area.corners.topRight : parent.topRightRadius
         bottomLeftRadius: area ? area.corners.bottomLeft : parent.bottomLeftRadius
         bottomRightRadius: area ? area.corners.bottomRight : parent.bottomRightRadius
-        color: root.foreground
+        color: segmentPart.selectedArea ? themeScheme.color["on-primary"] : root.foreground
         opacity: slot.knobHovered ? 0 : (modulePointer.pressed ? tokens.m3.state.pressed : (slot.hovered ? tokens.m3.state.hover : 0))
       }
     }
 
     BarIconButton {
       id: drawerKnob
+      objectName: "stefDrawerKnob"
       visible: slot.hasKnob
       bar: root
       x: slot.startPad
@@ -2373,7 +2429,9 @@ Item {
       readonly property int inset: Style.space(2)
 
       visible: opacity > 0
-      opacity: slot.panelOpen && !slot.dragSource ? 0.9 : 0
+      // stef.bar: only without segments (a vertical bar); with them the
+      // widget is a selected button (SPEC.md, Segments: Selected).
+      opacity: slot.panelOpen && !slot.dragSource && !root.segmented ? 0.9 : 0
       color: Color.accent
       radius: Math.min(width, height) / 2
       width: root.vertical ? Style.space(2) : slot.panelIndicatorExtent
@@ -2502,7 +2560,14 @@ Item {
     }
     // stef.bar: fit the slot's icon buttons, again whenever its widget
     // changes size (indicators and tray icons come and go).
-    Timer { id: fitTimer; interval: 0; onTriggered: root.fitIconButtons(slot) }
+    Timer {
+      id: fitTimer
+      interval: 0
+      onTriggered: {
+        root.fitIconButtons(slot)
+        if (!root.vertical) root.bindSelectedContent(slot, slot)
+      }
+    }
     Connections {
       target: slot.activeItem
       ignoreUnknownSignals: true
