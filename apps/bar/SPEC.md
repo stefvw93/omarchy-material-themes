@@ -40,7 +40,7 @@ From `shell.json` `bar`:
 - `position`: `top`, `bottom`, `left` or `right`, as in the stock bar.
 - `layout.left`, `layout.center`, `layout.right`: the entries. A string is an id; an object needs an `id`, the other keys are its inline settings. Anything else is dropped. The tray (`omarchy.tray`) always goes to the inner end of its section: first in `right`, last in `left` and `center`.
 - `centerAnchor`: an id in `center`. When present, that entry sits in the exact centre of the body, the entries before it to its left, the entries after it to its right. Otherwise the centre section as a whole is centred.
-- `transparent`: the body has no container colour; the text colour follows the stock contrast probe (`omarchy-bar-text-color`), and the content gets a legibility shadow ([Body colour](#body-colour)).
+- `transparent`: the body has no container colour; the segments keep theirs ([Colour](#colour)). On a vertical bar, which has no segments, the content sits on the wallpaper: the text colour follows the stock contrast probe (`omarchy-bar-text-color`), and the content gets a legibility shadow.
 
 Dragging an entry reorders the layout, dragging the bar's centre moves it to another edge, and a double-click on the centre toggles transparency, all as in the stock bar.
 
@@ -94,12 +94,12 @@ The widgets sit in segments, like ChromeOS's shelf: each group of widgets is an 
 | Bar         | Docked (full width)                                                                               | Floating (narrowed to the focus area)                            |
 | ----------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | Opaque      | body: the app bar's `surface` (the theme's `[bar] background`); segments `surface-container-high` | body: none; segments: the floating toolbar's `surface-container` |
-| Transparent | no body, no segments, a legibility shadow                                                         | no body, no segments, a legibility shadow                        |
+| Transparent | body: none; segments `surface-container-high`                                                     | as opaque                                                        |
 
 - Text is `on-surface` throughout: docked the theme's `[bar] text`, floating from the same colour roles as the segments.
 - The colours change between docked and floating on the effects default spring.
 - Nothing floating has elevation. The spec allows that over a visually distinct background (the segments float over the wallpaper), and a shadow wouldn't fit: the bar window ends right below the body, because the stock popups place themselves from its height.
-- The legibility shadow (not M3, interpretation `bar.transparent`) sits behind all of the body's content, glyphs and icons alike: offset 1 px down, blurred 3 px, at 0.5 opacity, in black or white, whichever contrasts more with the bar's text colour (`barForeground`). It is drawn only while the bar is transparent.
+- The legibility shadow (not M3, interpretation `bar.transparent`) sits behind all of the body's content, glyphs and icons alike: offset 1 px down, blurred 3 px, at 0.5 opacity, in black or white, whichever contrasts more with the bar's text colour (`barForeground`). It is drawn only while the content sits on the wallpaper: a transparent vertical bar. A transparent horizontal bar keeps its segments, so its text is on-surface on them, with no probe and no shadow.
 
 ## Architecture
 

@@ -12,6 +12,7 @@ import {
   nearestButton,
   segmentCorners,
   segmentPlan,
+  transparency,
 } from "./model.ts";
 
 describe("focus area", () => {
@@ -340,5 +341,17 @@ describe("nearestButton", () => {
 
   it("is -1 without buttons", () => {
     expect(nearestButton([], 10)).toBe(-1);
+  });
+});
+
+describe("transparency", () => {
+  it("keeps the segments on a horizontal bar, transparent or not", () => {
+    expect(transparency(true, false)).toEqual({ segmented: true, onWallpaper: false });
+    expect(transparency(false, false)).toEqual({ segmented: true, onWallpaper: false });
+  });
+
+  it("puts a transparent vertical bar's content on the wallpaper", () => {
+    expect(transparency(true, true)).toEqual({ segmented: false, onWallpaper: true });
+    expect(transparency(false, true)).toEqual({ segmented: false, onWallpaper: false });
   });
 });

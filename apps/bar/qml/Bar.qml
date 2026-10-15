@@ -84,8 +84,10 @@ Item {
   property color transparentForeground: Color.bar.text
   // stef.bar: floating, the text pairs with the floating toolbar's
   // surface-container from the same scheme: on-surface (SPEC.md, Body colour).
-  property color foreground: root.focusArea && root.focusArea.on && !root.vertical && !root.transparent ? themeScheme.color["on-surface"] : themeForeground
-  property color barForeground: useTransparentForeground ? transparentForeground : themeForeground
+  property color foreground: root.focusArea && root.focusArea.on && !root.vertical ? themeScheme.color["on-surface"] : themeForeground
+  // stef.bar: the probe's colour only for content on the wallpaper; a
+  // transparent horizontal bar's text is on its segments (SPEC.md, Colour).
+  property color barForeground: useTransparentForeground && root.transparency.onWallpaper ? transparentForeground : themeForeground
   property bool foregroundAnimationEnabled: true
   property color background: Color.bar.background
   property color urgent: Color.bar.active
@@ -836,8 +838,10 @@ Item {
   property var focusArea: null
   // stef.bar: the widgets sit in segments, connected button groups
   // (SPEC.md, Segments): the bar tokens' shape, size, gap and padding, the
-  // layout spacer between groups. Not on a vertical bar or a transparent one.
-  readonly property bool segmented: !root.vertical && !root.transparent
+  // layout spacer between groups. Not on a vertical bar; a transparent one
+  // drops only the body's colour (src/model, Transparency).
+  readonly property var transparency: Model.transparency(root.transparent, root.vertical)
+  readonly property bool segmented: root.transparency.segmented
   readonly property real segmentGap: tokens.m3.space[tokens.value.bar.gap] || 0
   readonly property real segmentPadding: tokens.m3.space[tokens.value.bar.padding] || 0
   readonly property real segmentHeight: root.barSize - 2 * root.segmentGap
@@ -1501,10 +1505,11 @@ Item {
       anchors.fill: parent
       sourceComponent: root.vertical ? verticalBar : horizontalBar
 
-      // stef.bar: a transparent bar's content gets a legibility shadow behind
-      // every glyph and icon (interpretation bar.transparent): 1 px down,
-      // 3 px blur, half opacity, black or white against the text colour.
-      layer.enabled: root.transparent
+      // stef.bar: content on the wallpaper (a transparent vertical bar) gets a
+      // legibility shadow behind every glyph and icon (interpretation
+      // bar.transparent): 1 px down, 3 px blur, half opacity, black or white
+      // against the text colour.
+      layer.enabled: root.transparency.onWallpaper
       layer.effect: MultiEffect {
         shadowEnabled: true
         shadowColor: Model.legibilityShadow(String(root.barForeground))

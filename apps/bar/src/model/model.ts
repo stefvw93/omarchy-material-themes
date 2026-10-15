@@ -21,6 +21,16 @@ export interface BodyEdges {
   readonly margin: number;
 }
 
+/** What a transparent bar keeps (specs.md, Transparency). */
+export interface Transparency {
+  readonly segmented: boolean;
+  readonly onWallpaper: boolean;
+}
+
+export function transparency(transparent: boolean, vertical: boolean): Transparency {
+  return { segmented: !vertical, onWallpaper: transparent && vertical };
+}
+
 export function parseFocusEvent(data: string): FocusArea | null {
   const m = /^periphery>>(?:(off)|(\d+),(\d+),([^,\s]+))$/.exec(data);
   if (!m) return null;

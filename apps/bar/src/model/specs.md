@@ -21,6 +21,13 @@ The bar's own decisions, without Qt: Periphery's focus area and where the body g
 
 `exclusiveZone(barSize, body, spacer)`: `barSize` docked; floating (`body.narrowed`), `barSize + spacer`, so windows tiled the outer gap below the zone sit one spacer below the body (which sits the margin from the edge, and the outer gap on that edge is the margin).
 
+## Transparency
+
+`transparency(transparent, vertical)`: what a transparent bar keeps, `{ segmented, onWallpaper }`.
+
+- `segmented`: the widgets sit in segments: on every horizontal bar, transparent or not. A vertical bar has none.
+- `onWallpaper`: the content sits straight on the wallpaper, with no body or segment behind it, so its text takes the stock contrast probe's colour and gets the legibility shadow: only a transparent vertical bar. A transparent horizontal bar drops only the body's colour; its text stays on-surface on the segments.
+
 ## Segments
 
 `segmentPlan(items, section)`, `items` in layout order `{ group?, visible, icon }`: for each item, how its part of a segment is drawn, `{ visible, start, end, gapAfter }`.
