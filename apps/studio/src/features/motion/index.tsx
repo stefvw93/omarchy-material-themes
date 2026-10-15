@@ -1,7 +1,10 @@
 import { Schema } from "effect";
-import { Action, define } from "@wych/react";
+import { Action, Task, define } from "@wych/react";
+import type { Draft } from "@wych/react";
 import { cssLinear, motionSchemes, settleTime, springStep, type Spring } from "@stef/motion";
+import { defaultTokens, type Tokens, TokensSchema } from "@stef/tokens";
 import { component } from "../shared";
+import { LoadTokens, SaveTokens } from "../tokens/tasks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -23,7 +26,8 @@ const Play = Action("Play", {});
 
 const MotionDefinition = define({
   props: Schema.Struct({}),
-  state: Schema.Struct({ scheme: Scheme, table: Schema.Boolean, plays: Schema.Number }),
+  state: Schema.Struct({ tokens: TokensSchema, table: Schema.Boolean, plays: Schema.Number }),
+  tasks: { load: LoadTokens, save: SaveTokens },
   actions: [SetScheme, SetTable, Play],
 });
 
@@ -41,9 +45,18 @@ const peakOf = (spring: Spring) =>
   Math.max(...Array.from({ length: 2000 }, (_, ms) => springStep(ms, spring)));
 
 const reducer = MotionDefinition.reducer({
-  SetScheme: ({ scheme }, { draft }) => {
-    draft.scheme = scheme;
+  Mounted: (_, { tasks }) => tasks.load.start(),
+
+  LoadTokensResolved: ({ value }, { draft }) => {
+    draft.tokens = value as Draft<Tokens>;
     return draft;
+  },
+
+  /** The scheme is the motion.scheme token: saved, and previewed in Hyprland like the Tokens page. */
+  SetScheme: ({ scheme }, { state, draft, tasks }) => {
+    const next: Tokens = { ...state.tokens, motion: { ...state.tokens.motion, scheme } };
+    draft.tokens = next as Draft<Tokens>;
+    return tasks.save.start({ tokens: next, preview: true });
   },
   SetTable: ({ table }, { draft }) => {
     draft.table = table;
@@ -73,8 +86,9 @@ const Preview = ({ spring, color, plays }: { spring: Spring; color: string; play
 };
 
 const render = MotionDefinition.render(({ state, dispatch }) => {
-  const spatial = seriesOf(state.scheme, "spatial");
-  const effects = seriesOf(state.scheme, "effects");
+  const scheme = state.tokens.motion.scheme;
+  const spatial = seriesOf(scheme, "spatial");
+  const effects = seriesOf(scheme, "effects");
   const all = [
     ...spatial.map((s) => ({ ...s, group: "spatial" })),
     ...effects.map((s) => ({ ...s, group: "effects" })),
@@ -90,19 +104,21 @@ const render = MotionDefinition.render(({ state, dispatch }) => {
       <div className="flex items-center gap-4">
         <p className="text-sm text-muted-foreground flex-1">
           Material 3 springs (mass 1) as Hyprland evaluates them. Spatial springs move things,
-          effects springs change colour and opacity.
+          effects springs change colour and opacity. The scheme is saved to tokens.json and applied
+          to Hyprland, the plugins and Studio.
         </p>
+        <Label htmlFor="motion-scheme">Motion scheme</Label>
         <Select
           items={[
             { value: "standard", label: "standard" },
             { value: "expressive", label: "expressive" },
           ]}
-          value={state.scheme}
+          value={scheme}
           onValueChange={(value) =>
             dispatch(SetScheme.make({ scheme: value === "expressive" ? "expressive" : "standard" }))
           }
         >
-          <SelectTrigger>
+          <SelectTrigger id="motion-scheme">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -120,6 +136,13 @@ const render = MotionDefinition.render(({ state, dispatch }) => {
           Table
         </Label>
       </div>
+
+      {Task.isRejected(state.load) && (
+        <p className="text-destructive">Could not read tokens: {state.load.error}</p>
+      )}
+      {Task.isRejected(state.save) && (
+        <p className="text-destructive">Not saved: {state.save.error}</p>
+      )}
 
       {state.table ? (
         <table className="text-sm">
@@ -195,7 +218,7 @@ const render = MotionDefinition.render(({ state, dispatch }) => {
 
 export const MotionPage = component(
   MotionDefinition.create({
-    initialState: () => ({ scheme: "standard" as const, table: false, plays: 0 }),
+    initialState: () => ({ tokens: defaultTokens, table: false, plays: 0 }),
     reducer,
     render,
   }),

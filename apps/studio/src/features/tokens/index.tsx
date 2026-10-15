@@ -1,18 +1,9 @@
-import { Cause, Effect, Schema } from "effect";
+import { Schema } from "effect";
 import { Action, Task, define } from "@wych/react";
 import type { Draft } from "@wych/react";
-import { Hyprland } from "@stef/hyprland";
-import { readTokens, writeTokens } from "@stef/omarchy";
-import {
-  cssVariables,
-  defaultTokens,
-  hyprlandTokensLua,
-  tokenChoices,
-  type Tokens,
-  TokensSchema,
-} from "@stef/tokens";
-import { setTypeScale } from "@/m3/text-scale";
+import { defaultTokens, tokenChoices, type Tokens, TokensSchema } from "@stef/tokens";
 import { component } from "../shared";
+import { LoadTokens, SaveTokens } from "./tasks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -124,42 +115,6 @@ const setIn = (value: unknown, keys: ReadonlyArray<string>, leaf: Leaf): unknown
   return { ...obj, [key]: setIn(obj[key], rest, leaf) };
 };
 
-/** Studio's own CSS follows the tokens, so its UI moves like the desktop. */
-const applyCss = (tokens: Tokens) =>
-  Effect.sync(() => {
-    for (const [name, value] of Object.entries(cssVariables(tokens))) {
-      document.documentElement.style.setProperty(name, value);
-    }
-    setTypeScale(tokens.type.scale);
-  });
-
-const LoadTokens = Task("LoadTokens", {
-  success: TokensSchema,
-  onError: (cause) => String(Cause.squash(cause)),
-  run: () => Effect.tap(readTokens, applyCss),
-});
-
-/**
- * Debounced by the take-latest default: a new edit interrupts the sleep.
- * tokens.json reaches running plugins on its own (Tokens.qml watches it);
- * Hyprland gets the generated Lua through `hyprctl eval`, which lasts until
- * the next config reload. Applying a theme renders the tokens into it.
- */
-const SaveTokens = Task("SaveTokens", {
-  success: Schema.Void,
-  onError: (cause) => String(Cause.squash(cause)),
-  run: (input: { readonly tokens: Tokens; readonly preview: boolean }) =>
-    Effect.gen(function* () {
-      yield* Effect.sleep("250 millis");
-      yield* writeTokens(input.tokens);
-      yield* applyCss(input.tokens);
-      if (input.preview) {
-        const hyprland = yield* Hyprland;
-        yield* hyprland.eval(hyprlandTokensLua(input.tokens));
-      }
-    }),
-});
-
 const SetToken = Action("SetToken", {
   path: Schema.String,
   value: Schema.Union([Schema.Number, Schema.String, Schema.Boolean]),
@@ -199,7 +154,9 @@ const reducer = TokensDefinition.reducer({
   },
 });
 
-const label = (path: string) => path.split(".").slice(1).join(".") || path;
+/** Labels where the key alone would be ambiguous ("scheme" reads as the colour scheme). */
+const labels: Record<string, string> = { "motion.scheme": "motion scheme" };
+const label = (path: string) => labels[path] ?? (path.split(".").slice(1).join(".") || path);
 
 const Field = ({
   path,
