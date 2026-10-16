@@ -25,10 +25,6 @@ Places the windows of the other workspaces as cards in the bands, Mission Contro
 | 3       | 1, 2              | 2      | 1      |
 | 3       | 1                 | 1      | (none) |
 
-## Reading order
-
-Within a group, windows are in reading order: tiled windows first, left to right (x differing by more than 4 px), then top to bottom; floating windows last.
-
 ## Units
 
 A group's windows form units, each placed as one block:

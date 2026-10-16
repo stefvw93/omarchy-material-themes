@@ -29,20 +29,6 @@ export function workspaceAnimationLua(animationsJson: string, style?: string): s
   return `hl.animation({ ${parts.join(", ")} })`;
 }
 
-export interface CardTravel {
-  distance: number;
-  vertical: boolean;
-}
-
-/** How far cards travel with a workspace switch in this animation style. */
-export function cardTravel(style: string, monW: number, monH: number): CardTravel {
-  const vertical = /vert/.test(style);
-  if (!/slide/.test(style)) return { distance: 0, vertical };
-  const extent = vertical ? monH : monW;
-  const percent = /(\d+(?:\.\d+)?)%/.exec(style);
-  return { distance: percent ? (extent * parseFloat(percent[1]!)) / 100 : extent, vertical };
-}
-
 export interface HookState {
   opened: boolean;
   cardsLeft: boolean;

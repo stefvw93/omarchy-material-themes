@@ -17,15 +17,6 @@ The animation call for the leaf `workspaces`, rebuilt as Lua:
 
 The off call is also available on its own, for a flight's switch.
 
-## Card travel
-
-How far cards travel with a workspace switch, following Hyprland's style string:
-
-- No `slide` in the style: 0.
-- A percentage in the style (`slidefade 10%`): that share of the monitor's extent on the slide's axis.
-- Otherwise the whole extent.
-- The axis is vertical when the style contains `vert` (height), else horizontal (width).
-
 ## Selection state for the hook
 
 The `hyprctl eval` string that hands the plugin's state to `hypr.lua`:

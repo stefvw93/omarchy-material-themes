@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { assignBands, layoutBands, readingOrder } from "./layout.ts";
+import { assignBands, layoutBands } from "./layout.ts";
 import type { Card, Geometry, LayoutWindow, Rect } from "./layout.ts";
 
 // DP-3: 2560×1440, ratio 1.25 → focus area 1800, bands 380.
@@ -82,23 +82,6 @@ describe("assignBands", () => {
 
   it("orders each band by id whatever the input order", () => {
     expect(assignBands([5, 2, 4], 3)).toEqual({ left: [2], right: [4, 5] });
-  });
-});
-
-describe("readingOrder", () => {
-  it("puts tiled windows left to right, then top to bottom, floating last", () => {
-    const right = win(1, 900, 0, 100, 100);
-    const lower = win(1, 0, 500, 100, 100);
-    const upper = win(1, 3, 0, 100, 100);
-    const floating = win(1, 0, 0, 100, 100, { floating: true });
-    expect(readingOrder([floating, right, lower, upper])).toEqual([upper, lower, right, floating]);
-  });
-
-  it("returns a copy", () => {
-    const windows = [win(1, 500, 0, 10, 10), win(1, 0, 0, 10, 10)];
-    const first = windows[0];
-    readingOrder(windows);
-    expect(windows[0]).toBe(first);
   });
 });
 

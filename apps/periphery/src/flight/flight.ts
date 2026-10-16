@@ -45,25 +45,18 @@ export interface PlanInput {
   target: string;
 }
 
-export interface Plan {
-  fly: string[];
-  card: string[];
-}
-
-/** Which windows fly and which only move as their card. */
-export function planFlight(input: PlanInput): Plan {
+/** The windows whose ghosts fly; every other window's card moves itself. */
+export function planFlight(input: PlanInput): string[] {
   const { before, after, cards, groups, shown, target } = input;
   const afterShown = shownAfter(groups, shown, target);
-  const hiddenBefore = (a: string) => isHiddenTab(a, groups, shown);
-  const hiddenAfter = (a: string) => isHiddenTab(a, groups, afterShown);
-  const plan: Plan = { fly: [], card: [] };
-  for (const a of before) {
-    if (after.includes(a)) {
-      if (!hiddenBefore(a) && !hiddenAfter(a)) plan.fly.push(a);
-    } else if (cards.includes(a)) (hiddenBefore(a) ? plan.card : plan.fly).push(a);
-  }
-  for (const a of after) if (!before.includes(a)) (hiddenAfter(a) ? plan.card : plan.fly).push(a);
-  return plan;
+  const shownBefore = (a: string) => !isHiddenTab(a, groups, shown);
+  const shownAtEnd = (a: string) => !isHiddenTab(a, groups, afterShown);
+  return [
+    ...before.filter((a) =>
+      after.includes(a) ? shownBefore(a) && shownAtEnd(a) : cards.includes(a) && shownBefore(a),
+    ),
+    ...after.filter((a) => !before.includes(a) && shownAtEnd(a)),
+  ];
 }
 
 export interface StackInput {

@@ -31,7 +31,7 @@ Each window gets one move:
 
 A window in the focus area after the switch was a card before it, unless it was in the focus area before. "Shown before" uses the shown set; "shown after" uses the shown set after the switch (Tab state).
 
-Output: the addresses that `fly`, and the addresses that move as `card`. Every other window does nothing.
+Output: the addresses that `fly`. Every other window does nothing here: a `card` move is its card fading on its own, as its window enters or leaves the bands.
 
 ## Ghost stacking
 

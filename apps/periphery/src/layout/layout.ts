@@ -1,8 +1,6 @@
 // Layout: the other workspaces' windows as cards in the bands, Mission
 // Control style. See specs.md.
 
-import { readingOrder } from "@stef/qml-kit";
-
 /** A window on another workspace, as the caller reads it from Hyprland. */
 export interface LayoutWindow {
   address: string;
@@ -79,9 +77,6 @@ export function assignBands(ids: readonly number[], current: number): Bands {
   else if (right.length === 0 && left.length >= 2) right.push(left.shift()!);
   return { left, right };
 }
-
-/** A group's windows in reading order (a sorted copy). Shared with expo via @stef/qml-kit. */
-export { readingOrder };
 
 /** Pile offset per tab behind the front one, and how many offsets show. */
 const PILE_STEP = 7;

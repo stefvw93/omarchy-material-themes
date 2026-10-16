@@ -130,11 +130,9 @@ Item {
   // inside the focus area (a full slide would cross the bands, as windows
   // are drawn above them).
   readonly property string workspaceStyle: "slidefade 10%"
-  // How far arriving and leaving cards travel, along with the focus area
-  // (src/hyprland/specs.md).
-  readonly property var cardTravel: Hypr.cardTravel(workspaceStyle, monW, monH) // qmllint disable missing-property
-  readonly property bool cardSlideVertical: cardTravel.vertical
-  readonly property real cardSlide: cardTravel.distance
+  // How far arriving and leaving cards travel, along with the focus area:
+  // the style's 10% of the monitor width.
+  readonly property real cardSlide: root.monW * 0.1
   // The workspace in the focus area, and which way the last switch went:
   // 1 to a higher workspace (Hyprland slides the content left or up), -1 to
   // a lower one.
@@ -142,7 +140,6 @@ Item {
   property int switchDir: 0
   // The hl.animation call for that, built from the theme's animation.
   property string hyprModeLua: 'hl.animation({ leaf = "workspaces", enabled = true, speed = 3, bezier = "default", style = "' + workspaceStyle + '" })'
-  readonly property string hyprOffLua: Hypr.workspacesOffLua
   property string hyprSlideRestore: ""
   // Address -> true for windows hidden, shadow included, during a flight:
   // the floating windows of the other workspaces. Their shadows (tiled
@@ -252,35 +249,29 @@ Item {
   readonly property real liftScale: 1.05
   // The lifted card's shadow: the elevated card's hover elevation.
   readonly property var liftShadow: root.m3.shadowAt(root.m3.comp["md.comp.elevated-card.hover.container.elevation"])
-  // Global animation speed: 1 is normal, 0.25 plays every animation 4x
-  // slower to inspect it, 2 twice as fast. Scales the timeouts and the
-  // springs (stiffness by speed² keeps their shape, in time scaled by speed).
-  readonly property real animSpeed: 1
-  function ms(duration) { return Math.round(duration / root.animSpeed) }
-  function atSpeed(spring) { return { stiffness: spring.stiffness * root.animSpeed * root.animSpeed, ratio: spring.ratio } }
 
   // The tokens' motion scheme: geometry on spatial default, fades on effects
   // default, the drag grow (a small element) on spatial fast, border colour
   // on effects fast.
-  readonly property var springSpatial: root.atSpeed(root.m3.springs.spatial_default)
-  readonly property var springEffects: root.atSpeed(root.m3.springs.effects_default)
-  readonly property var springFast: root.atSpeed(root.m3.springs.spatial_fast)
+  readonly property var springSpatial: root.m3.springs.spatial_default
+  readonly property var springEffects: root.m3.springs.effects_default
+  readonly property var springFast: root.m3.springs.spatial_fast
   // Card borders change colour as Hyprland's do (its `border` leaf).
-  readonly property var springEffectsFast: root.atSpeed(root.m3.springs.effects_fast)
+  readonly property var springEffectsFast: root.m3.springs.effects_fast
   // Geometry settles to within a quarter pixel.
   readonly property real pixelEpsilon: 0.25
   // Ghosts settle at least this long before the hand-off, so the refresh
   // that follows a switch can still retarget them; and at most this long.
-  readonly property int switchMinMs: ms(120)
-  readonly property int switchMaxMs: ms(1500)
+  readonly property int switchMinMs: 120
+  readonly property int switchMaxMs: 1500
   // A flight whose switch hasn't come this long after its dispatch (a key
   // to the workspace already shown) ends: its ghosts are still on the tiles.
-  readonly property int switchWaitMs: ms(150)
+  readonly property int switchWaitMs: 150
   // How long after the pointer leaves the selected card, for a card that
   // isn't under it, the selection clears (pointerOff).
-  readonly property int leaveMs: ms(120)
+  readonly property int leaveMs: 120
   // Trial ghost motion: emphasized decelerate over medium4 (see the ghosts).
-  readonly property int easeMs: ms(400)
+  readonly property int easeMs: 400
   readonly property var easeCurve: [0.05, 0.7, 0.1, 1, 1, 1]
   // How far the switch backdrop reaches into the bands, to cover the border
   // (general:border_size) of a window tiled flush against the band.
@@ -903,7 +894,7 @@ Item {
     for (var o in oldFocus) if (oldFocus[o].fullscreen) fullscreen = true
     if (fullscreen) { root.finishSwitch(); return }
 
-    var plan = Flight.planFlight({ // qmllint disable missing-property
+    var fly = Flight.planFlight({ // qmllint disable missing-property
       before: Object.keys(oldFocus), after: Object.keys(root.focusRects), cards: Object.keys(root.winData),
       groups: root.tabGroups, shown: shown, target: target,
     })
@@ -911,10 +902,10 @@ Item {
     root.activeAfter = root.activeAddress()
     // Every flying ghost starts again from where it is drawn now; a hidden
     // tab's ghost is put away, its card fades instead.
-    for (var h in root.ghosted) if (plan.fly.indexOf(h) < 0 && root.ghostItems[h]) root.ghostItems[h].land()
+    for (var h in root.ghosted) if (fly.indexOf(h) < 0 && root.ghostItems[h]) root.ghostItems[h].land()
     var ghosted = {}
-    for (var i = 0; i < plan.fly.length; i++) {
-      var addr = plan.fly[i]
+    for (var i = 0; i < fly.length; i++) {
+      var addr = fly[i]
       if (!from[addr] || !root.ghostItems[addr]) continue
       root.ghostItems[addr].launch(from[addr], !!oldFocus[addr])
       ghosted[addr] = true
@@ -1168,8 +1159,7 @@ Item {
         liftAmount: lift.value
         transform: [
           Translate {
-            x: root.cardSlideVertical ? 0 : Math.round(slide.value)
-            y: root.cardSlideVertical ? Math.round(slide.value) : 0
+            x: Math.round(slide.value)
           },
           Matrix4x4 { matrix: root.surfaceAt(card.x, card.y, card.tiltAngle, recede.value * root.recedeDepth) },
           Scale {

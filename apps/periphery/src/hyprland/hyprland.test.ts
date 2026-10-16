@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
-  cardTravel,
   flightBatch,
   ghostBlur,
   hookStateLua,
@@ -82,19 +81,6 @@ describe("workspaceAnimationLua", () => {
 
   it("has the off call", () => {
     expect(workspacesOffLua).toBe('hl.animation({ leaf = "workspaces", enabled = false })');
-  });
-});
-
-describe("cardTravel", () => {
-  it.each([
-    { style: "slidefade 10%", distance: 256, vertical: false },
-    { style: "slide", distance: 2560, vertical: false },
-    { style: "slidevert", distance: 1440, vertical: true },
-    { style: "slidefadevert 20%", distance: 288, vertical: true },
-    { style: "slidefade 12.5%", distance: 320, vertical: false },
-    { style: "fade", distance: 0, vertical: false },
-  ])("$style → $distance px", ({ style, distance, vertical }) => {
-    expect(cardTravel(style, 2560, 1440)).toEqual({ distance, vertical });
   });
 });
 

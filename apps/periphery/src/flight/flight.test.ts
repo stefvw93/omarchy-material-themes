@@ -57,60 +57,54 @@ describe("planFlight", () => {
   const base = { groups, shown, target: "" };
 
   it("flies windows leaving the focus area to their cards, and windows entering to their tiles", () => {
-    const plan = planFlight({ ...base, before: ["a"], after: ["b"], cards: ["a"] });
-    expect(plan.fly.sort()).toEqual(["a", "b"]);
-    expect(plan.card).toEqual([]);
+    const fly = planFlight({ ...base, before: ["a"], after: ["b"], cards: ["a"] });
+    expect(fly.sort()).toEqual(["a", "b"]);
   });
 
-  it("only fades the card of a hidden tab leaving the focus area", () => {
-    const plan = planFlight({
+  it("doesn't fly a hidden tab leaving the focus area: its card fades in", () => {
+    const fly = planFlight({
       ...base,
       before: ["x", "y", "z"],
       after: ["b"],
       cards: ["x", "y", "z"],
     });
-    expect(plan.fly.sort()).toEqual(["b", "z"]);
-    expect(plan.card.sort()).toEqual(["x", "y"]);
+    expect(fly.sort()).toEqual(["b", "z"]);
   });
 
-  it("only fades the card of a hidden tab entering the focus area", () => {
-    const plan = planFlight({ ...base, before: ["a"], after: ["x", "y", "z"], cards: ["a"] });
-    expect(plan.fly.sort()).toEqual(["a", "z"]);
-    expect(plan.card.sort()).toEqual(["x", "y"]);
+  it("doesn't fly a hidden tab entering the focus area: its card fades out", () => {
+    const fly = planFlight({ ...base, before: ["a"], after: ["x", "y", "z"], cards: ["a"] });
+    expect(fly.sort()).toEqual(["a", "z"]);
   });
 
-  it("flies the target tab in and fades the tab shown until then", () => {
-    const plan = planFlight({
+  it("flies the target tab in, not the tab shown until then", () => {
+    const fly = planFlight({
       ...base,
       target: "x",
       before: ["a"],
       after: ["x", "y", "z"],
       cards: ["a"],
     });
-    expect(plan.fly.sort()).toEqual(["a", "x"]);
-    expect(plan.card.sort()).toEqual(["y", "z"]);
+    expect(fly.sort()).toEqual(["a", "x"]);
   });
 
   it("flies a window that stays in the focus area from tile to tile", () => {
-    const plan = planFlight({ ...base, before: ["a", "m"], after: ["m", "b"], cards: ["a"] });
-    expect(plan.fly.sort()).toEqual(["a", "b", "m"]);
+    const fly = planFlight({ ...base, before: ["a", "m"], after: ["m", "b"], cards: ["a"] });
+    expect(fly.sort()).toEqual(["a", "b", "m"]);
   });
 
   it("leaves a hidden tab that stays in the focus area alone", () => {
-    const plan = planFlight({ ...base, before: ["x", "z", "a"], after: ["x", "z"], cards: ["a"] });
-    expect(plan.fly.sort()).toEqual(["a", "z"]);
-    expect(plan.card).toEqual([]);
+    const fly = planFlight({ ...base, before: ["x", "z", "a"], after: ["x", "z"], cards: ["a"] });
+    expect(fly.sort()).toEqual(["a", "z"]);
   });
 
   it("leaves windows that are cards at both ends to their cards", () => {
-    const plan = planFlight({ ...base, before: ["a"], after: ["b"], cards: ["a", "c"] });
-    expect(plan.fly).not.toContain("c");
-    expect(plan.card).not.toContain("c");
+    const fly = planFlight({ ...base, before: ["a"], after: ["b"], cards: ["a", "c"] });
+    expect(fly).not.toContain("c");
   });
 
   it("doesn't fly a window leaving the focus area without a card (closed, other monitor)", () => {
-    const plan = planFlight({ ...base, before: ["a", "gone"], after: ["b"], cards: ["a"] });
-    expect(plan.fly.sort()).toEqual(["a", "b"]);
+    const fly = planFlight({ ...base, before: ["a", "gone"], after: ["b"], cards: ["a"] });
+    expect(fly.sort()).toEqual(["a", "b"]);
   });
 });
 
