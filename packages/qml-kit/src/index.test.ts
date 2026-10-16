@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
   compareReadingOrder,
+  coverSize,
   monitorGeometry,
   normalizeAddress,
   parseCssGaps,
@@ -74,5 +75,25 @@ describe("monitorGeometry", () => {
 
   it("treats a missing scale as 1 and an unknown screen as null", () => {
     expect(monitorGeometry({ ...mon, scale: 0 }, [])).toMatchObject({ w: 3840, screen: null });
+  });
+});
+
+describe("coverSize", () => {
+  it("covers the box at the frame's aspect, cropping the longer side", () => {
+    expect(coverSize(1600, 900, 400, 400)).toEqual({ w: 400 * (16 / 9), h: 400 });
+    expect(coverSize(900, 1600, 400, 400)).toEqual({ w: 400, h: 400 * (16 / 9) });
+  });
+
+  it("is the box when the frame has its aspect", () => {
+    expect(coverSize(800, 600, 400, 300)).toEqual({ w: 400, h: 300 });
+  });
+
+  it("is the box without a frame yet", () => {
+    expect(coverSize(0, 0, 400, 300)).toEqual({ w: 400, h: 300 });
+    expect(coverSize(800, 0, 400, 300)).toEqual({ w: 400, h: 300 });
+  });
+
+  it("never divides by an empty box", () => {
+    expect(coverSize(800, 600, 0, 0)).toEqual({ w: 0, h: 0 });
   });
 });

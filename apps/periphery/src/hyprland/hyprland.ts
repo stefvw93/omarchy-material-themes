@@ -91,27 +91,60 @@ export function focusRuleLua(state: FocusArea): string {
   );
 }
 
-export interface Decoration {
+export interface Options {
   borderSize?: number;
   rounding?: number;
   /** general:gaps_out as [top, right, bottom, left]. */
   gapsOut?: [number, number, number, number];
+  blur: Blur;
 }
 
-/** Border width and rounding from two `hyprctl -j getoption` outputs. */
-export function parseDecoration(text: string): Decoration {
-  const read = (option: string) => {
-    const m = new RegExp(`"${option}",\\s*"int":\\s*(\\d+)`).exec(text);
-    return m ? parseInt(m[1]!, 10) : undefined;
-  };
-  const result: Decoration = {};
-  const borderSize = read("general:border_size");
-  const rounding = read("decoration:rounding");
-  const gapsOut = parseCssGaps(/"general:gaps_out",\s*"css":\s*"([^"]*)"/.exec(text)?.[1]);
-  if (borderSize !== undefined) result.borderSize = borderSize;
-  if (rounding !== undefined) result.rounding = rounding;
-  if (gapsOut !== undefined) result.gapsOut = gapsOut;
-  return result;
+const BLUR_OPTIONS = ["enabled", "size", "passes", "contrast", "brightness", "vibrancy"] as const;
+
+/** The `hyprctl --batch` argument that reads every option the plugin uses. */
+export const optionsBatch = [
+  "general:border_size",
+  "decoration:rounding",
+  "general:gaps_out",
+  ...BLUR_OPTIONS.map((o) => "decoration:blur:" + o),
+]
+  .map((o) => "j/getoption " + o)
+  .join(" ; ");
+
+/** The options from that batch's output. */
+export function parseOptions(text: string): Options {
+  const values: Record<string, unknown> = {};
+  for (const block of text.split(/\n\s*\n/)) {
+    try {
+      const o = JSON.parse(block) as Record<string, unknown>;
+      if (typeof o.option === "string") values[o.option] = o.int ?? o.float ?? o.bool ?? o.css;
+    } catch {
+      // Not an option: skipped.
+    }
+  }
+  const options: Options = { blur: {} };
+  const number = (name: string) =>
+    typeof values[name] === "number" ? (values[name] as number) : undefined;
+  const borderSize = number("general:border_size");
+  const rounding = number("decoration:rounding");
+  const css = values["general:gaps_out"];
+  const gapsOut = parseCssGaps(typeof css === "string" ? css : undefined);
+  if (borderSize !== undefined) options.borderSize = borderSize;
+  if (rounding !== undefined) options.rounding = rounding;
+  if (gapsOut !== undefined) options.gapsOut = gapsOut;
+  const enabled = values["decoration:blur:enabled"];
+  if (typeof enabled === "boolean") options.blur.enabled = enabled;
+  for (const name of BLUR_OPTIONS.slice(1) as (
+    | "size"
+    | "passes"
+    | "contrast"
+    | "brightness"
+    | "vibrancy"
+  )[]) {
+    const value = number("decoration:blur:" + name);
+    if (value !== undefined) options.blur[name] = value;
+  }
+  return options;
 }
 
 const ADDRESS = /^0x[0-9a-fA-F]+$/;
@@ -124,22 +157,6 @@ export interface Blur {
   contrast?: number;
   brightness?: number;
   vibrancy?: number;
-}
-
-/** The decoration:blur options from `hyprctl -j getoption` outputs. */
-export function parseBlur(text: string): Blur {
-  const read = (name: string) =>
-    new RegExp(`"decoration:blur:${name}",\\s*"(?:int|float|bool)":\\s*([^,\\s}]+)`).exec(
-      text,
-    )?.[1];
-  const result: Blur = {};
-  const enabled = read("enabled");
-  if (enabled !== undefined) result.enabled = enabled === "true" || enabled === "1";
-  for (const name of ["size", "passes", "contrast", "brightness", "vibrancy"] as const) {
-    const value = read(name);
-    if (value !== undefined && Number.isFinite(parseFloat(value))) result[name] = parseFloat(value);
-  }
-  return result;
 }
 
 export interface GhostBlur {

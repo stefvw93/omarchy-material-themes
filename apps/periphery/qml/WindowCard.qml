@@ -1,7 +1,5 @@
-import Quickshell.Wayland
 import QtQuick
 import QtQuick.Effects
-import qs.Ui
 
 // One window in the periphery: a live thumbnail at the window's aspect.
 // Hovering selects it (the close and fullscreen keys then act on it). Click
@@ -61,37 +59,20 @@ Item {
     }
   }
 
-  // Rounded like its window and its border below.
-  RoundedClip {
+  WindowCopy {
+    id: thumb
     anchors.fill: parent
     radius: card.props.rounding
-
-    // Covers the card at the frame's own aspect, cropped by the clip: a
-    // stale frame of a hidden window (its old size) never letterboxes.
-    ScreencopyView {
-      id: thumb
-      readonly property real aspect: sourceSize.width > 0 && sourceSize.height > 0 ? sourceSize.width / sourceSize.height : parent.width / Math.max(1, parent.height)
-      anchors.centerIn: parent
-      width: Math.max(parent.width, parent.height * aspect)
-      height: Math.max(parent.height, parent.width / aspect)
-      captureSource: card.host.opened && card.win.toplevel ? card.win.toplevel.wayland : null
-      live: card.host.opened
-    }
+    toplevel: card.host.opened ? card.win.toplevel : null
+    live: card.host.opened
   }
 
   // The window's border, as Hyprland would draw it: active when selected.
-  // Hyprland moves border colour on the effects fast spring (its `border`
-  // leaf); the active border fading in over the inactive one blends the same.
-  BorderOverlay {
-    borderSpec: card.host.borderAt(card.host.inactiveBorder, card.props.borderSize)
+  WindowBorder {
+    host: card.host
+    borderWidth: card.props.borderSize
     radius: card.props.rounding
-  }
-  SpringValue { id: activeFade; spring: card.host.springEffectsFast; target: card.selected ? 1 : 0 }
-  BorderOverlay {
-    borderSpec: card.host.borderAt(card.host.activeBorder, card.props.borderSize)
-    radius: card.props.rounding
-    opacity: activeFade.value
-    visible: opacity > 0
+    active: card.selected
   }
 
   // The title: a plain tooltip, the card gap above the card's bottom edge.

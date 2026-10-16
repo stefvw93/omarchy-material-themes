@@ -87,3 +87,15 @@ export function parseCssGaps(
   const [t, r = t, b = t, l = r] = v as [number, number?, number?, number?];
   return [t, r, b, l];
 }
+
+/** The size, at its own aspect, that covers a box: a stale frame is cropped, never letterboxed. */
+export function coverSize(
+  frameW: number,
+  frameH: number,
+  boxW: number,
+  boxH: number,
+): { w: number; h: number } {
+  if (!(frameW > 0 && frameH > 0 && boxW > 0 && boxH > 0)) return { w: boxW, h: boxH };
+  const aspect = frameW / frameH;
+  return { w: Math.max(boxW, boxH * aspect), h: Math.max(boxH, boxW / aspect) };
+}

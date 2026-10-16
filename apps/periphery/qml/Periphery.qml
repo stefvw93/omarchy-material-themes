@@ -270,9 +270,6 @@ Item {
   // How long after the pointer leaves the selected card, for a card that
   // isn't under it, the selection clears (pointerOff).
   readonly property int leaveMs: 120
-  // Trial ghost motion: emphasized decelerate over medium4 (see the ghosts).
-  readonly property int easeMs: 400
-  readonly property var easeCurve: [0.05, 0.7, 0.1, 1, 1, 1]
   // How far the switch backdrop reaches into the bands, to cover the border
   // (general:border_size) of a window tiled flush against the band.
   readonly property int coverBleed: 2
@@ -312,9 +309,7 @@ Item {
     root.shownWorkspace = root.currentWorkspaceId()
     root.layoutSignature = ""
     root.disableHyprSlide()
-    if (!wallpaperProc.running) wallpaperProc.running = true
-    if (!decorProc.running) decorProc.running = true
-    if (!blurProc.running) blurProc.running = true
+    root.readTheme()
     root.refresh()
   }
 
@@ -336,7 +331,7 @@ Item {
   }
 
   // The gaps are read now, so the first rule the mode sends has them.
-  Component.onCompleted: decorProc.running = true
+  Component.onCompleted: optionsProc.running = true
   Component.onDestruction: {
     root.restoreHyprSlide()
     root.restoreFloating()
@@ -477,28 +472,24 @@ Item {
     onRunningChanged: if (!running && !root.hyprSlideOff) { root.hyprSlideOff = true; root.restoreHyprSlide() }
   }
 
-  // Hyprland's border width and rounding, for the cards.
-  Process {
-    id: decorProc
-    command: ["sh", "-c", "hyprctl -j getoption general:border_size; hyprctl -j getoption decoration:rounding; hyprctl -j getoption general:gaps_out"]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        var decoration = Hypr.parseDecoration(text) // qmllint disable missing-property
-        if (decoration.borderSize !== undefined) root.windowBorder = decoration.borderSize
-        if (decoration.rounding !== undefined) root.windowRounding = decoration.rounding
-        if (decoration.gapsOut !== undefined) root.gapsOut = decoration.gapsOut
-      }
-    }
+  // The wallpaper and Hyprland's options (border, rounding, gaps, blur):
+  // the cards and ghosts draw them, and a theme switch changes them.
+  function readTheme() {
+    if (!wallpaperProc.running) wallpaperProc.running = true
+    if (!optionsProc.running) optionsProc.running = true
   }
 
-  // Hyprland's blur options, for the ghosts' blurred wallpaper.
   Process {
-    id: blurProc
-    command: ["sh", "-c", ["enabled", "size", "passes", "contrast", "brightness", "vibrancy"].map(function(o) {
-        return "hyprctl -j getoption decoration:blur:" + o
-      }).join("; ")]
+    id: optionsProc
+    command: ["hyprctl", "--batch", Hypr.optionsBatch] // qmllint disable missing-property
     stdout: StdioCollector {
-      onStreamFinished: root.blurFx = Hypr.ghostBlur(Hypr.parseBlur(text)) // qmllint disable missing-property
+      onStreamFinished: {
+        var options = Hypr.parseOptions(text) // qmllint disable missing-property
+        if (options.borderSize !== undefined) root.windowBorder = options.borderSize
+        if (options.rounding !== undefined) root.windowRounding = options.rounding
+        if (options.gapsOut !== undefined) root.gapsOut = options.gapsOut
+        root.blurFx = Hypr.ghostBlur(options.blur) // qmllint disable missing-property
+      }
     }
   }
 
@@ -1028,9 +1019,7 @@ Item {
         root.sendLuaState()
         // A theme switch repoints current/background before it reloads
         // Hyprland, so this is when the backdrop's wallpaper changes.
-        if (!wallpaperProc.running) wallpaperProc.running = true
-        if (!decorProc.running) decorProc.running = true
-        if (!blurProc.running) blurProc.running = true
+        root.readTheme()
         root.windowProps = ({})
         root.readWindowProps()
       }
@@ -1131,20 +1120,17 @@ Item {
         visible: !!shown && !root.ghosted[address]
         // Placement moves on the spatial spring once the card has settled in.
         readonly property var place: card.shown
-        SpringValue { id: cardX; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.x : 0 }
-        SpringValue { id: cardY; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.y : 0 }
-        SpringValue { id: cardW; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.w : 0 }
-        SpringValue { id: cardH; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place ? card.place.h : 0 }
+        SpringRect { id: rect; spring: root.springSpatial; epsilon: root.pixelEpsilon; animated: card.settled; target: card.place }
         // In front: a closed pile's front tab over the ones behind, the
         // selection over everything.
         z: (card.shown && card.shown.z !== undefined ? card.shown.z : 0) + (card.selected ? 1000 : 0)
         // Sliding to a new place: the pointer doesn't select it meanwhile.
-        moving: cardX.running || cardY.running || cardW.running || cardH.running
+        moving: rect.running
         // On whole pixels, like the ghosts that land on it.
-        x: Math.round(cardX.value)
-        y: Math.round(cardY.value)
-        width: Math.round(cardW.value)
-        height: Math.round(cardH.value)
+        x: Math.round(rect.x)
+        y: Math.round(rect.y)
+        width: Math.round(rect.w)
+        height: Math.round(rect.h)
         // Cards fade in and out while they travel with the focus area, the
         // way Hyprland slides the workspace: an arriving card (its window
         // just slid out of the focus area) comes from the switch side, a
@@ -1347,24 +1333,20 @@ Item {
         onTargetChanged: if (target) lastTarget = target
         // At rest it sits on its target, at full size, so it keeps capturing.
         // armed: the spatial spring flies the ghost; otherwise it jumps.
-        // Trial: an ease-out instead of the spatial spring. M3's pairing for
-        // entering the screen: md.sys.motion.easing.emphasized.decelerate
-        // over md.sys.motion.duration.medium4 (styles/motion/easing-and-duration).
-        property real gx: flyer.launched && !flyer.flying ? flyer.fx : (flyer.lastTarget ? flyer.lastTarget.x : 0)
-        property real gy: flyer.launched && !flyer.flying ? flyer.fy : (flyer.lastTarget ? flyer.lastTarget.y : 0)
-        property real gw: flyer.launched && !flyer.flying ? flyer.fw : (flyer.lastTarget ? flyer.lastTarget.w : 1)
-        property real gh: flyer.launched && !flyer.flying ? flyer.fh : (flyer.lastTarget ? flyer.lastTarget.h : 1)
-        Behavior on gx { enabled: flyer.armed; NumberAnimation { duration: root.easeMs; easing.type: Easing.BezierSpline; easing.bezierCurve: root.easeCurve } }
-        Behavior on gy { enabled: flyer.armed; NumberAnimation { duration: root.easeMs; easing.type: Easing.BezierSpline; easing.bezierCurve: root.easeCurve } }
-        Behavior on gw { enabled: flyer.armed; NumberAnimation { duration: root.easeMs; easing.type: Easing.BezierSpline; easing.bezierCurve: root.easeCurve } }
-        Behavior on gh { enabled: flyer.armed; NumberAnimation { duration: root.easeMs; easing.type: Easing.BezierSpline; easing.bezierCurve: root.easeCurve } }
+        SpringRect {
+          id: flyRect
+          spring: root.springSpatial
+          epsilon: root.pixelEpsilon
+          animated: flyer.armed
+          target: flyer.launched && !flyer.flying ? { x: flyer.fx, y: flyer.fy, w: flyer.fw, h: flyer.fh } : flyer.lastTarget
+        }
         SpringValue { id: flyFade; spring: root.springEffects; target: flyer.target ? 1 : 0 }
         // On whole pixels: a window drawn at a fraction of a pixel is
         // resampled, soft, and would snap sharp at the hand-off.
-        x: Math.round(flyer.gx)
-        y: Math.round(flyer.gy)
-        width: Math.round(flyer.gw)
-        height: Math.round(flyer.gh)
+        x: Math.round(flyRect.x)
+        y: Math.round(flyRect.y)
+        width: Math.round(flyRect.w)
+        height: Math.round(flyRect.h)
         visible: !!root.ghosted[address]
         // Stacked as Hyprland stacks the windows: a tiled window's ghost
         // under the floating ones over it, or they pop up at the hand-off.
@@ -1383,15 +1365,19 @@ Item {
           return d < 1 ? 1 : Math.min(1, Math.hypot(x - fx, y - fy) / d)
         }
 
-        // Rounded like the window it is a copy of.
-        RoundedClip {
+        WindowCopy {
           anchors.fill: parent
           radius: flyer.props.rounding
+          toplevel: flyer.lastTarget ? flyer.lastTarget.toplevel : null
+          live: root.opened
+          layered: flyer.visible
+          contentOpacity: flyer.look.contentOpacity
 
           // The blurred wallpaper behind the window, as Hyprland draws it in
           // the focus area; cards sit on the sharp wallpaper (look.blurOpacity).
           Item {
             anchors.fill: parent
+            z: -1
             clip: true
             opacity: flyer.look.blurOpacity
 
@@ -1403,45 +1389,23 @@ Item {
               property variant source: wallBlurTex
             }
           }
-
-          // ScreencopyView doesn't blend: it overwrites what is under it with
-          // the window's own pixels and alpha. A translucent window (foot) then
-          // wiped the blur patch and left the surface translucent, so the real
-          // window behind showed through. Rendered alone into its own layer,
-          // it is drawn over the patch with normal blending, at the window's
-          // opacity on its tile.
-          // Covers the ghost at the frame's own aspect, like a card's thumbnail.
-          ScreencopyView {
-            readonly property real aspect: sourceSize.width > 0 && sourceSize.height > 0 ? sourceSize.width / sourceSize.height : parent.width / Math.max(1, parent.height)
-            anchors.centerIn: parent
-            width: Math.max(parent.width, parent.height * aspect)
-            height: Math.max(parent.height, parent.width / aspect)
-            layer.enabled: flyer.visible
-            opacity: flyer.look.contentOpacity
-            captureSource: flyer.lastTarget && flyer.lastTarget.toplevel ? flyer.lastTarget.toplevel.wayland : null
-            live: root.opened
-          }
         }
 
         // The window's border: Hyprland's outside the window on its tile, the
-        // card's inside the edge on a card. Colour moves on effects fast from
-        // the start of the flight, as Hyprland's border leaf does.
+        // card's inside the edge on a card. Its colour moves from the start of
+        // the flight, as Hyprland's border leaf does.
         Item {
           x: -flyer.look.borderOffset
           y: -flyer.look.borderOffset
           width: flyer.width + flyer.look.borderOffset * 2
           height: flyer.height + flyer.look.borderOffset * 2
 
-          BorderOverlay {
-            borderSpec: root.borderAt(root.inactiveBorder, flyer.props.borderSize)
+          WindowBorder {
+            host: root
+            borderWidth: flyer.props.borderSize
             radius: flyer.look.outerRadius
-          }
-          SpringValue { id: ghostActive; spring: root.springEffectsFast; animated: flyer.armed; target: (flyer.flying ? flyer.activeAtEnd : flyer.activeAtStart) ? 1 : 0 }
-          BorderOverlay {
-            borderSpec: root.borderAt(root.activeBorder, flyer.props.borderSize)
-            radius: flyer.look.outerRadius
-            opacity: ghostActive.value
-            visible: opacity > 0
+            active: flyer.flying ? flyer.activeAtEnd : flyer.activeAtStart
+            animated: flyer.armed
           }
         }
       }
@@ -1487,8 +1451,10 @@ Item {
     }
 
     Item {
-      id: ghost
+      id: dragged
       visible: root.dragAddress !== ""
+      // Its window's own rounding and border, like the card it came from.
+      readonly property var props: root.propsOf(root.dragAddress)
       // Grows a little once it's over the focus area, on the fast spring.
       SpringValue { id: grow; spring: root.springFast; epsilon: 0.001; target: root.dragOverFocus ? 1.25 : 1.05 }
       width: root.dragW * grow.value
@@ -1499,7 +1465,7 @@ Item {
       // Lifted: the filled card's dragged elevation, as the Web draws it.
       RectangularShadow {
         anchors.fill: parent
-        radius: root.windowRounding
+        radius: dragged.props.rounding
         blur: root.dragShadow.blur
         spread: root.dragShadow.spread
         offset: Qt.vector2d(root.dragShadow.x, root.dragShadow.y)
@@ -1508,33 +1474,31 @@ Item {
 
       Rectangle {
         anchors.fill: parent
-        radius: root.windowRounding
+        radius: dragged.props.rounding
         color: root.placeholderColor
       }
 
-      // Own layer so it blends, like the switch ghosts (see there).
-      RoundedClip {
+      WindowCopy {
         anchors.fill: parent
-        radius: root.windowRounding
-
-        ScreencopyView {
-          anchors.fill: parent
-          layer.enabled: ghost.visible
-          captureSource: root.dragWin && root.dragWin.toplevel ? root.dragWin.toplevel.wayland : null
-          live: root.dragAddress !== ""
-        }
+        radius: dragged.props.rounding
+        toplevel: root.dragWin ? root.dragWin.toplevel : null
+        live: dragged.visible
+        layered: dragged.visible
       }
 
       // The dragged state layer.
       Rectangle {
         anchors.fill: parent
-        radius: root.windowRounding
+        radius: dragged.props.rounding
         color: root.dragLayer
       }
 
-      BorderOverlay {
-        borderSpec: root.activeBorder
-        radius: root.windowRounding
+      WindowBorder {
+        host: root
+        borderWidth: dragged.props.borderSize
+        radius: dragged.props.rounding
+        active: true
+        animated: false
       }
     }
   }

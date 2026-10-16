@@ -4,8 +4,8 @@ import {
   focusRuleLua,
   ghostBlur,
   hookStateLua,
-  parseBlur,
-  parseDecoration,
+  optionsBatch,
+  parseOptions,
   parseTabs,
   parseWindowProps,
   restoreFloatingBatch,
@@ -156,67 +156,78 @@ describe("hookStateLua", () => {
   });
 });
 
-describe("parseDecoration", () => {
-  it("reads the border width and rounding", () => {
-    const text =
-      '{"option": "general:border_size", "int": 1, "set": true }\n{"option": "decoration:rounding", "int": 8, "set": true }\n';
-    expect(parseDecoration(text)).toEqual({ borderSize: 1, rounding: 8 });
-  });
+// As `hyprctl --batch` prints `j/getoption` answers: one object per option,
+// blank lines between them.
+const option = (name: string, type: string, value: string | number | boolean) =>
+  `{"option": "${name}", "${type}": ${value}, "set": true }`;
+const batch = (...options: string[]) => options.join("\n\n\n");
 
-  it("leaves out what it can't find", () => {
-    expect(parseDecoration('{"option": "general:border_size", "int": 2, "set": true }')).toEqual({
-      borderSize: 2,
-    });
-    expect(parseDecoration("")).toEqual({});
-  });
-
-  const gaps = (css: string) => `{"option": "general:gaps_out", "css": "${css}", "set": true }`;
-
-  it("reads the outer gaps as CSS shorthand", () => {
-    expect(parseDecoration(gaps("8 6 4 2")).gapsOut).toEqual([8, 6, 4, 2]);
-    expect(parseDecoration(gaps("5")).gapsOut).toEqual([5, 5, 5, 5]);
-    expect(parseDecoration(gaps("4 10")).gapsOut).toEqual([4, 10, 4, 10]);
-    expect(parseDecoration(gaps("1 2 3")).gapsOut).toEqual([1, 2, 3, 2]);
-  });
-
-  it("leaves out outer gaps it can't read", () => {
-    expect(parseDecoration(gaps("a b")).gapsOut).toBeUndefined();
-    expect(parseDecoration(gaps("1 2 3 4 5")).gapsOut).toBeUndefined();
-    expect(parseDecoration(gaps("")).gapsOut).toBeUndefined();
+describe("optionsBatch", () => {
+  it("asks for every option the plugin reads, in one batch", () => {
+    expect(optionsBatch.split(" ; ")).toEqual(
+      [
+        "general:border_size",
+        "decoration:rounding",
+        "general:gaps_out",
+        ...["enabled", "size", "passes", "contrast", "brightness", "vibrancy"].map(
+          (o) => "decoration:blur:" + o,
+        ),
+      ].map((o) => "j/getoption " + o),
+    );
   });
 });
 
-// As `hyprctl -j getoption` prints them, one after the other.
-const option = (name: string, type: string, value: string | number | boolean) =>
-  `{"option": "decoration:blur:${name}", "${type}": ${value}, "set": true }`;
-const blurOptions = [
-  option("enabled", "bool", true),
-  option("size", "int", 6),
-  option("passes", "int", 3),
-  option("contrast", "float", "0.891600"),
-  option("brightness", "float", "1.000000"),
-  option("vibrancy", "float", "0.169600"),
-].join("\n");
-
-describe("parseBlur", () => {
-  it("reads every blur option", () => {
-    expect(parseBlur(blurOptions)).toEqual({
-      enabled: true,
-      size: 6,
-      passes: 3,
-      contrast: 0.8916,
-      brightness: 1,
-      vibrancy: 0.1696,
+describe("parseOptions", () => {
+  it("reads the border width, the rounding and the blur", () => {
+    const text = batch(
+      option("general:border_size", "int", 1),
+      option("decoration:rounding", "int", 8),
+      option("decoration:blur:enabled", "bool", true),
+      option("decoration:blur:size", "int", 6),
+      option("decoration:blur:passes", "int", 3),
+      option("decoration:blur:contrast", "float", "0.891600"),
+      option("decoration:blur:brightness", "float", "1.000000"),
+      option("decoration:blur:vibrancy", "float", "0.169600"),
+    );
+    expect(parseOptions(text)).toEqual({
+      borderSize: 1,
+      rounding: 8,
+      blur: {
+        enabled: true,
+        size: 6,
+        passes: 3,
+        contrast: 0.8916,
+        brightness: 1,
+        vibrancy: 0.1696,
+      },
     });
   });
 
   it("reads blur off", () => {
-    expect(parseBlur(option("enabled", "bool", false)).enabled).toBe(false);
+    expect(parseOptions(option("decoration:blur:enabled", "bool", false)).blur.enabled).toBe(false);
   });
 
-  it("leaves missing options out", () => {
-    expect(parseBlur(option("size", "int", 8))).toEqual({ size: 8 });
-    expect(parseBlur("")).toEqual({});
+  it("leaves out what it can't find, and skips what isn't an option", () => {
+    expect(parseOptions(batch(option("general:border_size", "int", 2), "no such option"))).toEqual({
+      borderSize: 2,
+      blur: {},
+    });
+    expect(parseOptions("")).toEqual({ blur: {} });
+  });
+
+  const gaps = (css: string) => option("general:gaps_out", "css", `"${css}"`);
+
+  it("reads the outer gaps as CSS shorthand", () => {
+    expect(parseOptions(gaps("8 6 4 2")).gapsOut).toEqual([8, 6, 4, 2]);
+    expect(parseOptions(gaps("5")).gapsOut).toEqual([5, 5, 5, 5]);
+    expect(parseOptions(gaps("4 10")).gapsOut).toEqual([4, 10, 4, 10]);
+    expect(parseOptions(gaps("1 2 3")).gapsOut).toEqual([1, 2, 3, 2]);
+  });
+
+  it("leaves out outer gaps it can't read", () => {
+    expect(parseOptions(gaps("a b")).gapsOut).toBeUndefined();
+    expect(parseOptions(gaps("1 2 3 4 5")).gapsOut).toBeUndefined();
+    expect(parseOptions(gaps("")).gapsOut).toBeUndefined();
   });
 });
 

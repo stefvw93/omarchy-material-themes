@@ -32,15 +32,19 @@ The `hyprctl eval` string that hands the plugin's state to `hypr.lua`:
 - An address that is not `0x` followed by hex digits counts as no selection: nothing but an address ever reaches Lua code.
 - The `if … then` guard keeps the eval harmless when the hook is not loaded.
 
-## Decoration
+## Options
 
-From the output of `hyprctl -j getoption general:border_size; hyprctl -j getoption decoration:rounding; hyprctl -j getoption general:gaps_out` (JSON objects, one after the other): the border width and the rounding, each as an integer, and the outer gaps as `[top, right, bottom, left]`; each absent when not found.
+What the plugin reads of Hyprland's options, in one `hyprctl --batch`: `j/getoption <option>` for `general:border_size`, `decoration:rounding`, `general:gaps_out` and `decoration:blur:` `enabled`, `size`, `passes`, `contrast`, `brightness` and `vibrancy`, joined with `;`.
 
-The outer gaps are CSS shorthand in the `css` field: one value for all sides, two for top/bottom and left/right, three for top, left/right and bottom, four for top, right, bottom and left. Anything else is absent.
+Its output is one JSON object per option (`{"option": "<name>", "<type>": <value>, "set": <bool>}`, the type `int`, `float`, `bool` or `css`), separated by blank lines; anything that isn't such an object is skipped. From it:
+
+- the border width and the rounding, each as an integer;
+- the outer gaps as `[top, right, bottom, left]`, from the CSS shorthand in the `css` field: one value for all sides, two for top/bottom and left/right, three for top, left/right and bottom, four for top, right, bottom and left. Anything else is absent;
+- the blur: `enabled` (a bool), `size` and `passes`, `contrast`, `brightness` and `vibrancy` (numbers).
+
+Each is absent when not found.
 
 ## Blur
-
-From the output of `hyprctl -j getoption` for `decoration:blur:enabled`, `size`, `passes`, `contrast`, `brightness` and `vibrancy` (JSON objects, one after the other; `enabled` is a bool, `size` and `passes` ints, the rest floats): each value, or absent when not found.
 
 The ghost's `MultiEffect` settings from those (interpretation `periphery.ghost-blur`, SPEC.md [What a ghost copies from its window](../../SPEC.md#what-a-ghost-copies-from-its-window)):
 
