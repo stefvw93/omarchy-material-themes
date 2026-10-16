@@ -31,7 +31,8 @@ import "lib/surface.mjs" as Surface
 // workspaces the bands as side gaps; special workspaces and the bar keep the
 // full width. Cards are drawn on one full-screen Bottom-layer surface (below
 // windows, above the wallpaper), so they can slide between sides; the switch
-// ghosts and the dragged card on an Overlay surface, above every window.
+// ghosts and the dragged card on a Top-layer surface, above every window
+// and below the notifications.
 Item {
   id: root
 
@@ -585,9 +586,9 @@ Item {
   function launchOnTiles() {
     root.clearSelection()
     wallBlurTex.scheduleUpdate()
-    // Focus changes don't refresh the toplevels: the ghosts' stacking reads
-    // Hyprland's focus history afresh, before the switch goes out.
-    Hyprland.refreshToplevels()
+    // The ghosts stack as Hyprland stacks the windows; its order is read
+    // afresh, well before the switch goes out.
+    root.readStack()
     var ghosted = {}
     var onTiles = Flight.ghostsOnTiles(Object.keys(root.focusRects), root.tabGroups, root.shownTabs) // qmllint disable missing-property
     for (var i = 0; i < onTiles.length; i++) {
@@ -601,6 +602,32 @@ Item {
     var hidden = {}
     Flight.floatingToHide(root.winData, root.focusRects).forEach(function(a) { hidden[a] = true }) // qmllint disable missing-property
     root.hiddenFloating = hidden
+  }
+
+  // Address -> place in Hyprland's window list, back to front (src/flight/
+  // specs.md, Ghost stacking).
+  property var stackOrder: ({})
+
+  function readStack() {
+    if (stackProc.running) stackProc.again = true
+    else stackProc.running = true
+  }
+
+  Process {
+    id: stackProc
+    // Asked again while running: read once more, as the order may be newer.
+    property bool again: false
+    onRunningChanged: if (!running && again) { again = false; running = true }
+    command: ["hyprctl", "-j", "clients"]
+    stdout: StdioCollector {
+      onStreamFinished: {
+        var order = {}
+        try {
+          JSON.parse(text).forEach(function(c, i) { order[root.normalizeAddress(c.address)] = i })
+        } catch (e) {}
+        root.stackOrder = order
+      }
+    }
   }
 
   function scheduleDispatch() { flightTimer.restart() }
@@ -757,7 +784,7 @@ Item {
         var g = root.ghostItems[a]
         if (!g.visible || g.opacity < 0.01) continue
         var t = g.target
-        ghosts.push({ address: a, launched: g.launched, flying: g.flying, rect: root.liveRect(g),
+        ghosts.push({ address: a, launched: g.launched, flying: g.flying, rect: root.liveRect(g), z: g.z,
                       target: t ? { x: Math.round(t.x), y: Math.round(t.y), w: Math.round(t.w), h: Math.round(t.h) } : undefined })
       }
       var cards = []
@@ -946,6 +973,8 @@ Item {
   // switch retargets ghosts whose real tiles differ from the cache (hidden
   // workspaces keep their old tiling).
   function fly() {
+    // The switch focused a window of the new workspace, which raised it.
+    root.readStack()
     var target = root.flightTarget
     root.flightTarget = ""
     var shown = root.shownTabs
@@ -1190,7 +1219,8 @@ Item {
     exclusionMode: ExclusionMode.Ignore
     mask: Region {}
     WlrLayershell.namespace: "omarchy-periphery-fx"
-    WlrLayershell.layer: WlrLayer.Overlay
+    // Top: above every window, below the Overlay layer's notifications.
+    WlrLayershell.layer: WlrLayer.Top
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
     // Covers the tiling area (the bar stays visible) so the real windows of
@@ -1348,7 +1378,7 @@ Item {
         // Stacked as Hyprland stacks the windows: a tiled window's ghost
         // under the floating ones over it, or they pop up at the hand-off.
         readonly property var ipc: flyer.lastTarget && flyer.lastTarget.toplevel ? flyer.lastTarget.toplevel.lastIpcObject : null
-        z: flyer.ipc ? Flight.ghostZ({ floating: !!flyer.ipc.floating, pinned: !!flyer.ipc.pinned, focusHistoryID: flyer.ipc.focusHistoryID }) : 0 // qmllint disable missing-property
+        z: flyer.ipc ? Flight.ghostZ({ floating: !!flyer.ipc.floating, pinned: !!flyer.ipc.pinned, stack: root.stackOrder[flyer.address] }) : 0 // qmllint disable missing-property
         opacity: flyFade.value
         // On the plane of the band it leaves or lands on, as the cards.
         transform: Matrix4x4 { matrix: root.surfaceAt(flyer.x, flyer.y, flyer.look.tilt, 0) }

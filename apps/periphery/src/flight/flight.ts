@@ -71,8 +71,8 @@ export function floatingToHide(
 export interface StackInput {
   floating: boolean;
   pinned: boolean;
-  /** Hyprland's: 0 for the most recently focused, −1 or absent for never. */
-  focusHistoryID?: number | undefined;
+  /** Its place in Hyprland's window list, back to front; −1 or absent when unknown. */
+  stack?: number | undefined;
 }
 
 /** How many z values a stacking layer (floating, pinned) spans. */
@@ -81,12 +81,10 @@ const LAYER = 1000000;
 /** A ghost's z, higher in front: the way Hyprland stacks its window. */
 export function ghostZ(input: StackInput): number {
   if (!input.floating && !input.pinned) return 0;
-  // Each layer is LAYER deep: never focused at its back (1), focused
-  // windows ahead of it, the most recent in front.
+  // Each layer is LAYER deep: an unknown place at its back, then the list.
   const layer = input.pinned ? 2 : 1;
-  const id = input.focusHistoryID ?? -1;
-  const age = id >= 0 ? Math.min(id, LAYER - 2) : LAYER - 1;
-  return layer * LAYER - age;
+  const stack = input.stack ?? -1;
+  return layer * LAYER + (stack >= 0 ? 1 + Math.min(stack, LAYER - 2) : 0);
 }
 
 export interface LookInput {

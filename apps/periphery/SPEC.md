@@ -113,7 +113,7 @@ Only the hook sees a switch before Hyprland makes it. Every other switch reaches
 
 #### The Exposé flight
 
-The plugin cannot move real windows. It flies a ghost (a live `ScreencopyView`) per window on the Overlay layer. Each window on the monitor has a ghost for as long as the mode is on, hidden and capturing: a new `ScreencopyView` takes a few hundred ms to get its first frame, so a ghost made at switch time flew empty.
+The plugin cannot move real windows. It flies a ghost (a live `ScreencopyView`) per window on the Top layer: above every window, below the Overlay layer's notifications, which a flight must not cover. Each window on the monitor has a ghost for as long as the mode is on, hidden and capturing: a new `ScreencopyView` takes a few hundred ms to get its first frame, so a ghost made at switch time flew empty.
 
 The plugin starts this switch (`flyTo`, or a routed switch), so it gets ahead of Hyprland:
 
@@ -122,7 +122,7 @@ The plugin starts this switch (`flyTo`, or a routed switch), so it gets ahead of
 3. On `activeWorkspaceChanged`, `beginSwitch` reads where every window is drawn now (its ghost, card or tile), relays out from the cached geometry and starts every ghost: a window leaving the focus area flies from its tile to its new card, a window entering it flies from its card to its tile, and a window that stays in the focus area (one moved along with `SUPER + SHIFT + <n>`) flies from its old tile to its new one. Tab groups have their own rule ([Tab groups in a flight](#tab-groups-in-a-flight)). A hidden workspace can have old tiling; the refresh 80 ms later retargets the ghosts in flight.
 4. When every ghost has landed, two checks in a row (at least 120 ms, at most 1.5 s), the hidden floating windows are shown again under their ghosts, and two frames after that `hyprctl` returns, the ghosts and backdrop go in one frame. A ghost has landed when its rect is its target's, on whole pixels. Ghosts and cards are drawn on whole pixels: a ghost at a fraction of a pixel draws its window resampled, slightly soft, so its text shimmered in the spring's tail and snapped sharp when the real window took over (a visible pop on a large window). Rounded, a ghost sits on its target's pixels as soon as its spring is within half a pixel of it. Landing is measured on the ghost's rect, so a target that moves mid-flight (the 80 ms refresh) still counts only once it is reached. The shadows, the hidden floating windows and Hyprland's workspace animation (`workspaceStyle`) come back.
 
-Ghosts stack the way Hyprland stacks their windows: tiled at the back, floating windows in front of them (the most recently focused in front), pinned windows in front of all ([src/flight/specs.md](src/flight/specs.md#ghost-stacking)). The focus history is read afresh when the flight starts. Without this, a tiled window's ghost covered the floating windows over it, and they popped up at the hand-off.
+Ghosts stack the way Hyprland stacks their windows: tiled at the back, floating windows in front of them in Hyprland's own order, pinned windows in front of all ([src/flight/specs.md](src/flight/specs.md#ghost-stacking)). The order is `hyprctl clients`' (back to front), read when the flight starts: focus history isn't the stacking, as a window opened without focus has none and pointer focus doesn't raise. Without this, a tiled window's ghost covered the floating windows over it, and they popped up at the hand-off.
 
 No switch: when Hyprland hasn't switched `SWITCH_WAIT_MS` (150 ms) after the dispatch (a key to the workspace already shown), the flight ends. The ghosts are still on their tiles, so nothing visible changes.
 
@@ -316,10 +316,10 @@ From `@stef/qml-kit`, vendored into the build: `SpringValue`, `SpringRect`, `Rou
 
 The plugin creates 2 layer surfaces on the focused monitor. Both exist only while the mode is on, and neither reserves space.
 
-| Namespace              | Layer   | Size        | Exclusive zone | Input      | Use                                                                      |
-| ---------------------- | ------- | ----------- | -------------- | ---------- | ------------------------------------------------------------------------ |
-| `omarchy-periphery`    | Bottom  | full screen | ignore         | bands only | Draw the groups and cards.                                               |
-| `omarchy-periphery-fx` | Overlay | full screen | ignore         | none       | Draw the switch ghosts and backdrop, the dragged card and drop outlines. |
+| Namespace              | Layer  | Size        | Exclusive zone | Input      | Use                                                                      |
+| ---------------------- | ------ | ----------- | -------------- | ---------- | ------------------------------------------------------------------------ |
+| `omarchy-periphery`    | Bottom | full screen | ignore         | bands only | Draw the groups and cards.                                               |
+| `omarchy-periphery-fx` | Top    | full screen | ignore         | none       | Draw the switch ghosts and backdrop, the dragged card and drop outlines. |
 
 The bands get their room from the workspace rule ([Toggle](#toggle)). The Omarchy bar keeps its exclusive zone at the top of the full monitor width; the bands and the switch backdrop start below the reserved area.
 
@@ -428,7 +428,7 @@ Colours are the theme's M3 roles (`Scheme.qml`: `omaterial.json`, or approximate
 - **Hyprland reload while on.** `hyprctl reload` while the mode is on puts the theme's workspace slide back (a full slide crosses the bands). Toggle the mode off and on.
 - **Only routed switches and clicks fly.** A switch that doesn't go through the hook (a bar click, a script, a notification, an app taking focus) reaches the plugin about 8 ms after Hyprland has switched, too late to put a backdrop up, so Hyprland animates it. A key bound to a raw `hyprctl dispatch` or `exec` bypasses the hook too.
 - **Routed switches wait for the plugin.** A workspace key starts its flight 50 to 70 ms after the press. When the plugin doesn't answer, Hyprland switches after `routeTimeoutMs` (150 ms) without a flight.
-- **ScreencopyView does not blend.** A `ScreencopyView` overwrites what is under it with the window's own pixels and alpha. Over the backdrop, a translucent window (foot) made the Overlay surface translucent, and the real window behind showed through as a faint second copy; inside a ghost it wiped the blur patch. The `ScreencopyView` itself has `layer.enabled: true`: it renders alone into a texture that is drawn with normal blending. A layer on a parent item does not help, as the overwrite then happens inside that layer.
+- **ScreencopyView does not blend.** A `ScreencopyView` overwrites what is under it with the window's own pixels and alpha. Over the backdrop, a translucent window (foot) made the flight surface translucent, and the real window behind showed through as a faint second copy; inside a ghost it wiped the blur patch. The `ScreencopyView` itself has `layer.enabled: true`: it renders alone into a texture that is drawn with normal blending. A layer on a parent item does not help, as the overwrite then happens inside that layer.
 - **Hand-off leftovers.** A floating window's shadow, a tab group's tab bar and the blur's noise still change at the hand-off ([What a ghost copies from its window](#what-a-ghost-copies-from-its-window)).
 - **Hidden tabs: `hidden` is false.** Hyprland's IPC reports `hidden: false` for every tab of a tab group. Only the hook (`group.current`) knows the shown tab.
 - **Hiding floating windows assumes an instant opacity change.** The hide tag changes a window's opacity, which Hyprland animates with its `fadeSwitch` leaf. Omarchy's themes turn `fadeSwitch` off; a theme that turns it on would fade the floating windows in after the hand-off.

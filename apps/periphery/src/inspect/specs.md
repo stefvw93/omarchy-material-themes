@@ -7,7 +7,7 @@ What the stress test (`stress.ts`, `stef stress periphery`) looks for in the plu
 What `inspect` answers, at time `at` (milliseconds, the caller's clock):
 
 - `phase`: the flight's phase (`idle`, `pending`, `flying`, `unhiding`; [flight specs](../flight/specs.md#lifecycle)).
-- `ghosts`: every ghost that is drawn (visible, and not faded out), each with its window's `address`, whether it is `launched` (taken off its window for a flight) and `flying` (moving to its target), its `rect` and its `target` (`{ x, y, w, h }`, monitor-local pixels; the target absent when the window has neither card nor tile).
+- `ghosts`: every ghost that is drawn (visible, and not faded out), each with its window's `address`, whether it is `launched` (taken off its window for a flight) and `flying` (moving to its target), its `rect` and its `target` (`{ x, y, w, h }`, monitor-local pixels; the target absent when the window has neither card nor tile), and its `z` (higher in front).
 
 - `cards`: every card that is drawn, each with its window's `address`, whether it is `leaving` (its window left the bands; it fades out, then goes) and its `rect`.
 
@@ -21,5 +21,9 @@ Each problem names the rule, the window, and the sample's time, once per window 
 - **Grounded ghost:** during `flying`, a drawn ghost that is launched but not flying in two samples at least `GROUNDED_MS` (100) apart. Every launched ghost is sent flying the frame after the switch; one left behind sits at its start.
 - **Double:** a window drawn both as a card and as a ghost in the same sample. While a ghost flies, its card waits hidden.
 - **Fading card:** a leaving card drawn, in any phase. In a flight a window's ghost leaves from its card, which must not show again where the window was. This holds for flights only: a switch the plugin didn't start fades leaving cards out as they travel, and a hidden tab's card fades by design; the stress test makes neither.
+
+## Stacking
+
+Separately, for one sample and Hyprland's floating windows on the shown workspace in its stacking order (back to front, as `hyprctl clients` lists them once the flight has settled): every two of those windows whose ghosts are both drawn, the later one's ghost must have the higher `z`. Otherwise it was drawn behind a window it is in front of, and popped over it at the hand-off: a **wrong stacking** problem for the later window.
 
 Samples are taken in time order. Two samples count for a rule only when the phase is `flying` in both, with no other phase in between: a new flight starts every ghost again.

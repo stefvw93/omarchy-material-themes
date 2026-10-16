@@ -41,13 +41,13 @@ A floating window can reach past the focus area into a band, where the backdrop 
 
 Ghosts overlap where their windows do, so they stack the way Hyprland draws the windows: otherwise a tiled window's ghost covers the floating windows over it, and they pop up at the hand-off.
 
-Input per window: whether it floats, whether it is pinned, and its `focusHistoryID` (Hyprland's: 0 for the most recently focused window, higher for longer ago, −1 or absent for never).
+Input per window: whether it floats, whether it is pinned, and its `stack`: its place in Hyprland's window list (`hyprctl clients` lists the windows back to front, 0 furthest back; a raised window moves to the end), or −1 or absent when unknown. Focus history is not the stacking: a window opened without focus has none, and pointer focus doesn't raise. The plugin reads the list when a flight starts and again once Hyprland has switched: the switch focuses a window of the new workspace, which raises it when it floats.
 
 Output: a `z`, higher in front.
 
 - Tiled windows are at the back, all at 0: they don't overlap.
-- Floating windows are in front of every tiled window. Hyprland raises a floating window when it gets the focus, so among them the more recently focused one is in front. A floating window never focused is behind the floating windows that were.
-- Pinned windows are in front of every other window, among them again the more recently focused one in front.
+- Floating windows are in front of every tiled window, among them the one later in the list in front. One with an unknown place is behind those with a known one.
+- Pinned windows are in front of every other window, among them again the one later in the list in front.
 
 ## Ghost look
 

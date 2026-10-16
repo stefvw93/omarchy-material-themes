@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import {
   type CardState,
   findProblems,
+  stackingProblems,
   GROUNDED_MS,
   type GhostState,
   type Sample,
@@ -141,6 +142,28 @@ describe("findProblems", () => {
   it("leaves cards that stay alone", () => {
     expect(
       findProblems([{ ...sample(10, "idle"), cards: [card(), card({ address: "0xb" })] }]),
+    ).toEqual([]);
+  });
+});
+
+describe("stackingProblems", () => {
+  const at = (address: string, z: number) => ghost(halfway, { address, z });
+
+  it("accepts ghosts stacked in Hyprland's order", () => {
+    expect(
+      stackingProblems(sample(5, "flying", at("0xa", 10), at("0xb", 20)), ["0xa", "0xb"]),
+    ).toEqual([]);
+  });
+
+  it("flags the window drawn behind one it is in front of", () => {
+    expect(
+      stackingProblems(sample(5, "flying", at("0xa", 20), at("0xb", 10)), ["0xa", "0xb"]),
+    ).toEqual([{ rule: "wrong stacking", address: "0xb", at: 5 }]);
+  });
+
+  it("only compares windows in the order whose ghosts are drawn", () => {
+    expect(
+      stackingProblems(sample(5, "flying", at("0xa", 20), at("0xc", 0)), ["0xa", "0xb"]),
     ).toEqual([]);
   });
 });

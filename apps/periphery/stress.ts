@@ -13,7 +13,7 @@ import { join } from "node:path";
 import { Hyprland } from "@stef/hyprland";
 import { makeChecks, OmarchyShell, type SmokeTest } from "@stef/omarchy";
 import { Effect, Fiber, Option } from "effect";
-import { findProblems, type Problem, type Sample } from "./src/inspect/index.ts";
+import { findProblems, type Problem, type Sample, stackingProblems } from "./src/inspect/index.ts";
 import { hiddenCount, leftovers } from "./live.ts";
 
 /** The class of every terminal this run opens: its own, nothing else is closed. */
@@ -112,6 +112,7 @@ const stress: SmokeTest<Hyprland | OmarchyShell> = ({ id }) =>
 
     const go = (ws: number) => hypr.eval(`hl.dispatch(hl.dsp.focus({ workspace = "${ws}" }))`);
     let switches = 0;
+    let stackChecks = 0;
     for (const spam of SPAM_MS) {
       for (const order of orders(spaces[0]!, spaces[1]!, spaces[2]!)) {
         for (let lap = 0; lap < SPAM_LAPS; lap++)
@@ -121,6 +122,14 @@ const stress: SmokeTest<Hyprland | OmarchyShell> = ({ id }) =>
             yield* Effect.sleep(`${between(spam)} millis`);
           }
         yield* Effect.sleep(`${SETTLE_MS} millis`);
+        // The last flight's ghosts against Hyprland's stacking, now settled.
+        const shown = order[order.length - 1];
+        const stacked = (yield* hypr.clients)
+          .filter((c) => c.floating && c.workspace.id === shown)
+          .map((c) => c.address);
+        const last = samples.findLast((x) => x.phase === "flying" && x.ghosts.length > 0);
+        if (last) found.push(...stackingProblems(last, stacked));
+        stackChecks++;
       }
     }
     yield* Fiber.interrupt(sampler);
@@ -136,7 +145,7 @@ const stress: SmokeTest<Hyprland | OmarchyShell> = ({ id }) =>
     yield* check(
       "stress: no ghost problems",
       found.length === 0,
-      `${samples.length} samples, ${switches} switches${found.length ? `: ${found.map((p) => `${p.rule} ${p.address} @${p.at}`).join(", ")}; frames in ${frames}` : ""}`,
+      `${samples.length} samples, ${switches} switches, ${stackChecks} stacking checks${found.length ? `: ${found.map((p) => `${p.rule} ${p.address} @${p.at}`).join(", ")}; frames in ${frames}` : ""}`,
     );
     const settled = yield* leftovers(floating);
     const hidden = yield* hypr.evalValue(hiddenCount);

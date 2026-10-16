@@ -198,12 +198,9 @@ describe("ghostLook", () => {
 });
 
 describe("ghostZ", () => {
-  const tiled = (focusHistoryID?: number) =>
-    ghostZ({ floating: false, pinned: false, focusHistoryID });
-  const floating = (focusHistoryID?: number) =>
-    ghostZ({ floating: true, pinned: false, focusHistoryID });
-  const pinned = (focusHistoryID?: number) =>
-    ghostZ({ floating: true, pinned: true, focusHistoryID });
+  const tiled = (stack?: number) => ghostZ({ floating: false, pinned: false, stack });
+  const floating = (stack?: number) => ghostZ({ floating: true, pinned: false, stack });
+  const pinned = (stack?: number) => ghostZ({ floating: true, pinned: true, stack });
 
   it("puts every tiled window at the back, at 0", () => {
     expect(tiled(0)).toBe(0);
@@ -211,27 +208,26 @@ describe("ghostZ", () => {
     expect(tiled()).toBe(0);
   });
 
-  it("puts floating windows in front of tiled ones, focused or not", () => {
-    expect(floating(0)).toBeGreaterThan(tiled(0));
-    expect(floating(500)).toBeGreaterThan(tiled(0));
-    expect(floating(-1)).toBeGreaterThan(tiled(0));
-    expect(floating()).toBeGreaterThan(tiled(0));
+  it("puts floating windows in front of tiled ones, known place or not", () => {
+    expect(floating(0)).toBeGreaterThan(tiled(9));
+    expect(floating(-1)).toBeGreaterThan(tiled(9));
+    expect(floating()).toBeGreaterThan(tiled(9));
   });
 
-  it("puts the more recently focused floating window in front", () => {
-    expect(floating(1)).toBeGreaterThan(floating(2));
-    expect(floating(0)).toBeGreaterThan(floating(1));
+  it("puts the floating window later in Hyprland's list in front", () => {
+    expect(floating(5)).toBeGreaterThan(floating(2));
+    expect(floating(1)).toBeGreaterThan(floating(0));
   });
 
-  it("puts a never focused floating window behind the focused ones", () => {
-    expect(floating(-1)).toBeLessThan(floating(500));
+  it("puts a floating window with an unknown place behind the known ones", () => {
+    expect(floating(-1)).toBeLessThan(floating(0));
     expect(floating()).toBe(floating(-1));
   });
 
-  it("puts pinned windows in front of every other window, the more recent in front", () => {
-    expect(pinned(9)).toBeGreaterThan(floating(0));
-    expect(pinned(-1)).toBeGreaterThan(floating(0));
-    expect(pinned(1)).toBeGreaterThan(pinned(2));
+  it("puts pinned windows in front of every other window, the later in front", () => {
+    expect(pinned(0)).toBeGreaterThan(floating(500));
+    expect(pinned(-1)).toBeGreaterThan(floating(500));
+    expect(pinned(3)).toBeGreaterThan(pinned(2));
   });
 });
 

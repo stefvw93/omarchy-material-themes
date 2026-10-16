@@ -14,6 +14,7 @@ export interface GhostState {
   flying: boolean;
   rect: Rect;
   target?: Rect | undefined;
+  z?: number | undefined;
 }
 
 export interface CardState {
@@ -35,7 +36,8 @@ export type Rule =
   | "stuck ghost"
   | "grounded ghost"
   | "double"
-  | "fading card";
+  | "fading card"
+  | "wrong stacking";
 
 export interface Problem {
   rule: Rule;
@@ -100,3 +102,12 @@ export function findProblems(samples: readonly Sample[]): Problem[] {
 }
 
 const sameRect = (a: Rect, b: Rect) => a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
+
+/** Floating ghosts drawn out of Hyprland's order (back to front). */
+export function stackingProblems(sample: Sample, order: readonly string[]): Problem[] {
+  const z = new Map(sample.ghosts.map((g) => [g.address, g.z ?? 0]));
+  const drawn = order.filter((a) => z.has(a));
+  return drawn
+    .filter((a, i) => drawn.slice(0, i).some((before) => z.get(before)! >= z.get(a)!))
+    .map((address) => ({ rule: "wrong stacking" as const, address, at: sample.at }));
+}
