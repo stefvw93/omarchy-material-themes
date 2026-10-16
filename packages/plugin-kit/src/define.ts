@@ -24,6 +24,11 @@ export interface PluginConfig extends Omit<PluginManifest, "schemaVersion"> {
    * whose default export is `(ctx: { id }) => Effect` (see `SmokeTest`).
    */
   readonly smoke?: string;
+  /**
+   * A longer live run that takes over the desktop for a while, run by
+   * `stef stress`; the same shape as `smoke`.
+   */
+  readonly stress?: string;
 }
 
 export const definePlugin = <const C extends PluginConfig>(config: C): C => config;

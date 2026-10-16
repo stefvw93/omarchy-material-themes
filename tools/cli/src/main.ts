@@ -96,25 +96,35 @@ const harnessCmd = Command.make("harness", { app }, ({ app: name }) =>
   ),
 );
 
-const smoke = Command.make("smoke", { app }, ({ app: name }) =>
-  Effect.gen(function* () {
-    const a = yield* pluginApp(name);
-    if (a.config.smoke === undefined) {
-      return yield* new CliError({
-        message: `${a.name} has no smoke test (plugin.config.ts smoke)`,
-      });
-    }
-    const path = yield* Path.Path;
-    const test = (yield* Effect.promise(
-      () =>
-        import(path.join(a.root, a.config.smoke!)) as Promise<{
-          readonly default: SmokeTest<Hyprland | OmarchyShell>;
-        }>,
-    )).default;
-    const live = (yield* readState).active[a.config.id] ?? "prod";
-    yield* test({ id: variantId(a.config.id, live) });
-  }),
-).pipe(Command.withDescription("Live checks against the running session, on the live variant"));
+// `stef smoke` and `stef stress`: a module from plugin.config.ts, run on the
+// live variant.
+const liveTest = (kind: "smoke" | "stress", description: string) =>
+  Command.make(kind, { app }, ({ app: name }) =>
+    Effect.gen(function* () {
+      const a = yield* pluginApp(name);
+      const entry = a.config[kind];
+      if (entry === undefined) {
+        return yield* new CliError({
+          message: `${a.name} has no ${kind} test (plugin.config.ts ${kind})`,
+        });
+      }
+      const path = yield* Path.Path;
+      const test = (yield* Effect.promise(
+        () =>
+          import(path.join(a.root, entry)) as Promise<{
+            readonly default: SmokeTest<Hyprland | OmarchyShell>;
+          }>,
+      )).default;
+      const live = (yield* readState).active[a.config.id] ?? "prod";
+      yield* test({ id: variantId(a.config.id, live) });
+    }),
+  ).pipe(Command.withDescription(description));
+
+const smoke = liveTest("smoke", "Live checks against the running session, on the live variant");
+const stress = liveTest(
+  "stress",
+  "A longer live run that takes over the desktop for a while, on the live variant",
+);
 
 const hyprRecord = Command.make(
   "record",
@@ -182,6 +192,7 @@ const stef = Command.make("stef").pipe(
     devCmd,
     harnessCmd,
     smoke,
+    stress,
     hypr,
     tokens,
     hooks,

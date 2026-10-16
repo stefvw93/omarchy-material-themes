@@ -19,4 +19,5 @@ export default definePlugin({
   },
   files: ["README.md"],
   smoke: "smoke.ts",
+  stress: "stress.ts",
 });

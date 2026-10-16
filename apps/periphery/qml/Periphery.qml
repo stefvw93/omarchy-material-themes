@@ -749,6 +749,25 @@ Item {
       root.clearSelection()
     }
 
+    // For the stress test (src/inspect/specs.md): the flight's phase, and
+    // every ghost and card drawn now.
+    function inspect(): string {
+      var ghosts = []
+      for (var a in root.ghostItems) {
+        var g = root.ghostItems[a]
+        if (!g.visible || g.opacity < 0.01) continue
+        var t = g.target
+        ghosts.push({ address: a, launched: g.launched, flying: g.flying, rect: root.liveRect(g),
+                      target: t ? { x: Math.round(t.x), y: Math.round(t.y), w: Math.round(t.w), h: Math.round(t.h) } : undefined })
+      }
+      var cards = []
+      for (var c in root.cardItems) {
+        var card = root.cardItems[c]
+        if (card.visible && card.opacity >= 0.01) cards.push({ address: c, leaving: card.leaving, rect: root.liveRect(card) })
+      }
+      return JSON.stringify({ phase: root.phase.tag, ghosts: ghosts, cards: cards })
+    }
+
     function dropWindow(address: string, x: string, y: string): void {
       if (!root.opened) return
       var px = parseFloat(x) - root.monX

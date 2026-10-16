@@ -41,7 +41,17 @@ while the mode is on (the theme's own style once it is off). The settled diff
 is a few dozen pixels (clock, cursor); more means something still moves, or
 a terminal printed: crop the diff (`magick compare … -trim info:`) to see where.
 
-`stef smoke periphery` does the leftover checks without frames.
+`stef smoke periphery` does the leftover checks without frames. `stef stress
+periphery` runs about a minute of switching, from key-repeat speed to settled,
+between three empty workspaces it fills with printing terminals, and checks
+every drawn ghost and card through the plugin's `inspect` IPC call
+(src/inspect/specs.md); it saves a frame at every problem and names the
+folder.
+
+When the user sees a glitch that no run reproduces, ask them to run
+`omarchy-shell stef.periphery inspect` the moment they see it (or bind it):
+the phase and every drawn ghost and card, with rects and targets, at that
+instant.
 
 ## Simulating keys
 

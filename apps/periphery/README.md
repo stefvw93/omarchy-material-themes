@@ -76,6 +76,7 @@ vp run verify                  # build, QML lint, bundles + tokens in Quickshell
 stef deploy periphery          # build and install into ~/.config/omarchy/plugins/stef.periphery
 stef dev periphery             # live dev variant stef.periphery.dev; Ctrl+C restores prod
 stef smoke periphery           # live checks against the running session
+stef stress periphery          # ~1 min of switching between 3 workspaces of terminals; checks every ghost (hands off)
 ```
 
 (`stef` is `pnpm stef` from the repo root, or `node tools/cli/src/main.ts`.)
