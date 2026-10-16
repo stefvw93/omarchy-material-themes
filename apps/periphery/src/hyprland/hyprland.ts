@@ -62,21 +62,23 @@ export function hookStateLua(state: HookState): string {
   );
 }
 
-/**
- * The focus area as a workspace rule: the monitor's regular workspaces get
- * the bands as extra side gaps, so special ones keep the full width.
- */
+type FocusArea = Pick<HookState, "sideW" | "monitor" | "gapsOut">;
+
 // Nothing but a monitor name ever reaches Lua code.
-const safeMonitor = (state: HookState) =>
+const safeMonitor = (state: FocusArea) =>
   state.monitor && /^[A-Za-z0-9_.-]+$/.test(state.monitor) ? state.monitor : undefined;
 
 /** The monitor's name for the focus area announcements, or nil. */
-function monitorLua(state: HookState): string {
+function monitorLua(state: FocusArea): string {
   const name = safeMonitor(state);
   return name ? `"${name}"` : "nil";
 }
 
-function focusRuleLua(state: HookState): string {
+/**
+ * The focus area as a workspace rule: the monitor's regular workspaces get
+ * the bands as extra side gaps, so special ones keep the full width.
+ */
+export function focusRuleLua(state: FocusArea): string {
   const side = Math.round(state.sideW);
   if (!(side > 0)) return "nil";
   const [t = 0, r = 0, b = 0, l = 0] = state.gapsOut ?? [];

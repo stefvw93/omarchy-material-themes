@@ -333,6 +333,7 @@ One full-screen surface draws both bands. A card can then animate from one band 
 6. `rebuild()` also caches the tiles of the current workspace (`focusRects`), the start rects of a workspace switch.
 7. A window new to the plugin gets its `opacity`, `opacity_inactive`, `border_size` and `rounding` read in one `hyprctl --batch` (`j/getprop`), for its ghost. A reload reads them again for every window.
 8. A 3 s timer resyncs titles and sizes (and, through step 2, the reserved area) that change without a structural event. It stops during a drag.
+9. A new focus area rule (the mode turning on, a new ratio or outer gaps) re-tiles the regular workspaces without an event: once the hook has it, the plugin refreshes as in step 2. Without this, the first flight after the mode turned on started from the tiles of before.
 
 ### IPC
 

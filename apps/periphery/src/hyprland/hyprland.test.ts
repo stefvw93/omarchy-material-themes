@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
   flightBatch,
+  focusRuleLua,
   ghostBlur,
   hookStateLua,
   parseBlur,
@@ -125,6 +126,13 @@ describe("hookStateLua", () => {
     expect(
       hookStateLua({ ...on, monitor: "HDMI-A-1", gapsOut: [8.4, 8, 8, 8], sideW: 379.6 }),
     ).toContain(rule("s[false] m[HDMI-A-1]", 8, 388, 8, 388));
+  });
+
+  it("gives the rule on its own, the same whatever the selection", () => {
+    const rule = `, ${focusRuleLua({ ...on, monitor: "DP-3" })}, "DP-3");`;
+    expect(hookStateLua({ ...on, monitor: "DP-3" })).toContain(rule);
+    expect(hookStateLua({ ...on, monitor: "DP-3", selected: "0x1" })).toContain(rule);
+    expect(focusRuleLua({ ...on, sideW: 0 })).toBe("nil");
   });
 
   it("has no rule without bands", () => {

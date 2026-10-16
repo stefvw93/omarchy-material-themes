@@ -28,6 +28,7 @@ The `hyprctl eval` string that hands the plugin's state to `hypr.lua`:
   - `rule`: the focus area's workspace rule (SPEC.md, [Toggle](../../SPEC.md#toggle)), `{ workspace = "s[false] m[<monitor>]", gaps_out = { top = <t>, right = <r>, bottom = <b>, left = <l> } }`. The gaps are the outer gaps, with `sideW` added at the left and right, rounded; missing outer gaps are 0. A monitor name other than letters, digits, `-`, `_` and `.` is left out (`s[false]`): nothing but a name reaches Lua code. With `sideW` 0 the rule is `nil`;
   - `monitor`: the monitor's name in double quotes, for the focus area announcements (SPEC.md, [Focus area announcements](../../SPEC.md#focus-area-announcements)); `nil` for a missing name or one that isn't letters, digits, `-`, `_` and `.`;
   - `selected`: the address in double quotes, or `nil`.
+- The rule is also given on its own (the same Lua text, `nil` without one), whatever the selection: Hyprland re-tiles when the hook applies a new rule, without an event, so the plugin refreshes its windows after sending a changed one.
 - An address that is not `0x` followed by hex digits counts as no selection: nothing but an address ever reaches Lua code.
 - The `if … then` guard keeps the eval harmless when the hook is not loaded.
 

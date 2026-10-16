@@ -315,10 +315,7 @@ Item {
     if (!wallpaperProc.running) wallpaperProc.running = true
     if (!decorProc.running) decorProc.running = true
     if (!blurProc.running) blurProc.running = true
-    Hyprland.refreshToplevels()
-    Hyprland.refreshWorkspaces()
-    Hyprland.refreshMonitors()
-    refreshTimer.restart()
+    root.refresh()
   }
 
   function close() {
@@ -358,14 +355,25 @@ Item {
     var reset = root.hookReset && root.opened
     if (reset) root.hookReset = false
     luaProc.command = ["hyprctl", "eval", (reset ? Hypr.hookStateLua({ opened: false }) + "; " : "") + root.luaState] // qmllint disable missing-property
+    luaProc.retiles = reset || root.focusRule !== root.focusRuleSent
+    root.focusRuleSent = root.focusRule
     luaProc.running = true
   }
+  // A new focus area rule re-tiles the regular workspaces without an event:
+  // once the hook has it, the windows are read again (SPEC.md, Data flow).
+  readonly property string focusRule: Hypr.focusRuleLua({ sideW: root.sideW, monitor: root.targetMonitor ? root.targetMonitor.name : "", gapsOut: root.gapsOut }) // qmllint disable missing-property
+  property string focusRuleSent: ""
 
   Process {
     id: luaProc
+    property bool retiles: false
     // Not onExited: `running` is still true there, so the next state waited
     // for good.
-    onRunningChanged: if (!running) root.sendLuaState()
+    onRunningChanged: {
+      if (running) return
+      if (retiles && root.opened) root.refresh()
+      root.sendLuaState()
+    }
   }
 
   // over: the active window, when known better than activeToplevel (which
@@ -1027,12 +1035,16 @@ Item {
         root.readWindowProps()
       }
       if (root.refreshEvents.indexOf(event.name) < 0) return
-      if (!refreshTimer.running) {
-        Hyprland.refreshToplevels()
-        Hyprland.refreshWorkspaces()
-        refreshTimer.restart()
-      }
+      if (!refreshTimer.running) root.refresh()
     }
+  }
+
+  // Reads Hyprland's windows and workspaces again, and rebuilds 80 ms later
+  // when lastIpcObject has caught up.
+  function refresh() {
+    Hyprland.refreshToplevels()
+    Hyprland.refreshWorkspaces()
+    refreshTimer.restart()
   }
 
   // The monitors too: the reserved area (where the backdrop and the bands
@@ -1053,10 +1065,7 @@ Item {
     interval: 3000
     repeat: true
     running: root.opened && root.dragAddress === ""
-    onTriggered: {
-      Hyprland.refreshToplevels()
-      refreshTimer.restart()
-    }
+    onTriggered: root.refresh()
   }
 
   PanelWindow { // qmllint disable uncreatable-type
