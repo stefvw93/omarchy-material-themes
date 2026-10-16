@@ -1,9 +1,32 @@
 // Live checks against the running session (`stef smoke periphery`), ported
 // from scripts/smoke.sh. Toggles the mode off and on, asserts what Hyprland
 // sees each time, and leaves the mode as it found it.
+import { execFileSync } from "node:child_process";
 import { Hyprland } from "@stef/hyprland";
 import { makeChecks, OmarchyShell, type SmokeTest } from "@stef/omarchy";
 import { Effect, Option } from "effect";
+
+const hyprctl = (...args: string[]) =>
+  Effect.sync(() => execFileSync("hyprctl", args, { encoding: "utf8" }).trim());
+
+// What a flight changes and must give back: every floating window's
+// no_shadow, and Hyprland's workspace animation.
+const leftovers = (floating: readonly string[]) =>
+  Effect.all({
+    shadows: Effect.forEach(floating, (a) => hyprctl("getprop", `address:${a}`, "no_shadow")),
+    animation: Effect.map(hyprctl("animations", "-j"), (text) => {
+      const lists = JSON.parse(text) as unknown[];
+      const all = (Array.isArray(lists[0]) ? lists[0] : lists) as { name: string }[];
+      return JSON.stringify(all.find((a) => a.name === "workspaces"));
+    }),
+  });
+
+// Windows still hidden by a flight (the hook's periphery-hide tag).
+const hiddenCount = `(function() local n = 0
+  for _, w in ipairs(hl.get_windows() or {}) do
+    if tostring(type(w.tags) == "table" and table.concat(w.tags, " ") or w.tags):find("periphery%-hide") then n = n + 1 end
+  end
+  return tostring(n) end)()`;
 
 const smoke: SmokeTest<Hyprland | OmarchyShell> = ({ id }) =>
   Effect.gen(function* () {
@@ -37,6 +60,40 @@ const smoke: SmokeTest<Hyprland | OmarchyShell> = ({ id }) =>
     );
     const on = yield* reserved;
     yield* check("mode on: no bands reserved", on[0] === 0 && on[2] === 0, on.join(","));
+
+    // A flight away and, 100 ms in, back (a routed switch each, as the
+    // workspace keys make them): everything it hid or changed comes back.
+    // Switching workspaces meanwhile starts flights of your own, which these
+    // checks can't tell from theirs: keep your hands off for a few seconds.
+    const monitor = Option.getOrUndefined(yield* hypr.focusedMonitor);
+    const clients = (yield* hypr.clients).filter((c) => c.monitor === monitor?.id);
+    const home = monitor?.activeWorkspace.id ?? -1;
+    const away = clients.find((c) => c.workspace.id > 0 && c.workspace.id !== home)?.workspace.id;
+    if (away === undefined) yield* check("flight: skipped, no other occupied workspace", true);
+    else {
+      const floating = clients.filter((c) => c.floating).map((c) => c.address);
+      const before = yield* leftovers(floating);
+      const go = (ws: number) => hypr.eval(`hl.dispatch(hl.dsp.focus({ workspace = "${ws}" }))`);
+      yield* go(away);
+      yield* Effect.sleep("100 millis");
+      yield* go(home);
+      yield* Effect.sleep("2 seconds");
+      const after = yield* leftovers(floating);
+      const back = Option.getOrUndefined(yield* hypr.focusedMonitor)?.activeWorkspace.id;
+      yield* check("flight: back on the workspace it left", back === home, `${back}`);
+      const hidden = yield* hypr.evalValue(hiddenCount);
+      yield* check("flight: no window left hidden", hidden === "0", `${hidden} hidden`);
+      yield* check(
+        "flight: floating windows have their shadow setting back",
+        after.shadows.join() === before.shadows.join(),
+        `${before.shadows.join()} -> ${after.shadows.join()}`,
+      );
+      yield* check(
+        "flight: Hyprland's workspace animation is back",
+        after.animation === before.animation,
+        after.animation,
+      );
+    }
 
     yield* toggle;
     yield* check("mode off: hook state is nil", !(yield* modeOn));
