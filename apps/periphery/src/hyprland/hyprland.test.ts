@@ -4,10 +4,12 @@ import {
   focusRuleLua,
   ghostBlur,
   hookStateLua,
+  keepAnimationLua,
   optionsBatch,
   parseOptions,
   parseTabs,
   parseWindowProps,
+  restoreAnimationLua,
   restoreFloatingBatch,
   runSwitchLua,
   windowPropsBatch,
@@ -96,26 +98,51 @@ describe("hookStateLua", () => {
     monH: 1440,
     sideW: 380,
     selected: "",
+    seq: 7,
   };
+  const rule = (workspace: string, t: number, r: number, b: number, l: number) =>
+    `{ workspace = "${workspace}", gaps_out = { top = ${t}, right = ${r}, bottom = ${b}, left = ${l} } }`;
+  const numbered = (seq: number | string, body: string) =>
+    `if periphery_state == nil or periphery_state(${seq}) then ${body} end`;
 
   it("closes the hook's state when the mode is off", () => {
     expect(hookStateLua({ ...on, opened: false })).toBe(
-      "if periphery_close then periphery_close() end",
+      numbered(7, "if periphery_close then periphery_close() end"),
     );
   });
 
-  const rule = (workspace: string, t: number, r: number, b: number, l: number) =>
-    `{ workspace = "${workspace}", gaps_out = { top = ${t}, right = ${r}, bottom = ${b}, left = ${l} } }`;
+  it("numbers every state, a non-number as 0", () => {
+    expect(hookStateLua({ ...on, opened: false, seq: 1792140083472001 })).toContain(
+      "periphery_state(1792140083472001)",
+    );
+    expect(hookStateLua({ ...on, opened: false, seq: 1.5 })).toContain("periphery_state(0)");
+    expect(hookStateLua({ ...on, opened: false, seq: undefined })).toContain("periphery_state(0)");
+  });
+
+  it("resets the hook before the first open, under the one number", () => {
+    expect(hookStateLua({ ...on, reset: true })).toBe(
+      numbered(
+        "7, true",
+        `if periphery_open then periphery_close(); periphery_open(true, false, 380, 2180, 0, 1440, ${rule("s[false]", 0, 380, 0, 380)}, nil); periphery_select(nil) end`,
+      ),
+    );
+  });
 
   it("opens it with the bands, the focus area and its rule, nothing selected", () => {
     expect(hookStateLua(on)).toBe(
-      `if periphery_open then periphery_open(true, false, 380, 2180, 0, 1440, ${rule("s[false]", 0, 380, 0, 380)}, nil); periphery_select(nil) end`,
+      numbered(
+        7,
+        `if periphery_open then periphery_open(true, false, 380, 2180, 0, 1440, ${rule("s[false]", 0, 380, 0, 380)}, nil); periphery_select(nil) end`,
+      ),
     );
   });
 
   it("passes the selected address and the monitor's offset", () => {
     expect(hookStateLua({ ...on, monX: 2560, monY: 100.4, selected: "0x56c7bf423bd0" })).toBe(
-      `if periphery_open then periphery_open(true, false, 2940, 4740, 100, 1540, ${rule("s[false]", 0, 380, 0, 380)}, nil); periphery_select("0x56c7bf423bd0") end`,
+      numbered(
+        7,
+        `if periphery_open then periphery_open(true, false, 2940, 4740, 100, 1540, ${rule("s[false]", 0, 380, 0, 380)}, nil); periphery_select("0x56c7bf423bd0") end`,
+      ),
     );
   });
 
@@ -390,5 +417,25 @@ describe("parseTabs", () => {
   it("drops anything but addresses", () => {
     expect([...parseTabs(" 0xa1  nope 0x 0xb2\n")]).toEqual(["0xa1", "0xb2"]);
     expect(parseTabs("").size).toBe(0);
+  });
+});
+
+describe("theme animation", () => {
+  const theme = 'hl.animation({ leaf = "workspaces", enabled = true, speed = 1, style = "slide" })';
+
+  it("hands the hook the animation to keep, as a function", () => {
+    expect(keepAnimationLua(theme)).toBe(
+      `if periphery_keep_animation then periphery_keep_animation(function() ${theme} end) end`,
+    );
+    expect(keepAnimationLua("")).toBe("");
+  });
+
+  it("writes back the hook's, else its own read, else reloads the config", () => {
+    expect(restoreAnimationLua(theme)).toBe(
+      `if not (periphery_restore_animation and periphery_restore_animation()) then ${theme} end`,
+    );
+    expect(restoreAnimationLua("")).toBe(
+      'if not (periphery_restore_animation and periphery_restore_animation()) then hl.exec_cmd("hyprctl reload config-only") end',
+    );
   });
 });

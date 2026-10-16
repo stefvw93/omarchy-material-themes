@@ -82,15 +82,19 @@ describe("findProblems", () => {
     ).toEqual([]);
   });
 
-  it("flags a launched ghost left grounded during a flight", () => {
-    const grounded = ghost(halfway, { flying: false });
+  it("flags a launched ghost grounded for GROUNDED_MS by the plugin's clock", () => {
+    const grounded = (ms: number) => ghost(halfway, { flying: false, groundedMs: ms });
+    expect(findProblems([sample(0, "flying", grounded(GROUNDED_MS - 1))])).toEqual([]);
+    expect(findProblems([sample(5, "flying", grounded(GROUNDED_MS))])).toEqual([
+      { rule: "grounded ghost", address: "0xa", at: 5 },
+    ]);
+  });
+
+  it("doesn't count grounded moments across samples", () => {
+    const moment = ghost(halfway, { flying: false, groundedMs: 10 });
     expect(
-      findProblems([
-        sample(0, "flying", grounded),
-        sample(GROUNDED_MS - 1, "flying", grounded),
-        sample(GROUNDED_MS, "flying", grounded),
-      ]),
-    ).toEqual([{ rule: "grounded ghost", address: "0xa", at: GROUNDED_MS }]);
+      findProblems([sample(0, "flying", moment), sample(GROUNDED_MS * 2, "flying", moment)]),
+    ).toEqual([]);
   });
 
   it("starts over when another phase comes between two flying samples", () => {
@@ -137,6 +141,12 @@ describe("findProblems", () => {
       { rule: "fading card", address: "0xa", at: 10 },
       { rule: "fading card", address: "0xa", at: 20 },
     ]);
+  });
+
+  it("leaves a leaving card alone after a switch that wasn't flown", () => {
+    expect(
+      findProblems([{ ...sample(10, "idle"), flown: false, cards: [card({ leaving: true })] }]),
+    ).toEqual([]);
   });
 
   it("leaves cards that stay alone", () => {

@@ -79,6 +79,17 @@ const smoke: SmokeTest<Hyprland | OmarchyShell> = ({ id }) =>
     yield* check("mode off: no workspace rule", offRule === "nil", offRule);
     const left = (yield* hypr.binds).filter((b) => b.description.startsWith("Periphery:")).length;
     yield* check("mode off: no Periphery binds left", left === 0, `${left} left`);
+    // The mode's own style (Periphery.qml workspaceStyle) must not outlive it.
+    const theirs = (a: string) => !a.includes('"style":"slidefade 10%"');
+    const off = (yield* leftovers([])).animation;
+    yield* check("mode off: the theme's workspace animation is back", theirs(off), off);
+
+    // Off and on again quickly: the restore and the next mode-on's read race.
+    for (let i = 0; i < 4; i++) yield* Effect.andThen(shell.toggle(id), Effect.sleep("60 millis"));
+    yield* Effect.sleep("1500 millis");
+    const quick = (yield* leftovers([])).animation;
+    yield* check("quick off and on: the hook is off again", !(yield* modeOn));
+    yield* check("quick off and on: the theme's animation is back", theirs(quick), quick);
 
     if (wasOn) yield* toggle;
     if (failures() > 0) return yield* Effect.fail(`${failures()} smoke check(s) failed`);

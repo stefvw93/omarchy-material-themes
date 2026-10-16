@@ -19,10 +19,11 @@ The off call is also available on its own, for a flight's switch.
 
 ## Selection state for the hook
 
-The `hyprctl eval` string that hands the plugin's state to `hypr.lua`:
+The `hyprctl eval` string that hands the plugin's state to `hypr.lua`, numbered: the hook takes a state only when its number `<seq>` is higher than the last one it took, so a state that arrives late can't overwrite a newer one. A hook without `periphery_state` (loaded before numbering) takes every state.
 
-- Mode off: `if periphery_close then periphery_close() end`.
-- Mode on: `if periphery_open then periphery_open(<left>, <right>, <x0>, <x1>, <y0>, <y1>, <rule>, <monitor>); periphery_select(<selected>) end`
+- Mode off: `if periphery_state == nil or periphery_state(<seq>) then if periphery_close then periphery_close() end end`.
+- Mode on: `if periphery_state == nil or periphery_state(<seq>) then if periphery_open then periphery_open(<left>, <right>, <x0>, <x1>, <y0>, <y1>, <rule>, <monitor>); periphery_select(<selected>) end end`
+- Mode on after a reset (the first state after the mode turns on): the same, with `periphery_close();` before `periphery_open(…)`, under the one number, and `periphery_state(<seq>, true)`: the hook takes a reset whatever its number and counts on from it, so a clock set back can't lock the plugin out.
   - `left`, `right`: whether each band has cards (`true`/`false`);
   - `x0`, `x1`: the focus area's left and right edge, `y0`, `y1`: the monitor's top and bottom, global pixels, rounded;
   - `rule`: the focus area's workspace rule (SPEC.md, [Toggle](../../SPEC.md#toggle)), `{ workspace = "s[false] m[<monitor>]", gaps_out = { top = <t>, right = <r>, bottom = <b>, left = <l> } }`. The gaps are the outer gaps, with `sideW` added at the left and right, rounded; missing outer gaps are 0. A monitor name other than letters, digits, `-`, `_` and `.` is left out (`s[false]`): nothing but a name reaches Lua code. With `sideW` 0 the rule is `nil`;
@@ -30,7 +31,15 @@ The `hyprctl eval` string that hands the plugin's state to `hypr.lua`:
   - `selected`: the address in double quotes, or `nil`.
 - The rule is also given on its own (the same Lua text, `nil` without one), whatever the selection: Hyprland re-tiles when the hook applies a new rule, without an event, so the plugin refreshes its windows after sending a changed one.
 - An address that is not `0x` followed by hex digits counts as no selection: nothing but an address ever reaches Lua code.
-- The `if … then` guard keeps the eval harmless when the hook is not loaded.
+- The `if … then` guards keep the eval harmless when the hook is not loaded.
+- `seq` is a whole number; anything else counts as 0.
+
+## Theme animation
+
+The `hyprctl eval` strings that keep the theme's workspace animation in the hook, and write it back (SPEC.md, [Hyprland's workspace animation](../../SPEC.md#hyprlands-workspace-animation)):
+
+- Keep: `if periphery_keep_animation then periphery_keep_animation(function() <restore> end) end`, where `<restore>` is the animation call read at mode-on (Workspace animation, above). The hook keeps the first function it is given; empty `<restore>` gives an empty string.
+- Write back: `if not (periphery_restore_animation and periphery_restore_animation()) then <restore> end`: the hook's, which says whether it had one; else the plugin's own read, and `hl.exec_cmd("hyprctl reload config-only")` when that is empty too.
 
 ## Options
 

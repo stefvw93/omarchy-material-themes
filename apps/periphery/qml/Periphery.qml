@@ -99,6 +99,8 @@ Item {
   // the last switch's relayout: a flight starts each ghost there.
   property var switchFrom: ({})
   property var switchFocus: ({})
+  // Whether the last switch was flown (the stress test's inspect); none yet counts as flown.
+  property bool lastSwitchFlown: true
   // The window a flight goes to ("" for a routed switch), and the active
   // window at each end: ghosts wear its border and opacity at the tile.
   property string flightTarget: ""
@@ -165,11 +167,12 @@ Item {
   property bool cardsRight: false
   // The state last sent to hypr.lua, and the one to send.
   property string luaSent: ""
-  readonly property string luaState: Hypr.hookStateLua({ // qmllint disable missing-property
+  readonly property var hookState: ({
     opened: root.opened, cardsLeft: root.cardsLeft, cardsRight: root.cardsRight,
     monX: root.monX, monY: root.monY, monW: root.monW, monH: root.monH, sideW: root.sideW,
     selected: root.selected, monitor: root.targetMonitor ? root.targetMonitor.name : "", gapsOut: root.gapsOut,
   })
+  readonly property string luaState: Hypr.hookStateLua(root.hookState) // qmllint disable missing-property
   onLuaStateChanged: root.sendLuaState()
 
   // Which M3 component each part is, and which spring moves it:
@@ -324,7 +327,7 @@ Item {
   Component.onDestruction: {
     root.send({ tag: "close" })
     root.restoreHyprSlide()
-    Quickshell.execDetached(["hyprctl", "eval", "if periphery_close then periphery_close() end"])
+    Quickshell.execDetached(["hyprctl", "eval", Hypr.hookStateLua({ opened: false, seq: root.nextSeq() })]) // qmllint disable missing-property
   }
 
   // One hyprctl at a time, so the states reach hypr.lua in order; a state
@@ -338,10 +341,18 @@ Item {
     root.luaSent = root.luaState
     var reset = root.hookReset && root.opened
     if (reset) root.hookReset = false
-    luaProc.command = ["hyprctl", "eval", (reset ? Hypr.hookStateLua({ opened: false }) + "; " : "") + root.luaState] // qmllint disable missing-property
+    luaProc.command = ["hyprctl", "eval", Hypr.hookStateLua(Object.assign({}, root.hookState, { seq: root.nextSeq(), reset: reset }))] // qmllint disable missing-property
     luaProc.retiles = reset || root.focusRule !== root.focusRuleSent
     root.focusRuleSent = root.focusRule
     luaProc.running = true
+  }
+  // States are numbered, and the hook takes only a newer one: separate
+  // hyprctl calls can arrive out of order, the unload's close above all.
+  // Milliseconds, so a new plugin instance counts on from the last one.
+  property int seqCounter: 0
+  function nextSeq() {
+    root.seqCounter = (root.seqCounter + 1) % 1000
+    return Date.now() * 1000 + root.seqCounter
   }
   // A new focus area rule re-tiles the regular workspaces without an event:
   // once the hook has it, the windows are read again (SPEC.md, Data flow).
@@ -440,8 +451,7 @@ Item {
   function restoreHyprSlide() {
     if (!root.hyprSlideOff) return
     root.hyprSlideOff = false
-    if (root.hyprSlideRestore) Quickshell.execDetached(["hyprctl", "eval", root.hyprSlideRestore])
-    else Quickshell.execDetached(["hyprctl", "reload", "config-only"])
+    Quickshell.execDetached(["hyprctl", "eval", Hypr.restoreAnimationLua(root.hyprSlideRestore)]) // qmllint disable missing-property
   }
 
   Process {
@@ -454,7 +464,9 @@ Item {
           var mode = Hypr.workspaceAnimationLua(text, root.workspaceStyle) // qmllint disable missing-property
           if (mode) root.hyprModeLua = mode
         } catch (e) { root.hyprSlideRestore = "" }
-        if (root.hyprSlideOff) Quickshell.execDetached(["hyprctl", "eval", root.hyprModeLua])
+        // The hook keeps the first theme animation it is given, the one read
+        // before the mode changed it (SPEC.md, Hyprland's workspace animation).
+        if (root.hyprSlideOff) Quickshell.execDetached(["hyprctl", "eval", Hypr.keepAnimationLua(root.hyprSlideRestore) + "; " + root.hyprModeLua]) // qmllint disable missing-property
       }
     }
     // The mode went off before the slide was disabled: put it back now.
@@ -784,7 +796,7 @@ Item {
         var g = root.ghostItems[a]
         if (!g.visible || g.opacity < 0.01) continue
         var t = g.target
-        ghosts.push({ address: a, launched: g.launched, flying: g.flying, rect: root.liveRect(g), z: g.z,
+        ghosts.push({ address: a, launched: g.launched, flying: g.flying, rect: root.liveRect(g), z: g.z, groundedMs: g.launched && !g.flying ? Date.now() - g.launchedAt : 0,
                       target: t ? { x: Math.round(t.x), y: Math.round(t.y), w: Math.round(t.w), h: Math.round(t.h) } : undefined })
       }
       var cards = []
@@ -792,7 +804,7 @@ Item {
         var card = root.cardItems[c]
         if (card.visible && card.opacity >= 0.01) cards.push({ address: c, leaving: card.leaving, rect: root.liveRect(card) })
       }
-      return JSON.stringify({ phase: root.phase.tag, ghosts: ghosts, cards: cards })
+      return JSON.stringify({ phase: root.phase.tag, flown: root.lastSwitchFlown, ghosts: ghosts, cards: cards })
     }
 
     function dropWindow(address: string, x: string, y: string): void {
@@ -966,6 +978,7 @@ Item {
     root.switchFocus = root.focusRects
     root.rebuild()
     root.send({ tag: "switched", now: Date.now(), fullscreen: fullscreen || !!(ws && ws.hasFullscreen) })
+    root.lastSwitchFlown = root.inFlight
   }
 
   // FLIP: flies a ghost for each window the plan flies (src/flight/specs.md)
@@ -1043,6 +1056,10 @@ Item {
       if (event.name === "configreloaded") {
         root.luaSent = ""
         root.sendLuaState()
+        // The reload put the theme's animation back, and the hook is fresh:
+        // read it again, have the hook keep it, and apply the mode's.
+        root.hyprSlideOff = false
+        root.disableHyprSlide()
         // A theme switch repoints current/background before it reloads
         // Hyprland, so this is when the backdrop's wallpaper changes.
         root.readTheme()
@@ -1338,9 +1355,13 @@ Item {
         readonly property bool landed: !target || (x === Math.round(target.x) && y === Math.round(target.y)
           && width === Math.round(target.w) && height === Math.round(target.h))
 
+        // When it was last launched (the stress test's grounded check).
+        property double launchedAt: 0
+
         function launch(r, onTile) {
           armed = false
           flying = false
+          launchedAt = Date.now()
           fromTile = onTile
           fromTilt = !onTile && root.cardItems[address] ? root.cardItems[address].tiltAngle : 0
           fx = r.x; fy = r.y; fw = r.w; fh = r.h

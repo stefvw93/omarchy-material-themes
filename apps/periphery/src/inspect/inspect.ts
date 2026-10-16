@@ -15,6 +15,8 @@ export interface GhostState {
   rect: Rect;
   target?: Rect | undefined;
   z?: number | undefined;
+  /** How long it has been launched without flying, by the plugin's clock. */
+  groundedMs?: number | undefined;
 }
 
 export interface CardState {
@@ -28,6 +30,8 @@ export interface Sample {
   phase: string;
   ghosts: GhostState[];
   cards?: CardState[] | undefined;
+  /** Whether the last workspace switch was flown. */
+  flown?: boolean | undefined;
 }
 
 export type Rule =
@@ -47,16 +51,15 @@ export interface Problem {
 
 /** How long a flying ghost may keep one rect short of its target. */
 export const STUCK_MS = 300;
-/** How long a launched ghost may stay grounded during a flight. */
+/** How long a launched ghost may stay grounded during a flight (plugin's clock). */
 export const GROUNDED_MS = 100;
 
 /** Everything wrong across a run of samples, in time order. */
 export function findProblems(samples: readonly Sample[]): Problem[] {
   const problems: Problem[] = [];
-  // Per window, since when it has had this rect, and been grounded, within
-  // the current run of flying samples; and which rules it already broke.
+  // Per window, since when it has had this rect within the current run of
+  // flying samples; and which rules it already broke.
   let still = new Map<string, { since: number; rect: Rect }>();
-  let grounded = new Map<string, number>();
   const reported = new Set<string>();
   const report = (rule: Rule, address: string, at: number) => {
     if (reported.has(rule + address)) return;
@@ -69,10 +72,8 @@ export function findProblems(samples: readonly Sample[]): Problem[] {
     phase = s.phase;
     if (s.phase !== "flying") {
       still = new Map();
-      grounded = new Map();
     }
     const nextStill = new Map<string, { since: number; rect: Rect }>();
-    const nextGrounded = new Map<string, number>();
     for (const g of s.ghosts) {
       if (s.phase === "idle") report("idle ghost", g.address, s.at);
       if (!g.launched) report("resting ghost", g.address, s.at);
@@ -82,20 +83,16 @@ export function findProblems(samples: readonly Sample[]): Problem[] {
       nextStill.set(g.address, { since, rect: g.rect });
       if (g.target && !sameRect(g.rect, g.target) && s.at - since >= STUCK_MS)
         report("stuck ghost", g.address, s.at);
-      if (g.launched && !g.flying) {
-        const from = grounded.get(g.address) ?? s.at;
-        nextGrounded.set(g.address, from);
-        if (s.at - from >= GROUNDED_MS) report("grounded ghost", g.address, s.at);
-      }
+      if (g.launched && !g.flying && (g.groundedMs ?? 0) >= GROUNDED_MS)
+        report("grounded ghost", g.address, s.at);
     }
     const ghosts = new Set(s.ghosts.map((g) => g.address));
     for (const c of s.cards ?? []) {
       if (ghosts.has(c.address)) report("double", c.address, s.at);
-      if (c.leaving) report("fading card", c.address, s.at);
+      if (c.leaving && s.flown !== false) report("fading card", c.address, s.at);
     }
     if (s.phase === "flying") {
       still = nextStill;
-      grounded = nextGrounded;
     }
   }
   return problems;

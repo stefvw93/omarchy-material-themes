@@ -93,6 +93,7 @@ local function fake()
   _G.hl = hl
   _G.periphery = nil
   _G.periphery_focus_rule = nil
+  _G.periphery_state, _G.periphery_keep_animation, _G.periphery_restore_animation = nil, nil, nil
   dofile("hypr/hypr.lua")
   return log, state
 end
@@ -572,6 +573,37 @@ test("closing shows every window the plugin may have hidden", function()
     end
   end
   eq(table.concat(untagged, ","), "address:0x1,address:0x2", "untagged")
+end)
+
+
+test("states are taken only in rising order", function()
+  fake()
+  eq(periphery_state(5), true, "first")
+  eq(periphery_state(4), false, "older")
+  eq(periphery_state(5), false, "the same again")
+  eq(periphery_state(9), true, "newer")
+end)
+
+test("a reset is taken whatever its number, and counts on from it", function()
+  fake()
+  eq(periphery_state(100), true, "first")
+  eq(periphery_state(3, true), true, "reset from a clock set back")
+  eq(periphery_state(4), true, "on from the reset")
+end)
+
+test("the theme's animation: the first one kept, written back, kept over a close", function()
+  fake()
+  local written = {}
+  periphery_keep_animation(function() table.insert(written, "theme") end)
+  periphery_keep_animation(function() table.insert(written, "mode's own") end)
+  periphery_close()
+  eq(periphery_restore_animation(), true, "had one")
+  eq(table.concat(written, ","), "theme")
+end)
+
+test("restoring without a kept animation says so", function()
+  fake()
+  eq(periphery_restore_animation(), false)
 end)
 
 print(string.format("\n%d tests, %d failed", count, failures))

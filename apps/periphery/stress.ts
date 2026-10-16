@@ -134,6 +134,20 @@ const stress: SmokeTest<Hyprland | OmarchyShell> = ({ id }) =>
     }
     yield* Fiber.interrupt(sampler);
 
+    // Switches the hook made itself (the plugin answered too late): not flown.
+    const unflownAt = samples
+      // From the second sample: the first can show the mode's own start.
+      .filter((x, i) => i > 0 && x.flown === false && samples[i - 1]?.flown !== false)
+      .map((x) => x.at - samples[0]!.at);
+    const unflown = unflownAt.length
+      ? `${unflownAt.length} (${unflownAt.map((t) => `${t} ms in`).join(", ")})`
+      : "0";
+    // Each problem's phase, and how long since the last flight began.
+    const phaseAt = (at: number) => {
+      const i = samples.findIndex((x) => x.at === at);
+      const start = samples.findLast((x, j) => j <= i && x.phase === "pending");
+      return `${samples[i]?.phase ?? "?"}, ${start ? at - start.at : "?"} ms after a flight began`;
+    };
     // A sampler that sees nothing passes every rule: it must have seen flights.
     const flying = samples.filter((x) => x.phase === "flying" && x.ghosts.length > 0).length;
     const withCards = samples.filter((x) => (x.cards ?? []).length > 0).length;
@@ -145,7 +159,7 @@ const stress: SmokeTest<Hyprland | OmarchyShell> = ({ id }) =>
     yield* check(
       "stress: no ghost problems",
       found.length === 0,
-      `${samples.length} samples, ${switches} switches, ${stackChecks} stacking checks${found.length ? `: ${found.map((p) => `${p.rule} ${p.address} @${p.at}`).join(", ")}; frames in ${frames}` : ""}`,
+      `${samples.length} samples, ${switches} switches, ${stackChecks} stacking checks, ${unflown} switches not flown${found.length ? `: ${found.map((p) => `${p.rule} ${p.address} @${p.at} (${phaseAt(p.at)})`).join(", ")}; frames in ${frames}` : ""}`,
     );
     const settled = yield* leftovers(floating);
     const hidden = yield* hypr.evalValue(hiddenCount);

@@ -163,6 +163,34 @@ local function show_hidden()
   end
 end
 
+-- The plugin's states come through separate hyprctl calls, which can arrive
+-- out of order; the unload's close can't even share the plugin's queue.
+-- Each state is numbered and only a newer one is taken. A reset (the first
+-- state after the mode turns on) is taken whatever its number.
+local last_state = nil
+
+function periphery_state(seq, reset)
+  if not reset and last_state and seq <= last_state then return false end
+  last_state = seq
+  return true
+end
+
+-- The theme's workspace animation, to write back when the mode turns off.
+-- Kept here, for this Lua state (one config generation): the plugin reads
+-- it at every mode-on, and a quick off and on read its own style before the
+-- theme's was back. The first one is the theme's.
+local theme_animation = nil
+
+function periphery_keep_animation(restore)
+  theme_animation = theme_animation or restore
+end
+
+-- Whether it had one to write back.
+function periphery_restore_animation()
+  if theme_animation then theme_animation() end
+  return theme_animation ~= nil
+end
+
 function periphery_open(left, right, x0, x1, y0, y1, rule, monitor)
   periphery = periphery or {}
   hide_rule = hide_rule or hl.window_rule({ name = HIDE_TAG, match = { tag = HIDE_TAG }, opacity = "0 0 0" })

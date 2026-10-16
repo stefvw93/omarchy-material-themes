@@ -43,11 +43,18 @@ export interface HookState {
   monitor?: string;
   /** Hyprland's outer gaps, [top, right, bottom, left]. */
   gapsOut?: readonly number[];
+  /** The state's number: the hook takes only a newer one. */
+  seq?: number | undefined;
+  /** The first state after the mode turns on: the hook starts clean. */
+  reset?: boolean;
 }
 
 /** The `hyprctl eval` string that hands the plugin's state to hypr.lua. */
 export function hookStateLua(state: HookState): string {
-  if (!state.opened) return "if periphery_close then periphery_close() end";
+  const seq = Number.isSafeInteger(state.seq) ? state.seq! : 0;
+  const numbered = (body: string) =>
+    `if periphery_state == nil or periphery_state(${seq}${state.reset && state.opened ? ", true" : ""}) then ${body} end`;
+  if (!state.opened) return numbered("if periphery_close then periphery_close() end");
   const bounds = [
     state.monX + state.sideW,
     state.monX + state.monW - state.sideW,
@@ -56,9 +63,10 @@ export function hookStateLua(state: HookState): string {
   ].map(Math.round);
   // Nothing but an address ever reaches Lua code.
   const selected = /^0x[0-9a-fA-F]+$/.test(state.selected) ? `"${state.selected}"` : "nil";
-  return (
-    `if periphery_open then periphery_open(${[state.cardsLeft, state.cardsRight, ...bounds, focusRuleLua(state), monitorLua(state)].join(", ")}); ` +
-    `periphery_select(${selected}) end`
+  return numbered(
+    `if periphery_open then ${state.reset ? "periphery_close(); " : ""}` +
+      `periphery_open(${[state.cardsLeft, state.cardsRight, ...bounds, focusRuleLua(state), monitorLua(state)].join(", ")}); ` +
+      `periphery_select(${selected}) end`,
   );
 }
 
@@ -287,4 +295,17 @@ export function parseTabs(text: string): Set<string> {
       .filter(isAddress)
       .map((a) => a.toLowerCase()),
   );
+}
+
+/** The `hyprctl eval` string that has the hook keep the theme's animation. */
+export function keepAnimationLua(restore: string): string {
+  return restore
+    ? `if periphery_keep_animation then periphery_keep_animation(function() ${restore} end) end`
+    : "";
+}
+
+/** The `hyprctl eval` string that writes the theme's animation back. */
+export function restoreAnimationLua(restore: string): string {
+  const fallback = restore || 'hl.exec_cmd("hyprctl reload config-only")';
+  return `if not (periphery_restore_animation and periphery_restore_animation()) then ${fallback} end`;
 }
