@@ -33,6 +33,10 @@ A window in the focus area after the switch was a card before it, unless it was 
 
 Output: the addresses that `fly`. Every other window does nothing here: a `card` move is its card fading on its own, as its window enters or leaves the bands.
 
+## Hidden floating windows
+
+A floating window can reach past the focus area into a band, where the backdrop doesn't cover it. A flight hides every floating window of the monitor (SPEC.md, The Exposé flight): of the windows with a card and of the focus area's, the floating ones, in that order, each once. The focus area's are under their own ghosts when the switch goes out; hiding them too keeps a switch back mid-flight from showing them before their ghosts land.
+
 ## Ghost stacking
 
 Ghosts overlap where their windows do, so they stack the way Hyprland draws the windows: otherwise a tiled window's ghost covers the floating windows over it, and they pop up at the hand-off.

@@ -59,6 +59,15 @@ export function planFlight(input: PlanInput): string[] {
   ];
 }
 
+/** The floating windows a flight hides: those with a card, then the focus area's (specs.md). */
+export function floatingToHide(
+  cards: Readonly<Record<string, { floating?: boolean }>>,
+  tiles: Readonly<Record<string, { floating?: boolean }>>,
+): string[] {
+  const all = [...Object.entries(cards), ...Object.entries(tiles)];
+  return [...new Set(all.filter(([, w]) => w.floating).map(([a]) => a))];
+}
+
 export interface StackInput {
   floating: boolean;
   pinned: boolean;

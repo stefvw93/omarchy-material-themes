@@ -138,10 +138,10 @@ Item {
   property string hyprModeLua: 'hl.animation({ leaf = "workspaces", enabled = true, speed = 3, bezier = "default", style = "' + workspaceStyle + '" })'
   property string hyprSlideRestore: ""
   // Address -> true for windows hidden, shadow included, during a flight:
-  // the floating windows of the other workspaces. Their shadows (tiled
-  // windows rest at level 0), and any part reaching into a band, would show
-  // past the backdrop ahead of their ghosts. They are on hidden workspaces
-  // until the switch, so they lose nothing, and their cards are screencopies,
+  // every floating window of the monitor (src/flight/specs.md). A part
+  // reaching into a band, or a shadow, would show past the backdrop ahead of
+  // its ghost. Those of other workspaces are hidden until the switch anyway,
+  // those in the focus area under their ghosts; their cards are screencopies,
   // which a window's opacity doesn't reach.
   property var hiddenFloating: ({})
   // The periphery selection: the card that has the focus instead of a focus
@@ -599,7 +599,7 @@ Item {
     root.ghosted = ghosted
     root.activeBefore = root.activeAddress()
     var hidden = {}
-    for (var w in root.winData) if (root.winData[w].floating) hidden[w] = true
+    Flight.floatingToHide(root.winData, root.focusRects).forEach(function(a) { hidden[a] = true }) // qmllint disable missing-property
     root.hiddenFloating = hidden
   }
 
@@ -810,7 +810,7 @@ Item {
       var address = normalizeAddress(ipc.address || t.address)
       groups[address] = (ipc.grouped || []).map(root.normalizeAddress)
       if (wsId === current) {
-        focus[address] = { address: address, toplevel: t, fullscreen: !!ipc.fullscreen,
+        focus[address] = { address: address, toplevel: t, fullscreen: !!ipc.fullscreen, floating: !!ipc.floating,
                            x: ipc.at[0] - root.monX, y: ipc.at[1] - root.monY,
                            w: Math.max(1, ipc.size[0]), h: Math.max(1, ipc.size[1]) }
         continue

@@ -6,6 +6,7 @@ import {
   SWITCH_WAIT_MS,
   ghostLook,
   ghostsOnTiles,
+  floatingToHide,
   ghostZ,
   isHiddenTab,
   planFlight,
@@ -351,5 +352,17 @@ describe("step", () => {
         actions: ["cancelDispatch", "handOff"],
       });
     expect(step(idle, { tag: "close" })).toEqual({ phase: idle, actions: [] });
+  });
+});
+
+describe("floatingToHide", () => {
+  it("hides the floating windows with a card and those in the focus area, nothing tiled", () => {
+    const cards = { a: { floating: true }, b: { floating: false }, c: {} };
+    const tiles = { d: { floating: true }, e: { floating: false } };
+    expect(floatingToHide(cards, tiles)).toEqual(["a", "d"]);
+  });
+
+  it("names a window once", () => {
+    expect(floatingToHide({ a: { floating: true } }, { a: { floating: true } })).toEqual(["a"]);
   });
 });

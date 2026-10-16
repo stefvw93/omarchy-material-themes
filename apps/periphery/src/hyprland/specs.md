@@ -63,7 +63,7 @@ What a ghost copies from its window: `opacity`, `opacity_inactive`, `border_size
 
 The `hyprctl --batch` argument of a flight's switch (SPEC.md, The Exposé flight, step 2), in order:
 
-1. for each floating window of the other workspaces: `dispatch hl.dsp.window.set_prop({ window = "address:<a>", prop = "no_shadow", value = "1" })`, then `dispatch hl.dsp.window.tag({ window = "address:<a>", tag = "+periphery-hide" })` (the hook's rule makes a window with that tag fully transparent);
+1. for each floating window to hide (src/flight/specs.md, Hidden floating windows): `dispatch hl.dsp.window.set_prop({ window = "address:<a>", prop = "no_shadow", value = "1" })`, then `dispatch hl.dsp.window.tag({ window = "address:<a>", tag = "+periphery-hide" })` (the hook's rule makes a window with that tag fully transparent);
 2. `eval` of the workspace animation off call;
 3. the switch: `dispatch hl.dsp.focus({ window = "address:<a>" })` for a flight to a window, or `eval if periphery_run then periphery_run(<token>) end` for a routed switch.
 
