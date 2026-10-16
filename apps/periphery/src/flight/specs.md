@@ -33,6 +33,18 @@ A window in the focus area after the switch was a card before it, unless it was 
 
 Output: the addresses that `fly`, and the addresses that move as `card`. Every other window does nothing.
 
+## Ghost stacking
+
+Ghosts overlap where their windows do, so they stack the way Hyprland draws the windows: otherwise a tiled window's ghost covers the floating windows over it, and they pop up at the hand-off.
+
+Input per window: whether it floats, whether it is pinned, and its `focusHistoryID` (Hyprland's: 0 for the most recently focused window, higher for longer ago, −1 or absent for never).
+
+Output: a `z`, higher in front.
+
+- Tiled windows are at the back, all at 0: they don't overlap.
+- Floating windows are in front of every tiled window. Hyprland raises a floating window when it gets the focus, so among them the more recently focused one is in front. A floating window never focused is behind the floating windows that were.
+- Pinned windows are in front of every other window, among them again the more recently focused one in front.
+
 ## Ghost look
 
 Input: the ghost's travel `t` (0 at the start of its flight, 1 landed; values outside 0 to 1 are clamped), whether it starts on a tile (or a card), whether it is flying to a tile (or to a card), whether it is the active window at the tile end, its window's `opacity`, `opacityInactive`, `borderSize` and `rounding`, and its tilt at the start and at the end (`fromTilt`, `toTilt`, degrees: a card's tilt where it is a card, 0 on a tile).

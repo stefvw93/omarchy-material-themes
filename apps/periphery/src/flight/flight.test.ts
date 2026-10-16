@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { ghostLook, ghostsOnTiles, isHiddenTab, planFlight, shownAfter } from "./flight.ts";
+import { ghostLook, ghostsOnTiles, ghostZ, isHiddenTab, planFlight, shownAfter } from "./flight.ts";
 
 // A tab group of three (z shown), and a window outside any group.
 const groups = { x: ["x", "y", "z"], y: ["x", "y", "z"], z: ["x", "y", "z"], w: [] };
@@ -187,5 +187,43 @@ describe("ghostLook", () => {
     expect(ghostLook({ ...window, travel: -0.1, toTile: true })).toEqual(
       ghostLook({ ...window, travel: 0, toTile: true }),
     );
+  });
+});
+
+describe("ghostZ", () => {
+  const tiled = (focusHistoryID?: number) =>
+    ghostZ({ floating: false, pinned: false, focusHistoryID });
+  const floating = (focusHistoryID?: number) =>
+    ghostZ({ floating: true, pinned: false, focusHistoryID });
+  const pinned = (focusHistoryID?: number) =>
+    ghostZ({ floating: true, pinned: true, focusHistoryID });
+
+  it("puts every tiled window at the back, at 0", () => {
+    expect(tiled(0)).toBe(0);
+    expect(tiled(5)).toBe(0);
+    expect(tiled()).toBe(0);
+  });
+
+  it("puts floating windows in front of tiled ones, focused or not", () => {
+    expect(floating(0)).toBeGreaterThan(tiled(0));
+    expect(floating(500)).toBeGreaterThan(tiled(0));
+    expect(floating(-1)).toBeGreaterThan(tiled(0));
+    expect(floating()).toBeGreaterThan(tiled(0));
+  });
+
+  it("puts the more recently focused floating window in front", () => {
+    expect(floating(1)).toBeGreaterThan(floating(2));
+    expect(floating(0)).toBeGreaterThan(floating(1));
+  });
+
+  it("puts a never focused floating window behind the focused ones", () => {
+    expect(floating(-1)).toBeLessThan(floating(500));
+    expect(floating()).toBe(floating(-1));
+  });
+
+  it("puts pinned windows in front of every other window, the more recent in front", () => {
+    expect(pinned(9)).toBeGreaterThan(floating(0));
+    expect(pinned(-1)).toBeGreaterThan(floating(0));
+    expect(pinned(1)).toBeGreaterThan(pinned(2));
   });
 });

@@ -592,6 +592,9 @@ Item {
   function startFlight(to, target) {
     root.clearSelection()
     wallBlurTex.scheduleUpdate()
+    // Focus changes don't refresh the toplevels: the ghosts' stacking reads
+    // Hyprland's focus history afresh, before the switch goes out.
+    Hyprland.refreshToplevels()
     var ghosted = {}
     var onTiles = Flight.ghostsOnTiles(Object.keys(root.focusRects), root.tabGroups, root.shownTabs) // qmllint disable missing-property
     for (var i = 0; i < onTiles.length; i++) {
@@ -1339,6 +1342,10 @@ Item {
         width: Math.round(flyer.gw)
         height: Math.round(flyer.gh)
         visible: !!root.ghosted[address]
+        // Stacked as Hyprland stacks the windows: a tiled window's ghost
+        // under the floating ones over it, or they pop up at the hand-off.
+        readonly property var ipc: flyer.lastTarget && flyer.lastTarget.toplevel ? flyer.lastTarget.toplevel.lastIpcObject : null
+        z: flyer.ipc ? Flight.ghostZ({ floating: !!flyer.ipc.floating, pinned: !!flyer.ipc.pinned, focusHistoryID: flyer.ipc.focusHistoryID }) : 0 // qmllint disable missing-property
         opacity: flyFade.value
         // On the plane of the band it leaves or lands on, as the cards.
         transform: Matrix4x4 { matrix: root.surfaceAt(flyer.x, flyer.y, flyer.look.tilt, 0) }
