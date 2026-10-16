@@ -2642,7 +2642,9 @@ Item {
     keepSpace: setting("keepSpace", false) === true
     horizontalMargin: Number(setting("horizontalMargin", 7.5))
     verticalPadding: Number(setting("verticalPadding", 6))
-    fontSize: Number(setting("fontSize", 12))
+    // stef.bar: the theme's body size by default, as the bar's other text,
+    // not the stock 12px.
+    fontSize: Number(setting("fontSize", Style.font.body))
 
     onPressed: function(button) {
       var command = ""

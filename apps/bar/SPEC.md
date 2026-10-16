@@ -62,7 +62,7 @@ A hosted widget gets `bar`, `moduleName` (its id) and `settings` (its inline set
 
 ### Command modules
 
-A command module runs `bash -lc <exec>` every `interval` seconds (default 5, at least 1), starting at once; a run never starts while the previous one is still running. Its output is read as Waybar JSON: the last line, parsed as JSON, gives `text`, `tooltip` and `class` (or `alt`). Output that isn't JSON is all text. Empty output is nothing. The button shows `text` (or the entry's `text`), the tooltip is the output's `tooltip` or the entry's, and it is active (primary) when the class is `active` or a list with `active`. `onClick`, `onRightClick` and `onMiddleClick` run with `bash -lc`.
+A command module runs `bash -lc <exec>` every `interval` seconds (default 5, at least 1), starting at once; a run never starts while the previous one is still running. Its output is read as Waybar JSON: the last line, parsed as JSON, gives `text`, `tooltip` and `class` (or `alt`). Output that isn't JSON is all text. Empty output is nothing. The button shows `text` (or the entry's `text`) at the theme's body text size (`Style.font.body`) unless the entry sets `fontSize` (the stock bar uses 12px), the tooltip is the output's `tooltip` or the entry's, and it is active (primary) when the class is `active` or a list with `active`. `onClick`, `onRightClick` and `onMiddleClick` run with `bash -lc`.
 
 ### Panels
 
