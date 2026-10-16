@@ -8,7 +8,7 @@ import {
   parseDecoration,
   parseTabs,
   parseWindowProps,
-  restoreShadowsBatch,
+  restoreFloatingBatch,
   runSwitchLua,
   windowPropsBatch,
   workspaceAnimationLua,
@@ -325,12 +325,16 @@ describe("parseWindowProps", () => {
 describe("flightBatch", () => {
   const shadow = (a: string, v: string) =>
     `dispatch hl.dsp.window.set_prop({ window = "address:${a}", prop = "no_shadow", value = "${v}" })`;
+  const tag = (a: string, t: string) =>
+    `dispatch hl.dsp.window.tag({ window = "address:${a}", tag = "${t}" })`;
 
-  it("drops shadows, turns the workspace animation off, then focuses the window", () => {
+  it("hides the floating windows, turns the workspace animation off, then focuses the window", () => {
     expect(flightBatch(["0xa1", "0xb2"], { window: "0xc3" })).toBe(
       [
         shadow("0xa1", "1"),
+        tag("0xa1", "+periphery-hide"),
         shadow("0xb2", "1"),
+        tag("0xb2", "+periphery-hide"),
         "eval " + workspacesOffLua,
         'dispatch hl.dsp.focus({ window = "address:0xc3" })',
       ].join(" ; "),
@@ -345,7 +349,7 @@ describe("flightBatch", () => {
 
   it("lets nothing but addresses through", () => {
     expect(flightBatch(['0xa1" }) ; dispatch exit', "0xb2"], { window: "nope" })).toBe(
-      [shadow("0xb2", "1"), "eval " + workspacesOffLua].join(" ; "),
+      [shadow("0xb2", "1"), tag("0xb2", "+periphery-hide"), "eval " + workspacesOffLua].join(" ; "),
     );
   });
 
@@ -354,9 +358,11 @@ describe("flightBatch", () => {
     expect(flightBatch([], { token: 1.5 })).toBe("eval " + workspacesOffLua);
   });
 
-  it("gives shadows back as unset", () => {
-    expect(restoreShadowsBatch(["0xa1", "x"])).toBe(shadow("0xa1", "unset"));
-    expect(restoreShadowsBatch([])).toBe("");
+  it("gives the floating windows their shadow back as unset, and shows them again", () => {
+    expect(restoreFloatingBatch(["0xa1", "x"])).toBe(
+      [shadow("0xa1", "unset"), tag("0xa1", "-periphery-hide")].join(" ; "),
+    );
+    expect(restoreFloatingBatch([])).toBe("");
   });
 });
 

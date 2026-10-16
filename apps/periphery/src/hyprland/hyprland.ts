@@ -239,12 +239,18 @@ export type FlightSwitch = { window: string } | { token: number };
 
 const shadowDispatch = (a: string, value: string) =>
   `dispatch hl.dsp.window.set_prop({ window = "address:${a}", prop = "no_shadow", value = "${value}" })`;
+// The hook's window rule makes a window with this tag fully transparent.
+const HIDE_TAG = "periphery-hide";
+const tagDispatch = (a: string, tag: string) =>
+  `dispatch hl.dsp.window.tag({ window = "address:${a}", tag = "${tag}" })`;
 const isToken = (n: number) => Number.isSafeInteger(n) && n >= 1;
 const runLua = (token: number) => `if periphery_run then periphery_run(${token}) end`;
 
 /** The `hyprctl --batch` argument of a flight's switch. */
-export function flightBatch(shadowless: readonly string[], to: FlightSwitch): string {
-  const commands = shadowless.filter(isAddress).map((a) => shadowDispatch(a, "1"));
+export function flightBatch(floating: readonly string[], to: FlightSwitch): string {
+  const commands: string[] = [];
+  for (const a of floating.filter(isAddress))
+    commands.push(shadowDispatch(a, "1"), tagDispatch(a, "+" + HIDE_TAG));
   commands.push("eval " + workspacesOffLua);
   if ("window" in to) {
     if (isAddress(to.window))
@@ -253,12 +259,12 @@ export function flightBatch(shadowless: readonly string[], to: FlightSwitch): st
   return commands.join(" ; ");
 }
 
-/** The `hyprctl --batch` argument that gives the windows their shadow back. */
-export function restoreShadowsBatch(addresses: readonly string[]): string {
-  return addresses
-    .filter(isAddress)
-    .map((a) => shadowDispatch(a, "unset"))
-    .join(" ; ");
+/** The `hyprctl --batch` argument that gives the floating windows their shadow back and shows them. */
+export function restoreFloatingBatch(addresses: readonly string[]): string {
+  const commands: string[] = [];
+  for (const a of addresses.filter(isAddress))
+    commands.push(shadowDispatch(a, "unset"), tagDispatch(a, "-" + HIDE_TAG));
+  return commands.join(" ; ");
 }
 
 /** The `hyprctl eval` string that runs a routed switch; empty for anything but a token. */

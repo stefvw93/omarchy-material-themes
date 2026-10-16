@@ -144,11 +144,13 @@ Item {
   property string hyprModeLua: 'hl.animation({ leaf = "workspaces", enabled = true, speed = 3, bezier = "default", style = "' + workspaceStyle + '" })'
   readonly property string hyprOffLua: Hypr.workspacesOffLua
   property string hyprSlideRestore: ""
-  // Address -> true for windows we turned the shadow off for, during a
-  // flight: the floating windows of the other workspaces (tiled windows rest
-  // at level 0), whose shadows would show past the backdrop ahead of their
-  // ghosts (they are hidden until the switch, so they lose nothing).
-  property var shadowless: ({})
+  // Address -> true for windows hidden, shadow included, during a flight:
+  // the floating windows of the other workspaces. Their shadows (tiled
+  // windows rest at level 0), and any part reaching into a band, would show
+  // past the backdrop ahead of their ghosts. They are on hidden workspaces
+  // until the switch, so they lose nothing, and their cards are screencopies,
+  // which a window's opacity doesn't reach.
+  property var hiddenFloating: ({})
   // The periphery selection: the card that has the focus instead of a focus
   // area window, set by hovering a card or by the focus keys moving past the
   // focus area's edge (latest input wins). hypr.lua points the close and
@@ -333,7 +335,7 @@ Item {
     root.opened = false
     root.finishSwitch()
     root.restoreHyprSlide()
-    root.restoreShadows()
+    root.restoreFloating()
     root.targetMonitor = null
     root.layoutSignature = ""
     root.cancelDrag()
@@ -349,7 +351,7 @@ Item {
   Component.onCompleted: decorProc.running = true
   Component.onDestruction: {
     root.restoreHyprSlide()
-    root.restoreShadows()
+    root.restoreFloating()
     Quickshell.execDetached(["hyprctl", "eval", "if periphery_close then periphery_close() end"])
   }
 
@@ -437,9 +439,9 @@ Item {
 
   // Also runs on plugin unload, when the dispatch socket may already be
   // gone, so it goes through hyprctl.
-  function restoreShadows() {
-    var batch = Hypr.restoreShadowsBatch(Object.keys(root.shadowless)) // qmllint disable missing-property
-    root.shadowless = ({})
+  function restoreFloating() {
+    var batch = Hypr.restoreFloatingBatch(Object.keys(root.hiddenFloating)) // qmllint disable missing-property
+    root.hiddenFloating = ({})
     if (batch) Quickshell.execDetached(["hyprctl", "--batch", batch])
   }
 
@@ -611,9 +613,9 @@ Item {
     root.switchStarted = Date.now()
     root.flightTarget = target
     root.activeBefore = root.activeAddress()
-    var shadowless = {}
-    for (var w in root.winData) if (root.winData[w].floating) shadowless[w] = true
-    root.shadowless = shadowless
+    var hidden = {}
+    for (var w in root.winData) if (root.winData[w].floating) hidden[w] = true
+    root.hiddenFloating = hidden
     flightTimer.to = to
     flightTimer.restart()
   }
@@ -624,7 +626,7 @@ Item {
     // Two frames at 60 Hz: the backdrop is on screen before Hyprland switches.
     interval: 34
     onTriggered: {
-      Quickshell.execDetached(["hyprctl", "--batch", Hypr.flightBatch(Object.keys(root.shadowless), flightTimer.to)]) // qmllint disable missing-property
+      Quickshell.execDetached(["hyprctl", "--batch", Hypr.flightBatch(Object.keys(root.hiddenFloating), flightTimer.to)]) // qmllint disable missing-property
       root.dispatchedAt = Date.now()
     }
   }
@@ -943,8 +945,18 @@ Item {
   }
 
   // Hand-off: ghosts and backdrop go in the same frame, revealing the real
-  // windows they sit on and the cards they landed on.
+  // windows they sit on and the cards they landed on. The hidden floating
+  // windows come back first, under their ghosts: a hyprctl takes a few
+  // frames, which would otherwise show neither ghost nor window.
   function finishSwitch() {
+    if (root.flight && root.opened && Object.keys(root.hiddenFloating).length > 0) {
+      if (unhideProc.running) return
+      unhideProc.command = ["hyprctl", "--batch", Hypr.restoreFloatingBatch(Object.keys(root.hiddenFloating))] // qmllint disable missing-property
+      root.hiddenFloating = ({})
+      unhideProc.running = true
+      return
+    }
+    if (root.opened && (unhideProc.running || handOffTimer.running)) return
     root.transitioning = false
     root.landedTicks = 0
     for (var a in root.ghosted) if (root.ghostItems[a]) root.ghostItems[a].land()
@@ -953,8 +965,21 @@ Item {
     root.dispatchedAt = 0
     root.flightTarget = ""
     if (root.flight && root.opened) Quickshell.execDetached(["hyprctl", "eval", root.hyprModeLua])
-    if (root.flight) root.restoreShadows()
+    if (root.flight) root.restoreFloating()
     root.flight = false
+  }
+
+  Process {
+    id: unhideProc
+    // Not onExited: `running` is still true there.
+    onRunningChanged: if (!running) handOffTimer.restart()
+  }
+
+  // Two frames at 60 Hz: the shown windows are on screen under their ghosts.
+  Timer {
+    id: handOffTimer
+    interval: 34
+    onTriggered: root.finishSwitch()
   }
 
   ListModel { id: ghosts }

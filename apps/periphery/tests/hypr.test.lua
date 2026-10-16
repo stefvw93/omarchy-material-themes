@@ -41,6 +41,7 @@ local function fake()
         fullscreen = ctor("fullscreen"),
         set_prop = ctor("set_prop"),
         move = ctor("move"),
+        tag = ctor("tag"),
       },
       focus = ctor("focus"),
       event = ctor("event"),
@@ -64,6 +65,13 @@ local function fake()
     local r = { spec = spec, enabled = true }
     function r:set_enabled(on) self.enabled = on end
     table.insert(log.rules, r)
+    return r
+  end
+  log.window_rules = {}
+  function hl.window_rule(spec)
+    local r = { spec = spec, enabled = true }
+    function r:set_enabled(on) self.enabled = on end
+    table.insert(log.window_rules, r)
     return r
   end
   function hl.get_windows() return state.all end
@@ -532,6 +540,38 @@ test("the mode turning off forgets what was reported", function()
   local n = #log.exec
   periphery_open(true, true, 380, 2180, 0, 1440)
   eq(#log.exec, n + 1, "reported again")
+end)
+
+
+test("opening makes the hide rule once: the tag periphery-hide turns a window transparent", function()
+  local log = fake()
+  periphery_open(true, true, 380, 2180, 0, 1440, nil, "DP-3")
+  periphery_open(true, false, 380, 2180, 0, 1440, nil, "DP-3")
+  eq(#log.window_rules, 1, "rules made")
+  local spec = log.window_rules[1].spec
+  eq(spec.match.tag, "periphery-hide", "match")
+  eq(spec.opacity, "0 0 0", "opacity")
+end)
+
+test("the hide rule waits for the mode: none while it was never on", function()
+  local log = fake()
+  eq(#log.window_rules, 0, "rules made")
+end)
+
+test("closing shows every window the plugin may have hidden", function()
+  local log, state = fake()
+  state.all = { { address = "0x1" }, { address = "0x2" } }
+  periphery_open(true, true, 380, 2180, 0, 1440, nil, "DP-3")
+  log.dispatched = {}
+  periphery_close()
+  local untagged = {}
+  for _, d in ipairs(log.dispatched) do
+    if d.kind == "tag" then
+      eq(d.args.tag, "-periphery-hide", "tag")
+      table.insert(untagged, d.args.window)
+    end
+  end
+  eq(table.concat(untagged, ","), "address:0x1,address:0x2", "untagged")
 end)
 
 print(string.format("\n%d tests, %d failed", count, failures))

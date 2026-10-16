@@ -21,7 +21,7 @@
 periphery = nil
 
 local window = hl.dsp.window
-local close, fullscreen, focus, move, set_prop = window.close, window.fullscreen, hl.dsp.focus, window.move, window.set_prop
+local close, fullscreen, focus, move, set_prop, tag = window.close, window.fullscreen, hl.dsp.focus, window.move, window.set_prop, window.tag
 
 -- The plugin's IPC target. plugin-kit rewrites this line to the built id, so
 -- a dev build (stef.periphery.dev) talks to its own copy of the plugin.
@@ -149,8 +149,23 @@ function periphery_announce()
   hl.dispatch(hl.dsp.event("periphery>>" .. (announced or "off")))
 end
 
+-- During a flight the plugin hides the floating windows of the other
+-- workspaces with this tag: one reaching past the focus area would show in a
+-- band, where the backdrop doesn't cover it, ahead of its ghost. A rule and
+-- not set_prop, as the opacity prop has no unset. Made with the mode, after
+-- the config, so it comes after Omarchy's default-opacity rule and wins.
+local HIDE_TAG = "periphery-hide"
+local hide_rule = nil
+
+local function show_hidden()
+  for _, w in ipairs(hl.get_windows() or {}) do
+    pcall(hl.dispatch, tag({ window = "address:" .. w.address, tag = "-" .. HIDE_TAG }))
+  end
+end
+
 function periphery_open(left, right, x0, x1, y0, y1, rule, monitor)
   periphery = periphery or {}
+  hide_rule = hide_rule or hl.window_rule({ name = HIDE_TAG, match = { tag = HIDE_TAG }, opacity = "0 0 0" })
   periphery.bands = { l = left, r = right }
   periphery.focus = { x0 = x0, x1 = x1, y0 = y0, y1 = y1 }
   apply_focus_rule(rule)
@@ -172,6 +187,9 @@ function periphery_close()
   if periphery then periphery_select(nil) end
   apply_focus_rule(nil)
   if announced then announce("off") end
+  -- The plugin shows them again after every flight; this covers one that
+  -- died mid-flight, also before a config reload.
+  show_hidden()
   periphery = nil
   tabs_sent = nil
 end
