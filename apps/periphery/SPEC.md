@@ -288,25 +288,29 @@ Hyprland does not report pointer motion during its own window drag. The plugin s
 
 ### Files
 
-The repo (`~/Projects/omarchy-periphery`) holds the source; `vp run deploy` copies `plugin/` to `~/.config/omarchy/plugins/stef.periphery/`. The shell reloads plugins on any write under that folder, so the tooling lives outside it.
+The source is `apps/periphery` in the `omarchy-stef` monorepo. `vp run build` (plugin-kit) assembles `dist/prod/stef.periphery/`, and `stef deploy periphery` installs it into `~/.config/omarchy/plugins/stef.periphery/`. The shell reloads plugins on any write under that folder, so nothing is edited there.
 
 ```
-plugin/                what ships
-  manifest.json        plugin kind "panel", entry Periphery.qml
-  Periphery.qml        state, surfaces, animations, drag and drop, selection wiring, IPC
-  WindowCard.qml       one card: thumbnail, border, hover, click and drag input
-  hypr.lua             Hyprland side: wraps close, fullscreen and focus-direction for the selection
-  lib/*.mjs            vp pack output of src/, imported by Periphery.qml
-src/<module>/          pure TypeScript logic, each with specs.md, <module>.ts, <module>.test.ts
-  layout/              bands, wrap rule, card placement (specs: src/layout/specs.md)
-  selection/           focus-key navigation, drop targets (src/selection/specs.md)
-  hyprland/            animation, hook state and option strings (src/hyprland/specs.md)
+plugin.config.ts       the plugin: id, entry point, hook, libs
+qml/
+  Periphery.qml        state, surfaces, flights, drag and drop, selection wiring, IPC
+  WindowCard.qml       one card: thumbnail, border, tooltip, hover, click and drag input
+  WindowCopy.qml       a window's live pixels, rounded and cropped (cards, ghosts, the dragged card)
+  WindowBorder.qml     a window's border, the active one fading over the inactive
+hypr/hypr.lua          the Hyprland hook: wraps the actions, holds the selection, the rules
+src/<module>/          pure TypeScript, each with specs.md, <module>.ts, <module>.test.ts;
+                       bundled to lib/<module>.mjs for the QML
+  layout/              bands, wrap rule, card placement
+  selection/           focus-key navigation, drop targets
+  flight/              a flight's lifecycle, which windows fly, a ghost's look and stacking
+  surface/             a band's tilted plane in perspective
+  hyprland/            Hyprland strings: animation, hook state, options, batches
 tests/hypr.test.lua    hook tests against a fake `hl`
-scripts/               verify steps, deploy, smoke
-CLAUDE.md              rules and workflow for working on the plugin
-README.md              install and development
-SPEC.md                this file
+tests/*.engine.qml     QML components in a headless Quickshell
+smoke.ts               live checks (`stef smoke periphery`)
 ```
+
+From `@stef/qml-kit`, vendored into the build: `SpringValue`, `SpringRect`, `RoundedClip`, `Tokens`, `Scheme`, and `lib/kit.mjs`.
 
 ### Layer surfaces
 
@@ -408,7 +412,7 @@ Colours are the theme's M3 roles (`Scheme.qml`: `omaterial.json`, or approximate
 
 ## Constraints and gotchas
 
-- **Plugin reload turns the mode off.** Any write under `~/.config/omarchy/plugins/` reloads the plugins, `vp run deploy` included. Press `SUPER + E` again. The hot reload is not reliable: after a deploy, run `omarchy restart shell`.
+- **Plugin reload turns the mode off.** Any write under `~/.config/omarchy/plugins/` reloads the plugins, `stef deploy periphery` included. Press `SUPER + E` again. The hot reload is not reliable: after a deploy, run `omarchy restart shell`.
 - **Hidden workspaces keep their old tiling.** Hyprland re-tiles only the visible workspace when the gaps rule changes. A workspace that was tiled at full width keeps that layout until you visit it. Its cards still show the correct relative positions.
 - **Frame rate costs GPU.** Every card captures at the screen frame rate. Many windows in the periphery increase GPU load.
 - **Floating windows keep their position.** A floating window that you drop in the focus area stays floating at its last position. It does not move to the drop point.

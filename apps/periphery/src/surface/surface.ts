@@ -1,5 +1,5 @@
 // Surface: a band as one plane, hinged on the monitor's outer edge and seen in
-// perspective from in front of the monitor's centre. See specs.md.
+// perspective from in front of the band's own centre. See specs.md.
 
 export interface SurfaceInput {
   /** The card's top-left corner, monitor-local pixels. */

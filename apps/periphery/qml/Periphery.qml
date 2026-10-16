@@ -19,21 +19,19 @@ import "lib/selection.mjs" as Selection
 import "lib/flight.mjs" as Flight
 import "lib/surface.mjs" as Surface
 
-// Periphery exposé, after Scott Jenson's widescreen prototype: tiling and the
-// bar are squeezed into a centred focus area (5:4 of the monitor height by
-// default), and the windows of the other occupied workspaces sit exploded in
-// the side bands, grouped per workspace and kept near their real relative
-// positions. Lower-numbered workspaces go left, higher go right. Click a
-// window to go to it; drag it into the focus area to pull it onto the current
-// workspace, or onto another group to send it there. SUPER-dragging a real
-// window onto a band sends it away too (see dropWindow and the release bind
-// in hypr/bindings.lua).
+// Periphery exposé, after Scott Jenson's widescreen prototype: tiling is
+// squeezed into a centred focus area (5:4 of the monitor height by default),
+// and the windows of the other occupied workspaces sit as live cards in the
+// side bands, Mission Control style. Click a card to fly to its window; drag
+// it into the focus area or onto another group to move it there. A
+// SUPER-drag of a real window onto a band moves it too (dropWindow, bound in
+// ~/.config/hypr/bindings.lua, see README.md).
 //
 // A workspace rule (hypr.lua, periphery_open) gives the monitor's regular
-// workspaces the bands as side gaps, so they tile in the centre; special
-// workspaces (the scratchpad) and the bar keep the full width. Cards are drawn on one fullscreen Bottom-layer surface (below
-// windows, above the wallpaper) so they can slide between sides; a dragged
-// card is drawn on an Overlay surface so it stays above the focus windows.
+// workspaces the bands as side gaps; special workspaces and the bar keep the
+// full width. Cards are drawn on one full-screen Bottom-layer surface (below
+// windows, above the wallpaper), so they can slide between sides; the switch
+// ghosts and the dragged card on an Overlay surface, above every window.
 Item {
   id: root
 

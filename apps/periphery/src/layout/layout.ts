@@ -305,21 +305,24 @@ function pack<W extends LayoutWindow>(c: Candidate<W>, s: number, gap: number): 
   return { w, h, units };
 }
 
-// The largest scale, at most MAX_SCALE, at which the body fits maxW × maxH.
-function fitScale(c: Candidate<LayoutWindow>, gap: number, maxW: number, maxH: number): number {
-  const fits = (s: number) => {
-    const p = pack(c, s, gap);
-    return p.w <= maxW + 1e-9 && p.h <= maxH + 1e-9;
-  };
-  if (fits(MAX_SCALE)) return MAX_SCALE;
+// The largest x in [0, hi] for which fits(x) holds; fits shrinks with x.
+function largest(fits: (x: number) => boolean, hi: number): number {
+  if (fits(hi)) return hi;
   let lo = 0;
-  let hi = MAX_SCALE;
   for (let i = 0; i < 30; i++) {
     const mid = (lo + hi) / 2;
     if (fits(mid)) lo = mid;
     else hi = mid;
   }
   return lo;
+}
+
+// The largest scale, at most MAX_SCALE, at which the body fits maxW × maxH.
+function fitScale(c: Candidate<LayoutWindow>, gap: number, maxW: number, maxH: number): number {
+  return largest((s) => {
+    const p = pack(c, s, gap);
+    return p.w <= maxW + 1e-9 && p.h <= maxH + 1e-9;
+  }, MAX_SCALE);
 }
 
 // One band: each group's candidate at its width-limited scale times a common
@@ -360,17 +363,7 @@ function placeSide<W extends LayoutWindow>(
       const o = g.options[choice[i]!]!;
       return sum + pack(o.c, o.sMax * mu, gap).h;
     }, 0);
-  const muFor = (choice: number[]) => {
-    if (heightAt(choice, 1) <= freeH + 1e-9) return 1;
-    let lo = 0;
-    let hi = 1;
-    for (let i = 0; i < 30; i++) {
-      const mid = (lo + hi) / 2;
-      if (heightAt(choice, mid) <= freeH + 1e-9) lo = mid;
-      else hi = mid;
-    }
-    return lo;
-  };
+  const muFor = (choice: number[]) => largest((mu) => heightAt(choice, mu) <= freeH + 1e-9, 1);
 
   const combos = groups.reduce((n, g) => n * g.options.length, 1);
   let choice = groups.map((g) => g.options.length - 1);
