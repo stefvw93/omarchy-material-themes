@@ -124,7 +124,7 @@ The plugin starts this switch (`flyTo`, or a routed switch), so it gets ahead of
 
 Ghosts stack the way Hyprland stacks their windows: tiled at the back, floating windows in front of them (the most recently focused in front), pinned windows in front of all ([src/flight/specs.md](src/flight/specs.md#ghost-stacking)). The focus history is read afresh when the flight starts. Without this, a tiled window's ghost covered the floating windows over it, and they popped up at the hand-off.
 
-No switch: when Hyprland hasn't switched `switchWaitMs` (150 ms) after the dispatch (a key to the workspace already shown), the flight ends. The ghosts are still on their tiles, so nothing visible changes.
+No switch: when Hyprland hasn't switched `SWITCH_WAIT_MS` (150 ms) after the dispatch (a key to the workspace already shown), the flight ends. The ghosts are still on their tiles, so nothing visible changes.
 
 A switch during a flight continues it. Hyprland's workspace animation is off then, so the new workspace is under the backdrop too, whoever started the switch. Each window flies on from where it is drawn now, and windows that now cross start from there.
 
@@ -382,27 +382,27 @@ hl.dsp.window.move({ workspace = "2", follow = false, window = "address:0x56c7bf
 
 [README.md](README.md) has the mandatory configuration: the hook line in `~/.config/hypr/hyprland.lua`, the toggle and drop binds in `~/.config/hypr/bindings.lua`, and the `plugins` entry in `~/.config/omarchy/shell.json`.
 
-### Tunables (top of `Periphery.qml`)
+### Tunables (top of `Periphery.qml`; the switch timings in `src/flight`)
 
 Motion is Material 3 springs from the tokens' motion scheme (`tokens.m3.springs`, `SpringValue`): spatial default for card and ghost geometry, the cards' travel, the tilt and a pile opening, effects default for every fade, spatial fast for the drag grow (interpretation `periphery.components`). They follow `motion.scheme` live.
 
-| Property                      | Default                  | Effect                                                                                                                              |
-| ----------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `ratio`                       | `1.25`                   | Focus area width / monitor height.                                                                                                  |
-| `bandMargin`                  | `space200` (16dp)        | Space between band edge and cards. Token `periphery.bandMargin`.                                                                    |
-| `cardGap`                     | `space125` (10dp)        | Minimum space between cards, and between a group header and its cards. Token `periphery.cardGap`.                                   |
-| `groupGap`                    | `space250` (20dp)        | Space between groups. Token `periphery.groupGap`.                                                                                   |
-| `cardTilt`                    | `12`                     | How far a band's plane turns back about the monitor's outer edge, in degrees. A selected or dragged card turns flat.                |
-| `viewDistance`                | the monitor height       | How far in front of each band's centre its plane is seen from. Shorter: stronger perspective.                                       |
-| `liftScale`                   | `1.05`                   | How much the selected card grows, from the middle of its outer edge.                                                                |
-| `recedeScale`                 | `0.97`                   | While a card is selected, how much of their size the other cards are drawn at, pushed back towards their band's eye.                |
-| `leaveMs`                     | `120`                    | How long after the pointer leaves the selected card, for a card that isn't under it, the selection clears.                          |
-| `workspaceStyle`              | `slidefade 10%`          | Hyprland's workspace animation style while the mode is on (switches that aren't routed), with the theme's curve and speed.          |
-| `cardSlide`                   | 10% of the monitor width | How far arriving and leaving cards travel, sideways: `workspaceStyle`'s slide. Change both together.                                |
-| `coverBleed`                  | `2`                      | How far the switch backdrop reaches into the bands, to cover a flush window's border. At least `general:border_size`.               |
-| `switchMinMs` / `switchMaxMs` | `120` / `1500`           | Shortest and longest switch flight before the hand-off.                                                                             |
-| `switchWaitMs`                | `150`                    | How long a flight waits for Hyprland to switch after the dispatch before it ends without a switch.                                  |
-| `routeTimeoutMs` (`hypr.lua`) | `150`                    | How long the hook waits for the plugin to run a routed switch before it runs it itself. About twice the plugin's usual 50 to 70 ms. |
+| Property                      | Default                  | Effect                                                                                                                                    |
+| ----------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `ratio`                       | `1.25`                   | Focus area width / monitor height.                                                                                                        |
+| `bandMargin`                  | `space200` (16dp)        | Space between band edge and cards. Token `periphery.bandMargin`.                                                                          |
+| `cardGap`                     | `space125` (10dp)        | Minimum space between cards, and between a group header and its cards. Token `periphery.cardGap`.                                         |
+| `groupGap`                    | `space250` (20dp)        | Space between groups. Token `periphery.groupGap`.                                                                                         |
+| `cardTilt`                    | `12`                     | How far a band's plane turns back about the monitor's outer edge, in degrees. A selected or dragged card turns flat.                      |
+| `viewDistance`                | the monitor height       | How far in front of each band's centre its plane is seen from. Shorter: stronger perspective.                                             |
+| `liftScale`                   | `1.05`                   | How much the selected card grows, from the middle of its outer edge.                                                                      |
+| `recedeScale`                 | `0.97`                   | While a card is selected, how much of their size the other cards are drawn at, pushed back towards their band's eye.                      |
+| `leaveMs`                     | `120`                    | How long after the pointer leaves the selected card, for a card that isn't under it, the selection clears.                                |
+| `workspaceStyle`              | `slidefade 10%`          | Hyprland's workspace animation style while the mode is on (switches that aren't routed), with the theme's curve and speed.                |
+| `cardSlide`                   | 10% of the monitor width | How far arriving and leaving cards travel, sideways: `workspaceStyle`'s slide. Change both together.                                      |
+| `coverBleed`                  | `2`                      | How far the switch backdrop reaches into the bands, to cover a flush window's border. At least `general:border_size`.                     |
+| `SWITCH_MIN_MS` / `_MAX_MS`   | `120` / `1500`           | Shortest and longest switch flight before the hand-off. One that reaches the longest logs a warning naming the ghosts that hadn't landed. |
+| `SWITCH_WAIT_MS`              | `150`                    | How long a flight waits for Hyprland to switch after the dispatch before it ends without a switch.                                        |
+| `routeTimeoutMs` (`hypr.lua`) | `150`                    | How long the hook waits for the plugin to run a routed switch before it runs it itself. About twice the plugin's usual 50 to 70 ms.       |
 
 Colours are the theme's M3 roles (`Scheme.qml`: `omaterial.json`, or approximated from Omarchy's colours under other themes), type is the M3 type scale at the Omarchy text size (`tokens.m3.type`), and the font family is the shell's menu font. All follow theme, token and text-size changes.
 

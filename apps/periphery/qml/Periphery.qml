@@ -93,15 +93,13 @@ Item {
   property var ghostItems: ({})
   // Workspace switch: ghosts fly between the focus area and the bands while
   // a wallpaper backdrop hides the real, already switched, focus windows.
-  property bool transitioning: false
-  property double switchStarted: 0
-  property int landedTicks: 0
-  // A flight is running (flight), or set up and waiting for Hyprland to
-  // switch (flightPending); dispatchedAt is when its switch went out (0
-  // before), so a switch that never comes ends it (switchWaitMs).
-  property bool flight: false
-  property bool flightPending: false
-  property double dispatchedAt: 0
+  // The flight's phase (src/flight/specs.md, Lifecycle); send() moves it on.
+  property var phase: ({ tag: "idle" })
+  readonly property bool inFlight: root.phase.tag !== "idle"
+  // Where every window was drawn, and the focus area's windows, just before
+  // the last switch's relayout: a flight starts each ghost there.
+  property var switchFrom: ({})
+  property var switchFocus: ({})
   // The window a flight goes to ("" for a routed switch), and the active
   // window at each end: ghosts wear its border and opacity at the tile.
   property string flightTarget: ""
@@ -260,13 +258,6 @@ Item {
   readonly property var springEffectsFast: root.m3.springs.effects_fast
   // Geometry settles to within a quarter pixel.
   readonly property real pixelEpsilon: 0.25
-  // Ghosts settle at least this long before the hand-off, so the refresh
-  // that follows a switch can still retarget them; and at most this long.
-  readonly property int switchMinMs: 120
-  readonly property int switchMaxMs: 1500
-  // A flight whose switch hasn't come this long after its dispatch (a key
-  // to the workspace already shown) ends: its ghosts are still on the tiles.
-  readonly property int switchWaitMs: 150
   // How long after the pointer leaves the selected card, for a card that
   // isn't under it, the selection clears (pointerOff).
   readonly property int leaveMs: 120
@@ -316,9 +307,8 @@ Item {
   function close() {
     root.clearSelection()
     root.opened = false
-    root.finishSwitch()
+    root.send({ tag: "close" })
     root.restoreHyprSlide()
-    root.restoreFloating()
     root.targetMonitor = null
     root.layoutSignature = ""
     root.cancelDrag()
@@ -333,8 +323,8 @@ Item {
   // The gaps are read now, so the first rule the mode sends has them.
   Component.onCompleted: optionsProc.running = true
   Component.onDestruction: {
+    root.send({ tag: "close" })
     root.restoreHyprSlide()
-    root.restoreFloating()
     Quickshell.execDetached(["hyprctl", "eval", "if periphery_close then periphery_close() end"])
   }
 
@@ -552,7 +542,7 @@ Item {
   // over a fullscreen window.
   function canFly() {
     var ws = root.targetMonitor ? root.targetMonitor.activeWorkspace : null
-    return root.opened && root.dragAddress === "" && !root.transitioning && !(ws && ws.hasFullscreen)
+    return root.opened && root.dragAddress === "" && !root.inFlight && !(ws && ws.hasFullscreen)
   }
 
   // Card click: the Exposé flight. Only a window with a card switches
@@ -576,12 +566,25 @@ Item {
     }
   }
 
+  // Moves the flight on (src/flight/specs.md, Lifecycle) and runs the
+  // actions the step asks for, each a function below.
+  function send(event) {
+    var next = Flight.step(root.phase, event) // qmllint disable missing-property
+    root.phase = next.phase
+    for (var i = 0; i < next.actions.length; i++) root[next.actions[i]]()
+  }
+
   // The plugin starts this switch, so it can get ahead of Hyprland: it puts
   // the backdrop up with ghosts of the current focus windows on their tiles
   // (the screen looks the same), waits until that is on screen, then turns
   // Hyprland's workspace animation off for this switch and switches.
-  // beginSwitch flies the ghosts; finishSwitch turns the animation back on.
   function startFlight(to, target) {
+    root.flightTarget = target
+    flightTimer.to = to
+    root.send({ tag: "start", now: Date.now() })
+  }
+
+  function launchOnTiles() {
     root.clearSelection()
     wallBlurTex.scheduleUpdate()
     // Focus changes don't refresh the toplevels: the ghosts' stacking reads
@@ -596,19 +599,14 @@ Item {
       ghosted[a] = true
     }
     root.ghosted = ghosted
-    root.flight = true
-    root.flightPending = true
-    root.transitioning = true
-    root.dispatchedAt = 0
-    root.switchStarted = Date.now()
-    root.flightTarget = target
     root.activeBefore = root.activeAddress()
     var hidden = {}
     for (var w in root.winData) if (root.winData[w].floating) hidden[w] = true
     root.hiddenFloating = hidden
-    flightTimer.to = to
-    flightTimer.restart()
   }
+
+  function scheduleDispatch() { flightTimer.restart() }
+  function cancelDispatch() { flightTimer.stop() }
 
   Timer {
     id: flightTimer
@@ -617,8 +615,53 @@ Item {
     interval: 34
     onTriggered: {
       Quickshell.execDetached(["hyprctl", "--batch", Hypr.flightBatch(Object.keys(root.hiddenFloating), flightTimer.to)]) // qmllint disable missing-property
-      root.dispatchedAt = Date.now()
+      root.send({ tag: "dispatched", now: Date.now() })
     }
+  }
+
+  // The flight is over: the hidden floating windows come back first, under
+  // their ghosts, as a hyprctl takes a few frames that would otherwise show
+  // neither ghost nor window.
+  function unhide() {
+    var batch = Hypr.restoreFloatingBatch(Object.keys(root.hiddenFloating)) // qmllint disable missing-property
+    root.hiddenFloating = ({})
+    if (!batch) return root.send({ tag: "unhidden" })
+    unhideProc.command = ["hyprctl", "--batch", batch]
+    unhideProc.running = true
+  }
+
+  Process {
+    id: unhideProc
+    // Not onExited: `running` is still true there.
+    onRunningChanged: if (!running) unhiddenTimer.restart()
+  }
+
+  // Two frames at 60 Hz: the shown windows are on screen under their ghosts.
+  Timer {
+    id: unhiddenTimer
+    interval: 34
+    onTriggered: root.send({ tag: "unhidden" })
+  }
+
+  // Hand-off: ghosts and backdrop go in the same frame (the backdrop with the
+  // phase), revealing the real windows they sit on and the cards they landed
+  // on. Also the end of a flight the mode turning off cut short.
+  function handOff() {
+    for (var a in root.ghosted) if (root.ghostItems[a]) root.ghostItems[a].land()
+    root.ghosted = ({})
+    root.flightTarget = ""
+    root.restoreFloating()
+    if (root.opened) Quickshell.execDetached(["hyprctl", "eval", root.hyprModeLua])
+  }
+
+  function warnForced() {
+    var waiting = Object.keys(root.ghosted).filter(function(a) { return root.ghostItems[a] && !root.ghostItems[a].landed })
+    console.warn("Periphery: a flight ended at its time limit; ghosts not landed: " + (waiting.join(" ") || "none"))
+  }
+
+  function allLanded() {
+    for (var a in root.ghosted) if (root.ghostItems[a] && !root.ghostItems[a].landed) return false
+    return true
   }
 
   // The workspace shown in the focus area: the target monitor's, not the
@@ -857,44 +900,40 @@ Item {
     return { x: item.x, y: item.y, w: item.width, h: item.height }
   }
 
-  // FLIP over a workspace switch. Reads where every window is drawn now,
-  // relays out for the new workspace at once from the cached geometry, then
-  // flies a ghost for each window the plan flies (src/flight/specs.md). The
-  // refresh that follows the switch retargets ghosts whose real tiles differ
-  // from the cache (hidden workspaces keep their old tiling).
-  function beginSwitch() {
+  // A workspace switch, whoever made it. Reads where every window is drawn
+  // now and relays out for the new workspace at once from the cached
+  // geometry; a flight then flies its ghosts from there (fly).
+  function switched() {
     if (!root.opened) return
     var current = root.currentWorkspaceId()
     root.clearSelection()
     root.switchDir = current > root.shownWorkspace ? 1 : current < root.shownWorkspace ? -1 : 0
     root.shownWorkspace = current
-    // No flight running and none set up: a switch the plugin didn't start
-    // (bar, script). Hyprland animates the focus area; the cards move to
-    // their new places right away. During a flight Hyprland's animation is
-    // off, so any switch continues the flight.
-    if (!root.transitioning) {
-      root.rebuild()
-      return
-    }
-    root.flightPending = false
-    var oldFocus = root.focusRects
     var from = {}
-    for (var a in oldFocus) from[a] = oldFocus[a]
+    var fullscreen = false
+    for (var a in root.focusRects) {
+      from[a] = root.focusRects[a]
+      if (root.focusRects[a].fullscreen) fullscreen = true
+    }
     for (var c in root.cardItems) if (root.cardItems[c].visible) from[c] = root.liveRect(root.cardItems[c])
     for (var g in root.ghosted) if (root.ghostItems[g]) from[g] = root.liveRect(root.ghostItems[g])
+    var ws = root.targetMonitor ? root.targetMonitor.activeWorkspace : null
+    root.switchFrom = from
+    root.switchFocus = root.focusRects
+    root.rebuild()
+    root.send({ tag: "switched", now: Date.now(), fullscreen: fullscreen || !!(ws && ws.hasFullscreen) })
+  }
+
+  // FLIP: flies a ghost for each window the plan flies (src/flight/specs.md)
+  // from where it was drawn before the switch. The refresh that follows the
+  // switch retargets ghosts whose real tiles differ from the cache (hidden
+  // workspaces keep their old tiling).
+  function fly() {
     var target = root.flightTarget
     root.flightTarget = ""
     var shown = root.shownTabs
-
-    root.rebuild()
-
-    var ws = root.targetMonitor ? root.targetMonitor.activeWorkspace : null
-    var fullscreen = ws && ws.hasFullscreen
-    for (var o in oldFocus) if (oldFocus[o].fullscreen) fullscreen = true
-    if (fullscreen) { root.finishSwitch(); return }
-
     var fly = Flight.planFlight({ // qmllint disable missing-property
-      before: Object.keys(oldFocus), after: Object.keys(root.focusRects), cards: Object.keys(root.winData),
+      before: Object.keys(root.switchFocus), after: Object.keys(root.focusRects), cards: Object.keys(root.winData),
       groups: root.tabGroups, shown: shown, target: target,
     })
     root.shownTabs = Flight.shownAfter(root.tabGroups, shown, target) // qmllint disable missing-property
@@ -905,71 +944,12 @@ Item {
     var ghosted = {}
     for (var i = 0; i < fly.length; i++) {
       var addr = fly[i]
-      if (!from[addr] || !root.ghostItems[addr]) continue
-      root.ghostItems[addr].launch(from[addr], !!oldFocus[addr])
+      if (!root.switchFrom[addr] || !root.ghostItems[addr]) continue
+      root.ghostItems[addr].launch(root.switchFrom[addr], !!root.switchFocus[addr])
       ghosted[addr] = true
     }
     root.ghosted = ghosted
     for (var f in ghosted) root.ghostItems[f].fly()
-    root.switchStarted = Date.now()
-  }
-
-  function checkLanded() {
-    var now = Date.now()
-    var elapsed = now - root.switchStarted
-    // Waiting for Hyprland to switch: the ghosts sit on their tiles, landed.
-    // A switch that doesn't come (the workspace already shown) ends it.
-    if (root.flightPending) {
-      if (root.dispatchedAt > 0 && now - root.dispatchedAt > root.switchWaitMs) root.finishSwitch()
-      else if (elapsed >= root.switchMaxMs) root.finishSwitch()
-      return
-    }
-    if (elapsed < root.switchMinMs) return
-    if (elapsed < root.switchMaxMs) {
-      for (var a in root.ghosted)
-        if (root.ghostItems[a] && !root.ghostItems[a].landed) { root.landedTicks = 0; return }
-      // Twice in a row, so a spring passing through its target doesn't count.
-      if (++root.landedTicks < 2) return
-    }
-    root.finishSwitch()
-  }
-
-  // Hand-off: ghosts and backdrop go in the same frame, revealing the real
-  // windows they sit on and the cards they landed on. The hidden floating
-  // windows come back first, under their ghosts: a hyprctl takes a few
-  // frames, which would otherwise show neither ghost nor window.
-  function finishSwitch() {
-    if (root.flight && root.opened && Object.keys(root.hiddenFloating).length > 0) {
-      if (unhideProc.running) return
-      unhideProc.command = ["hyprctl", "--batch", Hypr.restoreFloatingBatch(Object.keys(root.hiddenFloating))] // qmllint disable missing-property
-      root.hiddenFloating = ({})
-      unhideProc.running = true
-      return
-    }
-    if (root.opened && (unhideProc.running || handOffTimer.running)) return
-    root.transitioning = false
-    root.landedTicks = 0
-    for (var a in root.ghosted) if (root.ghostItems[a]) root.ghostItems[a].land()
-    root.ghosted = ({})
-    root.flightPending = false
-    root.dispatchedAt = 0
-    root.flightTarget = ""
-    if (root.flight && root.opened) Quickshell.execDetached(["hyprctl", "eval", root.hyprModeLua])
-    if (root.flight) root.restoreFloating()
-    root.flight = false
-  }
-
-  Process {
-    id: unhideProc
-    // Not onExited: `running` is still true there.
-    onRunningChanged: if (!running) handOffTimer.restart()
-  }
-
-  // Two frames at 60 Hz: the shown windows are on screen under their ghosts.
-  Timer {
-    id: handOffTimer
-    interval: 34
-    onTriggered: root.finishSwitch()
   }
 
   ListModel { id: ghosts }
@@ -977,7 +957,7 @@ Item {
   Connections {
     target: root.targetMonitor
     enabled: root.opened
-    function onActiveWorkspaceChanged() { root.beginSwitch() }
+    function onActiveWorkspaceChanged() { root.switched() }
   }
 
   // Focus moved to a window (pointer, keys, anything): it has the focus now,
@@ -994,8 +974,8 @@ Item {
   Timer {
     interval: 16
     repeat: true
-    running: root.transitioning
-    onTriggered: root.checkLanded()
+    running: root.phase.tag === "pending" || root.phase.tag === "flying"
+    onTriggered: root.send({ tag: "tick", now: Date.now(), landed: root.allLanded() })
   }
 
   // Structural window/workspace events only; title and layout events fire on
@@ -1136,7 +1116,7 @@ Item {
         // just slid out of the focus area) comes from the switch side, a
         // leaving card (its window slides in) goes towards it. Not during a
         // flight: the ghost lands on the card, which must be in place.
-        readonly property real travel: root.flight ? 0 : -root.switchDir * root.cardSlide
+        readonly property real travel: root.inFlight ? 0 : -root.switchDir * root.cardSlide
         readonly property real arriveFrom: -travel
         property real leaveTo: 0
         // The spatial spring, like Hyprland's workspace slide it travels with.
@@ -1204,7 +1184,7 @@ Item {
       width: root.focusW + root.coverBleed * 2
       height: root.monH - root.reserved[1] - root.reserved[3]
       clip: true
-      visible: root.transitioning
+      visible: root.inFlight
 
       Rectangle {
         anchors.fill: parent
@@ -1260,7 +1240,7 @@ Item {
       width: root.monW
       height: root.monH
       visible: false
-      // Rendered once per switch (beginSwitch): rendering every frame cost
+      // Rendered once per flight (launchOnTiles): rendering every frame cost
       // frames, and a texture rendered only once came back blank later.
       live: false
     }

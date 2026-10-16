@@ -56,3 +56,39 @@ The tile weight `w` is how close the ghost is to the tile: `t` when flying to a 
 - **Outer corner:** `rounding + borderSize × w`.
 - **Tilt:** from the start's tilt to the end's along the travel: `fromTilt + (toTilt − fromTilt) × t`. Landed, the ghost has its card's tilt, so the hand-off shows no turn.
 - **Blur opacity:** the blurred wallpaper behind the ghost. Cards sit on the sharp wallpaper, and the spring's slow tail would leave a linear fade short at landing, so it changes over the first half of the travel: flying to a tile `min(1, 2t)`, flying to a card `1 − min(1, 2t)`; from a tile to a tile 1.
+
+## Lifecycle
+
+A flight's phases, as a step from a phase and an event to the next phase and the actions the plugin takes. Times are milliseconds from the plugin's clock.
+
+Phases:
+
+- `idle`: no flight.
+- `pending`: the backdrop and the tile ghosts are up; the switch is about to go out (`dispatchedAt` absent) or went out at `dispatchedAt`.
+- `flying` (`since`, `landedTicks`): Hyprland switched, the ghosts fly.
+- `unhiding`: the flight is over; the hidden floating windows are being shown again, under their ghosts.
+
+Events and what they do:
+
+| Phase               | Event                  | Next phase                    | Actions                             |
+| ------------------- | ---------------------- | ----------------------------- | ----------------------------------- |
+| `idle`              | `start`                | `pending` since now           | `launchOnTiles`, `scheduleDispatch` |
+| any other           | `start`                | unchanged                     | none                                |
+| `pending`           | `dispatched`           | `pending`, `dispatchedAt` now | none                                |
+| any other           | `switched`, fullscreen | `unhiding`                    | `unhide`                            |
+| any other           | `switched`             | `flying` since now, 0 ticks   | `fly`                               |
+| `pending`           | `tick`, no switch      | `unhiding`                    | `unhide`                            |
+| `pending`, `flying` | `tick`, too long       | `unhiding`                    | `warnForced`, `unhide`              |
+| `flying`            | `tick`, early          | unchanged                     | none                                |
+| `flying`            | `tick`, not landed     | ticks 0                       | none                                |
+| `flying`            | `tick`, landed         | ticks + 1; `unhiding` at 2    | `unhide` at 2                       |
+| `unhiding`          | `unhidden`             | `idle`                        | `handOff`                           |
+| any but `idle`      | `close`                | `idle`                        | `cancelDispatch`, `handOff`         |
+| anything else       |                        | unchanged                     | none                                |
+
+- No switch: `dispatchedAt` is set and more than `switchWaitMs` (150) ago.
+- Too long: more than `switchMaxMs` (1500) since the phase began (`pending`'s `since`, or `flying`'s).
+- Early: less than `switchMinMs` (120) since `flying` began, so the refresh after the switch can still retarget the ghosts.
+- Landed: every flying ghost on its target's pixels, reported with the tick. Twice in a row, so a spring passing through its target doesn't count.
+- A switch while `idle` is one the plugin didn't start: Hyprland animates it, and the cards move to their new places on their own.
+- A switch during `unhiding` continues the flight: the floating windows are shown again by then, which is accepted for this rare case.

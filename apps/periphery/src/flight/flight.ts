@@ -117,3 +117,83 @@ export function ghostLook(input: LookInput): Look {
     tilt: input.fromTilt + (input.toTilt - input.fromTilt) * Math.min(1, Math.max(0, input.travel)),
   };
 }
+
+/** Shortest flight before the hand-off, so the refresh after the switch can retarget the ghosts. */
+export const SWITCH_MIN_MS = 120;
+/** Longest pending or flying phase before the flight ends anyway. */
+export const SWITCH_MAX_MS = 1500;
+/** How long after its dispatch a switch may take to come. */
+export const SWITCH_WAIT_MS = 150;
+
+export type Phase =
+  | { tag: "idle" }
+  | { tag: "pending"; since: number; dispatchedAt?: number }
+  | { tag: "flying"; since: number; landedTicks: number }
+  | { tag: "unhiding" };
+
+export type FlightEvent =
+  | { tag: "start"; now: number }
+  | { tag: "dispatched"; now: number }
+  | { tag: "switched"; now: number; fullscreen: boolean }
+  | { tag: "tick"; now: number; landed: boolean }
+  | { tag: "unhidden" }
+  | { tag: "close" };
+
+export type Action =
+  | "launchOnTiles"
+  | "scheduleDispatch"
+  | "fly"
+  | "unhide"
+  | "handOff"
+  | "cancelDispatch"
+  | "warnForced";
+
+export interface Step {
+  phase: Phase;
+  actions: Action[];
+}
+
+/** A flight's next phase and the plugin's actions (specs.md, Lifecycle). */
+export function step(phase: Phase, event: FlightEvent): Step {
+  const stay: Step = { phase, actions: [] };
+  const end = (...actions: Action[]): Step => ({
+    phase: { tag: "unhiding" },
+    actions: [...actions, "unhide"],
+  });
+  switch (event.tag) {
+    case "start":
+      return phase.tag === "idle"
+        ? {
+            phase: { tag: "pending", since: event.now },
+            actions: ["launchOnTiles", "scheduleDispatch"],
+          }
+        : stay;
+    case "dispatched":
+      return phase.tag === "pending"
+        ? { phase: { ...phase, dispatchedAt: event.now }, actions: [] }
+        : stay;
+    case "switched":
+      if (phase.tag === "idle") return stay;
+      if (event.fullscreen) return end();
+      return { phase: { tag: "flying", since: event.now, landedTicks: 0 }, actions: ["fly"] };
+    case "tick":
+      if (phase.tag === "pending") {
+        if (phase.dispatchedAt !== undefined && event.now - phase.dispatchedAt > SWITCH_WAIT_MS)
+          return end();
+        return event.now - phase.since > SWITCH_MAX_MS ? end("warnForced") : stay;
+      }
+      if (phase.tag !== "flying") return stay;
+      if (event.now - phase.since > SWITCH_MAX_MS) return end("warnForced");
+      if (event.now - phase.since < SWITCH_MIN_MS) return stay;
+      if (!event.landed) return { phase: { ...phase, landedTicks: 0 }, actions: [] };
+      return phase.landedTicks + 1 >= 2
+        ? end()
+        : { phase: { ...phase, landedTicks: phase.landedTicks + 1 }, actions: [] };
+    case "unhidden":
+      return phase.tag === "unhiding" ? { phase: { tag: "idle" }, actions: ["handOff"] } : stay;
+    case "close":
+      return phase.tag === "idle"
+        ? stay
+        : { phase: { tag: "idle" }, actions: ["cancelDispatch", "handOff"] };
+  }
+}

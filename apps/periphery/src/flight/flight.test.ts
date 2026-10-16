@@ -1,5 +1,17 @@
 import { describe, expect, it } from "vite-plus/test";
-import { ghostLook, ghostsOnTiles, ghostZ, isHiddenTab, planFlight, shownAfter } from "./flight.ts";
+import {
+  type Phase,
+  SWITCH_MAX_MS,
+  SWITCH_MIN_MS,
+  SWITCH_WAIT_MS,
+  ghostLook,
+  ghostsOnTiles,
+  ghostZ,
+  isHiddenTab,
+  planFlight,
+  shownAfter,
+  step,
+} from "./flight.ts";
 
 // A tab group of three (z shown), and a window outside any group.
 const groups = { x: ["x", "y", "z"], y: ["x", "y", "z"], z: ["x", "y", "z"], w: [] };
@@ -219,5 +231,125 @@ describe("ghostZ", () => {
     expect(pinned(9)).toBeGreaterThan(floating(0));
     expect(pinned(-1)).toBeGreaterThan(floating(0));
     expect(pinned(1)).toBeGreaterThan(pinned(2));
+  });
+});
+
+describe("step", () => {
+  const idle: Phase = { tag: "idle" };
+  const pending: Phase = { tag: "pending", since: 1000 };
+  const dispatched: Phase = { tag: "pending", since: 1000, dispatchedAt: 1034 };
+  const flying: Phase = { tag: "flying", since: 1100, landedTicks: 0 };
+  const unhiding: Phase = { tag: "unhiding" };
+  const all = [idle, pending, dispatched, flying, unhiding];
+
+  it("starts from idle: ghosts on the tiles, the switch scheduled", () => {
+    expect(step(idle, { tag: "start", now: 1000 })).toEqual({
+      phase: pending,
+      actions: ["launchOnTiles", "scheduleDispatch"],
+    });
+  });
+
+  it("ignores a start during a flight", () => {
+    for (const phase of [pending, flying, unhiding])
+      expect(step(phase, { tag: "start", now: 2000 })).toEqual({ phase, actions: [] });
+  });
+
+  it("notes when the switch went out", () => {
+    expect(step(pending, { tag: "dispatched", now: 1034 })).toEqual({
+      phase: dispatched,
+      actions: [],
+    });
+  });
+
+  it("leaves a switch it didn't start to Hyprland", () => {
+    expect(step(idle, { tag: "switched", now: 5, fullscreen: false })).toEqual({
+      phase: idle,
+      actions: [],
+    });
+  });
+
+  it("flies a switch, also one that comes mid-flight or during the hand-off", () => {
+    for (const phase of [pending, dispatched, flying, unhiding])
+      expect(step(phase, { tag: "switched", now: 1100, fullscreen: false })).toEqual({
+        phase: flying,
+        actions: ["fly"],
+      });
+  });
+
+  it("ends at once on a switch to a fullscreen window", () => {
+    expect(step(dispatched, { tag: "switched", now: 1100, fullscreen: true })).toEqual({
+      phase: unhiding,
+      actions: ["unhide"],
+    });
+  });
+
+  it("waits for the switch, and ends when it doesn't come", () => {
+    const tick = (now: number) => step(dispatched, { tag: "tick", now, landed: true });
+    expect(tick(1034 + SWITCH_WAIT_MS)).toEqual({ phase: dispatched, actions: [] });
+    expect(tick(1034 + SWITCH_WAIT_MS + 1)).toEqual({ phase: unhiding, actions: ["unhide"] });
+  });
+
+  it("doesn't time out a switch that hasn't gone out yet", () => {
+    expect(step(pending, { tag: "tick", now: 1500, landed: true })).toEqual({
+      phase: pending,
+      actions: [],
+    });
+  });
+
+  it("ends a phase that takes too long, and says so", () => {
+    const forced = { phase: unhiding, actions: ["warnForced", "unhide"] };
+    expect(step(pending, { tag: "tick", now: 1000 + SWITCH_MAX_MS + 1, landed: true })).toEqual(
+      forced,
+    );
+    expect(step(flying, { tag: "tick", now: 1100 + SWITCH_MAX_MS + 1, landed: false })).toEqual(
+      forced,
+    );
+  });
+
+  it("doesn't hand off early, landed or not", () => {
+    expect(step(flying, { tag: "tick", now: 1100 + SWITCH_MIN_MS - 1, landed: true })).toEqual({
+      phase: flying,
+      actions: [],
+    });
+  });
+
+  it("hands off once landed on two ticks in a row", () => {
+    const now = 1100 + SWITCH_MIN_MS;
+    const once = step(flying, { tag: "tick", now, landed: true });
+    expect(once).toEqual({ phase: { ...flying, landedTicks: 1 }, actions: [] });
+    expect(step(once.phase, { tag: "tick", now: now + 16, landed: true })).toEqual({
+      phase: unhiding,
+      actions: ["unhide"],
+    });
+  });
+
+  it("starts counting again when a ghost leaves its target", () => {
+    const once: Phase = { ...flying, landedTicks: 1 };
+    expect(step(once, { tag: "tick", now: 1300, landed: false })).toEqual({
+      phase: flying,
+      actions: [],
+    });
+  });
+
+  it("ignores ticks when idle or unhiding", () => {
+    for (const phase of [idle, unhiding])
+      expect(step(phase, { tag: "tick", now: 99999, landed: false })).toEqual({
+        phase,
+        actions: [],
+      });
+  });
+
+  it("hands off once the floating windows are back", () => {
+    expect(step(unhiding, { tag: "unhidden" })).toEqual({ phase: idle, actions: ["handOff"] });
+    expect(step(flying, { tag: "unhidden" })).toEqual({ phase: flying, actions: [] });
+  });
+
+  it("closes from any phase: the switch cancelled, everything handed off", () => {
+    for (const phase of all.slice(1))
+      expect(step(phase, { tag: "close" })).toEqual({
+        phase: idle,
+        actions: ["cancelDispatch", "handOff"],
+      });
+    expect(step(idle, { tag: "close" })).toEqual({ phase: idle, actions: [] });
   });
 });
